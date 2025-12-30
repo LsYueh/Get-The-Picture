@@ -1,0 +1,21 @@
+using GetThePicture.Cobol;
+
+namespace GetThePicture.Codec.Options;
+
+public sealed class CodecOptions
+{
+    /// <summary>
+    /// 嚴格長度驗證 (預設 true)
+    /// </summary>
+    public bool Strict { get; set; } = true;
+
+    /// <summary>
+    /// `-Dci` is the default.
+    /// </summary>
+    public DataStorageOptions DataStorage { get; set; } = DataStorageOptions.CI;
+
+    /// <summary>
+    /// `SIGN IS TRAILING` is the default.
+    /// </summary>
+    public SignOptions Sign { get; set; } = SignOptions.IsTrailing;
+}

@@ -1,14 +1,17 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace GetThePicture;
+namespace GetThePicture.Cobol;
 
 public static partial class Pic
 {
+    [GeneratedRegex(@"^(S)?((9(\(\d+\))?)|9+)(V((9(\(\d+\))?)|9+))?$", RegexOptions.IgnoreCase)]
+    private static partial Regex NumericRegex();
+
     [GeneratedRegex(@"^X(\((\d+)\))?$", RegexOptions.IgnoreCase)]
     private static partial Regex XRegex();
 
-    [GeneratedRegex(@"^(S)?((9(\(\d+\))?)|9+)(V((9(\(\d+\))?)|9+))?$", RegexOptions.IgnoreCase)]
-    private static partial Regex NumericRegex();
+    [GeneratedRegex(@"^A(\((\d+)\))?$", RegexOptions.IgnoreCase)]
+    private static partial Regex ARegex();
             
     public static PicClause Parse(string input)
     {
@@ -16,24 +19,6 @@ public static partial class Pic
             throw new ArgumentException("PIC clause is empty.");
         
         input = input.ToUpperInvariant().Replace(" ", string.Empty);
-
-        // ─────────────────────────
-        // Alphanumeric
-        // ─────────────────────────
-        var xMatch = XRegex().Match(input);
-        if (xMatch.Success)
-        {
-            int len = xMatch.Groups[2].Success ? int.Parse(xMatch.Groups[2].Value) : 1;
-
-            return new PicClause
-            {
-                DataType = PicDataType.Alphanumeric,
-                Signed = false,
-                IntegerDigits = len,
-                DecimalDigits = 0,
-                Raw = input
-            };
-        }
 
         // ─────────────────────────
         // Numeric
@@ -51,8 +36,41 @@ public static partial class Pic
                 DataType = PicDataType.Numeric,
                 Signed = signed,
                 IntegerDigits = intDigits,
-                DecimalDigits = decDigits,
-                Raw = input
+                DecimalDigits = decDigits
+            };
+        }
+
+        // ─────────────────────────
+        // Alphanumeric
+        // ─────────────────────────
+        var xMatch = XRegex().Match(input);
+        if (xMatch.Success)
+        {
+            int len = xMatch.Groups[2].Success ? int.Parse(xMatch.Groups[2].Value) : 1;
+
+            return new PicClause
+            {
+                DataType = PicDataType.Alphanumeric,
+                Signed = false,
+                IntegerDigits = len,
+                DecimalDigits = 0
+            };
+        }
+
+        // ─────────────────────────
+        // Alphabetic
+        // ─────────────────────────
+        var aMatch = ARegex().Match(input);
+        if (aMatch.Success)
+        {
+            int len = aMatch.Groups[2].Success ? int.Parse(aMatch.Groups[2].Value) : 1;
+
+            return new PicClause
+            {
+                DataType = PicDataType.Alphabetic,
+                Signed = false,
+                IntegerDigits = len,
+                DecimalDigits = 0
             };
         }
 

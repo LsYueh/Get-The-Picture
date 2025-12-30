@@ -1,6 +1,6 @@
-using GetThePicture;
+using GetThePicture.Cobol;
 
-namespace GetThePictureTest;
+namespace GetThePicture.Tests.Cobol;
 
 [TestClass]
 public class PicToClrTypeTests

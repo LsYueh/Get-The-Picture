@@ -1,10 +1,50 @@
-using GetThePicture;
+using GetThePicture.Cobol;
 
-namespace GetThePictureTest;
+namespace GetThePicture.Tests.Cobol;
 
 [TestClass]
-public class GetThePictureTest
+public class PicTest
 {
+    // ─────────────────────────
+    // Alphabetic (A)
+    // ─────────────────────────
+
+    [TestMethod]
+    public void Parse_PIC_A_DefaultLength()
+    {
+        var pic = Pic.Parse("A");
+
+        Assert.AreEqual(PicDataType.Alphabetic, pic.DataType);
+        Assert.AreEqual(1, pic.IntegerDigits);
+        Assert.AreEqual(0, pic.DecimalDigits);
+        Assert.AreEqual(1, pic.TotalLength);
+        Assert.IsFalse(pic.Signed);
+    }
+
+    [TestMethod]
+    public void Parse_PIC_A_ExplicitLength()
+    {
+        var pic = Pic.Parse("A(20)");
+
+        Assert.AreEqual(PicDataType.Alphabetic, pic.DataType);
+        Assert.AreEqual(20, pic.IntegerDigits);
+        Assert.AreEqual(0, pic.DecimalDigits);
+        Assert.AreEqual(20, pic.TotalLength);
+        Assert.IsFalse(pic.Signed);
+    }
+
+     [TestMethod]
+    public void Parse_PIC_A_ExplicitLength_OnlyOnce()
+    {
+        var pic = Pic.Parse("A(1)");
+
+        Assert.AreEqual(PicDataType.Alphabetic, pic.DataType);
+        Assert.AreEqual(1, pic.IntegerDigits);
+        Assert.AreEqual(0, pic.DecimalDigits);
+        Assert.AreEqual(1, pic.TotalLength);
+        Assert.IsFalse(pic.Signed);
+    }
+    
     // ─────────────────────────
     // Alphanumeric (X)
     // ─────────────────────────
@@ -212,13 +252,6 @@ public class GetThePictureTest
     // ─────────────────────────
     // Error handling
     // ─────────────────────────
-
-    [TestMethod]
-    public void Parse_Invalid_PIC_ShouldThrow()
-    {
-        Assert.ThrowsException<NotSupportedException>(() =>
-            Pic.Parse("A(10)"));
-    }
 
     [TestMethod]
     public void Parse_Empty_ShouldThrow()
