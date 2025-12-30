@@ -19,5 +19,19 @@ public class CobolAlphanumericDecoderTest
 
         Assert.AreEqual("ABC", result);
     }
+
+    [TestMethod]
+    public void Decode_Alphanumeric_CP950_TrimsRightSpaces()
+    {
+        var pic = new PicClause
+        {
+            DataType = PicDataType.Alphanumeric,
+            IntegerDigits = 7
+        };
+
+        var result = CobolValueCodec.Decode("中文字 ", pic);
+
+        Assert.AreEqual("中文字", result);
+    }
     
 }

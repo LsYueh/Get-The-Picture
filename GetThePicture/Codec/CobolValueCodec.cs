@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Codec.Decoder;
 using GetThePicture.Cobol;
 
@@ -13,16 +15,20 @@ public static class CobolValueCodec
         ArgumentNullException.ThrowIfNull(display);
         ArgumentNullException.ThrowIfNull(pic);
 
+        Encoding cp950 = EncodingFactory.CP950;
+
+        byte[] cp950Bytes = cp950.GetBytes(display);
+
         // 嚴格長度驗證（COBOL 是 fixed-length）
-        if (display.Length != pic.TotalLength)
+        if (cp950Bytes.Length != pic.TotalLength)
         {
             throw new FormatException(
-                $"DISPLAY length mismatch. Expected {pic.TotalLength}, actual {display.Length}.");
+                $"DISPLAY length mismatch. Expected {pic.TotalLength}, actual {cp950Bytes.Length}.");
         }
 
         return pic.DataType switch
         {
-            PicDataType.Alphanumeric => CobolAlphanumericDecoder.Decode(display, pic),
+            PicDataType.Alphanumeric => CobolAlphanumericDecoder.Decode(cp950Bytes, pic),
             // PicDataType.Alphabetic   => CobolAlphanumericDecoder.Decode(display, pic),
             // PicDataType.Numeric      =>      CobolNumericDecoder.Decode(display, pic),
             _ => throw new NotSupportedException($"Unsupported PIC category: {pic.DataType}")
