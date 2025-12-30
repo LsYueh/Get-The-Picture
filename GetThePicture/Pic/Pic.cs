@@ -7,6 +7,9 @@ public static partial class Pic
     [GeneratedRegex(@"^X(\((\d+)\))?$", RegexOptions.IgnoreCase)]
     private static partial Regex XRegex();
 
+    [GeneratedRegex(@"^A(\((\d+)\))?$", RegexOptions.IgnoreCase)]
+    private static partial Regex ARegex();
+
     [GeneratedRegex(@"^(S)?((9(\(\d+\))?)|9+)(V((9(\(\d+\))?)|9+))?$", RegexOptions.IgnoreCase)]
     private static partial Regex NumericRegex();
             
@@ -28,6 +31,23 @@ public static partial class Pic
             return new PicClause
             {
                 DataType = PicDataType.Alphanumeric,
+                Signed = false,
+                IntegerDigits = len,
+                DecimalDigits = 0
+            };
+        }
+
+        // ─────────────────────────
+        // Alphabetic
+        // ─────────────────────────
+        var aMatch = ARegex().Match(input);
+        if (aMatch.Success)
+        {
+            int len = aMatch.Groups[2].Success ? int.Parse(aMatch.Groups[2].Value) : 1;
+
+            return new PicClause
+            {
+                DataType = PicDataType.Alphabetic,
                 Signed = false,
                 IntegerDigits = len,
                 DecimalDigits = 0

@@ -6,5 +6,6 @@ namespace GetThePicture.Pic;
 public enum PicDataType
 {
     Numeric,
-    Alphanumeric
+    Alphanumeric,
+    Alphabetic
 }
