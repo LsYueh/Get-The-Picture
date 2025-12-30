@@ -5,7 +5,16 @@ namespace GetThePicture.Pic;
 /// </summary>
 public enum PicDataType
 {
+    /// <summary>
+    /// 9/S9
+    /// </summary>
     Numeric,
+    /// <summary>
+    /// X
+    /// </summary>
     Alphanumeric,
+    /// <summary>
+    /// A
+    /// </summary>
     Alphabetic
 }

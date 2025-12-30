@@ -4,14 +4,14 @@ namespace GetThePicture.Pic;
 
 public static partial class Pic
 {
+    [GeneratedRegex(@"^(S)?((9(\(\d+\))?)|9+)(V((9(\(\d+\))?)|9+))?$", RegexOptions.IgnoreCase)]
+    private static partial Regex NumericRegex();
+
     [GeneratedRegex(@"^X(\((\d+)\))?$", RegexOptions.IgnoreCase)]
     private static partial Regex XRegex();
 
     [GeneratedRegex(@"^A(\((\d+)\))?$", RegexOptions.IgnoreCase)]
     private static partial Regex ARegex();
-
-    [GeneratedRegex(@"^(S)?((9(\(\d+\))?)|9+)(V((9(\(\d+\))?)|9+))?$", RegexOptions.IgnoreCase)]
-    private static partial Regex NumericRegex();
             
     public static PicClause Parse(string input)
     {
@@ -19,6 +19,26 @@ public static partial class Pic
             throw new ArgumentException("PIC clause is empty.");
         
         input = input.ToUpperInvariant().Replace(" ", string.Empty);
+
+        // ─────────────────────────
+        // Numeric
+        // ─────────────────────────
+        var numMatch = NumericRegex().Match(input);
+        if (numMatch.Success)
+        {
+            bool signed = numMatch.Groups[1].Success;
+
+            int intDigits = CountDigits(numMatch.Groups[2].Value);
+            int decDigits = numMatch.Groups[6].Success ? CountDigits(numMatch.Groups[6].Value) : 0;
+
+            return new PicClause
+            {
+                DataType = PicDataType.Numeric,
+                Signed = signed,
+                IntegerDigits = intDigits,
+                DecimalDigits = decDigits
+            };
+        }
 
         // ─────────────────────────
         // Alphanumeric
@@ -51,26 +71,6 @@ public static partial class Pic
                 Signed = false,
                 IntegerDigits = len,
                 DecimalDigits = 0
-            };
-        }
-
-        // ─────────────────────────
-        // Numeric
-        // ─────────────────────────
-        var numMatch = NumericRegex().Match(input);
-        if (numMatch.Success)
-        {
-            bool signed = numMatch.Groups[1].Success;
-
-            int intDigits = CountDigits(numMatch.Groups[2].Value);
-            int decDigits = numMatch.Groups[6].Success ? CountDigits(numMatch.Groups[6].Value) : 0;
-
-            return new PicClause
-            {
-                DataType = PicDataType.Numeric,
-                Signed = signed,
-                IntegerDigits = intDigits,
-                DecimalDigits = decDigits
             };
         }
 
