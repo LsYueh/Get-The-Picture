@@ -1,5 +1,8 @@
-namespace GetThePicture;
+namespace GetThePicture.Pic;
 
+/// <summary>
+/// COBOL PICTURE Metadata Class
+/// </summary>
 public class PicClause
 {
     public PicDataType DataType { get; set; }
@@ -7,8 +10,6 @@ public class PicClause
 
     public int IntegerDigits { get; set; }
     public int DecimalDigits { get; set; }
-
-    public String? Raw { get; set; }
 
     public int TotalLength => IntegerDigits + DecimalDigits;
 

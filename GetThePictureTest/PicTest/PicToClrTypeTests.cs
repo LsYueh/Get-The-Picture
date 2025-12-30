@@ -1,6 +1,6 @@
-using GetThePicture;
+using GetThePicture.Pic;
 
-namespace GetThePictureTest;
+namespace GetThePictureTest.PicTest;
 
 [TestClass]
 public class PicToClrTypeTests

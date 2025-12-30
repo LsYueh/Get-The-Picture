@@ -1,9 +1,9 @@
-using GetThePicture;
+using GetThePicture.Pic;
 
-namespace GetThePictureTest;
+namespace GetThePictureTest.PicTest;
 
 [TestClass]
-public class GetThePictureTest
+public class PicTest
 {
     // ─────────────────────────
     // Alphanumeric (X)

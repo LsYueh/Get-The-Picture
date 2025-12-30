@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace GetThePicture;
+namespace GetThePicture.Pic;
 
 public static partial class Pic
 {
@@ -30,8 +30,7 @@ public static partial class Pic
                 DataType = PicDataType.Alphanumeric,
                 Signed = false,
                 IntegerDigits = len,
-                DecimalDigits = 0,
-                Raw = input
+                DecimalDigits = 0
             };
         }
 
@@ -51,8 +50,7 @@ public static partial class Pic
                 DataType = PicDataType.Numeric,
                 Signed = signed,
                 IntegerDigits = intDigits,
-                DecimalDigits = decDigits,
-                Raw = input
+                DecimalDigits = decDigits
             };
         }
 
