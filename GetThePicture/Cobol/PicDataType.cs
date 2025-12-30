@@ -1,4 +1,4 @@
-namespace GetThePicture.Pic;
+namespace GetThePicture.Cobol;
 
 /// <summary>
 /// COBOL PICTURE Data Type

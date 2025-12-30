@@ -1,5 +1,5 @@
 using GetThePicture.Codec.Decoder;
-using GetThePicture.Pic;
+using GetThePicture.Cobol;
 
 namespace GetThePicture.Codec;
 

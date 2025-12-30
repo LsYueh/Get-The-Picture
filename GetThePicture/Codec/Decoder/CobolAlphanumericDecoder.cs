@@ -1,4 +1,4 @@
-using GetThePicture.Pic;
+using GetThePicture.Cobol;
 
 namespace GetThePicture.Codec.Decoder;
 

@@ -1,6 +1,6 @@
-using GetThePicture.Pic;
+using GetThePicture.Cobol;
 
-namespace GetThePictureTest.PicTest;
+namespace GetThePicture.Tests.Cobol;
 
 [TestClass]
 public class PicTest

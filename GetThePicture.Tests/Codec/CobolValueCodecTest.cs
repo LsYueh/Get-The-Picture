@@ -1,7 +1,7 @@
 using GetThePicture.Codec;
-using GetThePicture.Pic;
+using GetThePicture.Cobol;
 
-namespace GetThePictureTest.CodecTest;
+namespace GetThePicture.Tests.Codec;
 
 [TestClass]
 public class CobolValueCodecTests
