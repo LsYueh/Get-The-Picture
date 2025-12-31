@@ -27,10 +27,10 @@ public static class CobolValueCodec
 
         return pic.DataType switch
         {
-            PicDataType.Alphanumeric => CobolAlphanumericDecoder.Decode(cp950Bytes, pic),
-            // PicDataType.Alphabetic   => CobolAlphanumericDecoder.Decode(display, pic),
             // PicDataType.Numeric      =>      CobolNumericDecoder.Decode(display, pic),
-            _ => throw new NotSupportedException($"Unsupported PIC category: {pic.DataType}")
+            PicDataType.Alphanumeric => CobolAlphanumericDecoder.Decode(cp950Bytes, pic),
+            PicDataType.Alphabetic   =>   CobolAlphabeticDecoder.Decode(cp950Bytes, pic),
+            _ => throw new NotSupportedException($"Unsupported PIC Data Type: {pic.DataType}")
         };
     }
 

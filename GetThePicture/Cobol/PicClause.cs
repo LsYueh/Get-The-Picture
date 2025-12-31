@@ -7,17 +7,17 @@ public class PicClause
 {
     public PicDataType DataType { get; set; }
     
-    public bool Signed { get; set; }
+    public bool Signed { get; set; } = false;
 
     /// <summary>
     /// 字串長度/整數位數
     /// </summary>
-    public int IntegerDigits { get; set; }
+    public int IntegerDigits { get; set; } = 0;
 
     /// <summary>
     /// 小數位數
     /// </summary>
-    public int DecimalDigits { get; set; }
+    public int DecimalDigits { get; set; } = 0;
 
     /// <summary>
     /// COBOL-PIC 總佔用資料的長度
@@ -34,6 +34,9 @@ public class PicClause
         get
         {
             if (DataType == PicDataType.Alphanumeric)
+                return typeof(string);
+
+            if (DataType == PicDataType.Alphabetic)
                 return typeof(string);
 
             if (DecimalDigits > 0)

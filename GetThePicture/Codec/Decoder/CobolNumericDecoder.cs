@@ -6,6 +6,13 @@ namespace GetThePicture.Codec.Decoder;
 
 internal static class CobolNumericDecoder
 {
+    /// <summary>
+    /// Decoder for COBOL PIC 9/S9.
+    /// </summary>
+    /// <param name="display"></param>
+    /// <param name="pic"></param>
+    /// <returns></returns>
+    /// <exception cref="FormatException"></exception>
     public static object Decode(string display, PicClause pic)
     {
         string work = display;
