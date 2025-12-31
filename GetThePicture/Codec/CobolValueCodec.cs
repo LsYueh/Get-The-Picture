@@ -8,9 +8,9 @@ namespace GetThePicture.Codec;
 public static class CobolValueCodec
 {
     /// <summary>
-    /// DISPLAY → CLR value
+    /// COBOL PICTURE DISPLAY → CLR value
     /// </summary>
-    public static object Decode(string display, PicClause pic)
+    public static object Decode(string display, PicClause pic, bool strict = true)
     {
         ArgumentNullException.ThrowIfNull(display);
         ArgumentNullException.ThrowIfNull(pic);
@@ -20,10 +20,9 @@ public static class CobolValueCodec
         byte[] cp950Bytes = cp950.GetBytes(display);
 
         // 嚴格長度驗證（COBOL 是 fixed-length）
-        if (cp950Bytes.Length != pic.TotalLength)
+        if (strict && (cp950Bytes.Length != pic.TotalLength))
         {
-            throw new FormatException(
-                $"DISPLAY length mismatch. Expected {pic.TotalLength}, actual {cp950Bytes.Length}.");
+            throw new FormatException($"DISPLAY length mismatch. Expected {pic.TotalLength}, actual {cp950Bytes.Length}.");
         }
 
         return pic.DataType switch
@@ -36,7 +35,7 @@ public static class CobolValueCodec
     }
 
     /// <summary>
-    /// CLR value → DISPLAY
+    /// CLR value → COBOL PICTURE DISPLAY
     /// </summary>
     public static string Encode(object value, PicClause pic)
     {
