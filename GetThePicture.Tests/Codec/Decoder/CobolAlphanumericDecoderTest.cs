@@ -15,7 +15,7 @@ public class CobolAlphanumericDecoderTest
             IntegerDigits = 5
         }; // X(5)
 
-        var result = CobolValueCodec.Decode("ABC  ", pic);
+        var result = CobolValueCodec.Build("ABC  ", pic).Decode();
 
         Assert.AreEqual("ABC", result);
     }
@@ -29,7 +29,7 @@ public class CobolAlphanumericDecoderTest
             IntegerDigits = 6
         }; // X(6)
 
-        var result = CobolValueCodec.Decode("ABC  ", pic, false);
+        var result = CobolValueCodec.Build("ABC  ", pic).NoStrict().Decode();
 
         Assert.AreEqual("ABC", result);
     }
@@ -43,7 +43,7 @@ public class CobolAlphanumericDecoderTest
             IntegerDigits = 7
         }; // X(7)
 
-        var result = CobolValueCodec.Decode("中文字 ", pic);
+        var result = CobolValueCodec.Build("中文字 ", pic).Decode();
 
         Assert.AreEqual("中文字", result);
     }
@@ -57,7 +57,7 @@ public class CobolAlphanumericDecoderTest
             IntegerDigits = 5
         }; // X(5)
 
-        var result = CobolValueCodec.Decode("中文字 ", pic, false);
+        var result = CobolValueCodec.Build("中文字 ", pic).NoStrict().Decode();
 
         Assert.AreEqual("中文?", result);
     }

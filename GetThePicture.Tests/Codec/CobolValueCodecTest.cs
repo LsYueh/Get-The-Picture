@@ -22,7 +22,7 @@ public class CobolValueCodecTests
             DecimalDigits = 0
         };
 
-        CobolValueCodec.Decode("1234", pic);
+        CobolValueCodec.Build("1234", pic).Decode();
     }
 
     // -------------------------
@@ -41,7 +41,7 @@ public class CobolValueCodecTests
             DecimalDigits = 0
         };
 
-        CobolValueCodec.Decode("12A34", pic);
+        CobolValueCodec.Build("12A34", pic).Decode();
     }
 
     [TestMethod]
@@ -56,6 +56,6 @@ public class CobolValueCodecTests
             DecimalDigits = 0
         };
 
-        CobolValueCodec.Decode("123456789012345678901234567890", pic);
+        CobolValueCodec.Build("123456789012345678901234567890", pic).Decode();
     }
 }

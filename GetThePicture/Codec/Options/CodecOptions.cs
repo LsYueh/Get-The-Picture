@@ -5,6 +5,11 @@ namespace GetThePicture.Codec.Options;
 public sealed class CodecOptions
 {
     /// <summary>
+    /// 嚴格長度驗證 (預設 true)
+    /// </summary>
+    public bool Strict { get; set; } = true;
+
+    /// <summary>
     /// `-Dci` is the default.
     /// </summary>
     public DataStorageOptions DataStorage { get; set; } = DataStorageOptions.CI;

@@ -15,7 +15,7 @@ public class CobolAlphabeticDecoderTest
             IntegerDigits = 5
         }; // A(5)
 
-        var result = CobolValueCodec.Decode("AbC  ", pic);
+        var result = CobolValueCodec.Build("AbC  ", pic).Decode();
 
         Assert.AreEqual("AbC", result);
     }
@@ -29,7 +29,7 @@ public class CobolAlphabeticDecoderTest
             IntegerDigits = 5
         }; // A(5)
 
-        var result = CobolValueCodec.Decode("AbC  fGh", pic, false);
+        var result = CobolValueCodec.Build("AbC  fGh", pic).NoStrict().Decode();
 
         Assert.AreEqual("AbC", result);
     }
@@ -48,7 +48,7 @@ public class CobolAlphabeticDecoderTest
             IntegerDigits = 5
         };
 
-        CobolValueCodec.Decode("AbC@ ", pic);
+        CobolValueCodec.Build("AbC@ ", pic).Decode();
     }
 
     [TestMethod]
@@ -61,7 +61,7 @@ public class CobolAlphabeticDecoderTest
             IntegerDigits = 5
         };
 
-        CobolValueCodec.Decode("12345", pic);
+        CobolValueCodec.Build("12345", pic).Decode();
     }
 
     [TestMethod]
@@ -74,6 +74,6 @@ public class CobolAlphabeticDecoderTest
             IntegerDigits = 7
         };
 
-        CobolValueCodec.Decode("中文字 ", pic);
+        CobolValueCodec.Build("中文字 ", pic).Decode();
     }
 }
