@@ -1,4 +1,4 @@
-namespace GetThePicture.Codec;
+namespace GetThePicture.Codec.Utils;
 
 internal static class BufferSlice
 {

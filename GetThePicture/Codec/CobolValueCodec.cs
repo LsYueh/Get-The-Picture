@@ -1,7 +1,8 @@
 using System.Text;
 
-using GetThePicture.Codec.Decoder;
 using GetThePicture.Cobol;
+using GetThePicture.Codec.Decoder;
+using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Codec;
 
@@ -15,6 +16,9 @@ public static class CobolValueCodec
         ArgumentNullException.ThrowIfNull(display);
         ArgumentNullException.ThrowIfNull(pic);
 
+        if (pic.TotalLength > 28)
+            throw new NotSupportedException($"PIC length {pic.TotalLength} exceeds the maximum supported length of 28.");
+
         Encoding cp950 = EncodingFactory.CP950;
 
         byte[] cp950Bytes = cp950.GetBytes(display);
@@ -25,13 +29,16 @@ public static class CobolValueCodec
             throw new FormatException($"DISPLAY length mismatch. Expected {pic.TotalLength}, actual {cp950Bytes.Length}.");
         }
 
-        return pic.DataType switch
+#pragma warning disable IDE0066 // Convert switch statement to expression
+        switch (pic.DataType)
         {
-            // PicDataType.Numeric      =>      CobolNumericDecoder.Decode(display, pic),
-            PicDataType.Alphanumeric => CobolAlphanumericDecoder.Decode(cp950Bytes, pic),
-            PicDataType.Alphabetic   =>   CobolAlphabeticDecoder.Decode(cp950Bytes, pic),
-            _ => throw new NotSupportedException($"Unsupported PIC Data Type: {pic.DataType}")
-        };
+            case PicDataType.Numeric     : return      CobolNumericDecoder.Decode(cp950Bytes, pic); // TODO: 想辦法塞 new CodecOptions().Sign... 
+            case PicDataType.Alphanumeric: return CobolAlphanumericDecoder.Decode(cp950Bytes, pic);
+            case PicDataType.Alphabetic  : return   CobolAlphabeticDecoder.Decode(cp950Bytes, pic);
+            default:
+                throw new NotSupportedException($"Unsupported PIC Data Type: {pic.DataType}");
+        }
+#pragma warning restore IDE0066 // Convert switch statement to expression
     }
 
     /// <summary>

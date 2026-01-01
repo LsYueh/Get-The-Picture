@@ -21,9 +21,9 @@ public class CobolNumericDecoderTest
             DecimalDigits = 0
         };
 
-        var result = CobolValueCodec.Decode("00123", pic);
+        var value = CobolValueCodec.Decode("00123", pic);
 
-        Assert.AreEqual(123L, result);
+        Assert.AreEqual(123L, value);
     }
 
     // -------------------------
@@ -41,7 +41,7 @@ public class CobolNumericDecoderTest
             DecimalDigits = 0
         };
 
-        var result = CobolValueCodec.Decode("-00123", pic);
+        var result = CobolValueCodec.Decode("}0123", pic);
 
         Assert.AreEqual(-123L, result);
     }
@@ -57,7 +57,7 @@ public class CobolNumericDecoderTest
             DecimalDigits = 0
         };
 
-        var result = CobolValueCodec.Decode("00123-", pic);
+        var result = CobolValueCodec.Decode("0012L", pic);
 
         Assert.AreEqual(-123L, result);
     }
@@ -88,12 +88,12 @@ public class CobolNumericDecoderTest
         var pic = new PicClause
         {
             DataType = PicDataType.Numeric,
-            Signed = false,
+            Signed = true,
             IntegerDigits = 3,
             DecimalDigits = 2
         };
 
-        var result = CobolValueCodec.Decode("-12345", pic);
+        var result = CobolValueCodec.Decode("1234N", pic);
 
         Assert.AreEqual(-123.45m, result);
     }

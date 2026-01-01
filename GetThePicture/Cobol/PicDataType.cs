@@ -5,16 +5,10 @@ namespace GetThePicture.Cobol;
 /// </summary>
 public enum PicDataType
 {
-    /// <summary>
-    /// 9/S9
-    /// </summary>
+    /// <summary>9/S9</summary>
     Numeric,
-    /// <summary>
-    /// X
-    /// </summary>
+    /// <summary>X</summary>
     Alphanumeric,
-    /// <summary>
-    /// A
-    /// </summary>
+    /// <summary>A</summary>
     Alphabetic
 }

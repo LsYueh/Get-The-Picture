@@ -29,7 +29,7 @@ public class PicClause
         return $"{DataType}, Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={TotalLength}";
     }
 
-    public Type ClrType
+    public Type ClrType // TODO: 可能用不到
     {
         get
         {
