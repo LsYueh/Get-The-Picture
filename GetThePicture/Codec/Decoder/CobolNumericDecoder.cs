@@ -57,8 +57,15 @@ internal static class CobolNumericDecoder
 #pragma warning disable IDE0066 // Convert switch statement to expression
         switch (value)
         {
-            case long    l: return sign * l; // l 保持 long
-            case decimal d: return sign * d; // d 保持 decimal
+            case sbyte   sb: return (sbyte) sign * sb;
+            case byte     b: return b;
+            case short    s: return (short) sign * s;
+            case ushort  us: return us;
+            case int      i: return sign * i;
+            case uint    ui: return ui;
+            case long     l: return sign * l;
+            case ulong   ul: return ul;
+            case decimal  d: return sign * d;
             default:
                 throw new InvalidOperationException("Unsupported numeric type");
         }
@@ -104,15 +111,21 @@ internal static class CobolNumericDecoder
 
         if (pic.DecimalDigits == 0)
         {
-            return ParseInteger(display);
+            return ParseInteger(display, pic);
         }
         else
         {
-            return  ParseDecimal(display, pic);
+            return ParseDecimal(display, pic);
         }
     }
 
-    private static long ParseInteger(string display)
+    private static long ParseInteger(string display, PicClause pic)
+    {
+        // TODO: PIC位數對應資料型態轉換
+        return TryParseToLong(display);
+    }
+
+    private static long TryParseToLong(string display)
     {
         if (!long.TryParse(
                 display,
@@ -120,7 +133,7 @@ internal static class CobolNumericDecoder
                 CultureInfo.InvariantCulture,
                 out long value))
         {
-            throw new FormatException($"Invalid integer DISPLAY value: '{display}'");
+            throw new FormatException($"Invalid DISPLAY value '{display}' for type {typeof(long).Name}");
         }
 
         return value;
