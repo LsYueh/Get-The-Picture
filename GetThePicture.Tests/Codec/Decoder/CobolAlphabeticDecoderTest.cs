@@ -9,13 +9,8 @@ public class CobolAlphabeticDecoderTest
     [TestMethod]
     public void Decode_Alphabetic_TrimsRightSpaces()
     {
-        var pic = new PicClause
-        {
-            DataType = PicDataType.Alphabetic,
-            IntegerDigits = 5
-        }; // A(5)
-
-        var result = CobolValueCodec.Build("AbC  ", pic).Decode();
+        var pic = Pic.Parse("A(5)");
+        var result = CobolValueCodec.ForPic(pic).Decode("AbC  ");
 
         Assert.AreEqual("AbC", result);
     }
@@ -23,13 +18,8 @@ public class CobolAlphabeticDecoderTest
     [TestMethod]
     public void Decode_Alphabetic_Lesser_Extra_TrimsRightSpaces()
     {
-        var pic = new PicClause
-        {
-            DataType = PicDataType.Alphabetic,
-            IntegerDigits = 5
-        }; // A(5)
-
-        var result = CobolValueCodec.Build("AbC  fGh", pic).NoStrict().Decode();
+        var pic = Pic.Parse("A(5)");
+        var result = CobolValueCodec.ForPic(pic).NoStrict().Decode("AbC  fGh");
 
         Assert.AreEqual("AbC", result);
     }
@@ -42,38 +32,26 @@ public class CobolAlphabeticDecoderTest
     [ExpectedException(typeof(FormatException))]
     public void Decode_Alphanumeric_ThrowsFormatException()
     {
-        var pic = new PicClause
-        {
-            DataType = PicDataType.Alphabetic,
-            IntegerDigits = 5
-        };
+        var pic = Pic.Parse("A(5)");
 
-        CobolValueCodec.Build("AbC@ ", pic).Decode();
+        CobolValueCodec.ForPic(pic).Decode("AbC@ ");
     }
 
     [TestMethod]
     [ExpectedException(typeof(FormatException))]
     public void Decode_Numeric_ThrowsFormatException()
     {
-        var pic = new PicClause
-        {
-            DataType = PicDataType.Alphabetic,
-            IntegerDigits = 5
-        };
+        var pic = Pic.Parse("A(5)");
 
-        CobolValueCodec.Build("12345", pic).Decode();
+        CobolValueCodec.ForPic(pic).Decode("12345");
     }
 
     [TestMethod]
     [ExpectedException(typeof(FormatException))]
     public void Decode_CP950_ThrowsFormatException()
     {
-        var pic = new PicClause
-        {
-            DataType = PicDataType.Alphabetic,
-            IntegerDigits = 7
-        };
+        var pic = Pic.Parse("A(7)");
 
-        CobolValueCodec.Build("中文字 ", pic).Decode();
+        CobolValueCodec.ForPic(pic).Decode("中文字 ");
     }
 }
