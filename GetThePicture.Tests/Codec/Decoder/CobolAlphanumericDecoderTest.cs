@@ -9,13 +9,8 @@ public class CobolAlphanumericDecoderTest
     [TestMethod]
     public void Decode_Alphanumeric_TrimsRightSpaces()
     {
-        var pic = new PicClause
-        {
-            DataType = PicDataType.Alphanumeric,
-            IntegerDigits = 5
-        }; // X(5)
-
-        var result = CobolValueCodec.Build("ABC  ", pic).Decode();
+        var pic = Pic.Parse("X(5)");
+        var result = CobolValueCodec.ForPic(pic).Decode("ABC  ");
 
         Assert.AreEqual("ABC", result);
     }
@@ -23,13 +18,8 @@ public class CobolAlphanumericDecoderTest
     [TestMethod]
     public void Decode_Alphanumeric_Lesser_Extra_TrimsRightSpaces()
     {
-        var pic = new PicClause
-        {
-            DataType = PicDataType.Alphanumeric,
-            IntegerDigits = 6
-        }; // X(6)
-
-        var result = CobolValueCodec.Build("ABC  ", pic).NoStrict().Decode();
+        var pic = Pic.Parse("X(6)");
+        var result = CobolValueCodec.ForPic(pic).NoStrict().Decode("ABC  ");
 
         Assert.AreEqual("ABC", result);
     }
@@ -37,13 +27,8 @@ public class CobolAlphanumericDecoderTest
     [TestMethod]
     public void Decode_Alphanumeric_CP950_TrimsRightSpaces()
     {
-        var pic = new PicClause
-        {
-            DataType = PicDataType.Alphanumeric,
-            IntegerDigits = 7
-        }; // X(7)
-
-        var result = CobolValueCodec.Build("中文字 ", pic).Decode();
+        var pic = Pic.Parse("X(7)");
+        var result = CobolValueCodec.ForPic(pic).Decode("中文字 ");
 
         Assert.AreEqual("中文字", result);
     }
@@ -51,13 +36,8 @@ public class CobolAlphanumericDecoderTest
     [TestMethod]
     public void Decode_Alphanumeric_CP950_Lesser_TrimsRightSpaces()
     {
-        var pic = new PicClause
-        {
-            DataType = PicDataType.Alphanumeric,
-            IntegerDigits = 5
-        }; // X(5)
-
-        var result = CobolValueCodec.Build("中文字 ", pic).NoStrict().Decode();
+        var pic = Pic.Parse("X(5)");
+        var result = CobolValueCodec.ForPic(pic).NoStrict().Decode("中文字 ");
 
         Assert.AreEqual("中文?", result);
     }

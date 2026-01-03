@@ -9,19 +9,16 @@ namespace GetThePicture.Codec;
 
 public static class CobolValueCodec
 {
-    public static DecodeContext Build(string display, PicClause pic) => new(display, pic);
+    public static DecodeContext ForPic(PicClause pic) => new(pic);
 }
 
 public sealed class DecodeContext
 {
-    private readonly string _display;
     private readonly PicClause _pic;
     private readonly CodecOptions _codecOptions = new();
 
-
-    internal DecodeContext(string display, PicClause pic)
+    internal DecodeContext(PicClause pic)
     {
-        _display = display;
         _pic = pic;
     }
 
@@ -43,7 +40,26 @@ public sealed class DecodeContext
         return this;
     }
 
-    public object Decode() => Codec.Decode(_display, _pic, _codecOptions);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="display"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public object Decode(string display)
+    {
+        ArgumentNullException.ThrowIfNull(display);
+        
+        return Codec.Decode(display, _pic, _codecOptions);
+    }
+
+
+    public string Encode(object value)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+
+        return Codec.Encode(value, _pic, _codecOptions);
+    }
 }
 
 internal static class Codec
@@ -81,9 +97,12 @@ internal static class Codec
     /// <summary>
     /// CLR value → COBOL PICTURE DISPLAY
     /// </summary>
-    public static string Encode(object value, PicClause pic)
+    public static string Encode(object value, PicClause pic, CodecOptions codecOptions)
     {
-        // 之後實作
+        ArgumentNullException.ThrowIfNull(value);
+        ArgumentNullException.ThrowIfNull(pic);
+
+        // TODO: 之後實作
         throw new NotImplementedException("Encode is not implemented yet.");
     }
 }
