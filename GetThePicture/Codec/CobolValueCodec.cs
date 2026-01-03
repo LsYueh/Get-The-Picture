@@ -56,9 +56,6 @@ internal static class Codec
         ArgumentNullException.ThrowIfNull(display);
         ArgumentNullException.ThrowIfNull(pic);
 
-        if (pic.TotalLength > 28)
-            throw new NotSupportedException($"PIC length {pic.TotalLength} exceeds the maximum supported length of 28.");
-
         Encoding cp950 = EncodingFactory.CP950;
 
         byte[] cp950Bytes = cp950.GetBytes(display);

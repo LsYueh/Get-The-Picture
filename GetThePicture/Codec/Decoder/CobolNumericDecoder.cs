@@ -26,17 +26,26 @@ internal static class CobolNumericDecoder
         // 根據PIC內容限制大小
         ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(cp950Bytes, 0, pic.TotalLength);
 
-        Span<byte> span = stackalloc byte[fieldBytes.Length];
-        fieldBytes.CopyTo(span);
+        // 解析出符號(sign)與數字文(numeric)
+        Span<byte> span = OverpunchDecode(fieldBytes, pic, options, out decimal sign);
+        EnsureAllAsciiDigits(span);
+        string numeric = cp950.GetString(span);
+        
+        // 轉換成數字
+        return ParseToValue(numeric, sign, pic);
+    }
 
-        int sign = 1;
+    private static byte[] OverpunchDecode(ReadOnlySpan<byte> fieldBytes, PicClause pic, CodecOptions options, out decimal sign)
+    {
+        byte[] buffer = new byte[fieldBytes.Length];
+        fieldBytes.CopyTo(buffer);
 
-        // Overpunch decode
+        sign = 1.0m;
+
         if (pic.Signed)
         {
             OpVal opVal = GetOverpunchValue(fieldBytes, options);
 
-            // 用 Overpunch 對應值「寫到 scratch」
             Index index = options.Sign switch
             {
                 SignOptions.IsTrailing => ^1,
@@ -44,32 +53,11 @@ internal static class CobolNumericDecoder
                 _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
             };
 
-            span[index] = (byte) opVal.Digit;
+            buffer[index] = (byte) opVal.Digit;
             sign = opVal.Sign;
         }
-        
-        EnsureAllAsciiDigits(span);
-        
-        var display = cp950.GetString(span);
 
-        object value = ParseValue(display, pic);
-
-#pragma warning disable IDE0066 // Convert switch statement to expression
-        switch (value)
-        {
-            case sbyte   sb: return (sbyte) sign * sb;
-            case byte     b: return b;
-            case short    s: return (short) sign * s;
-            case ushort  us: return us;
-            case int      i: return sign * i;
-            case uint    ui: return ui;
-            case long     l: return sign * l;
-            case ulong   ul: return ul;
-            case decimal  d: return sign * d;
-            default:
-                throw new InvalidOperationException("Unsupported numeric type");
-        }
-#pragma warning restore IDE0066 // Convert switch statement to expression
+        return buffer;
     }
 
     private static OpVal GetOverpunchValue(ReadOnlySpan<byte> fieldBytes, CodecOptions options)
@@ -104,60 +92,76 @@ internal static class CobolNumericDecoder
         }
     }
 
-    private static object ParseValue(string display, PicClause pic)
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="numeric">數字文</param>
+    /// <param name="sign">(+/-)</param>
+    /// <param name="pic"></param>
+    /// <returns></returns>
+    private static object ParseToValue(string numeric, decimal sign, PicClause pic)
     {
-        if (string.IsNullOrEmpty(display))
-            throw new FormatException("DISPLAY value is empty.");
-
-        if (pic.DecimalDigits == 0)
-        {
-            return ParseInteger(display, pic);
-        }
-        else
-        {
-            return ParseDecimal(display, pic);
-        }
-    }
-
-    private static long ParseInteger(string display, PicClause pic)
-    {
-        // TODO: PIC位數對應資料型態轉換
-        return TryParseToLong(display);
-    }
-
-    private static long TryParseToLong(string display)
-    {
-        if (!long.TryParse(
-                display,
-                NumberStyles.None,
-                CultureInfo.InvariantCulture,
-                out long value))
-        {
-            throw new FormatException($"Invalid DISPLAY value '{display}' for type {typeof(long).Name}");
-        }
-
-        return value;
-    }
-
-    private static decimal ParseDecimal(string display, PicClause pic)
-    {
-        int expectedLength = pic.IntegerDigits + pic.DecimalDigits;
-
-        if (display.Length != expectedLength)
-            throw new FormatException($"Numeric length mismatch for PIC. Expected {expectedLength}, actual {display.Length}.");
+        if (pic.TotalLength > 28)
+            throw new OverflowException( $"PIC {pic} has {pic.IntegerDigits} + {pic.DecimalDigits} = {pic.TotalLength} digit(s), which exceeds the supported maximum (28 digits).");
+        
+        if (numeric.Length != pic.TotalLength)
+            throw new FormatException($"Numeric length mismatch for PIC. Expected {pic.TotalLength}, actual {numeric.Length}.");
 
         // 插入小數點
-        string withDot = (pic.DecimalDigits > 0) ? display.Insert(pic.IntegerDigits, ".") : display;
+        string withDot = (pic.DecimalDigits > 0) ? numeric.Insert(pic.IntegerDigits, ".") : numeric;
 
-        if (!decimal.TryParse(
-                withDot,
-                NumberStyles.AllowDecimalPoint,
-                CultureInfo.InvariantCulture,
-                out decimal value))
+        // 統一轉成decimal後再處理型別
+        if (!decimal.TryParse(withDot, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal numbers))
         {
-            throw new FormatException($"Invalid decimal DISPLAY value: '{withDot} ({display})'");
+            throw new FormatException($"Invalid numeric value: '{withDot} ({numeric})'");
         }
 
+        // 帶入正負號
+        decimal value = sign * numbers;
+
+        // 輸出
+        return (pic.DecimalDigits != 0) ? value : ConvertToClr(value, pic);
+    }
+
+    /// <summary>
+    /// 整數的 CLR 型別轉換
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="pic"></param>
+    /// <returns></returns>
+    private static object ConvertToClr(decimal value, PicClause pic)
+    {
+        int totalDigits = pic.IntegerDigits;
+        bool signed = pic.Signed;
+
+        // 根據 PIC 和 value 決定最佳型別
+        
+        if (totalDigits <= 2)
+        {
+            if (!signed) return (byte)value;
+            return value >= 0 ? (byte)value : (sbyte)value; // fallback
+        }
+
+        if (totalDigits <= 4)
+        {
+            if (!signed) return (ushort)value;
+            return value >= 0 ? (ushort)value : (short)value; // fallback
+        }
+
+        if (totalDigits <= 9)
+        {
+            if (!signed) return (uint)value;
+            return value >= 0 ? (uint)value : (int)value; // fallback
+        }
+
+        if (totalDigits <= 18)
+        {
+            if (!signed) return (ulong)value;
+            return value >= 0 ? (ulong)value : (long)value; // fallback
+        }
+
+        // 超過 18 位數，一律用 decimal
         return value;
     }
+
 }

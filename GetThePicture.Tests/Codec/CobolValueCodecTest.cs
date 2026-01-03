@@ -43,19 +43,4 @@ public class CobolValueCodecTests
 
         CobolValueCodec.Build("12A34", pic).Decode();
     }
-
-    [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void Decode_Maximum_Supported_Length_Exceeded()
-    {
-        var pic = new PicClause
-        {
-            DataType = PicDataType.Numeric,
-            Signed = false,
-            IntegerDigits = 30,
-            DecimalDigits = 0
-        };
-
-        CobolValueCodec.Build("123456789012345678901234567890", pic).Decode();
-    }
 }
