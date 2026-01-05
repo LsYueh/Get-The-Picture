@@ -1,20 +1,12 @@
-using System.Text;
-
 using GetThePicture.Cobol;
-using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Codec.Encoder;
 
 internal static class CobolAlphabeticEncoder
 {
-    public static string Encode(string value, PicClause pic)
+    public static string Encode(byte[] cp950Bytes, PicClause pic)
     {
-        Encoding cp950 = EncodingFactory.CP950;
-
-        byte[] cp950Bytes = cp950.GetBytes(value);
-
-        // TODO: ...
-        
-        return cp950.GetString(cp950Bytes);
+        // TODO: 之後實作
+        throw new NotImplementedException("Encode is not implemented yet.");
     }
 }
