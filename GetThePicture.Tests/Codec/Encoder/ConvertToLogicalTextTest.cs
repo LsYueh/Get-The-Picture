@@ -6,7 +6,7 @@ namespace GetThePicture.Tests.Codec.Encoder;
 [TestClass]
 public class ConvertToLogicalText
 {
-    // String / Char
+
     [TestMethod]
     public void StringChar_PassThrough()
     {
@@ -14,7 +14,6 @@ public class ConvertToLogicalText
         Assert.AreEqual("A"    , CobolPicEecoder.ConvertToLogicalText('A'    , Pic.Parse("X(1)")));
     }
 
-    // Integer
     [TestMethod]
     public void Integer_PreservesSign()
     {
@@ -22,7 +21,6 @@ public class ConvertToLogicalText
         Assert.AreEqual("-123", text);
     }
 
-    // Decimal
     [TestMethod]
     public void Decimal_UsesInvariantCulture()
     {
@@ -30,13 +28,78 @@ public class ConvertToLogicalText
         Assert.AreEqual("12.34", text);
     }
 
-    // DateTime
     [TestMethod]
-    public void DateTime_ToLogicalText()
+    public void DateOnly_Gregorian8_ToLogicalText()
     {
-        var dt = new DateTime(2026, 1, 5);
-        string text = CobolPicEecoder.ConvertToLogicalText(dt, Pic.Parse("9(8)"));
+        var pic = Pic.Parse("9(8)");
+        pic.DataType = PicDataType.Gregorian8;
+        
+        var date = new DateOnly(2026, 1, 5);
+        string text = CobolPicEecoder.ConvertToLogicalText(date, pic);
         Assert.AreEqual("20260105", text);
+    }
+
+    [TestMethod]
+    public void DateOnly_Minguo7_ToLogicalText()
+    {
+        var pic = Pic.Parse("9(8)");
+        pic.DataType = PicDataType.Minguo7;
+        
+        var date = new DateOnly(2026, 1, 5);
+        string text = CobolPicEecoder.ConvertToLogicalText(date, pic);
+        Assert.AreEqual("1150105", text);
+    }
+
+    [TestMethod]
+    public void TimeOnly_Time6_PadsZero()
+    {
+        var pic = Pic.Parse("9(6)");
+        pic.DataType = PicDataType.Time6;
+
+        var t = new TimeOnly(1, 2, 3);
+        Assert.AreEqual("010203", CobolPicEecoder.ConvertToLogicalText(t, pic));
+    }
+
+    [TestMethod]
+    public void TimeOnly_Time9_MillisecondPadding()
+    {
+        var pic = Pic.Parse("9(9)");
+        pic.DataType = PicDataType.Time9;
+
+        var t = new TimeOnly(23, 59, 59, 7);
+        Assert.AreEqual("235959007", CobolPicEecoder.ConvertToLogicalText(t, pic));
+    }
+
+    [TestMethod]
+    public void DateTime_Timestamp14()
+    {
+        var pic = Pic.Parse("9(14)");
+        pic.DataType = PicDataType.Timestamp14;
+
+        var dt = new DateTime(2025, 1, 6, 13, 45, 59);
+        Assert.AreEqual("20250106134559", CobolPicEecoder.ConvertToLogicalText(dt, pic));
+    }
+
+    // -------------------------
+    // Exceptions
+    // -------------------------
+
+    [TestMethod]
+    public void DateTime_Reject_Time6()
+    {
+        var pic = Pic.Parse("9(6)");
+        pic.DataType = PicDataType.Time6;
+
+        Assert.ThrowsException<NotSupportedException>(() => CobolPicEecoder.ConvertToLogicalText(new DateTime(), pic));
+    }
+
+    [TestMethod]
+    public void DateTime_Reject_Date_Gregorian8()
+    {
+        var pic = Pic.Parse("9(8)");
+        pic.DataType = PicDataType.Gregorian8;
+
+        Assert.ThrowsException<NotSupportedException>(() => CobolPicEecoder.ConvertToLogicalText(new DateTime(), pic));
     }
 
     // Unsupported type

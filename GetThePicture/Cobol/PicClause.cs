@@ -28,22 +28,4 @@ public class PicClause
     {
         return $"{DataType}, Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={TotalLength}";
     }
-
-    public Type ClrType // TODO: 可能用不到
-    {
-        get
-        {
-            if (DataType == PicDataType.Alphanumeric)
-                return typeof(string);
-
-            if (DataType == PicDataType.Alphabetic)
-                return typeof(string);
-
-            if (DecimalDigits > 0)
-                return typeof(decimal);
-
-            // 整數（先簡單）
-            return typeof(int);
-        }
-    }
 }

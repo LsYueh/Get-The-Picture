@@ -32,6 +32,12 @@ internal static class CobolPicDecoder
             case PicDataType.Numeric     : return      CobolNumericDecoder.Decode(cp950Bytes, pic, codecOptions);
             case PicDataType.Alphanumeric: return CobolAlphanumericDecoder.Decode(cp950Bytes, pic);
             case PicDataType.Alphabetic  : return   CobolAlphabeticDecoder.Decode(cp950Bytes, pic);
+            // TODO: ...
+            // case PicDataType.Gregorian8  : 
+            // case PicDataType.Minguo7     : 
+            // case PicDataType.Time6       : 
+            // case PicDataType.Time9       : 
+            // case PicDataType.Timestamp14 : 
             default:
                 throw new NotSupportedException($"Unsupported PIC Data Type: {pic.DataType}");
         }

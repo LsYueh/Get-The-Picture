@@ -125,7 +125,7 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 | COBOL PIC                    |  用途  |   對應   |  編碼  |  解碼  | 說明 |
 | ---------------------------- | ------ | :-----: | :----: | :----: | :--: |
 | `PIC X(8)` (YYYYMMDD)        |  日期  | `DateOnly` | -- | -- | 西元年 |
-| `PIC X(7)` (YYYMMDD)         |  日期  | `DateOnly` | -- | -- | 民國年 |
+| `PIC X(7)` (yyyMMDD)         |  日期  | `DateOnly` | -- | -- | 民國年 |
 
 <br>
 
@@ -143,6 +143,8 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 | COBOL PIC                    |   用途   |  對應  |  編碼  |  解碼  |
 | ---------------------------- | ------- | :-------: | :----: | :----: |
 | `PIC X(14)` (YYYYMMDDHHmmss) | 時間戳記 | `DateTime` | -- | -- |
+
+> 其他戳記格式可透過 `PIC X(7)` (yyyMMDD) + `PIC X(6)` (HHmmss) = `PIC X(13)` (yyyMMDDHHmmss) 的方式進行組合
 
 <br><br>
 

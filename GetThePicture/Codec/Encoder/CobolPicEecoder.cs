@@ -19,9 +19,19 @@ internal static class CobolPicEecoder
 
         byte[] cp950Bytes = EncodeToLogicalBytes(value, pic);
 
-        // TODO: 根據PicClause來處理cp950Bytes...
-
-        throw new NotImplementedException("Encode is not implemented yet.");
+        throw pic.DataType switch
+        {
+            // TODO: 根據PicClause來處理cp950Bytes...
+            // PicDataType.Numeric      => ,
+            // PicDataType.Alphanumeric => ,
+            // PicDataType.Alphabetic   => ,
+            // PicDataType.Gregorian8   => ,
+            // PicDataType.Minguo7      => ,
+            // PicDataType.Time6        => ,
+            // PicDataType.Time9        => ,
+            // PicDataType.Timestamp14  => ,
+            _ => throw new NotSupportedException($"Unsupported PIC Data Type: {pic.DataType}"),
+        };
     }
 
     private static byte[] EncodeToLogicalBytes(object value, PicClause pic)
@@ -50,6 +60,8 @@ internal static class CobolPicEecoder
             char   c => c.ToString(),
             sbyte or byte or short or ushort or int or uint or long or ulong => FormatInvariantText(value),
             float or double or decimal => FormatInvariantText(value),
+            DateOnly d => ConvertDateOnlyToText(d, pic),
+            TimeOnly t => ConvertTimeOnlyToText(t, pic),
             DateTime dt => ConvertDateTimeToText(dt, pic),
             _ => throw new NotSupportedException($"Unsupported value type '{value.GetType()}'"),
         };
@@ -63,14 +75,46 @@ internal static class CobolPicEecoder
         return value.ToString()!;
     }
 
+    private static string ConvertDateOnlyToText(DateOnly date, PicClause pic)
+    {
+        return pic.DataType switch
+        {
+            PicDataType.Gregorian8 => date.ToString("yyyyMMdd"),
+            PicDataType.Minguo7 => ToMinguoDateString(date),
+            _ => throw new NotSupportedException($"Unsupported DateOnly format: {pic.DataType}")
+        };
+    }
+
+    private static string ToMinguoDateString(DateOnly date)
+    {
+        int rocYear = date.Year - 1911;
+        
+        if (rocYear <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(date), "Date is before ROC calendar starts (1912-01-01).");
+        }
+
+        // yyyMMdd
+        return $"{rocYear:000}{date:MMdd}";
+    }
+
+    private static string ConvertTimeOnlyToText(TimeOnly dt, PicClause pic)
+    {
+        return pic.DataType switch
+        {
+            PicDataType.Time6 => dt.ToString("HHmmss"   , CultureInfo.InvariantCulture),
+            PicDataType.Time9 => dt.ToString("HHmmssfff", CultureInfo.InvariantCulture),
+            _ => throw new NotSupportedException($"Unsupported TIME format: {pic.DataType}")
+        };
+    }
+
     private static string ConvertDateTimeToText(DateTime dt, PicClause pic)
     {
-        // 這裡只是給一個合理預設
-        return pic.TotalLength switch
+        if (pic.DataType != PicDataType.Timestamp14)
         {
-            8  => dt.ToString("yyyyMMdd"),
-            // TODO: yyyMMdd
-            _  => dt.ToString("yyyyMMdd")
-        };
+            throw new NotSupportedException($"DateTime can only be encoded as Timestamp14, but was {pic.DataType}");
+        }
+
+        return dt.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
     }
 }

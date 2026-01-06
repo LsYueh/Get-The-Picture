@@ -10,15 +10,10 @@ public static class CobolValueCodec
     public static DecodeContext ForPic(PicClause pic) => new(pic);
 }
 
-public sealed class DecodeContext
+public sealed class DecodeContext(PicClause pic)
 {
-    private readonly PicClause _pic;
+    private readonly PicClause _pic = pic;
     private readonly CodecOptions _codecOptions = new();
-
-    internal DecodeContext(PicClause pic)
-    {
-        _pic = pic;
-    }
 
     public DecodeContext NoStrict()
     {
