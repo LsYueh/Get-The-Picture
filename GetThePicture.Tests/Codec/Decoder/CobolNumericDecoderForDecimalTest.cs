@@ -16,7 +16,7 @@ public class CobolNumericDecoderForDecimalTest
     public void Decode_Default_Decimal(string display, string picString, Type expectedType, string expectedValue)
     {
         var pic = Pic.Parse(picString);
-        var value = CobolValueCodec.ForPic(pic).Decode(display);
+        object value = CobolValueCodec.ForPic(pic).Decode(display);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(decimal.Parse(expectedValue, CultureInfo.InvariantCulture), value);

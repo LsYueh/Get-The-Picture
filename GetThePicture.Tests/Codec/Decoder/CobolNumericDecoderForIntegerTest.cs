@@ -34,7 +34,7 @@ public class CobolNumericDecoderForIntegerTest
     public void Decode_Default_Byte(string display, string picString, Type expectedType, object expectedValue)
     {
         var pic = Pic.Parse(picString);
-        var value = CobolValueCodec.ForPic(pic).Decode(display);
+        object value = CobolValueCodec.ForPic(pic).Decode(display);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(expectedValue, value);
@@ -52,7 +52,7 @@ public class CobolNumericDecoderForIntegerTest
     public void Decode_Default_Short(string display, string picString, Type expectedType, object expectedValue)
     {
         var pic = Pic.Parse(picString);
-        var value = CobolValueCodec.ForPic(pic).Decode(display);
+        object value = CobolValueCodec.ForPic(pic).Decode(display);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(expectedValue, value);
@@ -70,7 +70,7 @@ public class CobolNumericDecoderForIntegerTest
     public void Decode_Default_Int(string display, string picString, Type expectedType, object expectedValue)
     {
         var pic = Pic.Parse(picString);
-        var value = CobolValueCodec.ForPic(pic).Decode(display);
+        object value = CobolValueCodec.ForPic(pic).Decode(display);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(expectedValue, value);
@@ -88,7 +88,7 @@ public class CobolNumericDecoderForIntegerTest
     public void Decode_Default_Long(string display, string picString, Type expectedType, object expectedValue)
     {
         var pic = Pic.Parse(picString);
-        var value = CobolValueCodec.ForPic(pic).Decode(display);
+        object value = CobolValueCodec.ForPic(pic).Decode(display);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(expectedValue, value);
@@ -106,7 +106,7 @@ public class CobolNumericDecoderForIntegerTest
     public void Decode_Default_DecimalWithScaleZero(string display, string picString, Type expectedType, string expectedValue)
     {
         var pic = Pic.Parse(picString);
-        var value = CobolValueCodec.ForPic(pic).Decode(display);
+        object value = CobolValueCodec.ForPic(pic).Decode(display);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(decimal.Parse(expectedValue, CultureInfo.InvariantCulture), value);
@@ -121,7 +121,7 @@ public class CobolNumericDecoderForIntegerTest
     public void Decode_With_LeadingSign()
     {
         var pic = Pic.Parse("S9(5)");
-        var value = CobolValueCodec.ForPic(pic).WithSignIsLeading().Decode("}0123");
+        object value = CobolValueCodec.ForPic(pic).WithSignIsLeading().Decode("}0123");
 
         Assert.IsInstanceOfType(value, typeof(int));
         Assert.AreEqual(-123, value);
@@ -141,7 +141,7 @@ public class CobolNumericDecoderForIntegerTest
     public void Decode_ThrowsOverflowException(string display, string picString, Type expectedType, string expectedValue)
     {
         var pic = Pic.Parse(picString);
-        var value = CobolValueCodec.ForPic(pic).Decode(display);
+        object value = CobolValueCodec.ForPic(pic).Decode(display);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(decimal.Parse(expectedValue, CultureInfo.InvariantCulture), value);
