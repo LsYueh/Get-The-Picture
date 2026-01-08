@@ -80,7 +80,7 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 # 使用方式
 ```csharp
-using GetThePicture.Cobol;
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
 ```
 

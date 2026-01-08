@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace GetThePicture.Cobol;
+namespace GetThePicture.Cobol.Picture;
 
 public enum DataStorageOptions
 {

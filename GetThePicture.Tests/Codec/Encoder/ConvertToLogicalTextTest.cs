@@ -1,6 +1,6 @@
 using System.Globalization;
 
-using GetThePicture.Cobol;
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Encoder;
 
 namespace GetThePicture.Tests.Codec.Encoder;

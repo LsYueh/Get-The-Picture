@@ -1,6 +1,6 @@
 using System.Text;
 
-using GetThePicture.Cobol;
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Options;
 
 namespace GetThePicture.Codec.Utils;

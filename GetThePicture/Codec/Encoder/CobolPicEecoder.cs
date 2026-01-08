@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-using GetThePicture.Cobol;
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Options;
 using GetThePicture.Codec.Utils;
 
