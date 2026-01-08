@@ -6,6 +6,8 @@
 ## 專案目的
 > 透過簡單的文字 `X` 與數字 `9 / S9`，我們建構出長達百年的金融體系。  
 
+<br>
+
 COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**型態、長度、符號位、顯示格式與儲存語意**。
 這套設計方式歷經數十年的實務驗證，支撐了銀行、保險、政府與大型企業的核心系統，至今仍在持續運作。
 
@@ -77,7 +79,42 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 <br><br>
 
 # 使用方式
-(W.I.P.)  
+```csharp
+using GetThePicture.Cobol;
+using GetThePicture.Codec;
+```
+
+<br>
+
+## 字串
+基本使用:  
+```csharp
+var pic = Pic.Parse("X(5)");
+
+// Encode: CLR → COBOL PICTURE
+CobolValueCodec.ForPic(pic).Encode("AbC"); // >> "AbC  "
+
+// Decode: COBOL PICTURE → CLR
+CobolValueCodec.ForPic(pic).Decode("ABC  "); // >> "ABC"
+```
+
+<br>
+
+中文字(`CP950`)處理:  
+```csharp
+var pic = Pic.Parse("X(7)");
+
+CobolValueCodec.ForPic(pic).Decode("中文字 "); // >> "中文字"
+
+CobolValueCodec.ForPic(pic).Encode("中文字"); // >> "中文字 "
+```
+
+```csharp
+var pic = Pic.Parse("X(5)");
+
+// 宣告長度不夠
+CobolValueCodec.ForPic(pic).Encode("中文字"); // >> "中文?"
+```
 
 <br><br>
 

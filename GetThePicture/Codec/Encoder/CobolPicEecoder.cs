@@ -19,12 +19,12 @@ internal static class CobolPicEecoder
 
         byte[] cp950Bytes = EncodeToLogicalBytes(value, pic);
 
-        throw pic.DataType switch
+        return pic.DataType switch
         {
             // TODO: 根據PicClause來處理cp950Bytes...
             // PicDataType.Numeric      => ,
-            // PicDataType.Alphanumeric => ,
-            // PicDataType.Alphabetic   => ,
+            PicDataType.Alphanumeric => CobolAlphanumericEncoder.Encode(cp950Bytes, pic),
+            PicDataType.Alphabetic   => CobolAlphabeticEncoder.Encode(cp950Bytes, pic),
             // PicDataType.Gregorian8   => ,
             // PicDataType.Minguo7      => ,
             // PicDataType.Time6        => ,
