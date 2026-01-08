@@ -26,10 +26,9 @@ internal static class CobolPicEecoder
     {
         return pic.BaseType switch
         {
-            // TODO: 根據PicClause來處理cp950Bytes...
-            // PicDataType.Numeric      => ,
+            PicBaseType.Numeric      =>      CobolNumericEncoder.Encode(cp950Bytes, pic, codecOptions),
             PicBaseType.Alphanumeric => CobolAlphanumericEncoder.Encode(cp950Bytes, pic),
-            PicBaseType.Alphabetic   => CobolAlphabeticEncoder.Encode(cp950Bytes, pic),
+            PicBaseType.Alphabetic   =>   CobolAlphabeticEncoder.Encode(cp950Bytes, pic),
             _ => throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseType}"),
         };
     }
@@ -58,8 +57,8 @@ internal static class CobolPicEecoder
         {
             string s => s,
             char   c => c.ToString(),
-            sbyte or byte or short or ushort or int or uint or long or ulong => FormatInvariantText(value),
-            float or double or decimal => FormatInvariantText(value),
+            sbyte or byte or short or ushort or int or uint or long or ulong => FormatIntegerInvariant(value),
+            float or double or decimal => FormatDecimalInvariant(value, pic),
             DateOnly d => ConvertDateOnlyToText(d, pic),
             TimeOnly t => ConvertTimeOnlyToText(t, pic),
             DateTime dt => ConvertDateTimeToText(dt, pic),
@@ -67,12 +66,48 @@ internal static class CobolPicEecoder
         };
     }
 
-    private static string FormatInvariantText(object value)
+    private static string FormatIntegerInvariant(object value)
     {
         if (value is IFormattable formattable)
             return formattable.ToString(null, CultureInfo.InvariantCulture);
 
         return value.ToString()!;
+    }
+
+    private static string FormatDecimalInvariant(object value, PicClause pic)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        
+        decimal d = value switch
+        {
+            float   f   => (decimal)f,
+            double  db  => (decimal)db,
+            decimal dec => dec,
+            _ => throw new ArgumentException("Value must be a floating point type", nameof(value)),
+        };
+
+        if (pic.DecimalDigits == 0)
+        {
+            if (d != decimal.Truncate(d))
+                throw new InvalidOperationException("Value has fraction but expected integer");
+            return decimal.Truncate(d).ToString("0", CultureInfo.InvariantCulture);
+        }
+
+        // scale decimal
+        decimal scaled = d * Pow10(pic.DecimalDigits);
+
+        if (scaled != decimal.Truncate(scaled))
+            throw new InvalidOperationException("Value exceeds allowed precision");
+
+        return decimal.Truncate(scaled).ToString("0", CultureInfo.InvariantCulture);
+    }
+
+    private static decimal Pow10(int n)
+    {
+        decimal result = 1m;
+        for (int i = 0; i < n; i++)
+            result *= 10m;
+        return result;
     }
 
     private static string ConvertDateOnlyToText(DateOnly date, PicClause pic)

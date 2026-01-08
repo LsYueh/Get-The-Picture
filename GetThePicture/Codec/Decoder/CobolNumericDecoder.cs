@@ -24,7 +24,7 @@ internal static class CobolNumericDecoder
         options ??= new CodecOptions();
 
         // 根據PIC內容限制大小
-        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(cp950Bytes, 0, pic.TotalLength);
+        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(cp950Bytes, pic.TotalLength);
 
         // 解析出符號(sign)與數字文(numeric)
         Span<byte> span = OverpunchDecode(fieldBytes, pic, options, out decimal sign);

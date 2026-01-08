@@ -1,3 +1,5 @@
+using System.Globalization;
+
 using GetThePicture.Cobol;
 using GetThePicture.Codec.Encoder;
 
@@ -22,10 +24,15 @@ public class ConvertToLogicalText
     }
 
     [TestMethod]
-    public void Decimal_UsesInvariantCulture()
+    [DataTestMethod]
+    [DataRow( "12.3", "9(5)V9(2)",  "1230")]
+    [DataRow("-12.3", "9(5)V9(2)", "-1230")]
+    [DataRow("-12.3", "9(1)V9(3)", "-12300")]
+    public void Decimal(string value, string picString, string expected)
     {
-        string text = CobolPicEecoder.ConvertToLogicalText(12.34m, Pic.Parse("9(5)V9(2)"));
-        Assert.AreEqual("12.34", text);
+        var _value = decimal.Parse(value, CultureInfo.InvariantCulture);
+        string text = CobolPicEecoder.ConvertToLogicalText(_value, Pic.Parse(picString));
+        Assert.AreEqual(expected, text);
     }
 
     [TestMethod]
@@ -100,6 +107,15 @@ public class ConvertToLogicalText
         pic.Semantic = PicSemantic.GregorianDate;
 
         Assert.ThrowsException<NotSupportedException>(() => CobolPicEecoder.ConvertToLogicalText(new DateTime(), pic));
+    }
+
+    [TestMethod]
+    public void Decimal_Has_Fraction_But_Expected_Integer()
+    {
+        var pic = Pic.Parse("9(8)");
+        pic.Semantic = PicSemantic.GregorianDate;
+
+        Assert.ThrowsException<InvalidOperationException>(() => CobolPicEecoder.ConvertToLogicalText(12345.6m, pic));
     }
 
     // Unsupported type

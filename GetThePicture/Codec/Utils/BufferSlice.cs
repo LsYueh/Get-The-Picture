@@ -6,6 +6,18 @@ internal static class BufferSlice
     /// 
     /// </summary>
     /// <param name="buffer"></param>
+    /// <param name="length"></param>
+    /// <param name="pad">預設空白</param>
+    /// <returns></returns>
+    public static ReadOnlySpan<byte> SlicePadEnd(byte[] buffer, int length, byte pad = 0x20)
+    {
+        return SlicePadEnd(buffer, 0, length, pad);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="buffer"></param>
     /// <param name="offset"></param>
     /// <param name="length"></param>
     /// <param name="pad">預設空白</param>
@@ -48,9 +60,21 @@ internal static class BufferSlice
     /// 
     /// </summary>
     /// <param name="buffer"></param>
+    /// <param name="length"></param>
+    /// <param name="pad">預設 '0'</param>
+    /// <returns></returns>
+    public static ReadOnlySpan<byte> SlicePadStart(byte[] buffer, int length, byte pad = 0x30)
+    {
+        return SlicePadStart(buffer, 0, length, pad);
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="buffer"></param>
     /// <param name="offset"></param>
     /// <param name="length"></param>
-    /// <param name="pad"> 預設 '0'</param>
+    /// <param name="pad">預設 '0'</param>
     /// <returns></returns>
     public static ReadOnlySpan<byte> SlicePadStart(
         byte[] buffer,
@@ -61,14 +85,10 @@ internal static class BufferSlice
         ArgumentOutOfRangeException.ThrowIfNegative(offset);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 
-        // 完整命中
-        if ((uint)offset <= (uint)buffer.Length &&
-            (uint)length <= (uint)(buffer.Length - offset))
-        {
-            return buffer.AsSpan(offset, length);
-        }
+        if (length == 0)
+            return [];
 
-        // offset 超出 → 全 pad
+        // offset 在尾端或之後 → 全 pad
         if (offset >= buffer.Length)
         {
             byte[] padded = new byte[length];
@@ -76,11 +96,18 @@ internal static class BufferSlice
             return padded;
         }
 
-        // 部分不足 → 前補
         int available = buffer.Length - offset;
 
+        // 足夠 → 從尾端 slice
+        if (available >= length)
+        {
+            return buffer.AsSpan(offset + available - length, length);
+        }
+
+        // 不足 → 前補 pad
         byte[] result = new byte[length];
-        buffer.AsSpan(offset, available).CopyTo(result.AsSpan(length - available));
+        buffer.AsSpan(offset, available)
+              .CopyTo(result.AsSpan(length - available));
         result.AsSpan(0, length - available).Fill(pad);
 
         return result;
