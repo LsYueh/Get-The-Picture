@@ -32,7 +32,7 @@ public class ConvertToLogicalText
     public void DateOnly_Gregorian8_ToLogicalText()
     {
         var pic = Pic.Parse("9(8)");
-        pic.DataType = PicDataType.Gregorian8;
+        pic.Semantic = PicSemantic.GregorianDate;
         
         var date = new DateOnly(2026, 1, 5);
         string text = CobolPicEecoder.ConvertToLogicalText(date, pic);
@@ -43,7 +43,7 @@ public class ConvertToLogicalText
     public void DateOnly_Minguo7_ToLogicalText()
     {
         var pic = Pic.Parse("9(8)");
-        pic.DataType = PicDataType.Minguo7;
+        pic.Semantic = PicSemantic.MinguoDate;
         
         var date = new DateOnly(2026, 1, 5);
         string text = CobolPicEecoder.ConvertToLogicalText(date, pic);
@@ -54,7 +54,7 @@ public class ConvertToLogicalText
     public void TimeOnly_Time6_PadsZero()
     {
         var pic = Pic.Parse("9(6)");
-        pic.DataType = PicDataType.Time6;
+        pic.Semantic = PicSemantic.Time6;
 
         var t = new TimeOnly(1, 2, 3);
         Assert.AreEqual("010203", CobolPicEecoder.ConvertToLogicalText(t, pic));
@@ -64,7 +64,7 @@ public class ConvertToLogicalText
     public void TimeOnly_Time9_MillisecondPadding()
     {
         var pic = Pic.Parse("9(9)");
-        pic.DataType = PicDataType.Time9;
+        pic.Semantic = PicSemantic.Time9;
 
         var t = new TimeOnly(23, 59, 59, 7);
         Assert.AreEqual("235959007", CobolPicEecoder.ConvertToLogicalText(t, pic));
@@ -74,7 +74,7 @@ public class ConvertToLogicalText
     public void DateTime_Timestamp14()
     {
         var pic = Pic.Parse("9(14)");
-        pic.DataType = PicDataType.Timestamp14;
+        pic.Semantic = PicSemantic.Timestamp14;
 
         var dt = new DateTime(2025, 1, 6, 13, 45, 59);
         Assert.AreEqual("20250106134559", CobolPicEecoder.ConvertToLogicalText(dt, pic));
@@ -88,7 +88,7 @@ public class ConvertToLogicalText
     public void DateTime_Reject_Time6()
     {
         var pic = Pic.Parse("9(6)");
-        pic.DataType = PicDataType.Time6;
+        pic.Semantic = PicSemantic.Time6;
 
         Assert.ThrowsException<NotSupportedException>(() => CobolPicEecoder.ConvertToLogicalText(new DateTime(), pic));
     }
@@ -97,7 +97,7 @@ public class ConvertToLogicalText
     public void DateTime_Reject_Date_Gregorian8()
     {
         var pic = Pic.Parse("9(8)");
-        pic.DataType = PicDataType.Gregorian8;
+        pic.Semantic = PicSemantic.GregorianDate;
 
         Assert.ThrowsException<NotSupportedException>(() => CobolPicEecoder.ConvertToLogicalText(new DateTime(), pic));
     }

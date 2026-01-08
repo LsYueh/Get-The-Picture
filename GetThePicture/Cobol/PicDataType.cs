@@ -1,12 +1,12 @@
 namespace GetThePicture.Cobol;
 
 /// <summary>
-/// COBOL PICTURE Data Type
+/// Represents COBOL PIC base types.
 /// </summary>
-public enum PicDataType
+public enum PicBaseType
 {
     /// <summary>
-    /// 9/S9
+    /// 9 / S9
     /// </summary>
     Numeric,
 
@@ -19,29 +19,41 @@ public enum PicDataType
     /// A
     /// </summary>
     Alphabetic,
+}
 
+/// <summary>
+/// Domain-specific semantic storage formats
+/// (e.g. dates, times, timestamps).
+/// </summary>
+public enum PicSemantic
+{
     /// <summary>
-    /// Gregorian calendar (公曆)
+    /// No additional semantic meaning.
     /// </summary>
-    Gregorian8,
+    None,
 
     /// <summary>
-    /// Minguo calendar (民國曆)
-    /// </summary
-    Minguo7,
+    /// Gregorian calendar date (YYYYMMDD)
+    /// </summary>
+    GregorianDate,
 
     /// <summary>
-    /// HHmmss
+    /// Minguo calendar date (YYYMMDD)
+    /// </summary>
+    MinguoDate,
+
+    /// <summary>
+    /// Time (HHmmss)
     /// </summary>
     Time6,
 
     /// <summary>
-    /// HHmmssfff
+    /// Time with milliseconds (HHmmssfff)
     /// </summary>
     Time9,
-    
+
     /// <summary>
-    /// YYYYMMDDHHmmss
+    /// Timestamp (YYYYMMDDHHmmss)
     /// </summary>
     Timestamp14,
 }

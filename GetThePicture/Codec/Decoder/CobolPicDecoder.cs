@@ -27,19 +27,30 @@ internal static class CobolPicDecoder
         }
 
 #pragma warning disable IDE0066 // Convert switch statement to expression
-        switch (pic.DataType)
+        switch (pic.Semantic)
         {
-            case PicDataType.Numeric     : return      CobolNumericDecoder.Decode(cp950Bytes, pic, codecOptions);
-            case PicDataType.Alphanumeric: return CobolAlphanumericDecoder.Decode(cp950Bytes, pic);
-            case PicDataType.Alphabetic  : return   CobolAlphabeticDecoder.Decode(cp950Bytes, pic);
-            // TODO: ...
-            // case PicDataType.Gregorian8  : 
-            // case PicDataType.Minguo7     : 
-            // case PicDataType.Time6       : 
-            // case PicDataType.Time9       : 
-            // case PicDataType.Timestamp14 : 
+            // TODO: 根據PicClause來處理cp950Bytes...
+            case PicSemantic.GregorianDate : 
+            case PicSemantic.MinguoDate    : 
+            case PicSemantic.Time6         : 
+            case PicSemantic.Time9         : 
+            case PicSemantic.Timestamp14   : 
             default:
-                throw new NotSupportedException($"Unsupported PIC Data Type: {pic.DataType}");
+                return DecodeBaseType(cp950Bytes, pic, codecOptions);
+        }
+#pragma warning restore IDE0066 // Convert switch statement to expression
+    }
+
+    private static object DecodeBaseType(byte[] cp950Bytes, PicClause pic, CodecOptions codecOptions)
+    {
+#pragma warning disable IDE0066 // Convert switch statement to expression
+        switch (pic.BaseType)
+        {
+            case PicBaseType.Numeric     : return      CobolNumericDecoder.Decode(cp950Bytes, pic, codecOptions);
+            case PicBaseType.Alphanumeric: return CobolAlphanumericDecoder.Decode(cp950Bytes, pic);
+            case PicBaseType.Alphabetic  : return   CobolAlphabeticDecoder.Decode(cp950Bytes, pic);
+            default:
+                throw new NotSupportedException($"Unsupported PIC Data Type [Decode] : {pic.BaseType}");
         }
 #pragma warning restore IDE0066 // Convert switch statement to expression
     }

@@ -14,7 +14,7 @@ public class PicTest
     {
         var pic = Pic.Parse("A");
 
-        Assert.AreEqual(PicDataType.Alphabetic, pic.DataType);
+        Assert.AreEqual(PicBaseType.Alphabetic, pic.BaseType);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(1, pic.TotalLength);
@@ -26,7 +26,7 @@ public class PicTest
     {
         var pic = Pic.Parse("A(20)");
 
-        Assert.AreEqual(PicDataType.Alphabetic, pic.DataType);
+        Assert.AreEqual(PicBaseType.Alphabetic, pic.BaseType);
         Assert.AreEqual(20, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(20, pic.TotalLength);
@@ -38,7 +38,7 @@ public class PicTest
     {
         var pic = Pic.Parse("A(1)");
 
-        Assert.AreEqual(PicDataType.Alphabetic, pic.DataType);
+        Assert.AreEqual(PicBaseType.Alphabetic, pic.BaseType);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(1, pic.TotalLength);
@@ -54,7 +54,7 @@ public class PicTest
     {
         var pic = Pic.Parse("X");
 
-        Assert.AreEqual(PicDataType.Alphanumeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Alphanumeric, pic.BaseType);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(1, pic.TotalLength);
@@ -66,7 +66,7 @@ public class PicTest
     {
         var pic = Pic.Parse("X(20)");
 
-        Assert.AreEqual(PicDataType.Alphanumeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Alphanumeric, pic.BaseType);
         Assert.AreEqual(20, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(20, pic.TotalLength);
@@ -78,7 +78,7 @@ public class PicTest
     {
         var pic = Pic.Parse("X(1)");
 
-        Assert.AreEqual(PicDataType.Alphanumeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Alphanumeric, pic.BaseType);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(1, pic.TotalLength);
@@ -94,7 +94,7 @@ public class PicTest
     {
         var pic = Pic.Parse("9");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(1, pic.TotalLength);
@@ -106,7 +106,7 @@ public class PicTest
     {
         var pic = Pic.Parse("9(4)");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(4, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(4, pic.TotalLength);
@@ -118,7 +118,7 @@ public class PicTest
     {
         var pic = Pic.Parse("9(1)");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(1, pic.TotalLength);
@@ -130,7 +130,7 @@ public class PicTest
     {
         var pic = Pic.Parse("999");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(3, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(3, pic.TotalLength);
@@ -146,7 +146,7 @@ public class PicTest
     {
         var pic = Pic.Parse("S9");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(1, pic.TotalLength);
@@ -158,7 +158,7 @@ public class PicTest
     {
         var pic = Pic.Parse("S9(5)");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(5, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
         Assert.AreEqual(5, pic.TotalLength);
@@ -174,7 +174,7 @@ public class PicTest
     {
         var pic = Pic.Parse("9V9");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(1, pic.DecimalDigits);
         Assert.AreEqual(2, pic.TotalLength);
@@ -186,7 +186,7 @@ public class PicTest
     {
         var pic = Pic.Parse("9(3)V9(2)");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(3, pic.IntegerDigits);
         Assert.AreEqual(2, pic.DecimalDigits);
         Assert.AreEqual(5, pic.TotalLength);
@@ -198,7 +198,7 @@ public class PicTest
     {
         var pic = Pic.Parse("999V99");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(3, pic.IntegerDigits);
         Assert.AreEqual(2, pic.DecimalDigits);
         Assert.AreEqual(5, pic.TotalLength);
@@ -214,7 +214,7 @@ public class PicTest
     {
         var pic = Pic.Parse("S9V9");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(1, pic.DecimalDigits);
         Assert.AreEqual(2, pic.TotalLength);
@@ -226,7 +226,7 @@ public class PicTest
     {
         var pic = Pic.Parse("S9(5)V99");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(5, pic.IntegerDigits);
         Assert.AreEqual(2, pic.DecimalDigits);
         Assert.AreEqual(7, pic.TotalLength);
@@ -242,7 +242,7 @@ public class PicTest
     {
         var pic = Pic.Parse("    s9(2) v9 ");
 
-        Assert.AreEqual(PicDataType.Numeric, pic.DataType);
+        Assert.AreEqual(PicBaseType.Numeric, pic.BaseType);
         Assert.AreEqual(2, pic.IntegerDigits);
         Assert.AreEqual(1, pic.DecimalDigits);
         Assert.AreEqual(3, pic.TotalLength);
