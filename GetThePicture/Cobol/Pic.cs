@@ -13,7 +13,7 @@ public static partial class Pic
     [GeneratedRegex(@"^A(\((\d+)\))?$", RegexOptions.IgnoreCase)]
     private static partial Regex ARegex();
             
-    public static PicClause Parse(string input)
+    public static PicClause Parse(string input, PicSemantic semantic = PicSemantic.None)
     {
         if (string.IsNullOrWhiteSpace(input))
             throw new ArgumentException("PIC clause is empty.");
@@ -33,7 +33,8 @@ public static partial class Pic
 
             return new PicClause
             {
-                DataType = PicDataType.Numeric,
+                BaseType = PicBaseType.Numeric,
+                Semantic = semantic,
                 Signed = signed,
                 IntegerDigits = intDigits,
                 DecimalDigits = decDigits
@@ -50,7 +51,8 @@ public static partial class Pic
 
             return new PicClause
             {
-                DataType = PicDataType.Alphanumeric,
+                BaseType = PicBaseType.Alphanumeric,
+                Semantic = semantic,
                 Signed = false,
                 IntegerDigits = len,
                 DecimalDigits = 0
@@ -67,7 +69,8 @@ public static partial class Pic
 
             return new PicClause
             {
-                DataType = PicDataType.Alphabetic,
+                BaseType = PicBaseType.Alphabetic,
+                Semantic = semantic,
                 Signed = false,
                 IntegerDigits = len,
                 DecimalDigits = 0

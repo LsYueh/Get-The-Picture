@@ -19,18 +19,18 @@ internal static class CobolPicEecoder
 
         byte[] cp950Bytes = EncodeToLogicalBytes(value, pic);
 
-        return pic.DataType switch
+        return EncodeBaseType(cp950Bytes, pic, codecOptions);
+    }
+
+    private static string EncodeBaseType(byte[] cp950Bytes, PicClause pic, CodecOptions codecOptions)
+    {
+        return pic.BaseType switch
         {
             // TODO: 根據PicClause來處理cp950Bytes...
             // PicDataType.Numeric      => ,
-            PicDataType.Alphanumeric => CobolAlphanumericEncoder.Encode(cp950Bytes, pic),
-            PicDataType.Alphabetic   => CobolAlphabeticEncoder.Encode(cp950Bytes, pic),
-            // PicDataType.Gregorian8   => ,
-            // PicDataType.Minguo7      => ,
-            // PicDataType.Time6        => ,
-            // PicDataType.Time9        => ,
-            // PicDataType.Timestamp14  => ,
-            _ => throw new NotSupportedException($"Unsupported PIC Data Type: {pic.DataType}"),
+            PicBaseType.Alphanumeric => CobolAlphanumericEncoder.Encode(cp950Bytes, pic),
+            PicBaseType.Alphabetic   => CobolAlphabeticEncoder.Encode(cp950Bytes, pic),
+            _ => throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseType}"),
         };
     }
 
@@ -77,11 +77,11 @@ internal static class CobolPicEecoder
 
     private static string ConvertDateOnlyToText(DateOnly date, PicClause pic)
     {
-        return pic.DataType switch
+        return pic.Semantic switch
         {
-            PicDataType.Gregorian8 => date.ToString("yyyyMMdd"),
-            PicDataType.Minguo7 => ToMinguoDateString(date),
-            _ => throw new NotSupportedException($"Unsupported DateOnly format: {pic.DataType}")
+            PicSemantic.GregorianDate => date.ToString("yyyyMMdd"),
+            PicSemantic.MinguoDate => ToMinguoDateString(date),
+            _ => throw new NotSupportedException($"Unsupported DateOnly format: {pic.Semantic}")
         };
     }
 
@@ -100,19 +100,19 @@ internal static class CobolPicEecoder
 
     private static string ConvertTimeOnlyToText(TimeOnly dt, PicClause pic)
     {
-        return pic.DataType switch
+        return pic.Semantic switch
         {
-            PicDataType.Time6 => dt.ToString("HHmmss"   , CultureInfo.InvariantCulture),
-            PicDataType.Time9 => dt.ToString("HHmmssfff", CultureInfo.InvariantCulture),
-            _ => throw new NotSupportedException($"Unsupported TIME format: {pic.DataType}")
+            PicSemantic.Time6 => dt.ToString("HHmmss"   , CultureInfo.InvariantCulture),
+            PicSemantic.Time9 => dt.ToString("HHmmssfff", CultureInfo.InvariantCulture),
+            _ => throw new NotSupportedException($"Unsupported TIME format: {pic.Semantic}")
         };
     }
 
     private static string ConvertDateTimeToText(DateTime dt, PicClause pic)
     {
-        if (pic.DataType != PicDataType.Timestamp14)
+        if (pic.Semantic != PicSemantic.Timestamp14)
         {
-            throw new NotSupportedException($"DateTime can only be encoded as Timestamp14, but was {pic.DataType}");
+            throw new NotSupportedException($"DateTime can only be encoded as Timestamp14, but was {pic.Semantic}");
         }
 
         return dt.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
