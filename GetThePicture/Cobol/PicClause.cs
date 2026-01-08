@@ -5,7 +5,8 @@ namespace GetThePicture.Cobol;
 /// </summary>
 public class PicClause
 {
-    public PicDataType DataType { get; set; }
+    public PicBaseType BaseType { get; set; }
+    public PicSemantic Semantic { get; set; }
     
     public bool Signed { get; set; } = false;
 
@@ -26,6 +27,6 @@ public class PicClause
 
     public override string ToString()
     {
-        return $"{DataType}, Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={TotalLength}";
+        return $"{BaseType} ({Semantic}), Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={TotalLength}";
     }
 }
