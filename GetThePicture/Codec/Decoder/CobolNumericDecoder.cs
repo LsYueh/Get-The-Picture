@@ -1,4 +1,4 @@
-using System.Text;
+
 using System.Globalization;
 
 using GetThePicture.Cobol;
@@ -19,78 +19,18 @@ internal static class CobolNumericDecoder
     /// <exception cref="FormatException"></exception>
     public static object Decode(byte[] cp950Bytes, PicClause pic, CodecOptions? options = null)
     {
-        Encoding cp950 = EncodingFactory.CP950;
-
         options ??= new CodecOptions();
 
         // 根據PIC內容限制大小
         ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(cp950Bytes, pic.TotalLength);
 
-        // 解析出符號(sign)與數字文(numeric)
-        Span<byte> span = OverpunchDecode(fieldBytes, pic, options, out decimal sign);
-        EnsureAllAsciiDigits(span);
-        string numeric = cp950.GetString(span);
+        string numeric = Overpunch.Decode(fieldBytes, pic, options, out decimal sign);
         
         // 轉換成數字
         return ParseToValue(numeric, sign, pic);
     }
 
-    private static byte[] OverpunchDecode(ReadOnlySpan<byte> fieldBytes, PicClause pic, CodecOptions options, out decimal sign)
-    {
-        byte[] buffer = new byte[fieldBytes.Length];
-        fieldBytes.CopyTo(buffer);
-
-        sign = 1.0m;
-
-        if (pic.Signed)
-        {
-            OpVal opVal = GetOverpunchValue(fieldBytes, options);
-
-            Index index = options.Sign switch
-            {
-                SignOptions.IsTrailing => ^1,
-                SignOptions.IsLeading  => 0,
-                _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
-            };
-
-            buffer[index] = (byte) opVal.Digit;
-            sign = opVal.Sign;
-        }
-
-        return buffer;
-    }
-
-    private static OpVal GetOverpunchValue(ReadOnlySpan<byte> fieldBytes, CodecOptions options)
-    {
-        if (fieldBytes.IsEmpty)
-            throw new FormatException("Field bytes is empty.");
-
-        if (!OverpunchCode.Map.TryGetValue(options.DataStorage, out Dictionary<char, OpVal>? codex))
-            throw new FormatException($"Unsupported DataStorage: {options.DataStorage}");
-
-        Index index = options.Sign switch
-        {
-            SignOptions.IsTrailing => ^1,
-            SignOptions.IsLeading  => 0,
-            _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
-        };
-
-        char key = (char)(fieldBytes[index] & 0x7F); // ASCII overpunch
-
-        if (!codex.TryGetValue(key, out OpVal value))
-            throw new FormatException($"Invalid overpunch digit: '{key}'");
-
-        return value;
-    }
-
-    private static void EnsureAllAsciiDigits(ReadOnlySpan<byte> span)
-    {
-        for (int i = 0; i < span.Length; i++)
-        {
-            if ((uint)(span[i] - (byte)'0') > 9)
-                throw new FormatException($"Invalid digit at index {i+1}"); // Note: 轉成 1-based
-        }
-    }
+    
 
     /// <summary>
     /// 
