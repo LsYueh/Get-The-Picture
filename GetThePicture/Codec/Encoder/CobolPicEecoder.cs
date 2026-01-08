@@ -10,12 +10,14 @@ namespace GetThePicture.Codec.Encoder;
 internal static class CobolPicEecoder
 {
     /// <summary>
-    /// CLR value → CP950 → COBOL PICTURE DISPLAY
+    /// CLR value → Display Value → COBOL PICTURE DISPLAY
     /// </summary>
     public static string Encode(object value, PicClause pic, CodecOptions codecOptions)
     {
         ArgumentNullException.ThrowIfNull(value);
         ArgumentNullException.ThrowIfNull(pic);
+
+        // TODO: DisplayValue Refact...
 
         byte[] cp950Bytes = EncodeToLogicalBytes(value, pic);
 
