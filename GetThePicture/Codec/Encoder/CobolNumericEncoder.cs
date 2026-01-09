@@ -9,6 +9,14 @@ namespace GetThePicture.Codec.Encoder;
 
 internal static class CobolNumericEncoder
 {
+    /// <summary>
+    /// Display Value → Overpunch Encode → COBOL PICTURE DISPLAY
+    /// </summary>
+    /// <param name="displayValue"></param>
+    /// <param name="pic"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    /// <exception cref="NotSupportedException"></exception>
     public static string Encode(DisplayValue displayValue, PicClause pic, CodecOptions? options = null)
     {
         options ??= new CodecOptions();
@@ -21,14 +29,11 @@ internal static class CobolNumericEncoder
             _ => throw new NotSupportedException($"Unsupported Display Value Kind '{displayValue.Kind}' for Numeric Text"),
         };
 
-        byte[] buffer = cp950.GetBytes(text);
+        // TODO: DisplayValue (sign + numeric) 要傳入 Overpunch.Encode()...
+        byte[] buffer = Overpunch.Encode(cp950.GetBytes(text), pic, options);
 
         ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(buffer, pic.TotalLength);
 
-        // TODO: sign + numeric 要傳入 Overpunch.Encode()...
-
-        string numeric = cp950.GetString(Overpunch.Encode(fieldBytes, pic, options));
-
-        return numeric;
+        return cp950.GetString(fieldBytes);
     }
 }

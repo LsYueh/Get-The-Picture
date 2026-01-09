@@ -49,17 +49,17 @@ internal static class Overpunch
     /// <summary>
     /// 符號(sign)與數字文(numeric) → PIC 9/S9
     /// </summary>
-    /// <param name="logicalBytes">(sign + numeric)</param>
+    /// <param name="fieldBytes">(sign + numeric)</param>
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static byte[] Encode(ReadOnlySpan<byte> logicalBytes, PicClause pic, CodecOptions options)
+    public static byte[] Encode(ReadOnlySpan<byte> fieldBytes, PicClause pic, CodecOptions options)
     {
-        byte[] buffer = new byte[pic.TotalLength];
+        byte[] buffer = new byte[fieldBytes.Length];
 
         if (!pic.Signed)
         {
-            logicalBytes.CopyTo(buffer);
+            fieldBytes.CopyTo(buffer);
             return buffer;
         }
 

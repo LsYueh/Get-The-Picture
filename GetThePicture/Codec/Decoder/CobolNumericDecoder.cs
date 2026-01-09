@@ -10,7 +10,7 @@ namespace GetThePicture.Codec.Decoder;
 internal static class CobolNumericDecoder
 {
     /// <summary>
-    /// Decoder for COBOL PIC 9/S9.
+    /// CP950 → Overpunch Decode  → CLR value
     /// </summary>
     /// <param name="cp950Bytes"></param>
     /// <param name="pic"></param>
@@ -23,6 +23,8 @@ internal static class CobolNumericDecoder
 
         // 根據PIC內容限制大小
         ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(cp950Bytes, pic.TotalLength);
+
+        // TODO: (順序不對)
 
         string numeric = Overpunch.Decode(fieldBytes, pic, options, out decimal sign);
         
