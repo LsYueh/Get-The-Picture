@@ -22,9 +22,9 @@ internal static class CobolPicEecoder
 
         return pic.BaseType switch
         {
-            // PicBaseType.Numeric      =>      CobolNumericEncoder.Encode(cp950Bytes, pic, codecOptions),
-            // PicBaseType.Alphanumeric => CobolAlphanumericEncoder.Encode(cp950Bytes, pic),
-            // PicBaseType.Alphabetic   =>   CobolAlphabeticEncoder.Encode(cp950Bytes, pic),
+            // PicBaseType.Numeric      =>      CobolNumericEncoder.Encode(displayValue, pic, codecOptions),
+            // PicBaseType.Alphanumeric => CobolAlphanumericEncoder.Encode(displayValue, pic),
+            // PicBaseType.Alphabetic   =>   CobolAlphabeticEncoder.Encode(displayValue, pic),
             _ => throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseType}"),
         };
     }
