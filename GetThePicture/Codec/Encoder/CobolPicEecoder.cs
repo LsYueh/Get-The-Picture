@@ -1,10 +1,8 @@
 using System.Globalization;
-using System.Text;
 
 using GetThePicture.Cobol.Display;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Options;
-using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Codec.Encoder;
 
@@ -24,7 +22,7 @@ internal static class CobolPicEecoder
         // Display Value → COBOL PICTURE DISPLAY
         return pic.BaseType switch
         {
-            // PicBaseType.Numeric      =>      CobolNumericEncoder.Encode(displayValue, pic, codecOptions),
+            PicBaseType.Numeric      =>      CobolNumericEncoder.Encode(displayValue, pic, codecOptions),
             PicBaseType.Alphanumeric => CobolAlphanumericEncoder.Encode(displayValue, pic),
             PicBaseType.Alphabetic   =>   CobolAlphabeticEncoder.Encode(displayValue, pic),
             _ => throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseType}"),

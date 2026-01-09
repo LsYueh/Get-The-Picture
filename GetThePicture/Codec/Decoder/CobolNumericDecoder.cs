@@ -30,8 +30,6 @@ internal static class CobolNumericDecoder
         return ParseToValue(numeric, sign, pic);
     }
 
-    
-
     /// <summary>
     /// 
     /// </summary>

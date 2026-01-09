@@ -16,7 +16,7 @@ internal static class CobolAlphabeticEncoder
         {
             { Kind: DisplayValueKind.Text,   Text:   { } t } => t.Value,
             { Kind: DisplayValueKind.Number, Number: { } n } => n.Digits,
-            _ => throw new NotSupportedException($"Unsupported Display Value Kind '{displayValue.Kind}'"),
+            _ => throw new NotSupportedException($"Unsupported Display Value Kind '{displayValue.Kind}' for Alphabetic Text"),
         };
 
         byte[] buffer = cp950.GetBytes(text);
