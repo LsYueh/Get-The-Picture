@@ -18,13 +18,15 @@ internal static class CobolPicEecoder
         ArgumentNullException.ThrowIfNull(value);
         ArgumentNullException.ThrowIfNull(pic);
 
+        // CLR value → Display Value
         DisplayValue displayValue = ToDisplayValue(value, pic);
 
+        // Display Value → COBOL PICTURE DISPLAY
         return pic.BaseType switch
         {
             // PicBaseType.Numeric      =>      CobolNumericEncoder.Encode(displayValue, pic, codecOptions),
-            // PicBaseType.Alphanumeric => CobolAlphanumericEncoder.Encode(displayValue, pic),
-            // PicBaseType.Alphabetic   =>   CobolAlphabeticEncoder.Encode(displayValue, pic),
+            PicBaseType.Alphanumeric => CobolAlphanumericEncoder.Encode(displayValue, pic),
+            PicBaseType.Alphabetic   =>   CobolAlphabeticEncoder.Encode(displayValue, pic),
             _ => throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseType}"),
         };
     }
@@ -49,18 +51,6 @@ internal static class CobolPicEecoder
             DateTime dt => DvDateTime(dt, pic),
             _ => throw new NotSupportedException($"Unsupported value type '{value.GetType()}'"),
         };
-
-        Encoding cp950 = EncodingFactory.CP950;
-
-        var text = displayValue switch
-        {
-            { Kind: DisplayValueKind.Text,   Text:   { } t } => t.Value,
-            { Kind: DisplayValueKind.Number, Number: { } n } => n.Digits,
-            _ => throw new NotSupportedException($"Unsupported Display Value Kind '{displayValue.Kind}'"),
-        };
-
-        byte[] raw = cp950.GetBytes(text);
-        displayValue.SetRaw(raw);
 
         return displayValue;
     }

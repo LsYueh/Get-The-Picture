@@ -21,9 +21,6 @@ public class ToDisplayValue
         DisplayValue v = CobolPicEecoder.ToDisplayValue(value, pic);
 
         Assert.AreEqual(expected, v.Text?.Value);
-
-        Assert.IsTrue(v.HasRaw);
-
     }
 
     [TestMethod]
@@ -36,8 +33,6 @@ public class ToDisplayValue
         Assert.IsTrue(v.Number?.IsNegative);
         Assert.AreEqual("123", v.Number?.Digits);
         Assert.AreEqual(0, v.Number?.DecimalDigits);
-
-        Assert.IsTrue(v.HasRaw);
     }
 
     [TestMethod]
@@ -54,8 +49,6 @@ public class ToDisplayValue
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual(expected, v.Number?.Digits);
         Assert.AreEqual(expectedScale, v.Number?.DecimalDigits);
-
-        Assert.IsTrue(v.HasRaw);
     }
 
     [TestMethod]
@@ -73,8 +66,6 @@ public class ToDisplayValue
         Assert.IsTrue(v.Number?.IsNegative);
         Assert.AreEqual(expected, v.Number?.Digits);
         Assert.AreEqual(expectedScale, v.Number?.DecimalDigits);
-
-        Assert.IsTrue(v.HasRaw);
     }
 
     [TestMethod]
@@ -90,8 +81,6 @@ public class ToDisplayValue
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("20260105", v.Number?.Digits);
         Assert.AreEqual(0, v.Number?.DecimalDigits);
-
-        Assert.IsTrue(v.HasRaw);
     }
 
     [TestMethod]
@@ -107,8 +96,6 @@ public class ToDisplayValue
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("1150105", v.Number?.Digits);
         Assert.AreEqual(0, v.Number?.DecimalDigits);
-
-        Assert.IsTrue(v.HasRaw);
     }
 
     [TestMethod]
@@ -124,8 +111,6 @@ public class ToDisplayValue
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("010203", v.Number?.Digits);
         Assert.AreEqual(0, v.Number?.DecimalDigits);
-
-        Assert.IsTrue(v.HasRaw);
     }
 
     [TestMethod]
@@ -141,8 +126,6 @@ public class ToDisplayValue
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("235959007", v.Number?.Digits);
         Assert.AreEqual(0, v.Number?.DecimalDigits);
-
-        Assert.IsTrue(v.HasRaw);
     }
 
     [TestMethod]
@@ -158,8 +141,6 @@ public class ToDisplayValue
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("20250106134559", v.Number?.Digits);
         Assert.AreEqual(0, v.Number?.DecimalDigits);
-
-        Assert.IsTrue(v.HasRaw);
     }
 
     // -------------------------

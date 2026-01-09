@@ -1,5 +1,6 @@
 using System.Text;
 
+using GetThePicture.Cobol.Display;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Utils;
 
@@ -7,12 +8,20 @@ namespace GetThePicture.Codec.Encoder;
 
 internal static class CobolAlphabeticEncoder
 {
-    public static string Encode(byte[] cp950Bytes, PicClause pic)
+    public static string Encode(DisplayValue displayValue, PicClause pic)
     {
         Encoding cp950 = EncodingFactory.CP950;
 
-        // X(n) 通常右補空白
-        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadEnd(cp950Bytes, pic.TotalLength);
+        var text = displayValue switch
+        {
+            { Kind: DisplayValueKind.Text,   Text:   { } t } => t.Value,
+            { Kind: DisplayValueKind.Number, Number: { } n } => n.Digits,
+            _ => throw new NotSupportedException($"Unsupported Display Value Kind '{displayValue.Kind}'"),
+        };
+
+        byte[] buffer = cp950.GetBytes(text);
+
+        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadEnd(buffer, pic.TotalLength);
 
         // PIC A 檢查
         for (int i = 0; i < fieldBytes.Length; i++)
