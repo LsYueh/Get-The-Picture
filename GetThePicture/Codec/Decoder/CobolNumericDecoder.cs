@@ -21,14 +21,15 @@ internal static class CobolNumericDecoder
     {
         options ??= new CodecOptions();
 
-        // 根據PIC內容限制大小
+        // Note: VALUE進來後可能在DISPLAY被S9(n)截位，再轉輸出結果，一般COBOL應該也是這樣的狀況
+
+        // 截位或補字處理
         ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(cp950Bytes, pic.TotalLength);
 
-        // TODO: (順序不對)
-
+        // 轉換
         string numeric = Overpunch.Decode(fieldBytes, pic, options, out decimal sign);
         
-        // 轉換成數字
+        // 輸出
         return ParseToValue(numeric, sign, pic);
     }
 
