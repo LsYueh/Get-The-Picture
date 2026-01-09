@@ -13,6 +13,15 @@ internal sealed class DisplayValue
         Number = number;
     }
 
+    public bool IsNegative => Number?.IsNegative == true;
+
+    public decimal Sign => IsNegative ? -1.0m : 1.0m;
+
+    /// <summary>
+    /// 可用於 Encode / 格式化的數值字串表示
+    /// </summary>
+    public string NumericText => Number?.Digits ?? Text?.Value ?? string.Empty;
+
     public static DisplayValue FromText(string text)
     {
         return new(DisplayValueKind.Text, new DisplayText(text), null);

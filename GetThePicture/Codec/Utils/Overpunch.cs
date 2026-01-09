@@ -13,7 +13,7 @@ internal static class Overpunch
     /// <param name="fieldBytes"></param>
     /// <param name="pic"></param>
     /// <param name="options"></param>
-    /// <param name="sign"></param>
+    /// <param name="sign">符號</param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
     public static string Decode(ReadOnlySpan<byte> fieldBytes, PicClause pic, CodecOptions options, out decimal sign)
@@ -41,7 +41,7 @@ internal static class Overpunch
         EnsureAllAsciiDigits(buffer);
 
         Encoding cp950 = EncodingFactory.CP950;
-        string numeric = cp950.GetString(buffer);
+        string numeric = cp950.GetString(buffer); // 數字文
 
         return numeric;
     }
@@ -49,17 +49,19 @@ internal static class Overpunch
     /// <summary>
     /// 符號(sign)與數字文(numeric) → PIC 9/S9
     /// </summary>
-    /// <param name="fieldBytes">(sign + numeric)</param>
+    /// <param name="sign">符號</param>
+    /// <param name="numeric">數字文</param>
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static byte[] Encode(ReadOnlySpan<byte> fieldBytes, PicClause pic, CodecOptions options)
+    public static byte[] Encode(decimal sign, string numeric, PicClause pic, CodecOptions options)
     {
-        byte[] buffer = new byte[fieldBytes.Length];
+        Encoding cp950 = EncodingFactory.CP950;
+
+        byte[] buffer = cp950.GetBytes(numeric);
 
         if (!pic.Signed)
         {
-            fieldBytes.CopyTo(buffer);
             return buffer;
         }
 
