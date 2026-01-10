@@ -1,6 +1,6 @@
 using System.Text;
 
-using GetThePicture.Cobol;
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Codec.Decoder;
@@ -18,7 +18,7 @@ internal static class CobolAlphabeticDecoder
         Encoding cp950 = EncodingFactory.CP950;
 
         // X(n) 通常右補空白
-        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadEnd(cp950Bytes, 0, pic.TotalLength);
+        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadEnd(cp950Bytes, pic.TotalLength);
 
         // PIC A 檢查
         for (int i = 0; i < fieldBytes.Length; i++)

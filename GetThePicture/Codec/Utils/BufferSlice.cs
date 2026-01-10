@@ -3,85 +3,52 @@ namespace GetThePicture.Codec.Utils;
 internal static class BufferSlice
 {
     /// <summary>
-    /// 
+    /// 預設 PIC X 的行為，左對齊，右補空白
     /// </summary>
     /// <param name="buffer"></param>
-    /// <param name="offset"></param>
     /// <param name="length"></param>
     /// <param name="pad">預設空白</param>
     /// <returns></returns>
-    public static ReadOnlySpan<byte> SlicePadEnd(
-        byte[] buffer,
-        int offset, int length,
-        byte pad = 0x20)
+    public static byte[] SlicePadEnd(ReadOnlySpan<byte> buffer, int length, byte pad = 0x20)
     {
-        ArgumentNullException.ThrowIfNull(buffer);
-        ArgumentOutOfRangeException.ThrowIfNegative(offset);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 
-        // 完整落在 buffer 範圍內 → 零拷貝
-        if ((uint)offset <= (uint)buffer.Length &&
-            (uint)length <= (uint)(buffer.Length - offset))
-        {
-            return buffer.AsSpan(offset, length);
-        }
-
-        // offset 已超出 → 全 padding
-        if (offset >= buffer.Length)
-        {
-            byte[] padded = new byte[length];
-            padded.AsSpan().Fill(pad);
-            return padded;
-        }
-
-        // 部分不足 → copy + pad
-        int available = buffer.Length - offset;
-
         byte[] result = new byte[length];
-        buffer.AsSpan(offset, available).CopyTo(result);
-        result.AsSpan(available).Fill(pad);
+        int copyLength = Math.Min(buffer.Length, length);
+
+        // 從 buffer 開頭複製到 result
+        Array.Copy(buffer.ToArray(), 0, result, 0, copyLength);
+
+        // 如果不足，填充尾端 pad
+        if (length > copyLength)
+            Array.Fill(result, pad, copyLength, length - copyLength);
 
         return result;
     }
 
+
     /// <summary>
-    /// 
+    /// 預設 PIC 9/S9 的行為，右對齊，左補'0'
     /// </summary>
     /// <param name="buffer"></param>
     /// <param name="offset"></param>
     /// <param name="length"></param>
-    /// <param name="pad"> 預設 '0'</param>
+    /// <param name="pad">預設 '0'</param>
     /// <returns></returns>
-    public static ReadOnlySpan<byte> SlicePadStart(
-        byte[] buffer,
-        int offset, int length,
-        byte pad = 0x30)
+    public static byte[] SlicePadStart(ReadOnlySpan<byte> buffer, int length, byte pad = 0x30)
     {
-        ArgumentNullException.ThrowIfNull(buffer);
-        ArgumentOutOfRangeException.ThrowIfNegative(offset);
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 
-        // 完整命中
-        if ((uint)offset <= (uint)buffer.Length &&
-            (uint)length <= (uint)(buffer.Length - offset))
-        {
-            return buffer.AsSpan(offset, length);
-        }
-
-        // offset 超出 → 全 pad
-        if (offset >= buffer.Length)
-        {
-            byte[] padded = new byte[length];
-            padded.AsSpan().Fill(pad);
-            return padded;
-        }
-
-        // 部分不足 → 前補
-        int available = buffer.Length - offset;
-
         byte[] result = new byte[length];
-        buffer.AsSpan(offset, available).CopyTo(result.AsSpan(length - available));
-        result.AsSpan(0, length - available).Fill(pad);
+        int copyLength = Math.Min(buffer.Length, length);
+        int padLength = length - copyLength;
+
+        // 填充前面的 pad
+        if (padLength > 0)
+            Array.Fill(result, pad, 0, padLength);
+
+        // 從 buffer 尾端複製到 result 後面
+        Array.Copy(buffer.ToArray(), buffer.Length - copyLength, result, padLength, copyLength);
 
         return result;
     }

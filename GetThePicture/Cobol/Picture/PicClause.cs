@@ -1,4 +1,4 @@
-namespace GetThePicture.Cobol;
+namespace GetThePicture.Cobol.Picture;
 
 /// <summary>
 /// COBOL PICTURE Metadata Class

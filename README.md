@@ -80,7 +80,7 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 # 使用方式
 ```csharp
-using GetThePicture.Cobol;
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
 ```
 
@@ -116,6 +116,24 @@ var pic = Pic.Parse("X(5)");
 CobolValueCodec.ForPic(pic).Encode("中文字"); // >> "中文?"
 ```
 
+<br>
+
+## 浮點數:  
+```csharp
+var pic = Pic.Parse("S9(3)V9");
+
+// Encode: CLR → COBOL PICTURE
+CobolValueCodec.ForPic(pic).Encode( 12.3); // >> "012C"
+CobolValueCodec.ForPic(pic).Encode(-12.3); // >> "012L"
+
+// Encode: CLR → COBOL PICTURE (ACUCOBOL)
+CobolValueCodec.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Decode(12.3); // >> "0123"
+
+// Decode: COBOL PICTURE → CLR
+CobolValueCodec.ForPic(pic).Decode("12L"); // >> -12.3
+```
+
+
 <br><br>
 
 # 基本資料型態對照表
@@ -134,11 +152,11 @@ CobolValueCodec.ForPic(pic).Encode("中文字"); // >> "中文?"
 
 | COBOL PIC                   | 位數 (n) | SIGNED 對應 (範圍)                                                           | UNSIGNED 對應 (範圍)                                           |  編碼  |  解碼  |
 | :-------------------------- | :-----: | :--------------------------------------------------------------------------- | :------------------------------------------------------------- | :----: | :----: |
-| `PIC 9(1)` \~ `PIC 9(2)`<br>`PIC S9(1)` \~ `PIC S9(2)`     | 1–2 位   | `sbyte`<br>範圍 **-128 \~ 127**                                              | `byte`<br>範圍 **0 \~ 255**                         | -- | ✅ |
-| `PIC 9(3)` \~ `PIC 9(4)`<br>`PIC S9(3)` \~ `PIC S9(4)`     | 3–4 位   | `short`<br>範圍 **-32,768 \~ 32,767**                                        | `ushort`<br>範圍 **0 \~ 65,535**                    | -- | ✅ |
-| `PIC 9(5)` \~ `PIC 9(9)`<br>`PIC S9(5)` \~ `PIC S9(9)`     | 5–9 位   | `int`<br>範圍 **-2,147,483,648 \~ 2,147,483,647**                            | `uint`<br>範圍 **0 \~ 4,294,967,295**               | -- | ✅ |
-| `PIC 9(10)` \~ `PIC 9(18)`<br>`PIC S9(10)` \~ `PIC S9(18)` | 10–18 位 | `long`<br>範圍 **-9,223,372,036,854,775,808 \~ 9,223,372,036,854,775,807**   | `ulong`<br>範圍 **0 \~ 18,446,744,073,709,551,615** | -- | ✅ |
-| `PIC 9(19)` \~ `PIC 9(28)`<br>`PIC S9(19)` \~ `PIC S9(28)` | 19-28 位 | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**                           | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**  | -- | ✅ |
+| `PIC 9(1)` \~ `PIC 9(2)`<br>`PIC S9(1)` \~ `PIC S9(2)`     | 1–2 位   | `sbyte`<br>範圍 **-128 \~ 127**                                              | `byte`<br>範圍 **0 \~ 255**                         | ✅ | ✅ |
+| `PIC 9(3)` \~ `PIC 9(4)`<br>`PIC S9(3)` \~ `PIC S9(4)`     | 3–4 位   | `short`<br>範圍 **-32,768 \~ 32,767**                                        | `ushort`<br>範圍 **0 \~ 65,535**                    | ✅ | ✅ |
+| `PIC 9(5)` \~ `PIC 9(9)`<br>`PIC S9(5)` \~ `PIC S9(9)`     | 5–9 位   | `int`<br>範圍 **-2,147,483,648 \~ 2,147,483,647**                            | `uint`<br>範圍 **0 \~ 4,294,967,295**               | ✅ | ✅ |
+| `PIC 9(10)` \~ `PIC 9(18)`<br>`PIC S9(10)` \~ `PIC S9(18)` | 10–18 位 | `long`<br>範圍 **-9,223,372,036,854,775,808 \~ 9,223,372,036,854,775,807**   | `ulong`<br>範圍 **0 \~ 18,446,744,073,709,551,615** | ✅ | ✅ |
+| `PIC 9(19)` \~ `PIC 9(28)`<br>`PIC S9(19)` \~ `PIC S9(28)` | 19-28 位 | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**                           | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**  | ✅ | ✅ |
 
 不支援超過`28`位的整數位數  
 
@@ -148,8 +166,8 @@ CobolValueCodec.ForPic(pic).Encode("中文字"); // >> "中文?"
 
 | COBOL PIC        |  位數 (n+m) |  說明                         |       對應         |  編碼  |  解碼  |
 | ---------------- |  :-------:  | :--------------------------- | :----------------- | :----: | :----: |
-| `PIC 9(n)V9(m)`  |   1–28 位   | 無號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | -- | ✅ |
-| `PIC S9(n)V9(m)` |   1–28 位   | 有號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | -- | ✅ |
+| `PIC 9(n)V9(m)`  |   1–28 位   | 無號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | ✅ | ✅ |
+| `PIC S9(n)V9(m)` |   1–28 位   | 有號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | ✅ | ✅ |
 
 不支援超過`28`位的精度位數組合  
 
@@ -263,5 +281,28 @@ LEADING SEPARATE   '-'  '1'  '2'  '3'  '4'  '5'  '6'
 
 ```
 
+<br><br>
+
+# COMP-3 (planning)
+
+|  Sign  | Trailing byte |
+| ---- | :--: |
+|-Dca `Positive` | x'0F' |
+|-Dcb/-Dci/-Dcm/-Dcr `Positive` | x'0C' |
+|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Negative` | x'0D' |
+|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Unsigned` | x'0F' |
+|-Dcv `Unsigned` | x'0C' |
+
+<br>
+
+## Difference between COMP and COMP-3
+
+|  COMP  | COMP-3 |
+| :----: | :----: |
+| It represents the data in pure binary form. | It represents the data in packed decimal form. |
+| Can use only `9` and `S` in PIC Clause. | Ccan use `9` , `S` , `V` in PIC Clause. |
+| COMP usage stores the data in `half word` or in `full word`, depending on the size of the data. | COMP3 usage stores `1 digit` in `half byte (i.e. 4 bits)` and a separate `1 bit` is reserved for the sign, which is stored at the right side of the data. |
+| The memory to be occupied by the data according to the length is predefined i.e. : <br> • 9(01) - 9(04) : 16 bits (2 bytes) <br> • 9(05) - 9(09) :  32 bits (4 bytes) <br> • S9(10) - S9(18) :  64 bits (8 bytes) | The memory to be occupied by the data is defined by the following formula: <br> • (length of variable + 1)/2 bytes. <br> <br> Example : The memory occupied by S9(3) is: <br> (3+1)/2 i.e. 2 bytes. |
+| COMP does not occupy extra space to store sign. | In COMP3 sign in compulsorily stored at right side and thus it occupies an extra space. |
 
 <br><br>

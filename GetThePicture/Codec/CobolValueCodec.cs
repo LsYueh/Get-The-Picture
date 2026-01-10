@@ -1,4 +1,4 @@
-using GetThePicture.Cobol;
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Decoder;
 using GetThePicture.Codec.Encoder;
 using GetThePicture.Codec.Options;
@@ -34,7 +34,7 @@ public sealed class DecodeContext(PicClause pic)
     }
 
     /// <summary>
-    /// 
+    /// COBOL PICTURE → CLR
     /// </summary>
     /// <param name="display"></param>
     /// <returns></returns>
@@ -47,7 +47,7 @@ public sealed class DecodeContext(PicClause pic)
     }
 
     /// <summary>
-    /// 
+    /// CLR → COBOL PICTURE
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
