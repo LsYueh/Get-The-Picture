@@ -2,8 +2,9 @@ using System.Text;
 
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Options;
+using GetThePicture.Codec.Utils;
 
-namespace GetThePicture.Codec.Utils;
+namespace GetThePicture.Cobol;
 
 internal static class Overpunch
 {
@@ -25,14 +26,16 @@ internal static class Overpunch
 
         if (pic.Signed)
         {
-            OpVal opVal = GetOverpunchValue(fieldBytes, options);
-
             Index index = options.Sign switch
             {
                 SignOptions.IsTrailing => ^1,
                 SignOptions.IsLeading  => 0,
                 _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
             };
+
+            char key = (char)(fieldBytes[index] & 0x7F); // ASCII overpunch
+
+            OpVal opVal = GetOpValue(key, options);
 
             buffer[index] = (byte) opVal.Digit;
             sign = opVal.Sign;
@@ -60,37 +63,61 @@ internal static class Overpunch
 
         byte[] buffer = cp950.GetBytes(numeric);
 
-        if (!pic.Signed)
-        {
-            return buffer;
-        }
+        EnsureAllAsciiDigits(buffer);
 
-        // TODO: 查表替換...
+        if (pic.Signed)
+        {
+            Index index = options.Sign switch
+            {
+                SignOptions.IsTrailing => ^1,
+                SignOptions.IsLeading  => 0,
+                _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
+            };
+
+            char digit = (char)(buffer[index] & 0x7F); // ASCII overpunch
+
+            char value = GetOpKey(new OpVal(sign, digit), options);
+
+            buffer[index] = (byte) value;
+        }
 
         return buffer;
     }
 
-    private static OpVal GetOverpunchValue(ReadOnlySpan<byte> fieldBytes, CodecOptions options)
+    /// <summary>
+    /// Get Overpunch Value
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    /// <exception cref="FormatException"></exception>
+    private static OpVal GetOpValue(char key, CodecOptions options)
     {
-        if (fieldBytes.IsEmpty)
-            throw new FormatException("Field bytes is empty.");
-
         if (!OverpunchCode.Map.TryGetValue(options.DataStorage, out Dictionary<char, OpVal>? codex))
             throw new FormatException($"Unsupported DataStorage: {options.DataStorage}");
 
-        Index index = options.Sign switch
-        {
-            SignOptions.IsTrailing => ^1,
-            SignOptions.IsLeading  => 0,
-            _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
-        };
-
-        char key = (char)(fieldBytes[index] & 0x7F); // ASCII overpunch
-
         if (!codex.TryGetValue(key, out OpVal value))
-            throw new FormatException($"Invalid overpunch digit: '{key}'");
+            throw new FormatException($"Invalid overpunch search key: '{key}'");
 
         return value;
+    }
+
+    /// <summary>
+    /// Get Overpunch Key
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    /// <exception cref="FormatException"></exception>
+    private static char GetOpKey(OpVal value, CodecOptions options)
+    {
+        if (!OverpunchCode.ReversedMap.TryGetValue(options.DataStorage, out Dictionary<OpVal, char>? codex))
+            throw new FormatException($"Unsupported DataStorage: {options.DataStorage}");
+
+        if (!codex.TryGetValue(value, out char key))
+            throw new FormatException($"Invalid overpunch search value: '{value}'");
+
+        return key;
     }
 
     private static void EnsureAllAsciiDigits(ReadOnlySpan<byte> span)
