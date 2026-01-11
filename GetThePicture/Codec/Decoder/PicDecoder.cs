@@ -32,9 +32,9 @@ internal static class PicDecoder
         switch (pic.Semantic)
         {
             case PicSemantic.GregorianDate : 
-            case PicSemantic.MinguoDate    : return DateOnlyDecoder.Decode(display, pic);
+            case PicSemantic.MinguoDate    : return DateDecoder.Decode(display, pic);
             case PicSemantic.Time6         : 
-            case PicSemantic.Time9         : return TimeOnlyDecoder.Decode(display, pic);
+            case PicSemantic.Time9         : return TimeDecoder.Decode(display, pic);
             case PicSemantic.Timestamp14   : return TimestampDecoder.Decode(display, pic);
             default:
                 return DecodeBaseType(cp950Bytes, pic, codecOptions);

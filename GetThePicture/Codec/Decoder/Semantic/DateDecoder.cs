@@ -4,7 +4,7 @@ using GetThePicture.Cobol.Picture;
 
 namespace GetThePicture.Codec.Decoder.Semantic;
 
-internal static class DateOnlyDecoder
+internal static class DateDecoder
 {
     public static DateOnly Decode(string display, PicClause pic)
     {

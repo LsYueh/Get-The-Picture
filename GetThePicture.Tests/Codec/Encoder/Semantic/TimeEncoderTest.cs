@@ -5,7 +5,7 @@ using GetThePicture.Codec;
 namespace GetThePicture.Tests.Codec.Encoder.Semantic;
 
 [TestClass]
-public class TimeOnlyEncoderTest
+public class TimeEncoderTest
 {
     [DataTestMethod]
     [DataRow("X(6)", PicSemantic.Time6, "235959",    23, 59, 59, 0)]   // Time6

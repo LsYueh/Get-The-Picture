@@ -4,7 +4,7 @@ using GetThePicture.Codec;
 namespace GetThePicture.Tests.Codec.Decoder.Semantic;
 
 [TestClass]
-public class DateOnlyDecoderTest
+public class DateDecoderTest
 {
     [TestMethod]
     [DataTestMethod]
