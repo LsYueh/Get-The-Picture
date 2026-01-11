@@ -68,289 +68,47 @@ Ref. IBM COBOL for Linux on x86 (1.2.0) : [Classes and categories of data](https
 
 <br><br>
 
-# 引入方式
-```csharp
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Codec;
-```
+## 類別(`Category`)資料
+
+• [文字 (`Alphabetic`/`Alphanumeric`)](docs/cobol-picture/category/alphabetic-alphanumeric.md)  
+• [數字 (`Numeric`)](docs/cobol-picture/category/numeric.md)  
 
 <br><br>
 
-# COBOL資料種類(Category)
+## 語意(`Semantic`)資料
 
-## 文字 (Alphabetic/Alphanumeric)
-| COBOL PIC   | 說明                   |  CLR對應  |  編碼  | 解碼  | 說明 |
-| ----------- | ---------------------- | :---------: | :----: |:----: | :--: |
-| `X(n)`      | 任意字元，長度 n            | `string`  | ✅ |✅ | -- |
-| `A(n)`      | 只允許字母                 | `string`  | ✅ |✅ | -- |
-| `AN(n)`     | 字母 + 數字                | `string`  | ❌ |❌ | 請用 `X(n)` |
-| `G(n)`      | 雙位元組字元 (DBCS, EBCDIC) | `string`  | ❌ |❌ | 請用 `X(n)` |
-
-### 使用方式: 
-```csharp
-var pic = Pic.Parse("X(5)");
-
-// Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode("AbC"); // >> "AbC  "
-
-// Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("ABC  "); // >> "ABC"
-```
-
-```csharp
-var pic = Pic.Parse("X(7)");
-
-CodecBuilder.ForPic(pic).Decode("中文字 "); // >> "中文字"
-
-CodecBuilder.ForPic(pic).Encode("中文字"); // >> "中文字 "
-```
-
-```csharp
-var pic = Pic.Parse("X(5)");
-
-// 宣告長度不夠
-CodecBuilder.ForPic(pic).Encode("中文字"); // >> "中文?"
-```
-
-<br>
-
-## 數字 (Numeric)
-
-整數:
-| COBOL PIC                   | 位數 (n) | [SIGNED] CLR對應                                                          | [UNSIGNED] CLR對應                                           |  編碼  |  解碼  |
-| :-------------------------- | :-----: | :----------------------------------------------------------------------- | :--------------------------------------------------------- | :----: | :----: |
-| `9(1)` \~ `9(2)`<br>`S9(1)` \~ `S9(2)`     | 1–2 位   | `sbyte`<br>範圍 **-128 \~ 127**                                              | `byte`<br>範圍 **0 \~ 255**                         | ✅ | ✅ |
-| `9(3)` \~ `9(4)`<br>`S9(3)` \~ `S9(4)`     | 3–4 位   | `short`<br>範圍 **-32,768 \~ 32,767**                                        | `ushort`<br>範圍 **0 \~ 65,535**                    | ✅ | ✅ |
-| `9(5)` \~ `9(9)`<br>`S9(5)` \~ `S9(9)`     | 5–9 位   | `int`<br>範圍 **-2,147,483,648 \~ 2,147,483,647**                            | `uint`<br>範圍 **0 \~ 4,294,967,295**               | ✅ | ✅ |
-| `9(10)` \~ `9(18)`<br>`S9(10)` \~ `S9(18)` | 10–18 位 | `long`<br>範圍 **-9,223,372,036,854,775,808 \~ 9,223,372,036,854,775,807**   | `ulong`<br>範圍 **0 \~ 18,446,744,073,709,551,615** | ✅ | ✅ |
-| `9(19)` \~ `9(28)`<br>`S9(19)` \~ `S9(28)` | 19-28 位 | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**                           | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**  | ✅ | ✅ |
-
-> 不支援超過`28`位的整數位數  
-
-<br>
-
-浮點數:
-| COBOL PIC        |  位數 (n+m) |  說明                         |       CLR對應         |  編碼  |  解碼  |
-| ---------------- |  :-------:  | :--------------------------- | :----------------- | :----: | :----: |
-| `9(n)V9(m)`  |   1–28 位   | 無號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | ✅ | ✅ |
-| `S9(n)V9(m)` |   1–28 位   | 有號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | ✅ | ✅ |
-
-> 不支援超過`28`位的精度位數組合  
-
-### 使用方式:
-```csharp
-var pic = Pic.Parse("9(3)");
-
-// Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(123); // >> "123"
-
-// Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("123"); // >> 123
-```
-
-```csharp
-var pic = Pic.Parse("S9(3)V9");
-
-// Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode( 12.3); // >> "012C"
-CodecBuilder.ForPic(pic).Encode(-12.3); // >> "012L"
-
-// Encode: CLR → COBOL PICTURE (ACUCOBOL)
-CodecBuilder.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Decode(12.3); // >> "0123"
-
-// Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
-```
+• [日期 (`Date`)](docs/cobol-picture/semantic/date-time/date.md)  
+• [時間 (`Time`)](docs/cobol-picture/semantic/date-time/time.md)  
+• [時間戳記 (`Timestamp`)](docs/cobol-picture/semantic/date-time/timestamp.md)  
 
 <br><br>
 
-# 語意(Semantic)資料
+# COBOL Copybook
+`Copybook` 是 COBOL 中用來定義資料結構的重用檔案，透過 COPY 指令引入，常用於描述檔案格式、資料欄位配置與記憶體布局。在大型主機與金融系統中，Copybook 是資料交換與系統整合的核心。  
 
-## 日期
+Copybook 通常包含：
+- 欄位階層（Level Number）
+- 資料型別與長度（PIC 子句）
+- 儲存格式（如 DISPLAY、COMP、COMP-3）
 
-| COBOL PIC                  |  用途  | CLR對應 |  編碼  |  解碼  | 說明 |
-| -------------------------- | ------ | :-----: | :----: | :----: | :--: |
-| `X(8)` / `9(8)` (YYYYMMDD) |  日期  | `DateOnly` | ✅ | ✅ | 西元年 |
-| `X(7)` / `9(7)` (yyyMMDD)  |  日期  | `DateOnly` | ✅ | ✅ | 民國年 |
+由於 Copybook 直接對應到位元與位元組配置，它不僅是程式碼的一部分，更是系統間共用的資料規格說明書。  
 
-### 使用方式:
-```csharp
-var pic = Pic.Parse("9(8)"); // X(8) ok!
-pic.Semantic = PicSemantic.GregorianDate; // (YYYYMMDD)
-
-// Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(new DateOnly(2024, 1, 15)); // >> "20240115"
-
-// Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("20240115"); // >> DateOnly(2024, 1, 15)
-```
-
-```csharp
-var pic = Pic.Parse("9(7)"); // X(7) ok!
-pic.Semantic = PicSemantic.MinguoDate; // (YYYMMDD)
-
-// Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(new DateOnly(2024, 1, 15)); // >> "1130115"
-
-// Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("1130115"); // >> DateOnly(2024, 1, 15)
-```
-
-<br>
-
-## 時間
-
-| COBOL PIC                   |   用途   | CLR對應 |  編碼  |  解碼  |
-| --------------------------- | ------- | :-------: | :----: | :----: |
-| `X(6)` / `9(6)` (HHmmss)    | 時間     | `TimeOnly` | ✅ | ✅ |
-| `X(9)` / `9(9)` (HHmmssSSS) | 時間     | `TimeOnly` | ✅ | ✅ |
-
-### 使用方式:
-```csharp
-var pic = Pic.Parse("9(6)"); // X(6) ok!
-pic.Semantic = PicSemantic.Time6; // (HHmmss)
-
-// Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(new TimeOnly(23, 59, 59, 0)); // >> "235959"
-
-// Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("235959"); // >> TimeOnly(23, 59, 59, 0)
-```
-
-```csharp
-var pic = Pic.Parse("9(9)"); // X(9) ok!
-pic.Semantic = PicSemantic.Time9; // (HHmmssfff)
-
-// Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(new TimeOnly(12, 30, 45, 678)); // >> "123045678"
-
-// Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("123045678"); // >> TimeOnly(12, 30, 45, 678)
-```
-
-<br>
-
-## 時間戳記
-
-| COBOL PIC                |   用途   | CLR對應 |  編碼  |  解碼  |
-| ------------------------ | ------- | :-------: | :----: | :----: |
-| `X(14)` (YYYYMMDDHHmmss) | 時間戳記 | `DateTime` | ✅ | ✅ |
-
-> 其他戳記格式可透過 `X(7)` (yyyMMDD) + `X(6)` (HHmmss) = `X(13)` (yyyMMDDHHmmss) 的方式進行組合
-
-### 使用方式:
-```csharp
-var pic = Pic.Parse("9(14))"); // X(14) ok!
-pic.Semantic = PicSemantic.Timestamp14; // (HHmmss)
-
-// Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(new DateTime(2024,  1, 15, 12, 30, 45)); // >> "20240115123045"
-
-// Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("19991231235959"); // >> DateTime(1999, 12, 31, 23, 59, 59)
-```
-
-<br><br>
-
-# `S9`數字轉換規則
-`Signed overpunch`源自Hollerith(赫爾曼·何樂禮)打孔卡編碼，為解決正負號帶來的字元浪費與孔位長度變動的問題，將`數字`與`正負號`整併至一個孔位解讀。目前已知COBOL的對應關係有：
-
-|  數 字  | ca,<br>cb,<br>cm,<br>cr<br>Positive | ci,<br>cn<br>Positive | ca,<br>ci,<br>cn<br>Negative | cb<br>Negative | cm<br>Negative | cr<br>Negative |
-| :---- | :---- | :------ | :------ | :------ | :------ | :------ |
-| 0 | '0' | '{' | '}' | '@' | 'p' | ' ' (space) |
-| 1 | '1' | 'A' | 'J' | 'A' | 'q' | '!' |
-| 2 | '2' | 'B' | 'K' | 'B' | 'r' | '"' (double-quote) |
-| 3 | '3' | 'C' | 'L' | 'C' | 's' | '#' |
-| 4 | '4' | 'D' | 'M' | 'D' | 't' | '$' |
-| 5 | '5' | 'E' | 'N' | 'E' | 'u' | '%' |
-| 6 | '6' | 'F' | 'O' | 'F' | 'v' | '&' |
-| 7 | '7' | 'G' | 'P' | 'G' | 'w' | ''' (single-quote) |
-| 8 | '8' | 'H' | 'Q' | 'H' | 'x' | '(' |
-| 9 | '9' | 'I' | 'R' | 'I' | 'y' | ')' |
-
-<br>
-
-|  選 項  | 對 應 COBOL | 說明 |
-| :----: | :---- | :--: |
-| ca | RM/COBOL (not RM/COBOL-85) | -- |
-| cb | MBP COBOL | -- |
-| ci | IBM COBOL (RM/COBOL-85) | -- |
-| cm | Micro Focus COBOL | -- |
-| cn | NCR COBOL | -- |
-| cr | Realia COBOL | -- |
-| cv | VAX COBOL | 找不到 Overpunch Codex |
-
-<br>
-
-COBOL的`S9`對正負號數字表示範例 (IBM COBOL)
 ```cobol
-PIC S9(3) VALUE -123.
-TRAILING                 '1'   '2'   'L'
-TRAILING SEPARATE  '1'   '2'   '3'   '-'
-LEADING                  'J'   '2'   '3'
-LEADING SEPARATE   '-'   '1'   '2'   '3'
+       * Sample COBOL Copybook
+       * Defines a fixed-length record layout
+       * Total length: 23 bytes
 
-PIC S9(5)V9 VALUE -12345.6.
-TRAILING                '1'  '2'  '3'  '4'  '5'  'O'
-TRAILING SEPARATE  '1'  '2'  '3'  '4'  '5'  '6'  '-'
-LEADING                 'J'  '2'  '3'  '4'  '5'  '6'
-LEADING SEPARATE   '-'  '1'  '2'  '3'  '4'  '5'  '6'
-```
-
-<br>
-
-```js
-// IBM COBOL (-Dci) and Trailing
-
-'S9(3)V9': '12C' >> 12.3
-'S9(3)V9': '12L' >> -12.3
-
-'S9(1)V9': '12C' >> 2.3
-'S9(1)V9': '12L' >> -2.3
-```
-
-<br>
-
-雖然支援`Leading`解析，但是會跟某些`Overpunch`查表定義衝突
-
-```csharp
-// IBM COBOL (-Dci) and Leading
-
-'S9(3)V9': 'J23' >> -12.3
-
-'S9(1)V9': 'J23' >> `Exception: Unknown overpunch char: '2'`
-```
-
-```csharp
-// Micro Focus COBOL (-Dcm) and Leading
-
-'S9(1)V9': 'J23' >> 2.3
+       01  CUSTOMER-RECORD.
+           05  CUSTOMER-ID       PIC 9(8).             *> Numeric ID
+           05  CUSTOMER-NAME     PIC X(10).            *> Text
+           05  ACCOUNT-BALANCE   PIC S9(5)V99  COMP-3. *> Packed decimal
 ```
 
 <br><br>
 
-# `COMP-3` 轉換規則 (planning)
+# 其他說明
 
-|  Sign  | Trailing byte |
-| ---- | :--: |
-|-Dca `Positive` | x'0F' |
-|-Dcb/-Dci/-Dcm/-Dcr `Positive` | x'0C' |
-|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Negative` | x'0D' |
-|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Unsigned` | x'0F' |
-|-Dcv `Unsigned` | x'0C' |
-
-<br>
-
-## Difference between COMP and COMP-3
-
-|  COMP  | COMP-3 |
-| :----: | :----: |
-| It represents the data in pure binary form. | It represents the data in packed decimal form. |
-| Can use only `9` and `S` in PIC Clause. | Ccan use `9` , `S` , `V` in PIC Clause. |
-| COMP usage stores the data in `half word` or in `full word`, depending on the size of the data. | COMP3 usage stores `1 digit` in `half byte (i.e. 4 bits)` and a separate `1 bit` is reserved for the sign, which is stored at the right side of the data. |
-| The memory to be occupied by the data according to the length is predefined i.e. : <br> • S9(01) - S9(04) : 16 bits (2 bytes) <br> • S9(05) - S9(09) :  32 bits (4 bytes) <br> • S9(10) - S9(18) :  64 bits (8 bytes) | The memory to be occupied by the data is defined by the following formula: <br> • (length of variable + 1)/2 bytes. <br> <br> Example : The memory occupied by S9(3) is: <br> (3+1)/2 i.e. 2 bytes. |
-| COMP does not occupy extra space to store sign. | In COMP3 sign in compulsorily stored at right side and thus it occupies an extra space. |
-
-Ref. [Difference between COMP and COMP3](https://www.geeksforgeeks.org/cobol/difference-between-comp-and-comp3/)
+• [`S9`數字轉換規則](docs/other-topics/pic-s9-overpunch.md)  
+• [`COMP-3` 轉換規則](docs/other-topics/cobol-computational.md) (planning)  
 
 <br><br>
