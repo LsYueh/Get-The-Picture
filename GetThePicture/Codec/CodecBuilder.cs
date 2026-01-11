@@ -33,6 +33,12 @@ public sealed class DecodeContext(PicClause pic)
         return this;
     }
 
+    public DecodeContext WithSemantic(PicSemantic picSemantic = PicSemantic.None)
+    {
+        _pic.Semantic = picSemantic;
+        return this;
+    }
+
     /// <summary>
     /// COBOL PICTURE → CLR
     /// </summary>

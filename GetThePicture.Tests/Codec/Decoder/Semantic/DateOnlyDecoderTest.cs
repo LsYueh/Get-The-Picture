@@ -1,0 +1,44 @@
+using GetThePicture.Cobol.Picture;
+using GetThePicture.Codec;
+
+namespace GetThePicture.Tests.Codec.Decoder.Semantic;
+
+[TestClass]
+public class DateOnlyDecoderTest
+{
+    [TestMethod]
+    [DataTestMethod]
+    [DataRow("X(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
+    [DataRow("X(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
+    public void Decode_DateOnly(string picString, PicSemantic semantic, string display, int year, int month, int day)
+    {
+        var pic = Pic.Parse(picString);
+        pic.Semantic = semantic;
+
+        object result = CodecBuilder.ForPic(pic).Decode(display);
+
+        Assert.AreEqual(new DateOnly(year, month, day), result);
+    }
+
+    [TestMethod]
+    [DataTestMethod]
+    [DataRow("X(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
+    [DataRow("X(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
+    public void Decode_DateOnly_WithSemantic(string picString, PicSemantic semantic, string display, int year, int month, int day)
+    {
+        var pic = Pic.Parse(picString);
+
+        object result = CodecBuilder.ForPic(pic).WithSemantic(semantic).Decode(display);
+
+        Assert.AreEqual(new DateOnly(year, month, day), result);
+    }
+
+    [TestMethod]
+    public void Decode_InvalidGregorianDate_ThrowsFormatException()
+    {
+        var pic = Pic.Parse("X(8)");
+        pic.Semantic = PicSemantic.GregorianDate;
+
+        Assert.ThrowsException<FormatException>(() => CodecBuilder.ForPic(pic).Decode("20241301"));
+    }
+}

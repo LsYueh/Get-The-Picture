@@ -179,8 +179,8 @@ CobolValueCodec.ForPic(pic).Decode("12L"); // >> -12.3
 
 | COBOL PIC                    |  用途  |   對應   |  編碼  |  解碼  | 說明 |
 | ---------------------------- | ------ | :-----: | :----: | :----: | :--: |
-| `PIC X(8)` (YYYYMMDD)        |  日期  | `DateOnly` | -- | -- | 西元年 |
-| `PIC X(7)` (yyyMMDD)         |  日期  | `DateOnly` | -- | -- | 民國年 |
+| `PIC X(8)` (YYYYMMDD)        |  日期  | `DateOnly` | ✅ | ✅ | 西元年 |
+| `PIC X(7)` (yyyMMDD)         |  日期  | `DateOnly` | ✅ | ✅ | 民國年 |
 
 <br>
 
