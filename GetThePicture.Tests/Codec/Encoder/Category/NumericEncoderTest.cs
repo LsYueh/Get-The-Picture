@@ -3,10 +3,10 @@ using System.Globalization;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
 
-namespace GetThePicture.Tests.Codec.Encoder;
+namespace GetThePicture.Tests.Codec.Encoder.Category;
 
 [TestClass]
-public class CobolNumericEncoderTest
+public class NumericEncoderTest
 {
     [TestMethod]
     [DataTestMethod]

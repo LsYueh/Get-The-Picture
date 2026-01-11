@@ -1,10 +1,10 @@
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
 
-namespace GetThePicture.Tests.Codec.Encoder;
+namespace GetThePicture.Tests.Codec.Encoder.Category;
 
 [TestClass]
-public class CobolAlphabeticEncoderTest
+public class AlphabeticEncoderTest
 {
     [TestMethod]
     public void Encode_Alphabetic()

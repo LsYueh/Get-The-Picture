@@ -55,6 +55,6 @@ public sealed class DecodeContext(PicClause pic)
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return CobolPicEecoder.Encode(value, _pic, _codecOptions);
+        return PicEecoder.Encode(value, _pic, _codecOptions);
     }
 }

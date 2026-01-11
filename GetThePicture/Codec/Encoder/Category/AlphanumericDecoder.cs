@@ -4,9 +4,9 @@ using GetThePicture.Cobol.Display;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Utils;
 
-namespace GetThePicture.Codec.Encoder;
+namespace GetThePicture.Codec.Encoder.Category;
 
-internal static class CobolAlphanumericEncoder
+internal static class AlphanumericEncoder
 {
     public static string Encode(DisplayValue displayValue, PicClause pic)
     {

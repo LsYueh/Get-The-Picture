@@ -6,9 +6,9 @@ using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Options;
 using GetThePicture.Codec.Utils;
 
-namespace GetThePicture.Codec.Encoder;
+namespace GetThePicture.Codec.Encoder.Category;
 
-internal static class CobolNumericEncoder
+internal static class NumericEncoder
 {
     /// <summary>
     /// Display Value → Overpunch Encode → COBOL PICTURE DISPLAY
