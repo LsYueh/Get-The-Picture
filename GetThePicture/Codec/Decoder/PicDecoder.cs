@@ -31,12 +31,11 @@ internal static class PicDecoder
 #pragma warning disable IDE0066 // Convert switch statement to expression
         switch (pic.Semantic)
         {
-            // TODO: 根據PicClause來處理cp950Bytes...
             case PicSemantic.GregorianDate : 
             case PicSemantic.MinguoDate    : return DateOnlyDecoder.Decode(display, pic);
             case PicSemantic.Time6         : 
-            case PicSemantic.Time9         : 
-            case PicSemantic.Timestamp14   : 
+            case PicSemantic.Time9         : return TimeOnlyDecoder.Decode(display, pic);
+            case PicSemantic.Timestamp14   : return TimestampDecoder.Decode(display, pic);
             default:
                 return DecodeBaseType(cp950Bytes, pic, codecOptions);
         }

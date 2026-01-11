@@ -8,6 +8,9 @@ internal static class DateOnlyDecoder
 {
     public static DateOnly Decode(string display, PicClause pic)
     {
+        if (pic.BaseType == PicBaseType.Numeric && pic.Signed)
+            throw new NotSupportedException($"Unsupported DateOnly base type: PIC S9");
+
         return pic.Semantic switch
         {
             PicSemantic.GregorianDate => ParseGregorianDate(display),
