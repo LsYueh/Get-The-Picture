@@ -5,7 +5,7 @@ using GetThePicture.Codec.Options;
 
 namespace GetThePicture.Codec;
 
-public static class CobolValueCodec
+public static class CodecBuilder
 {
     public static DecodeContext ForPic(PicClause pic) => new(pic);
 }
@@ -33,6 +33,12 @@ public sealed class DecodeContext(PicClause pic)
         return this;
     }
 
+    public DecodeContext WithSemantic(PicSemantic picSemantic = PicSemantic.None)
+    {
+        _pic.Semantic = picSemantic;
+        return this;
+    }
+
     /// <summary>
     /// COBOL PICTURE → CLR
     /// </summary>
@@ -43,7 +49,7 @@ public sealed class DecodeContext(PicClause pic)
     {
         ArgumentNullException.ThrowIfNull(display);
         
-        return CobolPicDecoder.Decode(display, _pic, _codecOptions);
+        return PicDecoder.Decode(display, _pic, _codecOptions);
     }
 
     /// <summary>
@@ -55,6 +61,6 @@ public sealed class DecodeContext(PicClause pic)
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return CobolPicEecoder.Encode(value, _pic, _codecOptions);
+        return PicEecoder.Encode(value, _pic, _codecOptions);
     }
 }

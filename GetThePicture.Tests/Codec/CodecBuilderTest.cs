@@ -16,7 +16,7 @@ public class CobolValueCodecTests
     {
         var pic = Pic.Parse("9(3)");
 
-        CobolValueCodec.ForPic(pic).Decode("1234");
+        CodecBuilder.ForPic(pic).Decode("1234");
     }
 
     // -------------------------
@@ -29,6 +29,6 @@ public class CobolValueCodecTests
     {
         var pic = Pic.Parse("9(5)");
 
-        CobolValueCodec.ForPic(pic).Decode("12A34");
+        CodecBuilder.ForPic(pic).Decode("12A34");
     }
 }

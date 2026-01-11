@@ -1,16 +1,16 @@
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
 
-namespace GetThePicture.Tests.Codec.Decoder;
+namespace GetThePicture.Tests.Codec.Decoder.Category;
 
 [TestClass]
-public class CobolAlphanumericDecoderTest
+public class AlphanumericDecoderTest
 {
     [TestMethod]
     public void Decode_Alphanumeric_TrimsRightSpaces()
     {
         var pic = Pic.Parse("X(5)");
-        object result = CobolValueCodec.ForPic(pic).Decode("ABC  ");
+        object result = CodecBuilder.ForPic(pic).Decode("ABC  ");
 
         Assert.AreEqual("ABC", result);
     }
@@ -19,7 +19,7 @@ public class CobolAlphanumericDecoderTest
     public void Decode_Alphanumeric_Lesser_Extra_TrimsRightSpaces()
     {
         var pic = Pic.Parse("X(6)");
-        object result = CobolValueCodec.ForPic(pic).NoStrict().Decode("ABC  ");
+        object result = CodecBuilder.ForPic(pic).NoStrict().Decode("ABC  ");
 
         Assert.AreEqual("ABC", result);
     }
@@ -28,7 +28,7 @@ public class CobolAlphanumericDecoderTest
     public void Decode_Alphanumeric_CP950_TrimsRightSpaces()
     {
         var pic = Pic.Parse("X(7)");
-        object result = CobolValueCodec.ForPic(pic).Decode("中文字 ");
+        object result = CodecBuilder.ForPic(pic).Decode("中文字 ");
 
         Assert.AreEqual("中文字", result);
     }
@@ -37,7 +37,7 @@ public class CobolAlphanumericDecoderTest
     public void Decode_Alphanumeric_CP950_Lesser_TrimsRightSpaces()
     {
         var pic = Pic.Parse("X(5)");
-        object result = CobolValueCodec.ForPic(pic).NoStrict().Decode("中文字 ");
+        object result = CodecBuilder.ForPic(pic).NoStrict().Decode("中文字 ");
 
         Assert.AreEqual("中文?", result);
     }

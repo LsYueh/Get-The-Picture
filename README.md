@@ -58,152 +58,201 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 # COBOL PICTURE (PIC) 子句
 
-目前支援的解析格式  
+支援PIC語法  
 
-基本:
-- PIC X
-- PIC X(4)
-- PIC A
-- PIC A(4)
-- PIC 9999
-- PIC 9(4)
+| Alphabetic | Alphanumeric | Numeric | Numeric (With Sign) |
+| :--------: | :----------: | :-----: | :-----------------: |
+| PIC A.. <br> PIC A(n) | PIC X.. <br> PIC X(n) | PIC 9... <br> PIC 9(n) <br> PIC 9...V9... <br> PIC 9(n)V9(m) <br> PIC 9(n)V9... | PIC S9... <br> PIC S9(n) <br> PIC S9...V9... <br> PIC S9(n)V9(m) <br> PIC S9(n)V9... |
 
-混合:
-- PIC 99V99
-- PIC 9(3)V9(2)
-- PIC 9(3)V99
-- PIC S99V99
-- PIC S9(3)V9(2)
-- PIC S9(3)V99
+Ref. IBM COBOL for Linux on x86 (1.2.0) : [Classes and categories of data](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=relationships-classes-categories-data)  
 
 <br><br>
 
-# 使用方式
+# 引入方式
 ```csharp
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
 ```
 
-<br>
+<br><br>
 
-## 字串
-基本使用:  
+# COBOL資料種類(Category)
+
+## 文字 (Alphabetic/Alphanumeric)
+| COBOL PIC   | 說明                   |  CLR對應  |  編碼  | 解碼  | 說明 |
+| ----------- | ---------------------- | :---------: | :----: |:----: | :--: |
+| `X(n)`      | 任意字元，長度 n            | `string`  | ✅ |✅ | -- |
+| `A(n)`      | 只允許字母                 | `string`  | ✅ |✅ | -- |
+| `AN(n)`     | 字母 + 數字                | `string`  | ❌ |❌ | 請用 `X(n)` |
+| `G(n)`      | 雙位元組字元 (DBCS, EBCDIC) | `string`  | ❌ |❌ | 請用 `X(n)` |
+
+### 使用方式: 
 ```csharp
 var pic = Pic.Parse("X(5)");
 
 // Encode: CLR → COBOL PICTURE
-CobolValueCodec.ForPic(pic).Encode("AbC"); // >> "AbC  "
+CodecBuilder.ForPic(pic).Encode("AbC"); // >> "AbC  "
 
 // Decode: COBOL PICTURE → CLR
-CobolValueCodec.ForPic(pic).Decode("ABC  "); // >> "ABC"
+CodecBuilder.ForPic(pic).Decode("ABC  "); // >> "ABC"
 ```
 
-<br>
-
-中文字(`CP950`)處理:  
 ```csharp
 var pic = Pic.Parse("X(7)");
 
-CobolValueCodec.ForPic(pic).Decode("中文字 "); // >> "中文字"
+CodecBuilder.ForPic(pic).Decode("中文字 "); // >> "中文字"
 
-CobolValueCodec.ForPic(pic).Encode("中文字"); // >> "中文字 "
+CodecBuilder.ForPic(pic).Encode("中文字"); // >> "中文字 "
 ```
 
 ```csharp
 var pic = Pic.Parse("X(5)");
 
 // 宣告長度不夠
-CobolValueCodec.ForPic(pic).Encode("中文字"); // >> "中文?"
+CodecBuilder.ForPic(pic).Encode("中文字"); // >> "中文?"
 ```
 
 <br>
 
-## 浮點數:  
+## 數字 (Numeric)
+
+整數:
+| COBOL PIC                   | 位數 (n) | [SIGNED] CLR對應                                                          | [UNSIGNED] CLR對應                                           |  編碼  |  解碼  |
+| :-------------------------- | :-----: | :----------------------------------------------------------------------- | :--------------------------------------------------------- | :----: | :----: |
+| `9(1)` \~ `9(2)`<br>`S9(1)` \~ `S9(2)`     | 1–2 位   | `sbyte`<br>範圍 **-128 \~ 127**                                              | `byte`<br>範圍 **0 \~ 255**                         | ✅ | ✅ |
+| `9(3)` \~ `9(4)`<br>`S9(3)` \~ `S9(4)`     | 3–4 位   | `short`<br>範圍 **-32,768 \~ 32,767**                                        | `ushort`<br>範圍 **0 \~ 65,535**                    | ✅ | ✅ |
+| `9(5)` \~ `9(9)`<br>`S9(5)` \~ `S9(9)`     | 5–9 位   | `int`<br>範圍 **-2,147,483,648 \~ 2,147,483,647**                            | `uint`<br>範圍 **0 \~ 4,294,967,295**               | ✅ | ✅ |
+| `9(10)` \~ `9(18)`<br>`S9(10)` \~ `S9(18)` | 10–18 位 | `long`<br>範圍 **-9,223,372,036,854,775,808 \~ 9,223,372,036,854,775,807**   | `ulong`<br>範圍 **0 \~ 18,446,744,073,709,551,615** | ✅ | ✅ |
+| `9(19)` \~ `9(28)`<br>`S9(19)` \~ `S9(28)` | 19-28 位 | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**                           | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**  | ✅ | ✅ |
+
+> 不支援超過`28`位的整數位數  
+
+<br>
+
+浮點數:
+| COBOL PIC        |  位數 (n+m) |  說明                         |       CLR對應         |  編碼  |  解碼  |
+| ---------------- |  :-------:  | :--------------------------- | :----------------- | :----: | :----: |
+| `9(n)V9(m)`  |   1–28 位   | 無號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | ✅ | ✅ |
+| `S9(n)V9(m)` |   1–28 位   | 有號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | ✅ | ✅ |
+
+> 不支援超過`28`位的精度位數組合  
+
+### 使用方式:
+```csharp
+var pic = Pic.Parse("9(3)");
+
+// Encode: CLR → COBOL PICTURE
+CodecBuilder.ForPic(pic).Encode(123); // >> "123"
+
+// Decode: COBOL PICTURE → CLR
+CodecBuilder.ForPic(pic).Decode("123"); // >> 123
+```
+
 ```csharp
 var pic = Pic.Parse("S9(3)V9");
 
 // Encode: CLR → COBOL PICTURE
-CobolValueCodec.ForPic(pic).Encode( 12.3); // >> "012C"
-CobolValueCodec.ForPic(pic).Encode(-12.3); // >> "012L"
+CodecBuilder.ForPic(pic).Encode( 12.3); // >> "012C"
+CodecBuilder.ForPic(pic).Encode(-12.3); // >> "012L"
 
 // Encode: CLR → COBOL PICTURE (ACUCOBOL)
-CobolValueCodec.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Decode(12.3); // >> "0123"
+CodecBuilder.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Decode(12.3); // >> "0123"
 
 // Decode: COBOL PICTURE → CLR
-CobolValueCodec.ForPic(pic).Decode("12L"); // >> -12.3
+CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
 ```
 
-
 <br><br>
 
-# 基本資料型態對照表
-
-## 字串
-| COBOL PIC   | 說明                   |  對應  |  編碼  | 解碼  | 說明 |
-| ----------- | ---------------------- | :---------: | :----: |:----: | :--: |
-| `PIC X(n)`  | 任意字元，長度 n            | `string`  | ✅ |✅ | -- |
-| `PIC A(n)`  | 只允許字母                 | `string`  | ✅ |✅ | -- |
-| `PIC AN(n)` | 字母 + 數字                | `string`  | ❌ |❌ | 請用 `PIC X(n)` |
-| `PIC G(n)`  | 雙位元組字元 (DBCS, EBCDIC) | `string`  | ❌ |❌ | 請用 `PIC X(n)` |
-
-<br>
-
-## 整數
-
-| COBOL PIC                   | 位數 (n) | SIGNED 對應 (範圍)                                                           | UNSIGNED 對應 (範圍)                                           |  編碼  |  解碼  |
-| :-------------------------- | :-----: | :--------------------------------------------------------------------------- | :------------------------------------------------------------- | :----: | :----: |
-| `PIC 9(1)` \~ `PIC 9(2)`<br>`PIC S9(1)` \~ `PIC S9(2)`     | 1–2 位   | `sbyte`<br>範圍 **-128 \~ 127**                                              | `byte`<br>範圍 **0 \~ 255**                         | ✅ | ✅ |
-| `PIC 9(3)` \~ `PIC 9(4)`<br>`PIC S9(3)` \~ `PIC S9(4)`     | 3–4 位   | `short`<br>範圍 **-32,768 \~ 32,767**                                        | `ushort`<br>範圍 **0 \~ 65,535**                    | ✅ | ✅ |
-| `PIC 9(5)` \~ `PIC 9(9)`<br>`PIC S9(5)` \~ `PIC S9(9)`     | 5–9 位   | `int`<br>範圍 **-2,147,483,648 \~ 2,147,483,647**                            | `uint`<br>範圍 **0 \~ 4,294,967,295**               | ✅ | ✅ |
-| `PIC 9(10)` \~ `PIC 9(18)`<br>`PIC S9(10)` \~ `PIC S9(18)` | 10–18 位 | `long`<br>範圍 **-9,223,372,036,854,775,808 \~ 9,223,372,036,854,775,807**   | `ulong`<br>範圍 **0 \~ 18,446,744,073,709,551,615** | ✅ | ✅ |
-| `PIC 9(19)` \~ `PIC 9(28)`<br>`PIC S9(19)` \~ `PIC S9(28)` | 19-28 位 | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**                           | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**  | ✅ | ✅ |
-
-不支援超過`28`位的整數位數  
-
-<br>
-
-## 小數
-
-| COBOL PIC        |  位數 (n+m) |  說明                         |       對應         |  編碼  |  解碼  |
-| ---------------- |  :-------:  | :--------------------------- | :----------------- | :----: | :----: |
-| `PIC 9(n)V9(m)`  |   1–28 位   | 無號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | ✅ | ✅ |
-| `PIC S9(n)V9(m)` |   1–28 位   | 有號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | ✅ | ✅ |
-
-不支援超過`28`位的精度位數組合  
-
-<br><br>
-
-# 特殊資料型態對照表
+# 語意(Semantic)資料
 
 ## 日期
 
-| COBOL PIC                    |  用途  |   對應   |  編碼  |  解碼  | 說明 |
-| ---------------------------- | ------ | :-----: | :----: | :----: | :--: |
-| `PIC X(8)` (YYYYMMDD)        |  日期  | `DateOnly` | -- | -- | 西元年 |
-| `PIC X(7)` (yyyMMDD)         |  日期  | `DateOnly` | -- | -- | 民國年 |
+| COBOL PIC                  |  用途  | CLR對應 |  編碼  |  解碼  | 說明 |
+| -------------------------- | ------ | :-----: | :----: | :----: | :--: |
+| `X(8)` / `9(8)` (YYYYMMDD) |  日期  | `DateOnly` | ✅ | ✅ | 西元年 |
+| `X(7)` / `9(7)` (yyyMMDD)  |  日期  | `DateOnly` | ✅ | ✅ | 民國年 |
+
+### 使用方式:
+```csharp
+var pic = Pic.Parse("9(8)"); // X(8) ok!
+pic.Semantic = PicSemantic.GregorianDate; // (YYYYMMDD)
+
+// Encode: CLR → COBOL PICTURE
+CodecBuilder.ForPic(pic).Encode(new DateOnly(2024, 1, 15)); // >> "20240115"
+
+// Decode: COBOL PICTURE → CLR
+CodecBuilder.ForPic(pic).Decode("20240115"); // >> DateOnly(2024, 1, 15)
+```
+
+```csharp
+var pic = Pic.Parse("9(7)"); // X(7) ok!
+pic.Semantic = PicSemantic.MinguoDate; // (YYYMMDD)
+
+// Encode: CLR → COBOL PICTURE
+CodecBuilder.ForPic(pic).Encode(new DateOnly(2024, 1, 15)); // >> "1130115"
+
+// Decode: COBOL PICTURE → CLR
+CodecBuilder.ForPic(pic).Decode("1130115"); // >> DateOnly(2024, 1, 15)
+```
 
 <br>
 
 ## 時間
 
-| COBOL PIC                    |   用途   |  對應  |  編碼  |  解碼  |
-| ---------------------------- | ------- | :-------: | :----: | :----: |
-| `PIC X(6)` (HHmmss)          | 時間     | `TimeOnly` | -- | -- |
-| `PIC X(9)` (HHmmssSSS)       | 時間     | `TimeOnly` | -- | -- |
+| COBOL PIC                   |   用途   | CLR對應 |  編碼  |  解碼  |
+| --------------------------- | ------- | :-------: | :----: | :----: |
+| `X(6)` / `9(6)` (HHmmss)    | 時間     | `TimeOnly` | ✅ | ✅ |
+| `X(9)` / `9(9)` (HHmmssSSS) | 時間     | `TimeOnly` | ✅ | ✅ |
+
+### 使用方式:
+```csharp
+var pic = Pic.Parse("9(6)"); // X(6) ok!
+pic.Semantic = PicSemantic.Time6; // (HHmmss)
+
+// Encode: CLR → COBOL PICTURE
+CodecBuilder.ForPic(pic).Encode(new TimeOnly(23, 59, 59, 0)); // >> "235959"
+
+// Decode: COBOL PICTURE → CLR
+CodecBuilder.ForPic(pic).Decode("235959"); // >> TimeOnly(23, 59, 59, 0)
+```
+
+```csharp
+var pic = Pic.Parse("9(9)"); // X(9) ok!
+pic.Semantic = PicSemantic.Time9; // (HHmmssfff)
+
+// Encode: CLR → COBOL PICTURE
+CodecBuilder.ForPic(pic).Encode(new TimeOnly(12, 30, 45, 678)); // >> "123045678"
+
+// Decode: COBOL PICTURE → CLR
+CodecBuilder.ForPic(pic).Decode("123045678"); // >> TimeOnly(12, 30, 45, 678)
+```
 
 <br>
 
 ## 時間戳記
 
-| COBOL PIC                    |   用途   |  對應  |  編碼  |  解碼  |
-| ---------------------------- | ------- | :-------: | :----: | :----: |
-| `PIC X(14)` (YYYYMMDDHHmmss) | 時間戳記 | `DateTime` | -- | -- |
+| COBOL PIC                |   用途   | CLR對應 |  編碼  |  解碼  |
+| ------------------------ | ------- | :-------: | :----: | :----: |
+| `X(14)` (YYYYMMDDHHmmss) | 時間戳記 | `DateTime` | ✅ | ✅ |
 
-> 其他戳記格式可透過 `PIC X(7)` (yyyMMDD) + `PIC X(6)` (HHmmss) = `PIC X(13)` (yyyMMDDHHmmss) 的方式進行組合
+> 其他戳記格式可透過 `X(7)` (yyyMMDD) + `X(6)` (HHmmss) = `X(13)` (yyyMMDDHHmmss) 的方式進行組合
+
+### 使用方式:
+```csharp
+var pic = Pic.Parse("9(14))"); // X(14) ok!
+pic.Semantic = PicSemantic.Timestamp14; // (HHmmss)
+
+// Encode: CLR → COBOL PICTURE
+CodecBuilder.ForPic(pic).Encode(new DateTime(2024,  1, 15, 12, 30, 45)); // >> "20240115123045"
+
+// Decode: COBOL PICTURE → CLR
+CodecBuilder.ForPic(pic).Decode("19991231235959"); // >> DateTime(1999, 12, 31, 23, 59, 59)
+```
 
 <br><br>
 
-# 正負號數字`S9`字串轉換
+# `S9`數字轉換規則
 `Signed overpunch`源自Hollerith(赫爾曼·何樂禮)打孔卡編碼，為解決正負號帶來的字元浪費與孔位長度變動的問題，將`數字`與`正負號`整併至一個孔位解讀。目前已知COBOL的對應關係有：
 
 |  數 字  | ca,<br>cb,<br>cm,<br>cr<br>Positive | ci,<br>cn<br>Positive | ca,<br>ci,<br>cn<br>Negative | cb<br>Negative | cm<br>Negative | cr<br>Negative |
@@ -258,7 +307,6 @@ LEADING SEPARATE   '-'  '1'  '2'  '3'  '4'  '5'  '6'
 
 'S9(1)V9': '12C' >> 2.3
 'S9(1)V9': '12L' >> -2.3
-
 ```
 
 <br>
@@ -271,19 +319,17 @@ LEADING SEPARATE   '-'  '1'  '2'  '3'  '4'  '5'  '6'
 'S9(3)V9': 'J23' >> -12.3
 
 'S9(1)V9': 'J23' >> `Exception: Unknown overpunch char: '2'`
-
 ```
 
 ```csharp
 // Micro Focus COBOL (-Dcm) and Leading
 
 'S9(1)V9': 'J23' >> 2.3
-
 ```
 
 <br><br>
 
-# COMP-3 (planning)
+# `COMP-3` 轉換規則 (planning)
 
 |  Sign  | Trailing byte |
 | ---- | :--: |
@@ -302,7 +348,9 @@ LEADING SEPARATE   '-'  '1'  '2'  '3'  '4'  '5'  '6'
 | It represents the data in pure binary form. | It represents the data in packed decimal form. |
 | Can use only `9` and `S` in PIC Clause. | Ccan use `9` , `S` , `V` in PIC Clause. |
 | COMP usage stores the data in `half word` or in `full word`, depending on the size of the data. | COMP3 usage stores `1 digit` in `half byte (i.e. 4 bits)` and a separate `1 bit` is reserved for the sign, which is stored at the right side of the data. |
-| The memory to be occupied by the data according to the length is predefined i.e. : <br> • 9(01) - 9(04) : 16 bits (2 bytes) <br> • 9(05) - 9(09) :  32 bits (4 bytes) <br> • S9(10) - S9(18) :  64 bits (8 bytes) | The memory to be occupied by the data is defined by the following formula: <br> • (length of variable + 1)/2 bytes. <br> <br> Example : The memory occupied by S9(3) is: <br> (3+1)/2 i.e. 2 bytes. |
+| The memory to be occupied by the data according to the length is predefined i.e. : <br> • S9(01) - S9(04) : 16 bits (2 bytes) <br> • S9(05) - S9(09) :  32 bits (4 bytes) <br> • S9(10) - S9(18) :  64 bits (8 bytes) | The memory to be occupied by the data is defined by the following formula: <br> • (length of variable + 1)/2 bytes. <br> <br> Example : The memory occupied by S9(3) is: <br> (3+1)/2 i.e. 2 bytes. |
 | COMP does not occupy extra space to store sign. | In COMP3 sign in compulsorily stored at right side and thus it occupies an extra space. |
+
+Ref. [Difference between COMP and COMP3](https://www.geeksforgeeks.org/cobol/difference-between-comp-and-comp3/)
 
 <br><br>

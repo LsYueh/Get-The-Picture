@@ -3,10 +3,10 @@ using System.Globalization;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
 
-namespace GetThePicture.Tests.Codec.Decoder;
+namespace GetThePicture.Tests.Codec.Decoder.Category;
 
 [TestClass]
-public class CobolNumericDecoderForDecimalTest
+public class NumericDecoderForDecimalTest
 {
     [TestMethod]
     [DataTestMethod]
@@ -17,7 +17,7 @@ public class CobolNumericDecoderForDecimalTest
     public void Decode_Default_Decimal(string display, string picString, Type expectedType, string expectedValue)
     {
         var pic = Pic.Parse(picString);
-        object value = CobolValueCodec.ForPic(pic).Decode(display);
+        object value = CodecBuilder.ForPic(pic).Decode(display);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(decimal.Parse(expectedValue, CultureInfo.InvariantCulture), value);

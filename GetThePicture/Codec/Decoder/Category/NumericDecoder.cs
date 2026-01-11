@@ -6,9 +6,9 @@ using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Options;
 using GetThePicture.Codec.Utils;
 
-namespace GetThePicture.Codec.Decoder;
+namespace GetThePicture.Codec.Decoder.Category;
 
-internal static class CobolNumericDecoder
+internal static class NumericDecoder
 {
     /// <summary>
     /// CP950 → Overpunch Decode  → CLR value
