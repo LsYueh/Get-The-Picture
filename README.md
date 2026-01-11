@@ -78,67 +78,17 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 <br><br>
 
-# 使用方式
+# 引入方式
 ```csharp
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
 ```
 
-<br>
-
-## 字串
-基本使用:  
-```csharp
-var pic = Pic.Parse("X(5)");
-
-// Encode: CLR → COBOL PICTURE
-CobolValueCodec.ForPic(pic).Encode("AbC"); // >> "AbC  "
-
-// Decode: COBOL PICTURE → CLR
-CobolValueCodec.ForPic(pic).Decode("ABC  "); // >> "ABC"
-```
-
-<br>
-
-中文字(`CP950`)處理:  
-```csharp
-var pic = Pic.Parse("X(7)");
-
-CobolValueCodec.ForPic(pic).Decode("中文字 "); // >> "中文字"
-
-CobolValueCodec.ForPic(pic).Encode("中文字"); // >> "中文字 "
-```
-
-```csharp
-var pic = Pic.Parse("X(5)");
-
-// 宣告長度不夠
-CobolValueCodec.ForPic(pic).Encode("中文字"); // >> "中文?"
-```
-
-<br>
-
-## 浮點數:  
-```csharp
-var pic = Pic.Parse("S9(3)V9");
-
-// Encode: CLR → COBOL PICTURE
-CobolValueCodec.ForPic(pic).Encode( 12.3); // >> "012C"
-CobolValueCodec.ForPic(pic).Encode(-12.3); // >> "012L"
-
-// Encode: CLR → COBOL PICTURE (ACUCOBOL)
-CobolValueCodec.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Decode(12.3); // >> "0123"
-
-// Decode: COBOL PICTURE → CLR
-CobolValueCodec.ForPic(pic).Decode("12L"); // >> -12.3
-```
-
-
 <br><br>
 
-# 基本資料型態對照表
+# COBOL資料種類(Category)
 
-## 字串
+## 文字 (Alphabetic/Alphanumeric)
 | COBOL PIC   | 說明                   |  對應  |  編碼  | 解碼  | 說明 |
 | ----------- | ---------------------- | :---------: | :----: |:----: | :--: |
 | `PIC X(n)`  | 任意字元，長度 n            | `string`  | ✅ |✅ | -- |
@@ -146,10 +96,37 @@ CobolValueCodec.ForPic(pic).Decode("12L"); // >> -12.3
 | `PIC AN(n)` | 字母 + 數字                | `string`  | ❌ |❌ | 請用 `PIC X(n)` |
 | `PIC G(n)`  | 雙位元組字元 (DBCS, EBCDIC) | `string`  | ❌ |❌ | 請用 `PIC X(n)` |
 
+### 使用方式: 
+```csharp
+var pic = Pic.Parse("X(5)");
+
+// Encode: CLR → COBOL PICTURE
+CodecBuilder.ForPic(pic).Encode("AbC"); // >> "AbC  "
+
+// Decode: COBOL PICTURE → CLR
+CodecBuilder.ForPic(pic).Decode("ABC  "); // >> "ABC"
+```
+
+```csharp
+var pic = Pic.Parse("X(7)");
+
+CodecBuilder.ForPic(pic).Decode("中文字 "); // >> "中文字"
+
+CodecBuilder.ForPic(pic).Encode("中文字"); // >> "中文字 "
+```
+
+```csharp
+var pic = Pic.Parse("X(5)");
+
+// 宣告長度不夠
+CodecBuilder.ForPic(pic).Encode("中文字"); // >> "中文?"
+```
+
 <br>
 
-## 整數
+## 數字 (Numeric)
 
+整數:
 | COBOL PIC                   | 位數 (n) | SIGNED 對應 (範圍)                                                           | UNSIGNED 對應 (範圍)                                           |  編碼  |  解碼  |
 | :-------------------------- | :-----: | :--------------------------------------------------------------------------- | :------------------------------------------------------------- | :----: | :----: |
 | `PIC 9(1)` \~ `PIC 9(2)`<br>`PIC S9(1)` \~ `PIC S9(2)`     | 1–2 位   | `sbyte`<br>範圍 **-128 \~ 127**                                              | `byte`<br>範圍 **0 \~ 255**                         | ✅ | ✅ |
@@ -158,22 +135,46 @@ CobolValueCodec.ForPic(pic).Decode("12L"); // >> -12.3
 | `PIC 9(10)` \~ `PIC 9(18)`<br>`PIC S9(10)` \~ `PIC S9(18)` | 10–18 位 | `long`<br>範圍 **-9,223,372,036,854,775,808 \~ 9,223,372,036,854,775,807**   | `ulong`<br>範圍 **0 \~ 18,446,744,073,709,551,615** | ✅ | ✅ |
 | `PIC 9(19)` \~ `PIC 9(28)`<br>`PIC S9(19)` \~ `PIC S9(28)` | 19-28 位 | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**                           | `decimal (scale = 0)`<br>範圍 **約 ±7.9228x10^28**  | ✅ | ✅ |
 
-不支援超過`28`位的整數位數  
+> 不支援超過`28`位的整數位數  
 
 <br>
 
-## 小數
-
+浮點數:
 | COBOL PIC        |  位數 (n+m) |  說明                         |       對應         |  編碼  |  解碼  |
 | ---------------- |  :-------:  | :--------------------------- | :----------------- | :----: | :----: |
 | `PIC 9(n)V9(m)`  |   1–28 位   | 無號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | ✅ | ✅ |
 | `PIC S9(n)V9(m)` |   1–28 位   | 有號小數，整數 n 位，小數 m 位 | `decimal`<br>範圍 **±1.0x10^-28 \~ ±7.9228x10^28** | ✅ | ✅ |
 
-不支援超過`28`位的精度位數組合  
+> 不支援超過`28`位的精度位數組合  
+
+### 使用方式:
+```csharp
+var pic = Pic.Parse("9(3)");
+
+// Encode: CLR → COBOL PICTURE
+CodecBuilder.ForPic(pic).Encode(123); // >> "123"
+
+// Decode: COBOL PICTURE → CLR
+CodecBuilder.ForPic(pic).Decode("123"); // >> 123
+```
+
+```csharp
+var pic = Pic.Parse("S9(3)V9");
+
+// Encode: CLR → COBOL PICTURE
+CodecBuilder.ForPic(pic).Encode( 12.3); // >> "012C"
+CodecBuilder.ForPic(pic).Encode(-12.3); // >> "012L"
+
+// Encode: CLR → COBOL PICTURE (ACUCOBOL)
+CodecBuilder.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Decode(12.3); // >> "0123"
+
+// Decode: COBOL PICTURE → CLR
+CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
+```
 
 <br><br>
 
-# 特殊資料型態對照表
+# 語意(Semantic)資料
 
 ## 日期
 
@@ -181,6 +182,10 @@ CobolValueCodec.ForPic(pic).Decode("12L"); // >> -12.3
 | ---------------------------- | ------ | :-----: | :----: | :----: | :--: |
 | `PIC X(8)` (YYYYMMDD)        |  日期  | `DateOnly` | ✅ | ✅ | 西元年 |
 | `PIC X(7)` (yyyMMDD)         |  日期  | `DateOnly` | ✅ | ✅ | 民國年 |
+
+### 使用方式:
+```csharp
+```
 
 <br>
 
@@ -190,6 +195,10 @@ CobolValueCodec.ForPic(pic).Decode("12L"); // >> -12.3
 | ---------------------------- | ------- | :-------: | :----: | :----: |
 | `PIC X(6)` (HHmmss)          | 時間     | `TimeOnly` | -- | -- |
 | `PIC X(9)` (HHmmssSSS)       | 時間     | `TimeOnly` | -- | -- |
+
+### 使用方式:
+```csharp
+```
 
 <br>
 
@@ -201,9 +210,13 @@ CobolValueCodec.ForPic(pic).Decode("12L"); // >> -12.3
 
 > 其他戳記格式可透過 `PIC X(7)` (yyyMMDD) + `PIC X(6)` (HHmmss) = `PIC X(13)` (yyyMMDDHHmmss) 的方式進行組合
 
+### 使用方式:
+```csharp
+```
+
 <br><br>
 
-# 正負號數字`S9`字串轉換
+# `S9`數字轉換規則
 `Signed overpunch`源自Hollerith(赫爾曼·何樂禮)打孔卡編碼，為解決正負號帶來的字元浪費與孔位長度變動的問題，將`數字`與`正負號`整併至一個孔位解讀。目前已知COBOL的對應關係有：
 
 |  數 字  | ca,<br>cb,<br>cm,<br>cr<br>Positive | ci,<br>cn<br>Positive | ca,<br>ci,<br>cn<br>Negative | cb<br>Negative | cm<br>Negative | cr<br>Negative |
@@ -258,7 +271,6 @@ LEADING SEPARATE   '-'  '1'  '2'  '3'  '4'  '5'  '6'
 
 'S9(1)V9': '12C' >> 2.3
 'S9(1)V9': '12L' >> -2.3
-
 ```
 
 <br>
@@ -271,19 +283,17 @@ LEADING SEPARATE   '-'  '1'  '2'  '3'  '4'  '5'  '6'
 'S9(3)V9': 'J23' >> -12.3
 
 'S9(1)V9': 'J23' >> `Exception: Unknown overpunch char: '2'`
-
 ```
 
 ```csharp
 // Micro Focus COBOL (-Dcm) and Leading
 
 'S9(1)V9': 'J23' >> 2.3
-
 ```
 
 <br><br>
 
-# COMP-3 (planning)
+# `COMP-3` 轉換規則 (planning)
 
 |  Sign  | Trailing byte |
 | ---- | :--: |
