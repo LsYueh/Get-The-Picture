@@ -1,12 +1,14 @@
 using System.Text;
 
 using GetThePicture.Cobol.Picture;
+using GetThePicture.Codec.Decoder.Category;
+using GetThePicture.Codec.Decoder.Semantic;
 using GetThePicture.Codec.Options;
 using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Codec.Decoder;
 
-internal static class CobolPicDecoder
+internal static class PicDecoder
 {
     /// <summary>
     /// COBOL PICTURE DISPLAY → CP950 → CLR value
@@ -31,7 +33,7 @@ internal static class CobolPicDecoder
         {
             // TODO: 根據PicClause來處理cp950Bytes...
             case PicSemantic.GregorianDate : 
-            case PicSemantic.MinguoDate    : 
+            case PicSemantic.MinguoDate    : return DateOnlyDecoder.Decode(display, pic);
             case PicSemantic.Time6         : 
             case PicSemantic.Time9         : 
             case PicSemantic.Timestamp14   : 
@@ -46,9 +48,9 @@ internal static class CobolPicDecoder
 #pragma warning disable IDE0066 // Convert switch statement to expression
         switch (pic.BaseType)
         {
-            case PicBaseType.Numeric     : return      CobolNumericDecoder.Decode(cp950Bytes, pic, codecOptions);
-            case PicBaseType.Alphanumeric: return CobolAlphanumericDecoder.Decode(cp950Bytes, pic);
-            case PicBaseType.Alphabetic  : return   CobolAlphabeticDecoder.Decode(cp950Bytes, pic);
+            case PicBaseType.Numeric     : return      NumericDecoder.Decode(cp950Bytes, pic, codecOptions);
+            case PicBaseType.Alphanumeric: return AlphanumericDecoder.Decode(cp950Bytes, pic);
+            case PicBaseType.Alphabetic  : return   AlphabeticDecoder.Decode(cp950Bytes, pic);
             default:
                 throw new NotSupportedException($"Unsupported PIC Data Type [Decode] : {pic.BaseType}");
         }

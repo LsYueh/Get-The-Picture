@@ -3,9 +3,9 @@ using System.Text;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Utils;
 
-namespace GetThePicture.Codec.Decoder;
+namespace GetThePicture.Codec.Decoder.Category;
 
-internal static class CobolAlphanumericDecoder
+internal static class AlphanumericDecoder
 {
     /// <summary>
     /// Decoder for COBOL PIC X.

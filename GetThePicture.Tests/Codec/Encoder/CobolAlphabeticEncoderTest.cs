@@ -10,7 +10,7 @@ public class CobolAlphabeticEncoderTest
     public void Encode_Alphabetic()
     {
         var pic = Pic.Parse("A(5)");
-        string result = CobolValueCodec.ForPic(pic).Encode("AbC");
+        string result = CodecBuilder.ForPic(pic).Encode("AbC");
 
         Assert.AreEqual("AbC  ", result);
     }
@@ -19,7 +19,7 @@ public class CobolAlphabeticEncoderTest
     public void Encode_Alphabetic_Extra()
     {
         var pic = Pic.Parse("A(5)");
-        string result = CobolValueCodec.ForPic(pic).Encode("AbC  fGh");
+        string result = CodecBuilder.ForPic(pic).Encode("AbC  fGh");
 
         Assert.AreEqual("AbC  ", result);
     }
@@ -34,7 +34,7 @@ public class CobolAlphabeticEncoderTest
     {
         var pic = Pic.Parse("A(5)");
 
-        CobolValueCodec.ForPic(pic).Encode("AbC@ ");
+        CodecBuilder.ForPic(pic).Encode("AbC@ ");
     }
 
     [TestMethod]
@@ -43,7 +43,7 @@ public class CobolAlphabeticEncoderTest
     {
         var pic = Pic.Parse("A(5)");
 
-        CobolValueCodec.ForPic(pic).Encode("12345");
+        CodecBuilder.ForPic(pic).Encode("12345");
     }
 
     [TestMethod]
@@ -52,6 +52,6 @@ public class CobolAlphabeticEncoderTest
     {
         var pic = Pic.Parse("A(7)");
 
-        CobolValueCodec.ForPic(pic).Encode("中文字 ");
+        CodecBuilder.ForPic(pic).Encode("中文字 ");
     }
 }

@@ -17,7 +17,7 @@ public class CobolNumericEncoderTest
     public void Encode_Double_Default(object value, string picString, string expected)
     {
         var pic = Pic.Parse(picString);
-        string result = CobolValueCodec.ForPic(pic).Encode(value);
+        string result = CodecBuilder.ForPic(pic).Encode(value);
 
         Assert.AreEqual(expected, result);
     }
@@ -31,7 +31,7 @@ public class CobolNumericEncoderTest
     public void Encode_Double_With_Sign_Default(object value, string picString, string expected)
     {
         var pic = Pic.Parse(picString);
-        string result = CobolValueCodec.ForPic(pic).Encode(value);
+        string result = CodecBuilder.ForPic(pic).Encode(value);
 
         Assert.AreEqual(expected, result);
     }
@@ -47,7 +47,7 @@ public class CobolNumericEncoderTest
     public void Encode_Negative_Double_With_Sign_Default(object value, string picString, string expected)
     {
         var pic = Pic.Parse(picString);
-        string result = CobolValueCodec.ForPic(pic).Encode(value);
+        string result = CodecBuilder.ForPic(pic).Encode(value);
 
         Assert.AreEqual(expected, result);
     }
@@ -59,7 +59,7 @@ public class CobolNumericEncoderTest
     public void Encode_WithDataStorageOption_ACUCOBOL(object value, string picString, string expected)
     {
         var pic = Pic.Parse(picString);
-        string result = CobolValueCodec.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Encode(value);
+        string result = CodecBuilder.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Encode(value);
 
         Assert.AreEqual(expected, result);
     }
@@ -73,6 +73,6 @@ public class CobolNumericEncoderTest
     {
         var pic = Pic.Parse("S9(5)V9");
 
-        Assert.ThrowsException<NotSupportedException>(() => CobolValueCodec.ForPic(pic).Encode("中文字"));
+        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Encode("中文字"));
     }
 }

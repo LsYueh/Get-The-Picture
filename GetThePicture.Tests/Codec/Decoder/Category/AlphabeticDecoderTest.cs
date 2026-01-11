@@ -1,16 +1,16 @@
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
 
-namespace GetThePicture.Tests.Codec.Decoder;
+namespace GetThePicture.Tests.Codec.Decoder.Category;
 
 [TestClass]
-public class CobolAlphabeticDecoderTest
+public class AlphabeticDecoderTest
 {
     [TestMethod]
     public void Decode_Alphabetic_TrimsRightSpaces()
     {
         var pic = Pic.Parse("A(5)");
-        object result = CobolValueCodec.ForPic(pic).Decode("AbC  ");
+        object result = CodecBuilder.ForPic(pic).Decode("AbC  ");
 
         Assert.AreEqual("AbC", result);
     }
@@ -19,7 +19,7 @@ public class CobolAlphabeticDecoderTest
     public void Decode_Alphabetic_Lesser_Extra_TrimsRightSpaces()
     {
         var pic = Pic.Parse("A(5)");
-        object result = CobolValueCodec.ForPic(pic).NoStrict().Decode("AbC  fGh");
+        object result = CodecBuilder.ForPic(pic).NoStrict().Decode("AbC  fGh");
 
         Assert.AreEqual("AbC", result);
     }
@@ -34,7 +34,7 @@ public class CobolAlphabeticDecoderTest
     {
         var pic = Pic.Parse("A(5)");
 
-        CobolValueCodec.ForPic(pic).Decode("AbC@ ");
+        CodecBuilder.ForPic(pic).Decode("AbC@ ");
     }
 
     [TestMethod]
@@ -43,7 +43,7 @@ public class CobolAlphabeticDecoderTest
     {
         var pic = Pic.Parse("A(5)");
 
-        CobolValueCodec.ForPic(pic).Decode("12345");
+        CodecBuilder.ForPic(pic).Decode("12345");
     }
 
     [TestMethod]
@@ -52,6 +52,6 @@ public class CobolAlphabeticDecoderTest
     {
         var pic = Pic.Parse("A(7)");
 
-        CobolValueCodec.ForPic(pic).Decode("中文字 ");
+        CodecBuilder.ForPic(pic).Decode("中文字 ");
     }
 }
