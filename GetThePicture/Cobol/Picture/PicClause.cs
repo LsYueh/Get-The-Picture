@@ -7,6 +7,11 @@ public class PicClause
 {
     public PicBaseType BaseType { get; set; }
     public PicSemantic Semantic { get; set; }
+
+    /// <summary>
+    /// Only meaningful when BaseType is "Numeric"
+    /// </summary>
+    public ComputationalItem Comp { get; set; } = ComputationalItem.None;
     
     public bool Signed { get; set; } = false;
 
