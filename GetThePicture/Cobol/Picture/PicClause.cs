@@ -11,7 +11,7 @@ public class PicClause
     /// <summary>
     /// Only meaningful when BaseType is "Numeric"
     /// </summary>
-    public ComputationalItem Comp { get; set; } = ComputationalItem.None;
+    public ComputationalItems Comp { get; set; } = ComputationalItems.None;
     
     public bool Signed { get; set; } = false;
 
