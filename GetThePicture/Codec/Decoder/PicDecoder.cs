@@ -23,9 +23,9 @@ internal static class PicDecoder
         byte[] cp950Bytes = cp950.GetBytes(display);
 
         // 嚴格長度驗證（COBOL 是 fixed-length）
-        if (codecOptions.Strict && (cp950Bytes.Length != pic.TotalLength))
+        if (codecOptions.Strict && (cp950Bytes.Length != pic.DigitCount))
         {
-            throw new FormatException($"DISPLAY length mismatch. Expected {pic.TotalLength}, actual {cp950Bytes.Length}.");
+            throw new FormatException($"DISPLAY length mismatch. Expected {pic.DigitCount}, actual {cp950Bytes.Length}.");
         }
 
 #pragma warning disable IDE0066 // Convert switch statement to expression
@@ -45,13 +45,13 @@ internal static class PicDecoder
     private static object DecodeBaseType(byte[] cp950Bytes, PicClause pic, CodecOptions codecOptions)
     {
 #pragma warning disable IDE0066 // Convert switch statement to expression
-        switch (pic.BaseType)
+        switch (pic.BaseClass)
         {
-            case PicBaseType.Numeric     : return      NumericDecoder.Decode(cp950Bytes, pic, codecOptions);
-            case PicBaseType.Alphanumeric: return AlphanumericDecoder.Decode(cp950Bytes, pic);
-            case PicBaseType.Alphabetic  : return   AlphabeticDecoder.Decode(cp950Bytes, pic);
+            case PicBaseClass.Numeric     : return      NumericDecoder.Decode(cp950Bytes, pic, codecOptions);
+            case PicBaseClass.Alphanumeric: return AlphanumericDecoder.Decode(cp950Bytes, pic);
+            case PicBaseClass.Alphabetic  : return   AlphabeticDecoder.Decode(cp950Bytes, pic);
             default:
-                throw new NotSupportedException($"Unsupported PIC Data Type [Decode] : {pic.BaseType}");
+                throw new NotSupportedException($"Unsupported PIC Data Type [Decode] : {pic.BaseClass}");
         }
 #pragma warning restore IDE0066 // Convert switch statement to expression
     }

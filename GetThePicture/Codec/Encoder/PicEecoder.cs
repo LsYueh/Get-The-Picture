@@ -21,12 +21,12 @@ internal static class PicEecoder
         DisplayValue displayValue = ToDisplayValue(value, pic);
 
         // Display Value → COBOL PICTURE DISPLAY
-        return pic.BaseType switch
+        return pic.BaseClass switch
         {
-            PicBaseType.Numeric      =>      NumericEncoder.Encode(displayValue, pic, codecOptions),
-            PicBaseType.Alphanumeric => AlphanumericEncoder.Encode(displayValue, pic),
-            PicBaseType.Alphabetic   =>   AlphabeticEncoder.Encode(displayValue, pic),
-            _ => throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseType}"),
+            PicBaseClass.Numeric      =>      NumericEncoder.Encode(displayValue, pic, codecOptions),
+            PicBaseClass.Alphanumeric => AlphanumericEncoder.Encode(displayValue, pic),
+            PicBaseClass.Alphabetic   =>   AlphabeticEncoder.Encode(displayValue, pic),
+            _ => throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseClass}"),
         };
     }
 
@@ -61,6 +61,7 @@ internal static class PicEecoder
 
     private static DisplayValue DvInteger(object value)
     {
+        // TODO: Cast Bug...
         long number = value switch
         {
             sbyte v  => v,
@@ -119,6 +120,9 @@ internal static class PicEecoder
 
     private static DisplayValue DvDateOnly(DateOnly date, PicClause pic)
     {
+        if (pic.Usage != PicUsage.Display)
+            throw new NotSupportedException($"'Date' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
+            
         return pic.Semantic switch
         {
             PicSemantic.GregorianDate => DisplayValue.FromNumber(date.ToString("yyyyMMdd")),
@@ -141,6 +145,9 @@ internal static class PicEecoder
 
     private static DisplayValue DvTimeOnly(TimeOnly dt, PicClause pic)
     {
+        if (pic.Usage != PicUsage.Display)
+            throw new NotSupportedException($"'Time' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
+
         return pic.Semantic switch
         {
             PicSemantic.Time6 => DisplayValue.FromNumber(dt.ToString("HHmmss"   , CultureInfo.InvariantCulture)),
@@ -151,6 +158,9 @@ internal static class PicEecoder
 
     private static DisplayValue DvDateTime(DateTime dt, PicClause pic)
     {
+        if (pic.Usage != PicUsage.Display)
+            throw new NotSupportedException($"'Timestamp' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
+            
         if (pic.Semantic != PicSemantic.Timestamp14)
         {
             throw new NotSupportedException($"DateTime can only be encoded as Timestamp14, but was {pic.Semantic}");

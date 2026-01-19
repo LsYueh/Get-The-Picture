@@ -56,15 +56,31 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 <br><br>
 
-# COBOL PICTURE (PIC) 子句
+# Usage 子句
+
+`USAGE` 定義欄位在記憶體中的儲存方式，影響資料的物理編碼與運算行為。  
+- DISPLAY（預設）：以可讀字元存放，每個數字或字母對應一個 byte，便於輸入輸出與檢視。DISPLAY numeric 可能包含 Overpunch 符號。  
+- COMP / COMP-5（Binary）：以二進位形式存放，運算效率高，但不可直接讀取文字。  
+- COMP-3（Packed Decimal）：將兩個數字壓縮在一個 nibble，最後一個 nibble 用於符號，節省空間且方便算術運算。  
+
+<br>
+
+| Class | Category/Semantic | Usage |
+| :---: | :---------------: | ----- |
+| Alphabetic | Alphabetic | DISPLAY |
+| Alphanumeric | Alphanumeric | DISPLAY |
+| Date-Time <br> (Alphanumeric) | Date <br> Time <Timestamp> | DISPLAY |
+| Numeric | Numeric | DISPLAY <br> COMP (binary) <br> COMP-3 (packed decimal) |
+
+<br><br>
+
+# PICTURE (PIC) 子句
 
 支援PIC語法  
 
 | Alphabetic | Alphanumeric | Numeric | Numeric (With Sign) |
 | :--------: | :----------: | :-----: | :-----------------: |
 | PIC A.. <br> PIC A(n) | PIC X.. <br> PIC X(n) | PIC 9... <br> PIC 9(n) <br> PIC 9...V9... <br> PIC 9(n)V9(m) <br> PIC 9(n)V9... | PIC S9... <br> PIC S9(n) <br> PIC S9...V9... <br> PIC S9(n)V9(m) <br> PIC S9(n)V9... |
-
-Ref. IBM COBOL for Linux on x86 (1.2.0) : [Classes and categories of data](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=relationships-classes-categories-data)  
 
 <br><br>
 
@@ -109,6 +125,14 @@ Copybook 通常包含：
 # 其他說明
 
 • [`S9`數字轉換規則](docs/other-topics/pic-s9-overpunch.md)  
-• [`COMP-3` 轉換規則](docs/other-topics/cobol-computational.md) (planning)  
+• [`COMPUTATIONAL` 轉換規則](docs/other-topics/cobol-computational.md) (planning)  
+
+<br><br>
+
+# 參考
+
+Rocket Software ACUCOBOL-GT extend (V10.5.0) : [USAGE Clause](https://docs.rocketsoftware.com/zh-TW/bundle/acucobolgt_dg_1050_html/page/BKRFRFDATAS043.html)  
+IBM Enterprise COBOL for z/OS (6.5.0) : [USAGE clause](https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=entry-usage-clause)  
+IBM COBOL for Linux on x86 (1.2.0) : [Classes and categories of data](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=relationships-classes-categories-data)  
 
 <br><br>

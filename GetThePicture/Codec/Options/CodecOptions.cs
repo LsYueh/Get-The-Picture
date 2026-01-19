@@ -18,4 +18,11 @@ public sealed class CodecOptions
     /// `SIGN IS TRAILING` is the default.
     /// </summary>
     public SignOptions Sign { get; set; } = SignOptions.IsTrailing;
+
+    /// <summary>
+    /// BINARY specifies the representation format of binary data items.
+    /// <br/>
+    /// Ref. <see href="https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=options-binary">BINARY</see>
+    /// </summary>
+    public BinaryOptions Binary { get; set; } = BinaryOptions.Normal;
 }

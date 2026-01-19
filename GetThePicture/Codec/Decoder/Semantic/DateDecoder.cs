@@ -8,8 +8,13 @@ internal static class DateDecoder
 {
     public static DateOnly Decode(string display, PicClause pic)
     {
-        if (pic.BaseType == PicBaseType.Numeric && pic.Signed)
+        if (pic.BaseClass == PicBaseClass.Numeric && pic.Signed)
             throw new NotSupportedException($"Unsupported DateOnly base type: PIC S9");
+
+        if (pic.Usage != PicUsage.Display)
+            throw new NotSupportedException($"'Date' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
+
+        // TODO: 看看要不要支援 COMP-3 (PACKED-DECIMAL)
 
         return pic.Semantic switch
         {

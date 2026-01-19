@@ -1,4 +1,67 @@
-# `COMP-3` 轉換規則
+# `COMP` (Binary) / `COMP-5` (Native Binary)
+COMP（Binary / Computational）是 COBOL 中最早、也是效能最佳的數值儲存格式之一。  
+與 DISPLAY 或 COMP-3 不同，COMP 使用 CPU 原生整數（二補數, two’s complement） 表示數值，不包含任何字元或 decimal encoding。  
+
+<br>
+
+規則（主流 COBOL 編譯器通則）
+| Digits (`n`) | Binary Length | C# 對應型別 (Signed) | C# 對應型別 (Unsigned) |
+| ------------ | ------------- | ---------------- | ------------------ |
+| 1 – 4        | 2 bytes       | `short`          | `ushort`           |
+| 5 – 9        | 4 bytes       | `int`            | `uint`             |
+| 10 – 18      | 8 bytes       | `long`           | `ulong`            |
+
+> ⚠️實際分配結果取決於 編譯器實作，但以上對應為 IBM / Micro Focus / GnuCOBOL 的通用行為。  
+
+<br>
+
+## Storage Occupied
+
+```cobol
+01 WS-A PIC 9(4) COMP.
+01 WS-B PIC 9(5) COMP.
+01 WS-C PIC 9(10) COMP.
+```
+
+| Item | PIC        | Digits | Storage | 說明      |
+| ---- | ---------- | :----: | ------- | ------- |
+| WS-A | 9(4) COMP  | 4      | 2 bytes | `short` |
+| WS-B | 9(5) COMP  | 5      | 4 bytes | `int`   |
+| WS-C | 9(10) COMP | 10     | 8 bytes | `long`  |
+
+<br>
+
+## Signed vs Unsigned
+
+```cobol
+PIC S9(4) COMP.   *> signed
+PIC  9(4) COMP.   *> unsigned
+```
+
+| PIC          | Signed | C# Decode 型別            |
+| ------------ | ------ | ----------------------- |
+| `S9(n) COMP` | Yes    | `short / int / long`    |
+| `9(n) COMP`  | No     | `ushort / uint / ulong` |
+
+### 補數行為說明
+- 所有 signed COMP 數值皆使用 two’s complement
+- C# BitConverter.GetBytes(short/int/long) 與 COBOL 行為一致
+- 不需額外處理 sign bit
+
+<br>
+
+## COMP vs COMP-5
+
+| Picture Clause | COMP Range | COMP-5 Range |
+| :------------- | ---------- | ------------ |
+|     PIC 9      |    0 ~ 9   |      0 ~ 65535  |
+|     PIC S99    |  -99 ~ +99 | -32768 ~ +32767 |
+|     PIC 999    |    0 ~ 999 |      0 ~ 65535  |
+
+
+<br><br>
+
+# `COMP-3` (Packed Decimal)
 
 |  Sign  | Trailing byte |
 | ---- | :--: |
@@ -8,18 +71,11 @@
 |-Dca/-Dcb/-Dci/-Dcm/-Dcr `Unsigned` | x'0F' |
 |-Dcv `Unsigned` | x'0C' |
 
-<br>
+<br><br>
 
-## Difference between COMP and COMP-3
+# 參考
 
-|  COMP  | COMP-3 |
-| :----: | :----: |
-| It represents the data in pure binary form. | It represents the data in packed decimal form. |
-| Can use only `9` and `S` in PIC Clause. | Ccan use `9` , `S` , `V` in PIC Clause. |
-| COMP usage stores the data in `half word` or in `full word`, depending on the size of the data. | COMP3 usage stores `1 digit` in `half byte (i.e. 4 bits)` and a separate `1 bit` is reserved for the sign, which is stored at the right side of the data. |
-| The memory to be occupied by the data according to the length is predefined i.e. : <br> • S9(01) - S9(04) : 16 bits (2 bytes) <br> • S9(05) - S9(09) :  32 bits (4 bytes) <br> • S9(10) - S9(18) :  64 bits (8 bytes) | The memory to be occupied by the data is defined by the following formula: <br> • (length of variable + 1)/2 bytes. <br> <br> Example : The memory occupied by S9(3) is: <br> (3+1)/2 i.e. 2 bytes. |
-| COMP does not occupy extra space to store sign. | In COMP3 sign in compulsorily stored at right side and thus it occupies an extra space. |
-
-Ref. [Difference between COMP and COMP3](https://www.geeksforgeeks.org/cobol/difference-between-comp-and-comp3/)
+IBM COBOL for Linux on x86 (1.2.0) : [Computational items](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=clause-computational-items)  
+IBM Enterprise COBOL for z/OS (6.5.0) : [TRUNC](https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=options-trunc)
 
 <br><br>

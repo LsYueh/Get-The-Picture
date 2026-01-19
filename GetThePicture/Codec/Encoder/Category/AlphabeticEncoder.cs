@@ -10,6 +10,9 @@ internal static class AlphabeticEncoder
 {
     public static string Encode(DisplayValue displayValue, PicClause pic)
     {
+        if (pic.Usage != PicUsage.Display)
+            throw new NotSupportedException($"PIC A does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
+        
         Encoding cp950 = EncodingFactory.CP950;
 
         var text = displayValue switch
@@ -21,7 +24,7 @@ internal static class AlphabeticEncoder
 
         byte[] buffer = cp950.GetBytes(text);
 
-        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadEnd(buffer, pic.TotalLength);
+        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadEnd(buffer, pic.DigitCount);
 
         // PIC A 檢查
         for (int i = 0; i < fieldBytes.Length; i++)

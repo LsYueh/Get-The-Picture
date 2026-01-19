@@ -1,4 +1,9 @@
 using System.Collections.ObjectModel;
+using System.Text;
+
+using GetThePicture.Cobol.Picture.OverpunchBase;
+using GetThePicture.Codec.Options;
+using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Cobol.Picture;
 
@@ -29,146 +34,14 @@ public enum SignOptions {
 }
 
 /// <summary>
-/// Overpunch Value
-/// </summary>
-/// <param name="sign"></param>
-/// <param name="digit"></param>
-public readonly struct OpVal(decimal sign, char digit)
-{
-    public decimal Sign { get; } = sign;
-    public char Digit { get; } = digit;
-}
-
-/// <summary>
-/// Overpunch Codex<br/>
-/// Data Description Entry : <see href="https://docs.rocketsoftware.com/zh-TW/bundle/acucobolgt_dg_1050_html/page/BKRFRFDATAS043.html">USAGE Clause</see>
-/// </summary>
-public static class OpCodex
-{
-    /// <summary>
-    /// -Dca, -Dcb, -Dcm, -Dcr
-    /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_POSITIVE_01 = new()
-    {
-        { '0', new OpVal(1.0m, '0') },
-        { '1', new OpVal(1.0m, '1') },
-        { '2', new OpVal(1.0m, '2') },
-        { '3', new OpVal(1.0m, '3') },
-        { '4', new OpVal(1.0m, '4') },
-        { '5', new OpVal(1.0m, '5') },
-        { '6', new OpVal(1.0m, '6') },
-        { '7', new OpVal(1.0m, '7') },
-        { '8', new OpVal(1.0m, '8') },
-        { '9', new OpVal(1.0m, '9') },
-    };
-
-    public static readonly Dictionary<OpVal, char> OP_POSITIVE_01_REVERSE = OP_POSITIVE_01.ToDictionary(kv => kv.Value, kv => kv.Key);
-
-    /// <summary>
-    /// -Dci, -Dcn
-    /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_POSITIVE_02 = new()
-    {
-        { '{', new OpVal(1.0m, '0') },
-        { 'A', new OpVal(1.0m, '1') },
-        { 'B', new OpVal(1.0m, '2') },
-        { 'C', new OpVal(1.0m, '3') },
-        { 'D', new OpVal(1.0m, '4') },
-        { 'E', new OpVal(1.0m, '5') },
-        { 'F', new OpVal(1.0m, '6') },
-        { 'G', new OpVal(1.0m, '7') },
-        { 'H', new OpVal(1.0m, '8') },
-        { 'I', new OpVal(1.0m, '9') },
-    };
-
-    public static readonly Dictionary<OpVal, char> OP_POSITIVE_02_REVERSE = OP_POSITIVE_02.ToDictionary(kv => kv.Value, kv => kv.Key);
-
-    /// <summary>
-    /// -Dca, -Dci, -Dcn
-    /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_01 = new()
-    {
-        { '}', new OpVal(-1.0m, '0') },
-        { 'J', new OpVal(-1.0m, '1') },
-        { 'K', new OpVal(-1.0m, '2') },
-        { 'L', new OpVal(-1.0m, '3') },
-        { 'M', new OpVal(-1.0m, '4') },
-        { 'N', new OpVal(-1.0m, '5') },
-        { 'O', new OpVal(-1.0m, '6') },
-        { 'P', new OpVal(-1.0m, '7') },
-        { 'Q', new OpVal(-1.0m, '8') },
-        { 'R', new OpVal(-1.0m, '9') },
-    };
-
-    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_01_REVERSE = OP_NEGATIVE_01.ToDictionary(kv => kv.Value, kv => kv.Key);
-
-    /// <summary>
-    /// -Dcb
-    /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_02 = new()
-    {
-        { '@', new OpVal(-1.0m, '0') },
-        { 'A', new OpVal(-1.0m, '1') },
-        { 'B', new OpVal(-1.0m, '2') },
-        { 'C', new OpVal(-1.0m, '3') },
-        { 'D', new OpVal(-1.0m, '4') },
-        { 'E', new OpVal(-1.0m, '5') },
-        { 'F', new OpVal(-1.0m, '6') },
-        { 'G', new OpVal(-1.0m, '7') },
-        { 'H', new OpVal(-1.0m, '8') },
-        { 'I', new OpVal(-1.0m, '9') },
-    };
-
-    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_02_REVERSE = OP_NEGATIVE_02.ToDictionary(kv => kv.Value, kv => kv.Key);
-
-    /// <summary>
-    /// -Dcm
-    /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_03 = new()
-    {
-        { 'p', new OpVal(-1.0m, '0') },
-        { 'q', new OpVal(-1.0m, '1') },
-        { 'r', new OpVal(-1.0m, '2') },
-        { 's', new OpVal(-1.0m, '3') },
-        { 't', new OpVal(-1.0m, '4') },
-        { 'u', new OpVal(-1.0m, '5') },
-        { 'v', new OpVal(-1.0m, '6') },
-        { 'w', new OpVal(-1.0m, '7') },
-        { 'x', new OpVal(-1.0m, '8') },
-        { 'y', new OpVal(-1.0m, '9') },
-    };
-
-    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_03_REVERSE = OP_NEGATIVE_03.ToDictionary(kv => kv.Value, kv => kv.Key);
-
-    /// <summary>
-    /// -Dcr
-    /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_04 = new()
-    {
-        { ' ', new OpVal(-1.0m, '0') }, // (space)
-        { '!', new OpVal(-1.0m, '1') },
-        { '"', new OpVal(-1.0m, '2') }, // (double-quote)
-        { '#', new OpVal(-1.0m, '3') },
-        { '$', new OpVal(-1.0m, '4') },
-        { '%', new OpVal(-1.0m, '5') },
-        { '&', new OpVal(-1.0m, '6') },
-        { '\'',new OpVal(-1.0m, '7') }, // (single-quote)
-        { '(', new OpVal(-1.0m, '8') },
-        { ')', new OpVal(-1.0m, '9') },
-    };
-
-    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_04_REVERSE = OP_NEGATIVE_04.ToDictionary(kv => kv.Value, kv => kv.Key);
-}
-
-/// <summary>
 /// 
 /// </summary>
-public static class OverpunchCode
+internal static class OverpunchCodex
 {
     public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>> Map;
     public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>> ReversedMap;
 
-    static OverpunchCode()
+    static OverpunchCodex()
     {
         Map = BuildMap();
         ReversedMap = BuildReversedMap();
@@ -222,5 +95,129 @@ public static class OverpunchCode
         foreach (var kv in a) dict[kv.Key] = kv.Value;
         foreach (var kv in b) dict[kv.Key] = kv.Value;
         return dict;
+    }
+}
+
+public static class Overpunch
+{
+    /// <summary>
+    /// PIC 9/S9 → 符號(sign)與數字文(numeric)
+    /// </summary>
+    /// <param name="fieldBytes"></param>
+    /// <param name="pic"></param>
+    /// <param name="options"></param>
+    /// <param name="sign">符號</param>
+    /// <returns></returns>
+    /// <exception cref="FormatException"></exception>
+    public static string Decode(ReadOnlySpan<byte> fieldBytes, PicClause pic, CodecOptions options, out decimal sign)
+    {
+        byte[] buffer = new byte[fieldBytes.Length];
+        fieldBytes.CopyTo(buffer);
+
+        sign = 1.0m;
+
+        if (pic.Signed)
+        {
+            Index index = options.Sign switch
+            {
+                SignOptions.IsTrailing => ^1,
+                SignOptions.IsLeading  => 0,
+                _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
+            };
+
+            char key = (char)(fieldBytes[index] & 0x7F); // ASCII overpunch
+
+            OpVal opVal = GetOpValue(key, options);
+
+            buffer[index] = (byte) opVal.Digit;
+            sign = opVal.Sign;
+        }
+
+        EnsureAllAsciiDigits(buffer);
+
+        Encoding cp950 = EncodingFactory.CP950;
+        string numeric = cp950.GetString(buffer); // 數字文
+
+        return numeric;
+    }
+
+    /// <summary>
+    /// 符號(sign)與數字文(numeric) → PIC 9/S9
+    /// </summary>
+    /// <param name="sign">符號</param>
+    /// <param name="numeric">數字文</param>
+    /// <param name="pic"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public static byte[] Encode(decimal sign, string numeric, PicClause pic, CodecOptions options)
+    {
+        Encoding cp950 = EncodingFactory.CP950;
+
+        byte[] buffer = cp950.GetBytes(numeric);
+
+        EnsureAllAsciiDigits(buffer);
+
+        if (pic.Signed)
+        {
+            Index index = options.Sign switch
+            {
+                SignOptions.IsTrailing => ^1,
+                SignOptions.IsLeading  => 0,
+                _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
+            };
+
+            char digit = (char)(buffer[index] & 0x7F); // ASCII overpunch
+
+            char value = GetOpKey(new OpVal(sign, digit), options);
+
+            buffer[index] = (byte) value;
+        }
+
+        return buffer;
+    }
+
+    /// <summary>
+    /// Get Overpunch Value
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    /// <exception cref="FormatException"></exception>
+    private static OpVal GetOpValue(char key, CodecOptions options)
+    {
+        if (!OverpunchCodex.Map.TryGetValue(options.DataStorage, out Dictionary<char, OpVal>? codex))
+            throw new FormatException($"Unsupported DataStorage: {options.DataStorage}");
+
+        if (!codex.TryGetValue(key, out OpVal value))
+            throw new FormatException($"Invalid overpunch search key: '{key}'");
+
+        return value;
+    }
+
+    /// <summary>
+    /// Get Overpunch Key
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    /// <exception cref="FormatException"></exception>
+    private static char GetOpKey(OpVal value, CodecOptions options)
+    {
+        if (!OverpunchCodex.ReversedMap.TryGetValue(options.DataStorage, out Dictionary<OpVal, char>? codex))
+            throw new FormatException($"Unsupported DataStorage: {options.DataStorage}");
+
+        if (!codex.TryGetValue(value, out char key))
+            throw new FormatException($"Invalid overpunch search value: '{value}'");
+
+        return key;
+    }
+
+    private static void EnsureAllAsciiDigits(ReadOnlySpan<byte> span)
+    {
+        for (int i = 0; i < span.Length; i++)
+        {
+            if ((uint)(span[i] - (byte)'0') > 9)
+                throw new FormatException($"Invalid digit at index {i+1}"); // Note: 轉成 1-based
+        }
     }
 }

@@ -8,8 +8,11 @@ internal static class TimestampDecoder
 {
     public static DateTime Decode(string display, PicClause pic)
     {
-        if (pic.BaseType == PicBaseType.Numeric && pic.Signed)
+        if (pic.BaseClass == PicBaseClass.Numeric && pic.Signed)
             throw new NotSupportedException($"Unsupported DateTime base type: PIC S9");
+
+        if (pic.Usage != PicUsage.Display)
+            throw new NotSupportedException($"'Timestamp' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
 
         return pic.Semantic switch
         {

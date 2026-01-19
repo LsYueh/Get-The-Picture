@@ -1,6 +1,6 @@
 using GetThePicture.Cobol.Picture;
 
-namespace GetThePicture.Tests.Cobol;
+namespace GetThePicture.Tests.Cobol.Picture;
 
 [TestClass]
 public class PicOverpunchTest
@@ -8,7 +8,7 @@ public class PicOverpunchTest
     [TestMethod]
     public void OverpunchCode_Positive_CI()
     {
-        var OpCode = OverpunchCode.Map[DataStorageOptions.CI];
+        var OpCode = OverpunchCodex.Map[DataStorageOptions.CI];
 
         OpCode.TryGetValue('C', out var info);
 
@@ -19,7 +19,7 @@ public class PicOverpunchTest
     [TestMethod]
     public void OverpunchCode_Negative_CI()
     {
-        var OpCode = OverpunchCode.Map[DataStorageOptions.CI];
+        var OpCode = OverpunchCodex.Map[DataStorageOptions.CI];
 
         OpCode.TryGetValue('}', out var info);
 
@@ -30,7 +30,7 @@ public class PicOverpunchTest
     [TestMethod]
     public void OverpunchCode_Negative_CR()
     {
-        var OpCode = OverpunchCode.Map[DataStorageOptions.CR];
+        var OpCode = OverpunchCodex.Map[DataStorageOptions.CR];
 
         OpCode.TryGetValue(' ', out var info_0);
         Assert.AreEqual(-1, info_0.Sign);
