@@ -5,13 +5,10 @@ namespace GetThePicture.Cobol.Picture;
 /// </summary>
 public class PicClause
 {
-    public PicBaseType BaseType { get; set; }
+    public PicBaseClass BaseClass { get; set; }
     public PicSemantic Semantic { get; set; }
 
-    /// <summary>
-    /// Only meaningful when BaseType is "Numeric"
-    /// </summary>
-    public ComputationalItems Comp { get; set; } = ComputationalItems.None;
+    public PicUsage Usage { get; set; } = PicUsage.Display;
     
     public bool Signed { get; set; } = false;
 
@@ -28,10 +25,20 @@ public class PicClause
     /// <summary>
     /// COBOL-PIC 總佔用資料的長度
     /// </summary>
-    public int TotalLength => IntegerDigits + DecimalDigits;
+    public int DigitCount => IntegerDigits + DecimalDigits;
+
+    public int StorageLength =>
+        Usage switch
+        {
+            PicUsage.Display       => DigitCount,
+            // PicUsage.Binary        => BinarySizeCalculator.For(DigitCount),
+            PicUsage.PackedDecimal => (DigitCount + 1) / 2,
+            // PicUsage.NativeBinary  => NativeBinarySize,
+            _ => throw new NotSupportedException()
+        };
 
     public override string ToString()
     {
-        return $"{BaseType} ({Semantic}), Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={TotalLength}";
+        return $"{BaseClass} ({Semantic}), Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={DigitCount}";
     }
 }

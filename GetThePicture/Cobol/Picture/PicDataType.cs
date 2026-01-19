@@ -3,7 +3,7 @@ namespace GetThePicture.Cobol.Picture;
 /// <summary>
 /// Represents COBOL PIC base types.
 /// </summary>
-public enum PicBaseType
+public enum PicBaseClass
 {
     /// <summary>
     /// 9 / S9
@@ -56,4 +56,30 @@ public enum PicSemantic
     /// Timestamp (YYYYMMDDHHmmss)
     /// </summary>
     Timestamp14,
+}
+
+/// <summary>
+/// 
+/// </summary>
+public enum PicUsage
+{
+    /// <summary>
+    /// DISPLAY (default)
+    /// </summary>
+    Display,
+
+    /// <summary>
+    /// COMP (binary)
+    /// </summary>
+    Binary,
+
+    /// <summary>
+    /// COMP-3 (packed decimal)
+    /// </summary>
+    PackedDecimal,
+
+    /// <summary>
+    /// COMP-5 (native binary)
+    /// </summary>
+    NativeBinary,
 }

@@ -1,3 +1,5 @@
+using GetThePicture.Cobol.Display;
+
 namespace GetThePicture.Cobol.Picture.ComputationalBase;
 
 /// <summary>
@@ -10,7 +12,7 @@ internal static class COMP3
         throw new NotImplementedException();
     }
 
-    public static byte[] Encode(string text, PicClause pic)
+    public static byte[] Encode(DisplayValue displayValue, PicClause pic)
     {
         throw new NotImplementedException();
     }

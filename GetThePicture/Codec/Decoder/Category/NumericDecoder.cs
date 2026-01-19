@@ -1,8 +1,8 @@
 
 using System.Globalization;
 
-using GetThePicture.Cobol;
 using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.ComputationalBase;
 using GetThePicture.Codec.Options;
 using GetThePicture.Codec.Utils;
 
@@ -25,12 +25,21 @@ internal static class NumericDecoder
         // Note: VALUE進來後可能在DISPLAY被S9(n)截位，再轉輸出結果，一般COBOL應該也是這樣的狀況
 
         // 截位或補字處理
-        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(cp950Bytes, pic.TotalLength);
+        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(cp950Bytes, pic.DigitCount);
 
-        // 轉換
+        return pic.Usage switch
+        {
+            PicUsage.Display       => Display_Decode(fieldBytes, pic, options),
+            PicUsage.Binary        =>    COMP.Decode(fieldBytes, pic),
+            PicUsage.PackedDecimal =>   COMP3.Decode(fieldBytes, pic),
+            PicUsage.NativeBinary  =>   COMP5.Decode(fieldBytes, pic),
+            _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
+        };
+    }
+
+    private static object Display_Decode(ReadOnlySpan<byte> fieldBytes, PicClause pic, CodecOptions options)
+    {
         string numeric = Overpunch.Decode(fieldBytes, pic, options, out decimal sign);
-        
-        // 輸出
         return ParseToValue(numeric, sign, pic);
     }
 
@@ -43,11 +52,11 @@ internal static class NumericDecoder
     /// <returns></returns>
     private static object ParseToValue(string numeric, decimal sign, PicClause pic)
     {
-        if (pic.TotalLength > 28)
-            throw new OverflowException( $"PIC {pic} has {pic.IntegerDigits} + {pic.DecimalDigits} = {pic.TotalLength} digit(s), which exceeds the supported maximum (28 digits).");
+        if (pic.DigitCount > 28)
+            throw new OverflowException( $"PIC {pic} has {pic.IntegerDigits} + {pic.DecimalDigits} = {pic.DigitCount} digit(s), which exceeds the supported maximum (28 digits).");
         
-        if (numeric.Length != pic.TotalLength)
-            throw new FormatException($"Numeric length mismatch for PIC. Expected {pic.TotalLength}, actual {numeric.Length}.");
+        if (numeric.Length != pic.DigitCount)
+            throw new FormatException($"Numeric length mismatch for PIC. Expected {pic.DigitCount}, actual {numeric.Length}.");
 
         // 插入小數點
         string withDot = (pic.DecimalDigits > 0) ? numeric.Insert(pic.IntegerDigits, ".") : numeric;
