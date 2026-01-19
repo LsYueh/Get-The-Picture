@@ -7,96 +7,48 @@ namespace GetThePicture.Cobol.Picture.ComputationalBase;
 /// </summary>
 internal static class COMP
 {
+    // TRUNC example 1:
+    //
+    // 01  BIN-VAR     PIC S99 USAGE BINARY.
+    //     MOVE 123451 to BIN-VAR
+    //
+    // +---------------------+---------+-------------+---------+
+    // | Data item           | Decimal | Hex         | Display |
+    // +---------------------+---------+-------------+---------+
+    // | Sender              | 123451  | 00|01|E2|3B | 123451  |
+    // | Receiver TRUNC(STD) | 51      | 00|33       | 51      | <<<
+    // | Receiver TRUNC(OPT) | -7621   | E2|3B       | 2J      |
+    // | Receiver TRUNC(BIN) | -7621   | E2|3B       | 762J    |
+    // +---------------------+---------+-------------+---------+
+    // 
+    //
+    // TRUNC example 2:
+    //
+    // 01  BIN-VAR     PIC 9(6)  USAGE BINARY
+    //     MOVE 1234567891 to BIN-VAR
+    //
+    // +---------------------+------------+-------------+------------+
+    // | Data item           | Decimal    | Hex         | Display    |
+    // +---------------------+------------+-------------+------------+
+    // | Sender              | 1234567891 | 49|96|02|D3 | 1234567891 |
+    // | Receiver TRUNC(STD) | 567891     | 00|08|AA|53 | 567891     | <<<
+    // | Receiver TRUNC(OPT) | 567891     | 53|AA|08|00 | 567891     |
+    // | Receiver TRUNC(BIN) | 1234567891 | 49|96|02|D3 | 1234567891 |
+    // +---------------------+------------+-------------+------------+
+    //
+    // https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=options-trunc
+    
     public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
     {
-        int length = GetByteLength(pic);
+        // TODO: 只實作 TRUNC STD
         
-        if (buffer.Length < length)
-            throw new ArgumentException("Buffer too short");
-
-        Span<byte> bytes = stackalloc byte[length];
-        buffer[..length].CopyTo(bytes);
-
-        if (endian == BinaryOptions.Reversed)
-            bytes.Reverse();
-
-        return length switch
-        {
-            2 => pic.Signed ? BitConverter.ToInt16(bytes) : BitConverter.ToUInt16(bytes),
-            4 => pic.Signed ? BitConverter.ToInt32(bytes) : BitConverter.ToUInt32(bytes),
-            8 => pic.Signed ? BitConverter.ToInt64(bytes) : BitConverter.ToUInt64(bytes),
-            _ => throw new NotSupportedException("Unsupported COMP length")
-        };
+        return COMP5.Decode(buffer, pic, endian);
     }
 
     public static byte[] Encode(DisplayValue displayValue, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
     {
-        if (pic.DecimalDigits > 0)
-            throw new NotSupportedException($"COMP does not support decimal digits. PIC has {pic.DecimalDigits} decimal digits.");
-        
-        if (displayValue.Number is null)
-            throw new ArgumentNullException(nameof(displayValue));
-
-        var number = displayValue.Number.Value;
-
-        // 檢查是否有小數位
-        if (number.Value != decimal.Truncate(number.Value))
-            throw new InvalidOperationException($"COMP Encode can only handle integers. Value {number.Value} has fractional part.");
-
-        int length = GetByteLength(pic);
-
-        // 範圍檢查
-        switch (length)
-        {
-            case 2:
-                if (pic.Signed && (number.Value < short.MinValue || number.Value > short.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 2-byte signed range.");
-                if (!pic.Signed && (number.Value < 0 || number.Value > ushort.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 2-byte unsigned range.");
-                break;
-
-            case 4:
-                if (pic.Signed && (number.Value < int.MinValue || number.Value > int.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 4-byte signed range.");
-                if (!pic.Signed && (number.Value < 0 || number.Value > uint.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 4-byte unsigned range.");
-                break;
-
-            case 8:
-                if (pic.Signed && (number.Value < long.MinValue || number.Value > long.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 8-byte signed range.");
-                if (!pic.Signed && (number.Value < 0 || number.Value > ulong.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 8-byte unsigned range.");
-                break;
-
-            default:
-                throw new NotSupportedException("Unsupported COMP length");
-        }
-
-        Span<byte> bytes = length switch
-        {
-            2 => pic.Signed ? BitConverter.GetBytes((short)number.Value) : BitConverter.GetBytes((ushort)number.Value),
-            4 => pic.Signed ? BitConverter.GetBytes((int)  number.Value) : BitConverter.GetBytes((uint)  number.Value),
-            8 => pic.Signed ? BitConverter.GetBytes((long) number.Value) : BitConverter.GetBytes((ulong) number.Value),
-            _ => throw new NotSupportedException()
-        };
-
-        if (endian == BinaryOptions.Reversed)
-            bytes.Reverse();
-
-        return bytes.ToArray();
-    }
-
-    public static int GetByteLength(PicClause pic)
-    {
-        int digits = pic.DigitCount;
-
-        return digits switch
-        {
-            <=  4 => 2,
-            <=  9 => 4,
-            <= 18 => 8,
-            _ => throw new NotSupportedException("Too many digits for COMP/BINARY")
-        };
+       // TODO: 只實作 TRUNC STD
+       
+       return COMP5.Encode(displayValue, pic, endian);
     }
 }

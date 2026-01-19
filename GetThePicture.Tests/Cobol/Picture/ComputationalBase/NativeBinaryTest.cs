@@ -5,7 +5,7 @@ using GetThePicture.Cobol.Picture.ComputationalBase;
 namespace GetThePicture.Tests.Cobol.Picture.ComputationalBase;
 
 [TestClass]
-public class BinaryTest
+public class NativeBinaryTest
 {
     private static Type GetExpectedType(PicClause pic)
     {
@@ -37,12 +37,12 @@ public class BinaryTest
         var displayValue = DisplayValue.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
-        byte[] bytesLE = COMP.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP.Encode(displayValue, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(displayValue, pic, BinaryOptions.Reversed);
 
         // Decode
-        object decodedLE = COMP.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -65,12 +65,12 @@ public class BinaryTest
         var displayValue = DisplayValue.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
-        byte[] bytesLE = COMP.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP.Encode(displayValue, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(displayValue, pic, BinaryOptions.Reversed);
 
         // Decode
-        object decodedLE = COMP.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -93,12 +93,12 @@ public class BinaryTest
         var displayValue = DisplayValue.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
-        byte[] bytesLE = COMP.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP.Encode(displayValue, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(displayValue, pic, BinaryOptions.Reversed);
 
         // Decode
-        object decodedLE = COMP.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -121,12 +121,12 @@ public class BinaryTest
         var displayValue = DisplayValue.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
-        byte[] bytesLE = COMP.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP.Encode(displayValue, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(displayValue, pic, BinaryOptions.Reversed);
 
         // Decode
-        object decodedLE = COMP.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -149,12 +149,12 @@ public class BinaryTest
         var displayValue = DisplayValue.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
-        byte[] bytesLE = COMP.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP.Encode(displayValue, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(displayValue, pic, BinaryOptions.Reversed);
 
         // Decode
-        object decodedLE = COMP.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -177,12 +177,12 @@ public class BinaryTest
         var displayValue = DisplayValue.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
-        byte[] bytesLE = COMP.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP.Encode(displayValue, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(displayValue, pic, BinaryOptions.Normal); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(displayValue, pic, BinaryOptions.Reversed);
 
         // Decode
-        object decodedLE = COMP.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -210,7 +210,7 @@ public class BinaryTest
         
         var displayValue = DisplayValue.FromNumber(isNegative, digits, decimalDigits: 0);
 
-        Assert.ThrowsException<OverflowException>(() => COMP.Encode(displayValue, pic));
+        Assert.ThrowsException<OverflowException>(() => COMP5.Encode(displayValue, pic));
     }
 
     [TestMethod]
@@ -223,6 +223,6 @@ public class BinaryTest
         
         var displayValue = DisplayValue.FromNumber(isNegative, digits, decimalDigits: 0);
 
-        Assert.ThrowsException<NotSupportedException>(() => COMP.Encode(displayValue, pic));
+        Assert.ThrowsException<NotSupportedException>(() => COMP5.Encode(displayValue, pic));
     }
 }

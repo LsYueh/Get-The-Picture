@@ -25,17 +25,20 @@ public class PicClause
     public int DecimalDigits { get; set; } = 0;
 
     /// <summary>
-    /// COBOL-PIC 總佔用資料的長度
+    /// COBOL-PIC 宣告資料的長度
     /// </summary>
     public int DigitCount => IntegerDigits + DecimalDigits;
 
-    public int StorageLength =>
+    /// <summary>
+    /// COBOL-PIC 總佔用資料的長度
+    /// </summary>
+    public int StorageOccupied =>
         Usage switch
         {
             PicUsage.Display       => DigitCount,
-            PicUsage.Binary        => COMP.GetByteLength(this),
+            PicUsage.Binary        => COMP5.GetByteLength(this),
             PicUsage.PackedDecimal => (DigitCount + 1) / 2,
-            // PicUsage.NativeBinary  => NativeBinarySize,
+            PicUsage.NativeBinary  => COMP5.GetByteLength(this),
             _ => throw new NotSupportedException()
         };
 

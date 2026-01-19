@@ -39,6 +39,12 @@ public sealed class DecodeContext(PicClause pic)
         return this;
     }
 
+    public DecodeContext WithUsage(PicUsage Usage = PicUsage.Display)
+    {
+        _pic.Usage = Usage;
+        return this;
+    }
+
     /// <summary>
     /// COBOL PICTURE → CLR
     /// </summary>
