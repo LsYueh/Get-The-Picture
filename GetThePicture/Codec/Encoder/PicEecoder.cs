@@ -61,23 +61,46 @@ internal static class PicEecoder
 
     private static DisplayValue DvInteger(object value)
     {
-        // TODO: Cast Bug...
-        long number = value switch
+        bool isNegative;
+        string digits;
+
+        switch (value)
         {
-            sbyte v  => v,
-            byte v   => v,
-            short v  => v,
-            ushort v => v,
-            int v    => v,
-            uint v   => v,
-            long v   => v,
-            ulong v  => checked((long)v),
-
-            _ => throw new NotSupportedException($"Unsupported integer type '{value.GetType()}'")
-        };
-
-        bool isNegative = number < 0;
-        string digits = Math.Abs(number).ToString(CultureInfo.InvariantCulture);
+            case sbyte v:
+                isNegative = v < 0;
+                digits = Math.Abs(v).ToString(CultureInfo.InvariantCulture);
+                break;
+            case short v:
+                isNegative = v < 0;
+                digits = Math.Abs(v).ToString(CultureInfo.InvariantCulture);
+                break;
+            case int v:
+                isNegative = v < 0;
+                digits = Math.Abs(v).ToString(CultureInfo.InvariantCulture);
+                break;
+            case long v:
+                isNegative = v < 0;
+                digits = Math.Abs(v).ToString(CultureInfo.InvariantCulture);
+                break;
+            case byte v:
+                isNegative = false;
+                digits = v.ToString(CultureInfo.InvariantCulture);
+                break;
+            case ushort v:
+                isNegative = false;
+                digits = v.ToString(CultureInfo.InvariantCulture);
+                break;
+            case uint v:
+                isNegative = false;
+                digits = v.ToString(CultureInfo.InvariantCulture);
+                break;
+            case ulong v:
+                isNegative = false;
+                digits = v.ToString(CultureInfo.InvariantCulture);
+                break;
+            default:
+                throw new NotSupportedException($"Unsupported integer type '{value.GetType()}'");
+        }
 
         return DisplayValue.FromNumber(isNegative, digits, decimalDigits: 0);
     }
