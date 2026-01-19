@@ -1,3 +1,5 @@
+using GetThePicture.Cobol.Picture.ComputationalBase;
+
 namespace GetThePicture.Cobol.Picture;
 
 /// <summary>
@@ -31,7 +33,7 @@ public class PicClause
         Usage switch
         {
             PicUsage.Display       => DigitCount,
-            // PicUsage.Binary        => BinarySizeCalculator.For(DigitCount),
+            PicUsage.Binary        => COMP.GetByteLength(this),
             PicUsage.PackedDecimal => (DigitCount + 1) / 2,
             // PicUsage.NativeBinary  => NativeBinarySize,
             _ => throw new NotSupportedException()
