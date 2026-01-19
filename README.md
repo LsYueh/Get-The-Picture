@@ -70,7 +70,7 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 | Alphabetic | Alphabetic | DISPLAY |
 | Alphanumeric | Alphanumeric | DISPLAY |
 | Date-Time <br> (Alphanumeric) | Date <br> Time <Timestamp> | DISPLAY |
-| Numeric | Numeric | DISPLAY <br> COMP (binary) <br> COMP-3 (packed decimal) |
+| Numeric | Numeric | DISPLAY <br> COMP (Binary) <br> COMP-3 (Packed Decimal) <br> COMP-5 (Native Binary) |
 
 <br><br>
 
@@ -125,7 +125,7 @@ Copybook 通常包含：
 # 其他說明
 
 • [`S9`數字轉換規則](docs/other-topics/pic-s9-overpunch.md)  
-• [`COMPUTATIONAL` 轉換規則](docs/other-topics/cobol-computational.md) (planning)  
+• [`COMPUTATIONAL` 轉換規則](docs/other-topics/cobol-computational.md)  
 
 <br><br>
 
