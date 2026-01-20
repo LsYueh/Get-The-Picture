@@ -8,6 +8,48 @@ namespace GetThePicture.Cobol.Picture.ComputationalBase;
 /// </summary>
 internal static class COMP3
 {
+    private const int POSITIVE_SIGN = 0x0C; // TODO: 考慮是否要根據 DataStorageOptions 去切換 NibbleCodex
+    private const int NEGATIVE_SIGN = 0x0D;
+    private const int UNSIGNED      = 0x0F;
+
+    // Packed Decimal (COMP-3) Bit / Nibble Format
+    //  
+    // Byte n-2           Byte n-1 (last)
+    // +--------+--------+--------+--------+
+    // |  Digit |  Digit |  Digit |  Sign  |
+    // |  4bit  |  4bit  |  4bit  |  4bit  |
+    // +--------+--------+--------+--------+
+    //    High     Low      High      Low
+    // +--------+--------+--------+--------+
+    // |  (MSN) |        |  (LSN) |        |
+    // +--------+--------+--------+--------+
+    // |      (MSB)      |      (LSB)      |
+    // +--------+--------+--------+--------+
+    //
+    // Example:  -12345
+    //
+    // Digits:  1   2   3   4   5   Sign
+    // Nibbles: 1 | 2 | 3 | 4 | 5 |  D
+    //
+    // Bytes:
+    // +--------+--------+--------+
+    // |  0x12  |  0x34  |  0x5D  |
+    // +--------+--------+--------+
+    //
+    // Bit layout (one byte):
+    //   bit7 bit6 bit5 bit4 | bit3 bit2 bit1 bit0
+    //   --------------------+--------------------
+    //       High Nibble     |      Low Nibble
+    //
+    // Rules:
+    // - Each digit occupies one nibble (0x0 – 0x9)
+    // - Last nibble is the sign
+    //     C = positive
+    //     D = negative
+    //     F = unsigned / positive (vendor dependent)
+    // - Total bytes = (number_of_digits + 1) / 2
+    //
+
     public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
         PackedNumber pn = DecodePacked(buffer, pic.DigitCount);
@@ -42,8 +84,8 @@ internal static class COMP3
         int digitIndex = digits.Length - 1;
         int byteIndex  = buffer.Length - 1;
 
-        // last byte: digit + sign
-        int low  = (!pic.Signed) ? 0x0F : (number.IsNegative ? 0x0D : 0x0C);
+        // LSB : digit + sign
+        int low  = (!pic.Signed) ? UNSIGNED : (number.IsNegative ? NEGATIVE_SIGN : POSITIVE_SIGN);
         int high = digitIndex >= 0 ? digits[digitIndex--] - '0' : 0;
 
         buffer[byteIndex--] = (byte)((high << 4) | low);
@@ -77,18 +119,20 @@ internal static class COMP3
         int idx = digits - 1;
         bool negative = false;
 
-        for (int i = buffer.Length - 1; i >= 0; i--)
+        int LSB = buffer.Length - 1;
+
+        for (int i = LSB; i >= 0; i--)
         {
             byte b = buffer[i];
-            int low  = b & 0x0F;
-            int high = (b >> 4) & 0x0F;
+            int low  =  b       & 0x0F; // Bit Mask
+            int high = (b >> 4) & 0x0F; // Bit Mask
 
-            if (i == buffer.Length - 1)
+            if (i == LSB)
             {
                 negative = low switch
                 {
-                    0x0D => true,
-                    0x0C or 0x0F => false,
+                    NEGATIVE_SIGN => true,
+                    POSITIVE_SIGN or UNSIGNED => false,
                     _ => throw new FormatException($"Invalid COMP-3 sign nibble: {low:X}")
                 };
 

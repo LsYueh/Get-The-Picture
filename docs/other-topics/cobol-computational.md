@@ -80,15 +80,15 @@ PIC  9(4) COMP.   *> unsigned
 <br>
 
 ## Sign Nibble 規則
-|  Sign  | Trailing byte |
-| ---- | :--: |
-|-Dca `Positive` | x'0F' |
-|-Dcb/-Dci/-Dcm/-Dcr `Positive` | x'0C' |
-|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Negative` | x'0D' |
-|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Unsigned` | x'0F' |
-|-Dcv `Unsigned` | x'0C' |
+|  Sign  | Trailing byte | |
+| ---- | :--: | :--: |
+|-Dca `Positive` | x'0F' | -- |
+|-Dcb/-Dci/-Dcm/-Dcr `Positive` | x'0C' | ✅ |
+|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Negative` | x'0D' | ✅ |
+|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Unsigned` | x'0F' | ✅ |
+|-Dcv `Unsigned` | x'0C' | -- |
 
-> 原則上（IBM、ACUCOBOL、GnuCOBOL）， `C / D / F` 是最常見且相容性最高的組合
+> 原則上（IBM、ACUCOBOL、GnuCOBOL）， `C / D / F` 是最常見且相容性最高的組合，目前不實做切換功能。
 
 <br>
 
