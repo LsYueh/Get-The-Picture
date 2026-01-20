@@ -72,7 +72,7 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 01 CUSTOMER-RECORD.
    05 CUSTOMER-ID       PIC 9(5).         *> Elementary item, 整數 5 位
    05 CUSTOMER-NAME     PIC X(20).        *> Elementary item, 字元 20 位
-   05 CUSTOMER-BALANCE  PIC S9(7)V99.     *> Elementary item, 簽名數字，小數 2 位
+   05 CUSTOMER-BALANCE  PIC S9(7)V99.     *> Elementary item, 浮點數 (小數 2 位)
 ```
 
 - `CUSTOMER-ID`、`CUSTOMER-NAME`、`CUSTOMER-BALANCE` 都是 Elementary Items。  
