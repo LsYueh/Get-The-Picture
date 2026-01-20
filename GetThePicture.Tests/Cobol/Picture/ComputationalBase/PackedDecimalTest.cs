@@ -1,7 +1,8 @@
 using System.Globalization;
 using GetThePicture.Cobol.Display;
-using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.ComputationalBase;
+using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Tests.Cobol.Picture.ComputationalBase;
 

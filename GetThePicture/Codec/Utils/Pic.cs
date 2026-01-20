@@ -1,6 +1,9 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.TypeBase;
+
+namespace GetThePicture.Codec.Utils;
 
 public static partial class Pic
 {

@@ -7,6 +7,11 @@
 
 ## 使用方式:
 ```csharp
+using GetThePicture.Codec;
+using GetThePicture.Codec.Utils;
+```
+
+```csharp
 var pic = Pic.Parse("9(6)"); // X(6) ok!
 pic.Semantic = PicSemantic.Time6; // (HHmmss)
 

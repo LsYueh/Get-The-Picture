@@ -1,15 +1,14 @@
 using GetThePicture.Cobol.Display;
+using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Cobol.Picture.ComputationalBase;
-
-// TODO: 要查表替換 last byte...
 
 /// <summary>
 /// COMP-3 (Packed Decimal)
 /// </summary>
 internal static class COMP3
 {
-    public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic)
+    public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
         PackedNumber pn = DecodePacked(buffer, pic.DigitCount);
 
@@ -22,7 +21,7 @@ internal static class COMP3
         return DecodeInt64(pn);
     }
 
-    public static byte[] Encode(DisplayValue displayValue, PicClause pic)
+    public static byte[] Encode(DisplayValue displayValue, PicClause pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
         if (displayValue.Number is null)
             throw new ArgumentNullException(nameof(displayValue));

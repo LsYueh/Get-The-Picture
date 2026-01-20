@@ -1,4 +1,4 @@
-using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Codec.Options;
 

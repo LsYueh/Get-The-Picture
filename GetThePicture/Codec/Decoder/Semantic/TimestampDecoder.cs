@@ -1,6 +1,7 @@
 using System.Globalization;
 
 using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Codec.Decoder.Semantic;
 
