@@ -23,7 +23,7 @@ internal static class PicDecoder
     {
         ArgumentNullException.ThrowIfNull(pic);
 
-        if (codecOptions.Strict && (buffer.Length != pic.DigitCount))
+        if (codecOptions.Strict && (buffer.Length != pic.StorageOccupied))
         {
             throw new FormatException($"DISPLAY length mismatch. Expected {pic.StorageOccupied}, actual {buffer.Length}.");
         }

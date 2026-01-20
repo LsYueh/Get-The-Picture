@@ -31,13 +31,13 @@ internal static class NumericEncoder
         byte[] buffer = pic.Usage switch
         {
             PicUsage.Display       => Display_Encode(meta, pic, options),
-            // PicUsage.Binary        =>    COMP.Encode(meta, pic), // TODO: Debug...
-            // PicUsage.PackedDecimal =>   COMP3.Encode(meta, pic),
-            // PicUsage.NativeBinary  =>   COMP5.Encode(meta, pic),
+            PicUsage.Binary        =>    COMP.Encode(meta, pic),
+            PicUsage.PackedDecimal =>   COMP3.Encode(meta, pic),
+            PicUsage.NativeBinary  =>   COMP5.Encode(meta, pic),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
 
-        byte[] normalized = BufferSlice.SlicePadStart(buffer, pic.DigitCount);
+        byte[] normalized = BufferSlice.SlicePadStart(buffer, pic.StorageOccupied);
 
         return normalized;
     }

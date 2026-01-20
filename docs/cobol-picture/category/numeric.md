@@ -51,4 +51,73 @@ CodecBuilder.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Decode(12.
 CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
 ```
 
+<br>
+
+### COMP-3
+
+1. 指定 `Usage`  
+    ```csharp
+    using GetThePicture.Codec;
+    using GetThePicture.Codec.Utils;
+
+    using GetThePicture.Cobol.Picture.TypeBase; // 取得 PicUsage
+    ```
+
+    ```csharp
+    // PIC 9(5).
+    var pic = Pic.Parse("9(5)");
+
+    // Encode: CLR → COBOL
+    CodecBuilder.ForPic(pic)
+        .WithUsage(PicUsage.PackedDecimal) // 動態指定 USAGE COMP-3
+        .WithStrict()
+        .Encode(52194); // >> [0x52, 0x19, 0x4F]
+
+    // Decode: COBOL → CLR
+    CodecBuilder.ForPic(pic)
+        .WithUsage(PicUsage.PackedDecimal) // 動態指定 USAGE COMP-3
+        .WithStrict()
+        .Decode([0x52, 0x19, 0x4C]); // >> 52194UL
+    ```
+
+    or
+
+    ```csharp
+    // PIC 9(5)  USAGE  COMP-3.
+    var pic = Pic.Parse("9(5)");
+    pic.Usage = PicUsage.PackedDecimal; // 預先指定
+
+    // Encode: CLR → COBOL
+    CodecBuilder.ForPic(pic)
+        .WithStrict()
+        .Encode(52194); // >> [0x52, 0x19, 0x4F]
+
+    // Decode: COBOL → CLR
+    CodecBuilder.ForPic(pic)
+        .WithStrict()
+        .Decode([0x52, 0x19, 0x4C]); // >> 52194UL
+    ```
+
+<br>
+
+2. PIC 的 Truncate 行為  
+    ```csharp
+    using GetThePicture.Codec;
+    using GetThePicture.Codec.Utils;
+
+    using GetThePicture.Cobol.Picture.TypeBase; // 取得 PicUsage
+    ```
+
+    ```csharp
+    // PIC 9(3)  USAGE  COMP-3.
+    var pic = Pic.Parse("S9(3)");
+    pic.Usage = PicUsage.PackedDecimal;
+
+    // Encode: CLR → COBOL
+    CodecBuilder.ForPic(pic).Encode(-52194); // >> [0x19, 0x4D]
+
+    // Decode: COBOL → CLR
+    CodecBuilder.ForPic(pic).Decode([0x52, 0x19, 0x4D]); // >> -194L (-52194L)
+    ```
+
 <br><br>

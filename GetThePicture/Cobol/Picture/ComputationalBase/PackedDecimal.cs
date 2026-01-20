@@ -52,13 +52,18 @@ internal static class COMP3
 
     public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
-        PackedNumber pn = DecodePacked(buffer, pic.DigitCount);
+        PackedNumber pn = DecodePacked(buffer, pic.DigitCount); // 根據 PIC 長度解碼 BCD
 
         if (pic.DecimalDigits > 0)
             return DecodeDecimal(pn, pic);
-
+        
         if (!pic.Signed)
+        {
+            if (pn.IsNegative)
+                throw new OverflowException("Unsigned field contains negative number");
+                
             return DecodeUInt64(pn);
+        }
 
         return DecodeInt64(pn);
     }
@@ -74,9 +79,6 @@ internal static class COMP3
             throw new InvalidOperationException("Unsigned PIC cannot encode negative value");
 
         string digits = number.Digits;
-
-        if (digits.Length > pic.DigitCount)
-            throw new FormatException("Too many digits for PIC");
 
         int byteLen = (pic.DigitCount + 1) / 2;
         byte[] buffer = new byte[byteLen];
