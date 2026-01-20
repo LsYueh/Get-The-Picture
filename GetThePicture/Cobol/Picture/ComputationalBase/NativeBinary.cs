@@ -1,4 +1,4 @@
-using GetThePicture.Cobol.Display;
+using GetThePicture.Cobol.Elementary;
 using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Cobol.Picture.ComputationalBase;
@@ -30,7 +30,7 @@ internal static class COMP5
         };
     }
 
-    public static byte[] Encode(DisplayValue displayValue, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static byte[] Encode(ElementaryMeta displayValue, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
     {
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException($"COMP does not support decimal digits. PIC has {pic.DecimalDigits} decimal digits.");

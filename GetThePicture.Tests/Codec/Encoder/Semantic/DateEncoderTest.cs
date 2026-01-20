@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
@@ -7,6 +9,8 @@ namespace GetThePicture.Tests.Codec.Encoder.Semantic;
 [TestClass]
 public class DateEncoderTest
 {
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+    
     [TestMethod]
     [DataTestMethod]
     [DataRow("X(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
@@ -19,7 +23,9 @@ public class DateEncoderTest
         pic.Semantic = semantic;
 
         var value = new DateOnly(year, month, day);
-        string result = CodecBuilder.ForPic(pic).Encode(value);
+        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+
+        string result = cp950.GetString(buffer);
 
         Assert.AreEqual(expected, result);
     }
@@ -35,7 +41,9 @@ public class DateEncoderTest
         var pic = Pic.Parse(picString);
 
         var value = new DateOnly(year, month, day);
-        string result = CodecBuilder.ForPic(pic).WithSemantic(semantic).Encode(value);
+        byte[] buffer = CodecBuilder.ForPic(pic).WithSemantic(semantic).Encode(value);
+
+        string result = cp950.GetString(buffer);
 
         Assert.AreEqual(expected, result);
     }

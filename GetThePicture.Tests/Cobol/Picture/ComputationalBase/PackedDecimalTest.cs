@@ -1,5 +1,5 @@
 using System.Globalization;
-using GetThePicture.Cobol.Display;
+using GetThePicture.Cobol.Elementary;
 using GetThePicture.Cobol.Picture.ComputationalBase;
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Utils;
@@ -95,7 +95,7 @@ public class PackedDecimalTest
     public void Encode_Unsigned_Should_Use_F_Sign()
     {
         var pic = Pic.Parse("9(5)");
-        DisplayValue displayValue = DisplayValue.FromNumber("12345");
+        ElementaryMeta displayValue = ElementaryMeta.FromNumber("12345");
 
         byte[] buffer = COMP3.Encode(displayValue, pic);
 

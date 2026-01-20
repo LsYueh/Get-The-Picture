@@ -1,6 +1,6 @@
 using System.Globalization;
 
-using GetThePicture.Cobol.Display;
+using GetThePicture.Cobol.Elementary;
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Encoder;
 using GetThePicture.Codec.Utils;
@@ -19,7 +19,7 @@ public class ToDisplayValue
     {
         var pic = Pic.Parse(picString);
 
-        DisplayValue v = PicEecoder.ToDisplayValue(value, pic);
+        ElementaryMeta v = PicEecoder.ToDisplayValue(value, pic);
 
         Assert.AreEqual(expected, v.Text?.Value);
     }
@@ -29,7 +29,7 @@ public class ToDisplayValue
     {
         var pic = Pic.Parse("9(5)");
 
-        DisplayValue v = PicEecoder.ToDisplayValue(-123, pic);
+        ElementaryMeta v = PicEecoder.ToDisplayValue(-123, pic);
 
         Assert.IsTrue(v.Number?.IsNegative);
         Assert.AreEqual("123", v.Number?.Digits);
@@ -45,7 +45,7 @@ public class ToDisplayValue
 
         var pic = Pic.Parse(picString);
 
-        DisplayValue v = PicEecoder.ToDisplayValue(_value, pic);
+        ElementaryMeta v = PicEecoder.ToDisplayValue(_value, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual(expected, v.Number?.Digits);
@@ -62,7 +62,7 @@ public class ToDisplayValue
 
         var pic = Pic.Parse(picString);
 
-        DisplayValue v = PicEecoder.ToDisplayValue(_value, pic);
+        ElementaryMeta v = PicEecoder.ToDisplayValue(_value, pic);
 
         Assert.IsTrue(v.Number?.IsNegative);
         Assert.AreEqual(expected, v.Number?.Digits);
@@ -77,7 +77,7 @@ public class ToDisplayValue
         
         var date = new DateOnly(2026, 1, 5);
 
-        DisplayValue v = PicEecoder.ToDisplayValue(date, pic);
+        ElementaryMeta v = PicEecoder.ToDisplayValue(date, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("20260105", v.Number?.Digits);
@@ -92,7 +92,7 @@ public class ToDisplayValue
         
         var date = new DateOnly(2026, 1, 5);
 
-        DisplayValue v = PicEecoder.ToDisplayValue(date, pic);
+        ElementaryMeta v = PicEecoder.ToDisplayValue(date, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("1150105", v.Number?.Digits);
@@ -107,7 +107,7 @@ public class ToDisplayValue
 
         var t = new TimeOnly(1, 2, 3);
 
-        DisplayValue v = PicEecoder.ToDisplayValue(t, pic);
+        ElementaryMeta v = PicEecoder.ToDisplayValue(t, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("010203", v.Number?.Digits);
@@ -122,7 +122,7 @@ public class ToDisplayValue
 
         var t = new TimeOnly(23, 59, 59, 7);
 
-        DisplayValue v = PicEecoder.ToDisplayValue(t, pic);
+        ElementaryMeta v = PicEecoder.ToDisplayValue(t, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("235959007", v.Number?.Digits);
@@ -137,7 +137,7 @@ public class ToDisplayValue
 
         var dt = new DateTime(2025, 1, 6, 13, 45, 59);
 
-        DisplayValue v = PicEecoder.ToDisplayValue(dt, pic);
+        ElementaryMeta v = PicEecoder.ToDisplayValue(dt, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("20250106134559", v.Number?.Digits);

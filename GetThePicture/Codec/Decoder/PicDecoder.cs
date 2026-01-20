@@ -12,9 +12,9 @@ namespace GetThePicture.Codec.Decoder;
 internal static class PicDecoder
 {
     /// <summary>
-    /// 
+    /// COBOL Elementary Item (buffer) → CLR
     /// </summary>
-    /// <param name="buffer">ASCII/CP950</param>
+    /// <param name="buffer">COBOL Elementary Item</param>
     /// <param name="pic"></param>
     /// <param name="codecOptions"></param>
     /// <returns></returns>
@@ -22,6 +22,11 @@ internal static class PicDecoder
     public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, CodecOptions codecOptions)
     {
         ArgumentNullException.ThrowIfNull(pic);
+
+        if (codecOptions.Strict && (buffer.Length != pic.DigitCount))
+        {
+            throw new FormatException($"DISPLAY length mismatch. Expected {pic.StorageOccupied}, actual {buffer.Length}.");
+        }
 
 #pragma warning disable IDE0066 // Convert switch statement to expression
         switch (pic.Semantic)

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-using GetThePicture.Cobol.Display;
+using GetThePicture.Cobol.Elementary;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Encoder.Category;
@@ -11,24 +11,37 @@ namespace GetThePicture.Codec.Encoder;
 internal static class PicEecoder
 {
     /// <summary>
-    /// CLR value → Display Value → COBOL PICTURE DISPLAY
+    /// CLR value → Elementary Meta → COBOL Elementary Item (buffer)
     /// </summary>
-    public static string Encode(object value, PicClause pic, CodecOptions codecOptions)
+    /// <param name="value"></param>
+    /// <param name="pic"></param>
+    /// <param name="codecOptions"></param>
+    /// <returns></returns>
+    /// <exception cref="NotSupportedException"></exception>
+    /// <exception cref="FormatException"></exception>
+    public static byte[] Encode(object value, PicClause pic, CodecOptions codecOptions)
     {
         ArgumentNullException.ThrowIfNull(value);
         ArgumentNullException.ThrowIfNull(pic);
 
         // CLR value → Display Value
-        DisplayValue displayValue = ToDisplayValue(value, pic);
+        ElementaryMeta displayValue = ToDisplayValue(value, pic);
 
-        // Display Value → COBOL PICTURE DISPLAY
-        return pic.BaseClass switch
+        // Display Value → COBOL Elementary Item (buffer)
+        byte[] normalized = pic.BaseClass switch
         {
             PicBaseClass.Numeric      =>      NumericEncoder.Encode(displayValue, pic, codecOptions),
             PicBaseClass.Alphanumeric => AlphanumericEncoder.Encode(displayValue, pic),
             PicBaseClass.Alphabetic   =>   AlphabeticEncoder.Encode(displayValue, pic),
             _ => throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseClass}"),
         };
+
+        if (codecOptions.Strict && (normalized.Length != pic.StorageOccupied))
+        {
+            throw new FormatException($"DISPLAY length mismatch. Expected {pic.StorageOccupied}, actual {normalized.Length}.");
+        }
+
+        return normalized;
     }
 
     /// <summary>
@@ -38,9 +51,9 @@ internal static class PicEecoder
     /// <param name="pic"></param>
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
-    internal static DisplayValue ToDisplayValue(object value, PicClause pic)
+    internal static ElementaryMeta ToDisplayValue(object value, PicClause pic)
     {
-        DisplayValue displayValue = value switch
+        ElementaryMeta displayValue = value switch
         {
             string s => DvString(s),
             char   c => DvString(c.ToString()),
@@ -55,12 +68,12 @@ internal static class PicEecoder
         return displayValue;
     }
 
-    private static DisplayValue DvString(string text)
+    private static ElementaryMeta DvString(string text)
     {
-        return DisplayValue.FromText(text);
+        return ElementaryMeta.FromText(text);
     }
 
-    private static DisplayValue DvInteger(object value)
+    private static ElementaryMeta DvInteger(object value)
     {
         bool isNegative;
         string digits;
@@ -103,10 +116,10 @@ internal static class PicEecoder
                 throw new NotSupportedException($"Unsupported integer type '{value.GetType()}'");
         }
 
-        return DisplayValue.FromNumber(isNegative, digits, decimalDigits: 0);
+        return ElementaryMeta.FromNumber(isNegative, digits, decimalDigits: 0);
     }
 
-    private static DisplayValue DvDecimal(object value, PicClause pic)
+    private static ElementaryMeta DvDecimal(object value, PicClause pic)
     {
         ArgumentNullException.ThrowIfNull(value);
         
@@ -131,7 +144,7 @@ internal static class PicEecoder
 
         string digits = decimal.Truncate(scaled).ToString("0", CultureInfo.InvariantCulture);
 
-        return DisplayValue.FromNumber(isNegative, digits, scale);
+        return ElementaryMeta.FromNumber(isNegative, digits, scale);
     }
 
     private static decimal Pow10(int n)
@@ -142,15 +155,15 @@ internal static class PicEecoder
         return result;
     }
 
-    private static DisplayValue DvDateOnly(DateOnly date, PicClause pic)
+    private static ElementaryMeta DvDateOnly(DateOnly date, PicClause pic)
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"'Date' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
             
         return pic.Semantic switch
         {
-            PicSemantic.GregorianDate => DisplayValue.FromNumber(date.ToString("yyyyMMdd")),
-            PicSemantic.MinguoDate => DisplayValue.FromNumber(ToMinguoDateString(date)),
+            PicSemantic.GregorianDate => ElementaryMeta.FromNumber(date.ToString("yyyyMMdd")),
+            PicSemantic.MinguoDate => ElementaryMeta.FromNumber(ToMinguoDateString(date)),
             _ => throw new NotSupportedException($"Unsupported DateOnly format: {pic.Semantic}")
         };
     }
@@ -167,20 +180,20 @@ internal static class PicEecoder
         return $"{rocYear:000}{date:MMdd}";
     }
 
-    private static DisplayValue DvTimeOnly(TimeOnly dt, PicClause pic)
+    private static ElementaryMeta DvTimeOnly(TimeOnly dt, PicClause pic)
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"'Time' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
 
         return pic.Semantic switch
         {
-            PicSemantic.Time6 => DisplayValue.FromNumber(dt.ToString("HHmmss"   , CultureInfo.InvariantCulture)),
-            PicSemantic.Time9 => DisplayValue.FromNumber(dt.ToString("HHmmssfff", CultureInfo.InvariantCulture)),
+            PicSemantic.Time6 => ElementaryMeta.FromNumber(dt.ToString("HHmmss"   , CultureInfo.InvariantCulture)),
+            PicSemantic.Time9 => ElementaryMeta.FromNumber(dt.ToString("HHmmssfff", CultureInfo.InvariantCulture)),
             _ => throw new NotSupportedException($"Unsupported TIME format: {pic.Semantic}")
         };
     }
 
-    private static DisplayValue DvDateTime(DateTime dt, PicClause pic)
+    private static ElementaryMeta DvDateTime(DateTime dt, PicClause pic)
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"'Timestamp' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
@@ -192,6 +205,6 @@ internal static class PicEecoder
 
         string text = dt.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
 
-        return DisplayValue.FromNumber(text);
+        return ElementaryMeta.FromNumber(text);
     }
 }

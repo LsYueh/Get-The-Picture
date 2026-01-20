@@ -24,7 +24,7 @@ public class AlphanumericDecoderTest
         var pic = Pic.Parse("X(6)");
         byte[] buffer = Encoding.ASCII.GetBytes("ABC  ");
 
-        object result = CodecBuilder.ForPic(pic).NoStrict().Decode(buffer);
+        object result = CodecBuilder.ForPic(pic).Decode(buffer);
 
         Assert.AreEqual("ABC", result);
     }

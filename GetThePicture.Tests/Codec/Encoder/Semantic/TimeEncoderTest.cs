@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
@@ -7,6 +9,8 @@ namespace GetThePicture.Tests.Codec.Encoder.Semantic;
 [TestClass]
 public class TimeEncoderTest
 {
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+
     [DataTestMethod]
     [DataRow("X(6)", PicSemantic.Time6, "235959",    23, 59, 59, 0)]   // Time6
     [DataRow("9(6)", PicSemantic.Time6, "235959",    23, 59, 59, 0)]
@@ -22,7 +26,9 @@ public class TimeEncoderTest
         pic.Semantic = semantic;
 
         var value = new TimeOnly(hour, minute, second, millisecond);
-        object result = CodecBuilder.ForPic(pic).Encode(value);
+        byte[] buffer =CodecBuilder.ForPic(pic).Encode(value);
+
+        string result = cp950.GetString(buffer);
 
         Assert.AreEqual(expected, result);
     }

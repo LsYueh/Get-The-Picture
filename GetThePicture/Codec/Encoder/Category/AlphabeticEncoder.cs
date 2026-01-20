@@ -1,6 +1,6 @@
 using System.Text;
 
-using GetThePicture.Cobol.Display;
+using GetThePicture.Cobol.Elementary;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Utils;
@@ -9,28 +9,28 @@ namespace GetThePicture.Codec.Encoder.Category;
 
 internal static class AlphabeticEncoder
 {
-    public static string Encode(DisplayValue displayValue, PicClause pic)
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+
+    public static byte[] Encode(ElementaryMeta displayValue, PicClause pic)
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"PIC A does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-        
-        Encoding cp950 = EncodingFactory.CP950;
 
         var text = displayValue switch
         {
-            { Kind: DisplayValueKind.Text,   Text:   { } t } => t.Value,
-            { Kind: DisplayValueKind.Number, Number: { } n } => n.Digits,
-            _ => throw new NotSupportedException($"Unsupported Display Value Kind '{displayValue.Kind}' for Alphabetic Text"),
+            { Type: EleType.Text,   Text:   { } t } => t.Value,
+            { Type: EleType.Number, Number: { } n } => n.Digits,
+            _ => throw new NotSupportedException($"Unsupported Display Value Kind '{displayValue.Type}' for Alphabetic Text"),
         };
 
         byte[] buffer = cp950.GetBytes(text);
 
-        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadEnd(buffer, pic.DigitCount);
+        byte[] normalized = BufferSlice.SlicePadEnd(buffer, pic.DigitCount);
 
         // PIC A 檢查
-        for (int i = 0; i < fieldBytes.Length; i++)
+        for (int i = 0; i < normalized.Length; i++)
         {
-            byte b = fieldBytes[i];
+            byte b = normalized[i];
 
             // space
             if (b == 0x20)
@@ -47,6 +47,6 @@ internal static class AlphabeticEncoder
             throw new FormatException($"PIC A : Invalid byte 0x{b:X2} at position {i+1}"); // Note: 轉成 1-based
         }
         
-        return cp950.GetString(fieldBytes);
+        return normalized;
     }
 }

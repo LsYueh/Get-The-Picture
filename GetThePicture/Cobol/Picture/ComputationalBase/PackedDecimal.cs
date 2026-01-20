@@ -1,4 +1,4 @@
-using GetThePicture.Cobol.Display;
+using GetThePicture.Cobol.Elementary;
 using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Cobol.Picture.ComputationalBase;
@@ -63,7 +63,7 @@ internal static class COMP3
         return DecodeInt64(pn);
     }
 
-    public static byte[] Encode(DisplayValue displayValue, PicClause pic, DataStorageOptions ds = DataStorageOptions.CI)
+    public static byte[] Encode(ElementaryMeta displayValue, PicClause pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
         if (displayValue.Number is null)
             throw new ArgumentNullException(nameof(displayValue));

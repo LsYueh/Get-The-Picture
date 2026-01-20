@@ -16,9 +16,9 @@ public sealed class DecodeContext(PicClause pic)
     private readonly PicClause _pic = pic;
     private readonly CodecOptions _codecOptions = new();
 
-    public DecodeContext NoStrict()
+    public DecodeContext WithStrict()
     {
-        _codecOptions.Strict = false;
+        _codecOptions.Strict = true;
         return this;
     }
 
@@ -47,9 +47,9 @@ public sealed class DecodeContext(PicClause pic)
     }
 
     /// <summary>
-    /// COBOL PICTURE (buffer) → CLR
+    /// COBOL Elementary Item (buffer) → CLR
     /// </summary>
-    /// <param name="buffer">ASCII/CP950</param>
+    /// <param name="buffer">COBOL Elementary Item</param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     public object Decode(ReadOnlySpan<byte> buffer)
@@ -61,16 +61,14 @@ public sealed class DecodeContext(PicClause pic)
     }
 
     /// <summary>
-    /// CLR → COBOL PICTURE (buffer)
+    /// CLR → COBOL Elementary Item (buffer)
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public string Encode(object value)
+    public byte[] Encode(object value)
     {
-        throw new NotImplementedException("Encode is not implemented yet.");
-        
-        // ArgumentNullException.ThrowIfNull(value);
+        ArgumentNullException.ThrowIfNull(value);
 
-        // return PicEecoder.Encode(value, _pic, _codecOptions);
+        return PicEecoder.Encode(value, _pic, _codecOptions);
     }
 }

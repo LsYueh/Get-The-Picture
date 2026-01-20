@@ -1,4 +1,4 @@
-using GetThePicture.Cobol.Display;
+using GetThePicture.Cobol.Elementary;
 using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Cobol.Picture.ComputationalBase;
@@ -46,7 +46,7 @@ internal static class COMP
         return COMP5.Decode(buffer, pic, endian);
     }
 
-    public static byte[] Encode(DisplayValue displayValue, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static byte[] Encode(ElementaryMeta displayValue, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
     {
        // TODO: 只實作 TRUNC STD
        

@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
 
@@ -6,6 +8,8 @@ namespace GetThePicture.Tests.Codec.Encoder.Category;
 [TestClass]
 public class NumericEncoderForIntegerTest
 {
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+    
     [TestMethod]
     [DataTestMethod]
     [DataRow((byte)                  99, "9(02)",                 "99")]
@@ -15,7 +19,9 @@ public class NumericEncoderForIntegerTest
     public void Encode_Integer_Default(object value, string picString, string expected)
     {
         var pic = Pic.Parse(picString);
-        string result = CodecBuilder.ForPic(pic).Encode(value);
+        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+
+        string result = cp950.GetString(buffer);
 
         Assert.AreEqual(expected, result);
     }
