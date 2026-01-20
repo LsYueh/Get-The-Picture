@@ -34,7 +34,7 @@ internal static class TimestampDecoder
                 DateTimeStyles.None,
                 out var dt))
         {
-            throw new FormatException($"Invalid Timestamp14 DISPLAY value: '{s}'");
+            throw new FormatException($"Invalid Timestamp14 value: '{s}'");
         }
 
         return dt;

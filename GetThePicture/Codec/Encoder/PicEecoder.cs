@@ -24,15 +24,15 @@ internal static class PicEecoder
         ArgumentNullException.ThrowIfNull(value);
         ArgumentNullException.ThrowIfNull(pic);
 
-        // CLR value → Display Value
-        ElementaryMeta displayValue = ToDisplayValue(value, pic);
+        // CLR value → Elementary Meta
+        ElementaryMeta meta = ToElementaryMeta(value, pic);
 
-        // Display Value → COBOL Elementary Item (buffer)
+        // Elementary Meta → COBOL Elementary Item (buffer)
         byte[] normalized = pic.BaseClass switch
         {
-            PicBaseClass.Numeric      =>      NumericEncoder.Encode(displayValue, pic, codecOptions),
-            PicBaseClass.Alphanumeric => AlphanumericEncoder.Encode(displayValue, pic),
-            PicBaseClass.Alphabetic   =>   AlphabeticEncoder.Encode(displayValue, pic),
+            PicBaseClass.Numeric      =>      NumericEncoder.Encode(meta, pic, codecOptions),
+            PicBaseClass.Alphanumeric => AlphanumericEncoder.Encode(meta, pic),
+            PicBaseClass.Alphabetic   =>   AlphabeticEncoder.Encode(meta, pic),
             _ => throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseClass}"),
         };
 
@@ -45,35 +45,35 @@ internal static class PicEecoder
     }
 
     /// <summary>
-    /// CLR value → Display Value (要跑Test)
+    /// CLR value → Elementary Meta (要跑Test)
     /// </summary>
     /// <param name="value"></param>
     /// <param name="pic"></param>
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
-    internal static ElementaryMeta ToDisplayValue(object value, PicClause pic)
+    internal static ElementaryMeta ToElementaryMeta(object value, PicClause pic)
     {
-        ElementaryMeta displayValue = value switch
+        ElementaryMeta meta = value switch
         {
-            string s => DvString(s),
-            char   c => DvString(c.ToString()),
-            sbyte or byte or short or ushort or int or uint or long or ulong => DvInteger(value),
-            float or double or decimal => DvDecimal(value, pic),
-            DateOnly d => DvDateOnly(d, pic),
-            TimeOnly t => DvTimeOnly(t, pic),
-            DateTime dt => DvDateTime(dt, pic),
+            string    s => EleString(s),
+            char      c => EleString(c.ToString()),
+            sbyte or byte or short or ushort or int or uint or long or ulong => EleInteger(value),
+            float or double or decimal => EleDecimal(value, pic),
+            DateOnly  d => EleDate(d, pic),
+            TimeOnly  t => EleTime(t, pic),
+            DateTime dt => EleTimeStamp(dt, pic),
             _ => throw new NotSupportedException($"Unsupported value type '{value.GetType()}'"),
         };
 
-        return displayValue;
+        return meta;
     }
 
-    private static ElementaryMeta DvString(string text)
+    private static ElementaryMeta EleString(string text)
     {
         return ElementaryMeta.FromText(text);
     }
 
-    private static ElementaryMeta DvInteger(object value)
+    private static ElementaryMeta EleInteger(object value)
     {
         bool isNegative;
         string digits;
@@ -119,7 +119,7 @@ internal static class PicEecoder
         return ElementaryMeta.FromNumber(isNegative, digits, decimalDigits: 0);
     }
 
-    private static ElementaryMeta DvDecimal(object value, PicClause pic)
+    private static ElementaryMeta EleDecimal(object value, PicClause pic)
     {
         ArgumentNullException.ThrowIfNull(value);
         
@@ -155,7 +155,7 @@ internal static class PicEecoder
         return result;
     }
 
-    private static ElementaryMeta DvDateOnly(DateOnly date, PicClause pic)
+    private static ElementaryMeta EleDate(DateOnly date, PicClause pic)
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"'Date' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
@@ -180,7 +180,7 @@ internal static class PicEecoder
         return $"{rocYear:000}{date:MMdd}";
     }
 
-    private static ElementaryMeta DvTimeOnly(TimeOnly dt, PicClause pic)
+    private static ElementaryMeta EleTime(TimeOnly dt, PicClause pic)
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"'Time' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
@@ -193,7 +193,7 @@ internal static class PicEecoder
         };
     }
 
-    private static ElementaryMeta DvDateTime(DateTime dt, PicClause pic)
+    private static ElementaryMeta EleTimeStamp(DateTime dt, PicClause pic)
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"'Timestamp' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");

@@ -8,7 +8,7 @@ using GetThePicture.Codec.Utils;
 namespace GetThePicture.Tests.Codec.Encoder;
 
 [TestClass]
-public class ToDisplayValue
+public class ToElementaryMetaTest
 {
 
     [TestMethod]
@@ -19,7 +19,7 @@ public class ToDisplayValue
     {
         var pic = Pic.Parse(picString);
 
-        ElementaryMeta v = PicEecoder.ToDisplayValue(value, pic);
+        ElementaryMeta v = PicEecoder.ToElementaryMeta(value, pic);
 
         Assert.AreEqual(expected, v.Text?.Value);
     }
@@ -29,7 +29,7 @@ public class ToDisplayValue
     {
         var pic = Pic.Parse("9(5)");
 
-        ElementaryMeta v = PicEecoder.ToDisplayValue(-123, pic);
+        ElementaryMeta v = PicEecoder.ToElementaryMeta(-123, pic);
 
         Assert.IsTrue(v.Number?.IsNegative);
         Assert.AreEqual("123", v.Number?.Digits);
@@ -45,7 +45,7 @@ public class ToDisplayValue
 
         var pic = Pic.Parse(picString);
 
-        ElementaryMeta v = PicEecoder.ToDisplayValue(_value, pic);
+        ElementaryMeta v = PicEecoder.ToElementaryMeta(_value, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual(expected, v.Number?.Digits);
@@ -62,7 +62,7 @@ public class ToDisplayValue
 
         var pic = Pic.Parse(picString);
 
-        ElementaryMeta v = PicEecoder.ToDisplayValue(_value, pic);
+        ElementaryMeta v = PicEecoder.ToElementaryMeta(_value, pic);
 
         Assert.IsTrue(v.Number?.IsNegative);
         Assert.AreEqual(expected, v.Number?.Digits);
@@ -77,7 +77,7 @@ public class ToDisplayValue
         
         var date = new DateOnly(2026, 1, 5);
 
-        ElementaryMeta v = PicEecoder.ToDisplayValue(date, pic);
+        ElementaryMeta v = PicEecoder.ToElementaryMeta(date, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("20260105", v.Number?.Digits);
@@ -92,7 +92,7 @@ public class ToDisplayValue
         
         var date = new DateOnly(2026, 1, 5);
 
-        ElementaryMeta v = PicEecoder.ToDisplayValue(date, pic);
+        ElementaryMeta v = PicEecoder.ToElementaryMeta(date, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("1150105", v.Number?.Digits);
@@ -107,7 +107,7 @@ public class ToDisplayValue
 
         var t = new TimeOnly(1, 2, 3);
 
-        ElementaryMeta v = PicEecoder.ToDisplayValue(t, pic);
+        ElementaryMeta v = PicEecoder.ToElementaryMeta(t, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("010203", v.Number?.Digits);
@@ -122,7 +122,7 @@ public class ToDisplayValue
 
         var t = new TimeOnly(23, 59, 59, 7);
 
-        ElementaryMeta v = PicEecoder.ToDisplayValue(t, pic);
+        ElementaryMeta v = PicEecoder.ToElementaryMeta(t, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("235959007", v.Number?.Digits);
@@ -137,7 +137,7 @@ public class ToDisplayValue
 
         var dt = new DateTime(2025, 1, 6, 13, 45, 59);
 
-        ElementaryMeta v = PicEecoder.ToDisplayValue(dt, pic);
+        ElementaryMeta v = PicEecoder.ToElementaryMeta(dt, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("20250106134559", v.Number?.Digits);
@@ -154,7 +154,7 @@ public class ToDisplayValue
         var pic = Pic.Parse("9(6)");
         pic.Semantic = PicSemantic.Time6;
 
-        Assert.ThrowsException<NotSupportedException>(() => PicEecoder.ToDisplayValue(new DateTime(), pic));
+        Assert.ThrowsException<NotSupportedException>(() => PicEecoder.ToElementaryMeta(new DateTime(), pic));
     }
 
     [TestMethod]
@@ -163,7 +163,7 @@ public class ToDisplayValue
         var pic = Pic.Parse("9(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<NotSupportedException>(() => PicEecoder.ToDisplayValue(new DateTime(), pic));
+        Assert.ThrowsException<NotSupportedException>(() => PicEecoder.ToElementaryMeta(new DateTime(), pic));
     }
 
     [TestMethod]
@@ -172,7 +172,7 @@ public class ToDisplayValue
         var pic = Pic.Parse("9(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<InvalidOperationException>(() => PicEecoder.ToDisplayValue(12345.6m, pic));
+        Assert.ThrowsException<InvalidOperationException>(() => PicEecoder.ToElementaryMeta(12345.6m, pic));
     }
 
     // Unsupported type
@@ -180,6 +180,6 @@ public class ToDisplayValue
     public void UnsupportedType_Throws()
     {
         Assert.ThrowsException<NotSupportedException>(() =>
-            PicEecoder.ToDisplayValue(new object(), Pic.Parse("X(5)")));
+            PicEecoder.ToElementaryMeta(new object(), Pic.Parse("X(5)")));
     }
 }

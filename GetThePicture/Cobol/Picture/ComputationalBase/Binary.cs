@@ -46,10 +46,10 @@ internal static class COMP
         return COMP5.Decode(buffer, pic, endian);
     }
 
-    public static byte[] Encode(ElementaryMeta displayValue, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static byte[] Encode(ElementaryMeta meta, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
     {
        // TODO: 只實作 TRUNC STD
        
-       return COMP5.Encode(displayValue, pic, endian);
+       return COMP5.Encode(meta, pic, endian);
     }
 }

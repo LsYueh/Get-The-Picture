@@ -15,14 +15,14 @@ internal static class NumericEncoder
     private static readonly Encoding cp950 = EncodingFactory.CP950;
 
     /// <summary>
-    /// Display Value → Overpunch Encode → COBOL Elementary Item (buffer)
+    /// Elementary Meta → Overpunch Encode → COBOL Elementary Item (buffer)
     /// </summary>
-    /// <param name="displayValue"></param>
+    /// <param name="meta"></param>
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
-    public static byte[] Encode(ElementaryMeta displayValue, PicClause pic, CodecOptions? options = null)
+    public static byte[] Encode(ElementaryMeta meta, PicClause pic, CodecOptions? options = null)
     {
         options ??= new CodecOptions();
 
@@ -30,10 +30,10 @@ internal static class NumericEncoder
 
         byte[] buffer = pic.Usage switch
         {
-            PicUsage.Display       => Display_Encode(displayValue, pic, options),
-            // PicUsage.Binary        =>    COMP.Encode(displayValue, pic), // TODO: Debug...
-            // PicUsage.PackedDecimal =>   COMP3.Encode(displayValue, pic),
-            // PicUsage.NativeBinary  =>   COMP5.Encode(displayValue, pic),
+            PicUsage.Display       => Display_Encode(meta, pic, options),
+            // PicUsage.Binary        =>    COMP.Encode(meta, pic), // TODO: Debug...
+            // PicUsage.PackedDecimal =>   COMP3.Encode(meta, pic),
+            // PicUsage.NativeBinary  =>   COMP5.Encode(meta, pic),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
 
@@ -42,15 +42,15 @@ internal static class NumericEncoder
         return normalized;
     }
 
-    private static byte[] Display_Encode(ElementaryMeta displayValue, PicClause pic, CodecOptions options)
+    private static byte[] Display_Encode(ElementaryMeta meta, PicClause pic, CodecOptions options)
     {
-        string numeric = displayValue switch
+        string numeric = meta switch
         {
             { Type: EleType.Number, Number: { } n } => n.Digits,
-            _ => throw new NotSupportedException($"Unsupported Display Value Kind '{displayValue.Type}' for Numeric Text"),
+            _ => throw new NotSupportedException($"Unsupported meta type '{meta.Type}' for Numeric Text"),
         };
 
-        decimal sign = displayValue.Sign;
+        decimal sign = meta.Sign;
 
         byte[] buffer = Overpunch.Encode(sign, numeric, pic, options);
 

@@ -36,7 +36,7 @@ internal static class DateDecoder
                 DateTimeStyles.None,
                 out var date))
         {
-            throw new FormatException($"Invalid Gregorian date DISPLAY value: '{s}'");
+            throw new FormatException($"Invalid Gregorian date value: '{s}'");
         }
 
         return date;
@@ -48,7 +48,7 @@ internal static class DateDecoder
         
         if (s.Length < 7)
         {
-            throw new FormatException($"Invalid Minguo date DISPLAY value: '{s}'");
+            throw new FormatException($"Invalid Minguo date value: '{s}'");
         }
 
         // 前 3 碼：民國年
@@ -56,7 +56,7 @@ internal static class DateDecoder
             !int.TryParse(s[3..5], out int month) ||
             !int.TryParse(s[5..7], out int day))
         {
-            throw new FormatException($"Invalid Minguo date DISPLAY value: '{s}'");
+            throw new FormatException($"Invalid Minguo date value: '{s}'");
         }
 
         int gregorianYear = minguoYear + 1911;
@@ -67,7 +67,7 @@ internal static class DateDecoder
         }
         catch (ArgumentOutOfRangeException ex)
         {
-            throw new FormatException($"Invalid Minguo date DISPLAY value: '{s}'", ex);
+            throw new FormatException($"Invalid Minguo date value: '{s}'", ex);
         }
     }
 }

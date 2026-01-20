@@ -63,12 +63,12 @@ internal static class COMP3
         return DecodeInt64(pn);
     }
 
-    public static byte[] Encode(ElementaryMeta displayValue, PicClause pic, DataStorageOptions ds = DataStorageOptions.CI)
+    public static byte[] Encode(ElementaryMeta meta, PicClause pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
-        if (displayValue.Number is null)
-            throw new ArgumentNullException(nameof(displayValue));
+        if (meta.Number is null)
+            throw new ArgumentNullException(nameof(meta));
 
-        var number = displayValue.Number.Value;
+        var number = meta.Number.Value;
 
         if (!pic.Signed && number.IsNegative)
             throw new InvalidOperationException("Unsigned PIC cannot encode negative value");

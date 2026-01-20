@@ -37,7 +37,7 @@ internal static class TimeDecoder
                 DateTimeStyles.None,
                 out var time))
         {
-            throw new FormatException($"Invalid Time6 DISPLAY value: '{s}'");
+            throw new FormatException($"Invalid Time6 value: '{s}'");
         }
 
         return time;
@@ -54,7 +54,7 @@ internal static class TimeDecoder
                 DateTimeStyles.None,
                 out var time))
         {
-            throw new FormatException($"Invalid Time9 DISPLAY value: '{s}'");
+            throw new FormatException($"Invalid Time9 value: '{s}'");
         }
 
         return time;

@@ -11,16 +11,16 @@ internal static class AlphanumericEncoder
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
 
-    public static byte[] Encode(ElementaryMeta displayValue, PicClause pic)
+    public static byte[] Encode(ElementaryMeta meta, PicClause pic)
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"PIC X does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
 
-        var text = displayValue switch
+        var text = meta switch
         {
             { Type: EleType.Text,   Text:   { } t } => t.Value,
             { Type: EleType.Number, Number: { } n } => n.Digits,
-            _ => throw new NotSupportedException($"Unsupported Display Value Kind '{displayValue.Type}' for Alphanumeric Text"),
+            _ => throw new NotSupportedException($"Unsupported meta type '{meta.Type}' for Alphanumeric Text"),
         };
 
         byte[] buffer = cp950.GetBytes(text);
