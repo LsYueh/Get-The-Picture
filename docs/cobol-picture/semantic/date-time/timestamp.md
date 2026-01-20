@@ -8,6 +8,11 @@
 
 ## 使用方式:
 ```csharp
+using GetThePicture.Codec;
+using GetThePicture.Codec.Utils;
+```
+
+```csharp
 var pic = Pic.Parse("9(14))"); // X(14) ok!
 pic.Semantic = PicSemantic.Timestamp14; // (HHmmss)
 

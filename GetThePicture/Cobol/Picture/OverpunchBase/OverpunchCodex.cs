@@ -1,4 +1,73 @@
+using System.Collections.ObjectModel;
+
+using GetThePicture.Cobol.Picture.TypeBase;
+
 namespace GetThePicture.Cobol.Picture.OverpunchBase;
+
+/// <summary>
+/// 
+/// </summary>
+internal static class OverpunchCodex
+{
+    public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>> Map;
+    public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>> ReversedMap;
+
+    static OverpunchCodex()
+    {
+        Map = BuildMap();
+        ReversedMap = BuildReversedMap();
+    }
+
+    private static ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>> BuildMap()
+    {
+        var dictionary = new Dictionary<DataStorageOptions, Dictionary<char, OpVal>>
+        {
+            { DataStorageOptions.CA, Merge(OpCodex.OP_POSITIVE_01, OpCodex.OP_NEGATIVE_01) },
+            { DataStorageOptions.CB, Merge(OpCodex.OP_POSITIVE_01, OpCodex.OP_NEGATIVE_02) },
+            { DataStorageOptions.CI, Merge(OpCodex.OP_POSITIVE_02, OpCodex.OP_NEGATIVE_01) },
+            { DataStorageOptions.CM, Merge(OpCodex.OP_POSITIVE_01, OpCodex.OP_NEGATIVE_03) },
+            { DataStorageOptions.CN, Merge(OpCodex.OP_POSITIVE_02, OpCodex.OP_NEGATIVE_01) },
+            { DataStorageOptions.CR, Merge(OpCodex.OP_POSITIVE_01, OpCodex.OP_NEGATIVE_04) },
+        };
+        
+        return new ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>>(dictionary);
+    }
+
+    private static Dictionary<char, OpVal> Merge(
+        Dictionary<char, OpVal> a,
+        Dictionary<char, OpVal> b)
+    {
+        var dict = new Dictionary<char, OpVal>(a.Count + b.Count);
+        foreach (var kv in a) dict[kv.Key] = kv.Value;
+        foreach (var kv in b) dict[kv.Key] = kv.Value;
+        return dict;
+    }
+
+    private static ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>> BuildReversedMap()
+    {
+        var dictionary = new Dictionary<DataStorageOptions, Dictionary<OpVal, char>>
+        {
+            { DataStorageOptions.CA, MergeRev(OpCodex.OP_POSITIVE_01_REVERSE, OpCodex.OP_NEGATIVE_01_REVERSE) },
+            { DataStorageOptions.CB, MergeRev(OpCodex.OP_POSITIVE_01_REVERSE, OpCodex.OP_NEGATIVE_02_REVERSE) },
+            { DataStorageOptions.CI, MergeRev(OpCodex.OP_POSITIVE_02_REVERSE, OpCodex.OP_NEGATIVE_01_REVERSE) },
+            { DataStorageOptions.CM, MergeRev(OpCodex.OP_POSITIVE_01_REVERSE, OpCodex.OP_NEGATIVE_03_REVERSE) },
+            { DataStorageOptions.CN, MergeRev(OpCodex.OP_POSITIVE_02_REVERSE, OpCodex.OP_NEGATIVE_01_REVERSE) },
+            { DataStorageOptions.CR, MergeRev(OpCodex.OP_POSITIVE_01_REVERSE, OpCodex.OP_NEGATIVE_04_REVERSE) },
+        };
+        
+        return new ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>>(dictionary);
+    }
+
+    private static Dictionary<OpVal, char> MergeRev(
+        Dictionary<OpVal, char> a,
+        Dictionary<OpVal, char> b)
+    {
+        var dict = new Dictionary<OpVal, char>(a.Count + b.Count);
+        foreach (var kv in a) dict[kv.Key] = kv.Value;
+        foreach (var kv in b) dict[kv.Key] = kv.Value;
+        return dict;
+    }
+}
 
 /// <summary>
 /// Overpunch Value

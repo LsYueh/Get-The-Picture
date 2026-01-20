@@ -1,9 +1,10 @@
-using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.OverpunchBase;
+using GetThePicture.Cobol.Picture.TypeBase;
 
-namespace GetThePicture.Tests.Cobol.Picture;
+namespace GetThePicture.Tests.Cobol.Picture.OverpunchBase;
 
 [TestClass]
-public class PicOverpunchTest
+public class OverpunchCodexTest
 {
     [TestMethod]
     public void OverpunchCode_Positive_CI()

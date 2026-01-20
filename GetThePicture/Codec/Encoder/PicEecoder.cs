@@ -2,6 +2,7 @@ using System.Globalization;
 
 using GetThePicture.Cobol.Display;
 using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Encoder.Category;
 using GetThePicture.Codec.Options;
 

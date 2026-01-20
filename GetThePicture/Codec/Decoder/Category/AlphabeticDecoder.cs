@@ -1,6 +1,7 @@
 using System.Text;
 
 using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Codec.Decoder.Category;

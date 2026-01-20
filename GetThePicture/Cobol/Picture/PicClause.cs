@@ -1,4 +1,5 @@
 using GetThePicture.Cobol.Picture.ComputationalBase;
+using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Cobol.Picture;
 

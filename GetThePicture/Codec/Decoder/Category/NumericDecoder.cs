@@ -3,6 +3,8 @@ using System.Globalization;
 
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.ComputationalBase;
+using GetThePicture.Cobol.Picture.OverpunchBase;
+using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Options;
 using GetThePicture.Codec.Utils;
 

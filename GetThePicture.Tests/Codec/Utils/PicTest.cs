@@ -1,6 +1,7 @@
-using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.Codec.Utils;
 
-namespace GetThePicture.Tests.Cobol;
+namespace GetThePicture.Tests.Codec.Utils;
 
 [TestClass]
 public class PicTest

@@ -1,12 +1,12 @@
-namespace GetThePicture.Cobol.Picture;
+namespace GetThePicture.Cobol.Picture.TypeBase;
 
 /// <summary>
-/// Represents COBOL PIC base types.
+/// Class of elementary data items.
 /// </summary>
 public enum PicBaseClass
 {
     /// <summary>
-    /// 9 / S9
+    /// 9/S/V
     /// </summary>
     Numeric,
 
@@ -22,8 +22,7 @@ public enum PicBaseClass
 }
 
 /// <summary>
-/// Domain-specific semantic storage formats
-/// (e.g. dates, times, timestamps).
+/// As Category
 /// </summary>
 public enum PicSemantic
 {
@@ -59,7 +58,7 @@ public enum PicSemantic
 }
 
 /// <summary>
-/// 
+/// Usage
 /// </summary>
 public enum PicUsage
 {
@@ -82,20 +81,4 @@ public enum PicUsage
     /// COMP-5 (native binary)
     /// </summary>
     NativeBinary,
-}
-
-/// <summary>
-/// Little-endian / Big-endian Switchs
-/// </summary>
-public enum BinaryOptions
-{
-    /// <summary>
-    /// 
-    /// </summary>
-    Normal,
-
-    /// <summary>
-    /// 
-    /// </summary>
-    Reversed,
 }

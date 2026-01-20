@@ -1,5 +1,6 @@
-using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec;
+using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Tests.Codec.Decoder.Semantic;
 

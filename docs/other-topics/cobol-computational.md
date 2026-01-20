@@ -62,19 +62,75 @@ PIC  9(4) COMP.   *> unsigned
 <br><br>
 
 # `COMP-3` (Packed Decimal)
+與 DISPLAY 不同，COMP-3 不是用字元儲存數字，而是用 `Binary Packed` 的方式壓縮存放。
 
-|  Sign  | Trailing byte |
-| ---- | :--: |
-|-Dca `Positive` | x'0F' |
-|-Dcb/-Dci/-Dcm/-Dcr `Positive` | x'0C' |
-|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Negative` | x'0D' |
-|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Unsigned` | x'0F' |
-|-Dcv `Unsigned` | x'0C' |
+<br>
+
+## 基本儲存規則
+- 每個 byte = 2 個 nibble（4 bits）
+- 每個 nibble 儲存 一個十進位數字
+- 最後一個 nibble 為 sign（符號）
+
+<br>
+
+```r
+| digit | digit | digit | sign |
+```
+
+<br>
+
+## Sign Nibble 規則
+|  Sign  | Trailing byte | |
+| ---- | :--: | :--: |
+|-Dca `Positive` | x'0F' | -- |
+|-Dcb/-Dci/-Dcm/-Dcr `Positive` | x'0C' | ✅ |
+|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Negative` | x'0D' | ✅ |
+|-Dca/-Dcb/-Dci/-Dcm/-Dcr `Unsigned` | x'0F' | ✅ |
+|-Dcv `Unsigned` | x'0C' | -- |
+
+> 原則上（IBM、ACUCOBOL、GnuCOBOL）， `C / D / F` 是最常見且相容性最高的組合，目前不實做切換功能。
+
+<br>
+
+## 位元組長度計算
+> bytes = (digits + 1) / 2  
+
+| PIC                     | digits | bytes |
+| ----------------------- | ------ | ----- |
+| `PIC 9(3) COMP-3`       | 3      | 2     |
+| `PIC S9(5) COMP-3`      | 5      | 3     |
+| `PIC S9(5)V9(2) COMP-3` | 7      | 4     |
+
+<br><br>
+
+## 範例對照
+
+PIC S9(5) COMP-3  
+| 值        | Packed Hex |
+| -------- | ---------- |
+| `12345`  | `12 34 5C` |
+| `-12345` | `12 34 5D` |
+
+<br>
+
+PIC 9(5) COMP-3（Unsigned）  
+| 值       | Packed Hex |
+| ------- | ---------- |
+| `12345` | `12 34 5F` |
+
+<br>
+
+PIC S9(5)V9(2) COMP-3  
+| 值          | Packed Hex    |
+| ---------- | ------------- |
+| `12345.67` | `12 34 56 7C` |
+| `-123.45`  | `01 23 45 D`  |
 
 <br><br>
 
 # 參考
 
+Rocket Software ACUCOBOL-GT extend (V10.5.0) : [USAGE Clause](https://docs.rocketsoftware.com/zh-TW/bundle/acucobolgt_dg_1050_html/page/BKRFRFDATAS043.html)  
 IBM COBOL for Linux on x86 (1.2.0) : [Computational items](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=clause-computational-items)  
 IBM Enterprise COBOL for z/OS (6.5.0) : [TRUNC](https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=options-trunc)
 

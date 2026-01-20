@@ -1,8 +1,9 @@
 using System.Globalization;
 
 using GetThePicture.Cobol.Display;
-using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Encoder;
+using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Tests.Codec.Encoder;
 

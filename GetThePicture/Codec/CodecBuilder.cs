@@ -1,4 +1,5 @@
 using GetThePicture.Cobol.Picture;
+using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Decoder;
 using GetThePicture.Codec.Encoder;
 using GetThePicture.Codec.Options;

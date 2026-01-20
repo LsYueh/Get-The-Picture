@@ -23,8 +23,8 @@
 
 ## 使用方式:
 ```csharp
-using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
+using GetThePicture.Codec.Utils;
 ```
 
 ```csharp

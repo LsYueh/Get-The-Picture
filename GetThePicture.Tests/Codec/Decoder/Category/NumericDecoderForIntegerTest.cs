@@ -1,7 +1,7 @@
 using System.Globalization;
 
-using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec;
+using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Tests.Codec.Decoder.Category;
 
