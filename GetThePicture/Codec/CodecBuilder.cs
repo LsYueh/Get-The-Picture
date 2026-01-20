@@ -47,27 +47,30 @@ public sealed class DecodeContext(PicClause pic)
     }
 
     /// <summary>
-    /// COBOL PICTURE → CLR
+    /// COBOL PICTURE (buffer) → CLR
     /// </summary>
-    /// <param name="display"></param>
+    /// <param name="buffer">ASCII/CP950</param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public object Decode(string display)
+    public object Decode(ReadOnlySpan<byte> buffer)
     {
-        ArgumentNullException.ThrowIfNull(display);
+        if (buffer.Length == 0)
+            throw new ArgumentException("Buffer is empty.", nameof(buffer));
         
-        return PicDecoder.Decode(display, _pic, _codecOptions);
+        return PicDecoder.Decode(buffer, _pic, _codecOptions);
     }
 
     /// <summary>
-    /// CLR → COBOL PICTURE
+    /// CLR → COBOL PICTURE (buffer)
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
     public string Encode(object value)
     {
-        ArgumentNullException.ThrowIfNull(value);
+        throw new NotImplementedException("Encode is not implemented yet.");
+        
+        // ArgumentNullException.ThrowIfNull(value);
 
-        return PicEecoder.Encode(value, _pic, _codecOptions);
+        // return PicEecoder.Encode(value, _pic, _codecOptions);
     }
 }

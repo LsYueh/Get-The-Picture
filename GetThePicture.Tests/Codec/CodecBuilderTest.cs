@@ -1,3 +1,4 @@
+using System.Text;
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
 
@@ -16,7 +17,9 @@ public class CobolValueCodecTests
     {
         var pic = Pic.Parse("9(3)");
 
-        CodecBuilder.ForPic(pic).Decode("1234");
+        byte[] buffer = Encoding.ASCII.GetBytes("1234");
+
+        CodecBuilder.ForPic(pic).Decode(buffer);
     }
 
     // -------------------------
@@ -29,6 +32,8 @@ public class CobolValueCodecTests
     {
         var pic = Pic.Parse("9(5)");
 
-        CodecBuilder.ForPic(pic).Decode("12A34");
+        byte[] buffer = Encoding.ASCII.GetBytes("1234");
+
+        CodecBuilder.ForPic(pic).Decode(buffer);
     }
 }
