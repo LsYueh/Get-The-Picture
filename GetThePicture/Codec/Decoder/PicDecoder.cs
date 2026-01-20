@@ -26,11 +26,11 @@ internal static class PicDecoder
 #pragma warning disable IDE0066 // Convert switch statement to expression
         switch (pic.Semantic)
         {
-            // case PicSemantic.GregorianDate : 
-            // case PicSemantic.MinguoDate    : return DateDecoder.Decode(display, pic);
-            // case PicSemantic.Time6         : 
-            // case PicSemantic.Time9         : return TimeDecoder.Decode(display, pic);
-            // case PicSemantic.Timestamp14   : return TimestampDecoder.Decode(display, pic);
+            case PicSemantic.GregorianDate : 
+            case PicSemantic.MinguoDate    : return DateDecoder.Decode(buffer, pic);
+            case PicSemantic.Time6         : 
+            case PicSemantic.Time9         : return TimeDecoder.Decode(buffer, pic);
+            case PicSemantic.Timestamp14   : return TimestampDecoder.Decode(buffer, pic);
             default:
                 return DecodeBaseType(buffer, pic, codecOptions);
         }
@@ -42,8 +42,8 @@ internal static class PicDecoder
 #pragma warning disable IDE0066 // Convert switch statement to expression
         switch (pic.BaseClass)
         {
-            // case PicBaseClass.Numeric     : return      NumericDecoder.Decode(buffer, pic, codecOptions);
-            // case PicBaseClass.Alphanumeric: return AlphanumericDecoder.Decode(buffer, pic);
+            case PicBaseClass.Numeric     : return      NumericDecoder.Decode(buffer, pic, codecOptions);
+            case PicBaseClass.Alphanumeric: return AlphanumericDecoder.Decode(buffer, pic);
             case PicBaseClass.Alphabetic  : return   AlphabeticDecoder.Decode(buffer, pic);
             default:
                 throw new NotSupportedException($"Unsupported PIC Data Type [Decode] : {pic.BaseClass}");

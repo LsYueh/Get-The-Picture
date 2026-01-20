@@ -11,7 +11,7 @@ internal static class AlphabeticDecoder
     /// <summary>
     /// Decoder for COBOL PIC A.
     /// </summary>
-    /// <param name="buffer"></param>
+    /// <param name="buffer">ASCII/CP950</param>
     /// <param name="pic"></param>
     /// <returns></returns>
     public static string Decode(ReadOnlySpan<byte> buffer, PicClause pic)

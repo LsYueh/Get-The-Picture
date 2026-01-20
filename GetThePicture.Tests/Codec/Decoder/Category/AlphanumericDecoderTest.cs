@@ -11,7 +11,7 @@ public class AlphanumericDecoderTest
     public void Decode_Alphanumeric_TrimsRightSpaces()
     {
         var pic = Pic.Parse("X(5)");
-        byte[] buffer = Encoding.ASCII.GetBytes("AbC  ");
+        byte[] buffer = Encoding.ASCII.GetBytes("ABC  ");
 
         object result = CodecBuilder.ForPic(pic).Decode(buffer);
 
@@ -34,7 +34,7 @@ public class AlphanumericDecoderTest
     {
         var pic = Pic.Parse("X(7)");
 
-        Encoding cp950 = Encoding.GetEncoding("cp950");
+        Encoding cp950 = EncodingFactory.CP950;
         byte[] buffer = cp950.GetBytes("中文字 ");
 
         object result = CodecBuilder.ForPic(pic).Decode(buffer);
@@ -47,7 +47,7 @@ public class AlphanumericDecoderTest
     {
         var pic = Pic.Parse("X(5)");
         
-        Encoding cp950 = Encoding.GetEncoding("cp950");
+        Encoding cp950 = EncodingFactory.CP950;
         byte[] buffer = cp950.GetBytes("中文字 ");
 
         object result = CodecBuilder.ForPic(pic).Decode(buffer);

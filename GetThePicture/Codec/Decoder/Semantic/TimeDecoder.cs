@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
@@ -7,7 +8,7 @@ namespace GetThePicture.Codec.Decoder.Semantic;
 
 internal static class TimeDecoder
 {
-    public static TimeOnly Decode(string display, PicClause pic)
+    public static TimeOnly Decode(ReadOnlySpan<byte> buffer, PicClause pic)
     {
         if (pic.BaseClass == PicBaseClass.Numeric && pic.Signed)
             throw new NotSupportedException($"Unsupported TimeOnly base type: PIC S9");
@@ -19,39 +20,41 @@ internal static class TimeDecoder
 
         return pic.Semantic switch
         {
-            PicSemantic.Time6 => ParseTime6(display),
-            PicSemantic.Time9 => ParseTime9(display),
+            PicSemantic.Time6 => ParseTime6(buffer),
+            PicSemantic.Time9 => ParseTime9(buffer),
             _ => throw new NotSupportedException($"Unsupported TimeOnly format: {pic.Semantic}")
         };
     }
 
-    private static TimeOnly ParseTime6(string display)
+    private static TimeOnly ParseTime6(ReadOnlySpan<byte> buffer)
     {
+        string s = Encoding.ASCII.GetString(buffer);
+        
         // HHmmss
         if (!TimeOnly.TryParseExact(
-                display,
-                "HHmmss",
+                s, "HHmmss",
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None,
                 out var time))
         {
-            throw new FormatException($"Invalid Time6 DISPLAY value: '{display}'");
+            throw new FormatException($"Invalid Time6 DISPLAY value: '{s}'");
         }
 
         return time;
     }
 
-    private static TimeOnly ParseTime9(string display)
+    private static TimeOnly ParseTime9(ReadOnlySpan<byte> buffer)
     {
+        string s = Encoding.ASCII.GetString(buffer);
+
         // HHmmssfff
         if (!TimeOnly.TryParseExact(
-                display,
-                "HHmmssfff",
+                s, "HHmmssfff",
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None,
                 out var time))
         {
-            throw new FormatException($"Invalid Time9 DISPLAY value: '{display}'");
+            throw new FormatException($"Invalid Time9 DISPLAY value: '{s}'");
         }
 
         return time;
