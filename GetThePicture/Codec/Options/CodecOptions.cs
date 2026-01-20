@@ -5,9 +5,9 @@ namespace GetThePicture.Codec.Options;
 public sealed class CodecOptions
 {
     /// <summary>
-    /// 嚴格長度驗證 (預設 true)
+    /// 嚴格長度驗證 (預設 false)
     /// </summary>
-    public bool Strict { get; set; } = true;
+    public bool Strict { get; set; } = false;
 
     /// <summary>
     /// `-Dci` is the default.

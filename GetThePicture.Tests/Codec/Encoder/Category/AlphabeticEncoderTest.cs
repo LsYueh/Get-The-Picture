@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
 
@@ -6,11 +8,15 @@ namespace GetThePicture.Tests.Codec.Encoder.Category;
 [TestClass]
 public class AlphabeticEncoderTest
 {
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+
     [TestMethod]
     public void Encode_Alphabetic()
     {
         var pic = Pic.Parse("A(5)");
-        string result = CodecBuilder.ForPic(pic).Encode("AbC");
+        byte[] buffer = CodecBuilder.ForPic(pic).Encode("AbC");
+
+        string result = cp950.GetString(buffer);
 
         Assert.AreEqual("AbC  ", result);
     }
@@ -19,7 +25,9 @@ public class AlphabeticEncoderTest
     public void Encode_Alphabetic_Extra()
     {
         var pic = Pic.Parse("A(5)");
-        string result = CodecBuilder.ForPic(pic).Encode("AbC  fGh");
+        byte[] buffer = CodecBuilder.ForPic(pic).Encode("AbC  fGh");
+
+        string result = cp950.GetString(buffer);
 
         Assert.AreEqual("AbC  ", result);
     }

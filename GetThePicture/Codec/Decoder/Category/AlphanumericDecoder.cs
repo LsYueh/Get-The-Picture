@@ -11,10 +11,10 @@ internal static class AlphanumericDecoder
     /// <summary>
     /// Decoder for COBOL PIC X.
     /// </summary>
-    /// <param name="cp950Bytes"></param>
+    /// <param name="buffer">ASCII/CP950</param>
     /// <param name="pic"></param>
     /// <returns></returns>
-    public static string Decode(byte[] cp950Bytes, PicClause pic)
+    public static string Decode(ReadOnlySpan<byte> buffer, PicClause pic)
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"PIC X does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
@@ -22,7 +22,7 @@ internal static class AlphanumericDecoder
         Encoding cp950 = EncodingFactory.CP950;
 
         // X(n) 通常右補空白
-        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadEnd(cp950Bytes, pic.DigitCount);
+        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadEnd(buffer, pic.DigitCount);
         
         string value = cp950.GetString(fieldBytes);
 

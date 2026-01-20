@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
@@ -15,13 +17,15 @@ public class TimeDecoderTest
     public void Decode_TimeOnly_FromDataRow(
         string picString,
         PicSemantic semantic,
-        string display,
+        string text,
         int hour, int minute, int second, int millisecond)
     {
         var pic = Pic.Parse(picString);
         pic.Semantic = semantic;
 
-        object result = CodecBuilder.ForPic(pic).Decode(display);
+        byte[] buffer = Encoding.ASCII.GetBytes(text);
+
+        object result = CodecBuilder.ForPic(pic).Decode(buffer);
 
         var expected = new TimeOnly(hour, minute, second, millisecond);
         Assert.AreEqual(expected, result);
@@ -37,9 +41,9 @@ public class TimeDecoderTest
         var pic = Pic.Parse("S9(6)");
         pic.Semantic = PicSemantic.Time6;
 
-        var display = "123456";
+        byte[] buffer = Encoding.ASCII.GetBytes("123456");
 
-        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode(display));
+        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode(buffer));
     }
 
     [TestMethod]
@@ -48,8 +52,8 @@ public class TimeDecoderTest
         var pic = Pic.Parse("S9(6)");
         pic.Semantic = PicSemantic.Time6;
 
-        var display = "246060"; // invalid time
+        byte[] buffer = Encoding.ASCII.GetBytes("246060"); // invalid time
 
-        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode(display));
+        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode(buffer));
     }
 }

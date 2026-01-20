@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
@@ -7,6 +9,8 @@ namespace GetThePicture.Tests.Codec.Encoder.Category;
 [TestClass]
 public class NumericEncoderTest
 {
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+    
     [TestMethod]
     [DataTestMethod]
     [DataRow(123.45, "9(3)V9(2)", "12345")]
@@ -16,7 +20,9 @@ public class NumericEncoderTest
     public void Encode_Double_Default(object value, string picString, string expected)
     {
         var pic = Pic.Parse(picString);
-        string result = CodecBuilder.ForPic(pic).Encode(value);
+        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+
+        string result = cp950.GetString(buffer);
 
         Assert.AreEqual(expected, result);
     }
@@ -30,7 +36,9 @@ public class NumericEncoderTest
     public void Encode_Double_With_Sign_Default(object value, string picString, string expected)
     {
         var pic = Pic.Parse(picString);
-        string result = CodecBuilder.ForPic(pic).Encode(value);
+        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+
+        string result = cp950.GetString(buffer);
 
         Assert.AreEqual(expected, result);
     }
@@ -46,7 +54,9 @@ public class NumericEncoderTest
     public void Encode_Negative_Double_With_Sign_Default(object value, string picString, string expected)
     {
         var pic = Pic.Parse(picString);
-        string result = CodecBuilder.ForPic(pic).Encode(value);
+        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+
+        string result = cp950.GetString(buffer);
 
         Assert.AreEqual(expected, result);
     }
@@ -58,8 +68,10 @@ public class NumericEncoderTest
     public void Encode_WithDataStorageOption_ACUCOBOL(object value, string picString, string expected)
     {
         var pic = Pic.Parse(picString);
-        string result = CodecBuilder.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Encode(value);
+        byte[] buffer = CodecBuilder.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Encode(value);
 
+        string result = cp950.GetString(buffer);
+        
         Assert.AreEqual(expected, result);
     }
 

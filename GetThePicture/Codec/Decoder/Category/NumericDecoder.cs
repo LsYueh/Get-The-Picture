@@ -15,19 +15,19 @@ internal static class NumericDecoder
     /// <summary>
     /// CP950 → Overpunch Decode  → CLR value
     /// </summary>
-    /// <param name="cp950Bytes"></param>
+    /// <param name="buffer">ASCII/CP950</param>
     /// <param name="pic"></param>
     /// <param name="dataStorageOptions"></param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    public static object Decode(byte[] cp950Bytes, PicClause pic, CodecOptions? options = null)
+    public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, CodecOptions? options = null)
     {
         options ??= new CodecOptions();
 
         // Note: VALUE進來後可能在DISPLAY被S9(n)截位，再轉輸出結果，一般COBOL應該也是這樣的狀況
 
         // 截位或補字處理
-        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(cp950Bytes, pic.DigitCount);
+        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(buffer, pic.DigitCount);
 
         return pic.Usage switch
         {

@@ -1,6 +1,6 @@
-namespace GetThePicture.Cobol.Display;
+namespace GetThePicture.Cobol.Elementary;
 
-internal readonly struct DisplayNumber(bool isNegative, string digits, int decimalDigits, decimal? value = null)
+internal readonly struct EleNumber(bool isNegative, string digits, int decimalDigits, decimal? value = null)
 {
     public bool IsNegative { get; } = isNegative;
     /// <summary>

@@ -1,3 +1,4 @@
+using System.Text;
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
 
@@ -10,7 +11,9 @@ public class AlphanumericDecoderTest
     public void Decode_Alphanumeric_TrimsRightSpaces()
     {
         var pic = Pic.Parse("X(5)");
-        object result = CodecBuilder.ForPic(pic).Decode("ABC  ");
+        byte[] buffer = Encoding.ASCII.GetBytes("ABC  ");
+
+        object result = CodecBuilder.ForPic(pic).Decode(buffer);
 
         Assert.AreEqual("ABC", result);
     }
@@ -19,7 +22,9 @@ public class AlphanumericDecoderTest
     public void Decode_Alphanumeric_Lesser_Extra_TrimsRightSpaces()
     {
         var pic = Pic.Parse("X(6)");
-        object result = CodecBuilder.ForPic(pic).NoStrict().Decode("ABC  ");
+        byte[] buffer = Encoding.ASCII.GetBytes("ABC  ");
+
+        object result = CodecBuilder.ForPic(pic).Decode(buffer);
 
         Assert.AreEqual("ABC", result);
     }
@@ -28,7 +33,11 @@ public class AlphanumericDecoderTest
     public void Decode_Alphanumeric_CP950_TrimsRightSpaces()
     {
         var pic = Pic.Parse("X(7)");
-        object result = CodecBuilder.ForPic(pic).Decode("中文字 ");
+
+        Encoding cp950 = EncodingFactory.CP950;
+        byte[] buffer = cp950.GetBytes("中文字 ");
+
+        object result = CodecBuilder.ForPic(pic).Decode(buffer);
 
         Assert.AreEqual("中文字", result);
     }
@@ -37,7 +46,11 @@ public class AlphanumericDecoderTest
     public void Decode_Alphanumeric_CP950_Lesser_TrimsRightSpaces()
     {
         var pic = Pic.Parse("X(5)");
-        object result = CodecBuilder.ForPic(pic).NoStrict().Decode("中文字 ");
+        
+        Encoding cp950 = EncodingFactory.CP950;
+        byte[] buffer = cp950.GetBytes("中文字 ");
+
+        object result = CodecBuilder.ForPic(pic).Decode(buffer);
 
         Assert.AreEqual("中文?", result);
     }

@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
@@ -7,6 +9,8 @@ namespace GetThePicture.Tests.Codec.Encoder.Semantic;
 [TestClass]
 public class TimestampEncoderTest
 {
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+    
     [DataTestMethod]
     [DataRow("X(14)", PicSemantic.Timestamp14, "20240115123045", 2024,  1, 15, 12, 30, 45)]
     [DataRow("9(14)", PicSemantic.Timestamp14, "20240115123045", 2024,  1, 15, 12, 30, 45)]
@@ -30,7 +34,9 @@ public class TimestampEncoderTest
             year, month, day,
             hour, minute, second,
             DateTimeKind.Unspecified);
-        object result = CodecBuilder.ForPic(pic).Encode(value);
+        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+
+        string result = cp950.GetString(buffer);
 
         Assert.AreEqual(expected, result);
     }

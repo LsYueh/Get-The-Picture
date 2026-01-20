@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
@@ -13,15 +15,17 @@ public class DateDecoderTest
     [DataRow("9(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("X(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
     [DataRow("9(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
-    public void Decode_DateOnly(string picString, PicSemantic semantic, string display, int year, int month, int day)
+    public void Decode_DateOnly(string picString, PicSemantic semantic, string text, int year, int month, int day)
     {
         var pic = Pic.Parse(picString);
         pic.Semantic = semantic;
 
-        object result = CodecBuilder.ForPic(pic).Decode(display);
+        byte[] buffer = Encoding.ASCII.GetBytes(text);
+
+        object value = CodecBuilder.ForPic(pic).Decode(buffer);
 
         var expected = new DateOnly(year, month, day);
-        Assert.AreEqual(expected, result);
+        Assert.AreEqual(expected, value);
     }
 
     [TestMethod]
@@ -30,11 +34,12 @@ public class DateDecoderTest
     [DataRow("9(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("X(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
     [DataRow("9(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
-    public void Decode_DateOnly_WithSemantic(string picString, PicSemantic semantic, string display, int year, int month, int day)
+    public void Decode_DateOnly_WithSemantic(string picString, PicSemantic semantic, string text, int year, int month, int day)
     {
         var pic = Pic.Parse(picString);
+        byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object result = CodecBuilder.ForPic(pic).WithSemantic(semantic).Decode(display);
+        object result = CodecBuilder.ForPic(pic).WithSemantic(semantic).Decode(buffer);
 
         var expected = new DateOnly(year, month, day);
         Assert.AreEqual(expected, result);
@@ -50,7 +55,9 @@ public class DateDecoderTest
         var pic = Pic.Parse("S9(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode("20241301"));
+        byte[] buffer = Encoding.ASCII.GetBytes("20241301");
+
+        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode(buffer));
     }
 
     [TestMethod]
@@ -59,6 +66,8 @@ public class DateDecoderTest
         var pic = Pic.Parse("X(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<FormatException>(() => CodecBuilder.ForPic(pic).Decode("20241301"));
+        byte[] buffer = Encoding.ASCII.GetBytes("20241301");
+
+        Assert.ThrowsException<FormatException>(() => CodecBuilder.ForPic(pic).Decode(buffer));
     }
 }

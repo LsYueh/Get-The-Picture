@@ -16,9 +16,9 @@ public sealed class DecodeContext(PicClause pic)
     private readonly PicClause _pic = pic;
     private readonly CodecOptions _codecOptions = new();
 
-    public DecodeContext NoStrict()
+    public DecodeContext WithStrict()
     {
-        _codecOptions.Strict = false;
+        _codecOptions.Strict = true;
         return this;
     }
 
@@ -47,24 +47,25 @@ public sealed class DecodeContext(PicClause pic)
     }
 
     /// <summary>
-    /// COBOL PICTURE → CLR
+    /// COBOL Elementary Item (buffer) → CLR
     /// </summary>
-    /// <param name="display"></param>
+    /// <param name="buffer">COBOL Elementary Item</param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public object Decode(string display)
+    public object Decode(ReadOnlySpan<byte> buffer)
     {
-        ArgumentNullException.ThrowIfNull(display);
+        if (buffer.Length == 0)
+            throw new ArgumentException("Buffer is empty.", nameof(buffer));
         
-        return PicDecoder.Decode(display, _pic, _codecOptions);
+        return PicDecoder.Decode(buffer, _pic, _codecOptions);
     }
 
     /// <summary>
-    /// CLR → COBOL PICTURE
+    /// CLR → COBOL Elementary Item (buffer)
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>
-    public string Encode(object value)
+    public byte[] Encode(object value)
     {
         ArgumentNullException.ThrowIfNull(value);
 

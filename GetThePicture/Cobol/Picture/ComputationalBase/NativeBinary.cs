@@ -1,4 +1,4 @@
-using GetThePicture.Cobol.Display;
+using GetThePicture.Cobol.Elementary;
 using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Cobol.Picture.ComputationalBase;
@@ -30,15 +30,15 @@ internal static class COMP5
         };
     }
 
-    public static byte[] Encode(DisplayValue displayValue, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static byte[] Encode(ElementaryMeta meta, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
     {
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException($"COMP does not support decimal digits. PIC has {pic.DecimalDigits} decimal digits.");
         
-        if (displayValue.Number is null)
-            throw new ArgumentNullException(nameof(displayValue));
+        if (meta.Number is null)
+            throw new ArgumentNullException(nameof(meta));
 
-        var number = displayValue.Number.Value;
+        var number = meta.Number.Value;
 
         // 檢查是否有小數位
         if (number.Value != decimal.Truncate(number.Value))

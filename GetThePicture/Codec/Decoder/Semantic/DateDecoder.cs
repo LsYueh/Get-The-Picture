@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text;
 
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
@@ -7,7 +8,7 @@ namespace GetThePicture.Codec.Decoder.Semantic;
 
 internal static class DateDecoder
 {
-    public static DateOnly Decode(string display, PicClause pic)
+    public static DateOnly Decode(ReadOnlySpan<byte> buffer, PicClause pic)
     {
         if (pic.BaseClass == PicBaseClass.Numeric && pic.Signed)
             throw new NotSupportedException($"Unsupported DateOnly base type: PIC S9");
@@ -19,40 +20,43 @@ internal static class DateDecoder
 
         return pic.Semantic switch
         {
-            PicSemantic.GregorianDate => ParseGregorianDate(display),
-            PicSemantic.MinguoDate    => ParseMinguoDate(display),
+            PicSemantic.GregorianDate => ParseGregorianDate(buffer),
+            PicSemantic.MinguoDate    => ParseMinguoDate(buffer),
             _ => throw new NotSupportedException($"Unsupported DateOnly format: {pic.Semantic}")
         };
     }
 
-    private static DateOnly ParseGregorianDate(string display)
+    private static DateOnly ParseGregorianDate(ReadOnlySpan<byte> buffer)
     {
+        string s = Encoding.ASCII.GetString(buffer);
+
         if (!DateOnly.TryParseExact(
-                display,
-                "yyyyMMdd",
+                s, "yyyyMMdd",
                 CultureInfo.InvariantCulture,
                 DateTimeStyles.None,
                 out var date))
         {
-            throw new FormatException($"Invalid Gregorian date DISPLAY value: '{display}'");
+            throw new FormatException($"Invalid Gregorian date value: '{s}'");
         }
 
         return date;
     }
 
-    private static DateOnly ParseMinguoDate(string display)
+    private static DateOnly ParseMinguoDate(ReadOnlySpan<byte> buffer)
     {
-        if (display.Length < 7)
+        string s = Encoding.ASCII.GetString(buffer);
+        
+        if (s.Length < 7)
         {
-            throw new FormatException($"Invalid Minguo date DISPLAY value: '{display}'");
+            throw new FormatException($"Invalid Minguo date value: '{s}'");
         }
 
         // 前 3 碼：民國年
-        if (!int.TryParse(display[..3], out int minguoYear) ||
-            !int.TryParse(display[3..5], out int month) ||
-            !int.TryParse(display[5..7], out int day))
+        if (!int.TryParse(s[..3], out int minguoYear) ||
+            !int.TryParse(s[3..5], out int month) ||
+            !int.TryParse(s[5..7], out int day))
         {
-            throw new FormatException($"Invalid Minguo date DISPLAY value: '{display}'");
+            throw new FormatException($"Invalid Minguo date value: '{s}'");
         }
 
         int gregorianYear = minguoYear + 1911;
@@ -63,7 +67,7 @@ internal static class DateDecoder
         }
         catch (ArgumentOutOfRangeException ex)
         {
-            throw new FormatException($"Invalid Minguo date DISPLAY value: '{display}'", ex);
+            throw new FormatException($"Invalid Minguo date value: '{s}'", ex);
         }
     }
 }

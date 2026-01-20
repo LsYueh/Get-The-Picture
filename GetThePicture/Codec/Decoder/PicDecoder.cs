@@ -12,45 +12,44 @@ namespace GetThePicture.Codec.Decoder;
 internal static class PicDecoder
 {
     /// <summary>
-    /// COBOL PICTURE DISPLAY → CP950 → CLR value
+    /// COBOL Elementary Item (buffer) → CLR
     /// </summary>
-    public static object Decode(string display, PicClause pic, CodecOptions codecOptions)
+    /// <param name="buffer">COBOL Elementary Item</param>
+    /// <param name="pic"></param>
+    /// <param name="codecOptions"></param>
+    /// <returns></returns>
+    /// <exception cref="FormatException"></exception>
+    public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, CodecOptions codecOptions)
     {
-        ArgumentNullException.ThrowIfNull(display);
         ArgumentNullException.ThrowIfNull(pic);
 
-        Encoding cp950 = EncodingFactory.CP950;
-
-        byte[] cp950Bytes = cp950.GetBytes(display);
-
-        // 嚴格長度驗證（COBOL 是 fixed-length）
-        if (codecOptions.Strict && (cp950Bytes.Length != pic.DigitCount))
+        if (codecOptions.Strict && (buffer.Length != pic.DigitCount))
         {
-            throw new FormatException($"DISPLAY length mismatch. Expected {pic.DigitCount}, actual {cp950Bytes.Length}.");
+            throw new FormatException($"DISPLAY length mismatch. Expected {pic.StorageOccupied}, actual {buffer.Length}.");
         }
 
 #pragma warning disable IDE0066 // Convert switch statement to expression
         switch (pic.Semantic)
         {
             case PicSemantic.GregorianDate : 
-            case PicSemantic.MinguoDate    : return DateDecoder.Decode(display, pic);
+            case PicSemantic.MinguoDate    : return DateDecoder.Decode(buffer, pic);
             case PicSemantic.Time6         : 
-            case PicSemantic.Time9         : return TimeDecoder.Decode(display, pic);
-            case PicSemantic.Timestamp14   : return TimestampDecoder.Decode(display, pic);
+            case PicSemantic.Time9         : return TimeDecoder.Decode(buffer, pic);
+            case PicSemantic.Timestamp14   : return TimestampDecoder.Decode(buffer, pic);
             default:
-                return DecodeBaseType(cp950Bytes, pic, codecOptions);
+                return DecodeBaseType(buffer, pic, codecOptions);
         }
 #pragma warning restore IDE0066 // Convert switch statement to expression
     }
 
-    private static object DecodeBaseType(byte[] cp950Bytes, PicClause pic, CodecOptions codecOptions)
+    private static object DecodeBaseType(ReadOnlySpan<byte> buffer, PicClause pic, CodecOptions codecOptions)
     {
 #pragma warning disable IDE0066 // Convert switch statement to expression
         switch (pic.BaseClass)
         {
-            case PicBaseClass.Numeric     : return      NumericDecoder.Decode(cp950Bytes, pic, codecOptions);
-            case PicBaseClass.Alphanumeric: return AlphanumericDecoder.Decode(cp950Bytes, pic);
-            case PicBaseClass.Alphabetic  : return   AlphabeticDecoder.Decode(cp950Bytes, pic);
+            case PicBaseClass.Numeric     : return      NumericDecoder.Decode(buffer, pic, codecOptions);
+            case PicBaseClass.Alphanumeric: return AlphanumericDecoder.Decode(buffer, pic);
+            case PicBaseClass.Alphabetic  : return   AlphabeticDecoder.Decode(buffer, pic);
             default:
                 throw new NotSupportedException($"Unsupported PIC Data Type [Decode] : {pic.BaseClass}");
         }

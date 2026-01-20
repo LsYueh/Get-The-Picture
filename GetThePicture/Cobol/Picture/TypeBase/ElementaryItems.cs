@@ -1,7 +1,7 @@
 namespace GetThePicture.Cobol.Picture.TypeBase;
 
 /// <summary>
-/// Class of elementary data items.
+/// Class of elementary items.
 /// </summary>
 public enum PicBaseClass
 {

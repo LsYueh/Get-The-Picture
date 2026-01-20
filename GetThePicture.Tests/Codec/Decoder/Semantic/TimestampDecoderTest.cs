@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
@@ -15,7 +17,7 @@ public class TimestampDecoderTest
     public void Decode_Timestamp14_FromDataRow(
         string picString,
         PicSemantic semantic,
-        string display,
+        string text,
         int year,
         int month,
         int day,
@@ -26,7 +28,9 @@ public class TimestampDecoderTest
         var pic = Pic.Parse(picString);
         pic.Semantic = semantic;
 
-        object result = CodecBuilder.ForPic(pic).Decode(display);
+        byte[] buffer = Encoding.ASCII.GetBytes(text);
+
+        object result = CodecBuilder.ForPic(pic).Decode(buffer);
 
         var expected = new DateTime(
             year, month, day,
@@ -46,9 +50,9 @@ public class TimestampDecoderTest
         var pic = Pic.Parse("S9(14)");
         pic.Semantic = PicSemantic.Timestamp14;
 
-        var display = "20240115123045";
+        byte[] buffer = Encoding.ASCII.GetBytes("20240115123045");
 
-        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode(display));
+        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode(buffer));
     }
 
     [TestMethod]
@@ -57,8 +61,8 @@ public class TimestampDecoderTest
         var pic = Pic.Parse("9(14)");
         pic.Semantic = PicSemantic.Timestamp14;
 
-        var display = "20241301120000"; // invalid month
+        byte[] buffer = Encoding.ASCII.GetBytes("20241301120000");// invalid month
 
-        Assert.ThrowsException<FormatException>(() => CodecBuilder.ForPic(pic).Decode(display));
+        Assert.ThrowsException<FormatException>(() => CodecBuilder.ForPic(pic).Decode(buffer));
     }
 }
