@@ -16,35 +16,70 @@ public sealed class DecodeContext(PicClause pic)
     private readonly PicClause _pic = pic;
     private readonly CodecOptions _codecOptions = new();
 
+    // -------------------------
+    // COBOL Compile Options
+    // -------------------------
+
+    /// <summary>
+    /// Data Length Enforcement
+    /// </summary>
+    /// <returns></returns>
     public DecodeContext WithStrict()
     {
         _codecOptions.Strict = true;
         return this;
     }
 
+    /// <summary>
+    /// For PIC S9 DISPLAY. (Overpunch Codex)
+    /// </summary>
+    /// <param name="opt"></param>
+    /// <returns></returns>
     public DecodeContext WithDataStorageOption(DataStorageOptions? opt)
     {
         _codecOptions.DataStorage = opt ?? DataStorageOptions.CI;
         return this;
     }
 
+    /// <summary>
+    /// For PIC S9 DISPLAY. (Overpunch Codex)
+    /// </summary>
+    /// <returns></returns>
     public DecodeContext WithSignIsLeading()
     {
         _codecOptions.Sign = SignOptions.IsLeading;
         return this;
     }
 
-    public DecodeContext WithSemantic(PicSemantic picSemantic = PicSemantic.None)
+    /// <summary>
+    /// For COMP/COMP-5 use only.
+    /// </summary>
+    /// <returns></returns>
+    public DecodeContext WithReversedBinary()
+    {
+        _codecOptions.Binary = BinaryOptions.Reversed;
+        return this;
+    }
+
+    // -------------------------
+    // COBOL PICTURE Clause 
+    // -------------------------
+
+    public DecodeContext AsSemantic(PicSemantic picSemantic = PicSemantic.None)
     {
         _pic.Semantic = picSemantic;
         return this;
     }
 
-    public DecodeContext WithUsage(PicUsage Usage = PicUsage.Display)
+    public DecodeContext Usage(PicUsage Usage = PicUsage.Display)
     {
         _pic.Usage = Usage;
         return this;
     }
+
+    // -------------------------
+    // Codec
+    // -------------------------
 
     /// <summary>
     /// COBOL Elementary Item (buffer) → CLR

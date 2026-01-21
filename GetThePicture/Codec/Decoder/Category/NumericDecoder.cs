@@ -24,17 +24,17 @@ internal static class NumericDecoder
     {
         options ??= new CodecOptions();
 
-        // Note: VALUE進來後可能在DISPLAY被S9(n)截位，再轉輸出結果，一般COBOL應該也是這樣的狀況
+        // Note: COBOL資料記憶體先被S9(n)截位再轉處裡，一般COBOL應該也是這樣的狀況
 
         // 截位或補字處理
-        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(buffer, pic.DigitCount);
+        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(buffer, pic.StorageOccupied);
 
         return pic.Usage switch
         {
             PicUsage.Display       => Display_Decode(fieldBytes, pic, options),
-            PicUsage.Binary        =>    COMP.Decode(fieldBytes, pic),
+            PicUsage.Binary        =>    COMP.Decode(fieldBytes, pic, options.Binary),
             PicUsage.PackedDecimal =>   COMP3.Decode(fieldBytes, pic),
-            PicUsage.NativeBinary  =>   COMP5.Decode(fieldBytes, pic),
+            PicUsage.NativeBinary  =>   COMP5.Decode(fieldBytes, pic, options.Binary),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
     }

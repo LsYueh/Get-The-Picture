@@ -31,7 +31,7 @@ public class PicClause
     public int DigitCount => IntegerDigits + DecimalDigits;
 
     /// <summary>
-    /// COBOL-PIC 總佔用資料的長度
+    /// COBOL-PIC 記憶體佔用資料的長度
     /// </summary>
     public int StorageOccupied =>
         Usage switch

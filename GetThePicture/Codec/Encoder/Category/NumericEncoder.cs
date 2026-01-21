@@ -26,18 +26,18 @@ internal static class NumericEncoder
     {
         options ??= new CodecOptions();
 
-        // Note: 要先變成DISPLAY的VALUE，再模擬DISPLAY時被S9(n)截位的輸出結果
-
         byte[] buffer = pic.Usage switch
         {
             PicUsage.Display       => Display_Encode(meta, pic, options),
-            // PicUsage.Binary        =>    COMP.Encode(meta, pic), // TODO: Debug...
-            // PicUsage.PackedDecimal =>   COMP3.Encode(meta, pic),
-            // PicUsage.NativeBinary  =>   COMP5.Encode(meta, pic),
+            PicUsage.Binary        =>    COMP.Encode(meta, pic, options.Binary),
+            PicUsage.PackedDecimal =>   COMP3.Encode(meta, pic),
+            PicUsage.NativeBinary  =>   COMP5.Encode(meta, pic, options.Binary),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
 
-        byte[] normalized = BufferSlice.SlicePadStart(buffer, pic.DigitCount);
+        // Note: 模擬COBOL資料記憶體被S9(n)截位的輸出結果
+        
+        byte[] normalized = BufferSlice.SlicePadStart(buffer, pic.StorageOccupied);
 
         return normalized;
     }

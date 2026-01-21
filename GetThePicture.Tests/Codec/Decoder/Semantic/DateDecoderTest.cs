@@ -34,12 +34,12 @@ public class DateDecoderTest
     [DataRow("9(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("X(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
     [DataRow("9(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
-    public void Decode_DateOnly_WithSemantic(string picString, PicSemantic semantic, string text, int year, int month, int day)
+    public void Decode_DateOnly_AsSemantic(string picString, PicSemantic semantic, string text, int year, int month, int day)
     {
         var pic = Pic.Parse(picString);
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object result = CodecBuilder.ForPic(pic).WithSemantic(semantic).Decode(buffer);
+        object result = CodecBuilder.ForPic(pic).AsSemantic(semantic).Decode(buffer);
 
         var expected = new DateOnly(year, month, day);
         Assert.AreEqual(expected, result);
