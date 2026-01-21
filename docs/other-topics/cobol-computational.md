@@ -11,7 +11,7 @@ COMP（Binary / Computational）是 COBOL 中最早、也是效能最佳的數�
 | 5 – 9        | 4 bytes       | `int`            | `uint`             |
 | 10 – 18      | 8 bytes       | `long`           | `ulong`            |
 
-> ⚠️實際分配結果取決於 編譯器實作，但以上對應為 IBM / Micro Focus / GnuCOBOL 的通用行為。  
+> ⚠️ 實際分配結果取決於 編譯器實作，但以上對應為 IBM / Micro Focus / GnuCOBOL 的通用行為。  
 
 <br>
 
@@ -58,6 +58,7 @@ PIC  9(4) COMP.   *> unsigned
 |     PIC S99    |  -99 ~ +99 | -32768 ~ +32767 |
 |     PIC 999    |    0 ~ 999 |      0 ~ 65535  |
 
+> ⚠️ 目前沒有對`COMP`做範圍限制，底層都是呼叫`COMP-5`  
 
 <br><br>
 
@@ -88,7 +89,7 @@ PIC  9(4) COMP.   *> unsigned
 |-Dca/-Dcb/-Dci/-Dcm/-Dcr `Unsigned` | x'0F' | ✅ |
 |-Dcv `Unsigned` | x'0C' | -- |
 
-> 原則上（IBM、ACUCOBOL、GnuCOBOL）， `C / D / F` 是最常見且相容性最高的組合，目前不實做切換功能。
+> ⚠️ 原則上（IBM、ACUCOBOL、GnuCOBOL） `C / D / F` 是最常見且相容性最高的組合，目前不實做切換功能。
 
 <br>
 

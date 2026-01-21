@@ -27,7 +27,7 @@ internal static class NumericDecoder
         // Note: VALUE進來後可能在DISPLAY被S9(n)截位，再轉輸出結果，一般COBOL應該也是這樣的狀況
 
         // 截位或補字處理
-        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(buffer, pic.DigitCount);
+        ReadOnlySpan<byte> fieldBytes = BufferSlice.SlicePadStart(buffer, pic.StorageOccupied);
 
         return pic.Usage switch
         {

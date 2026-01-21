@@ -13,15 +13,20 @@ internal static class BufferSlice
     {
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 
-        byte[] result = new byte[length];
         int copyLength = Math.Min(buffer.Length, length);
 
+        // 長度剛好，直接複製回傳
+        if (buffer.Length == length)
+            return buffer.ToArray();
+
+        byte[] result = new byte[length];
+
         // 從 buffer 開頭複製到 result
-        Array.Copy(buffer.ToArray(), 0, result, 0, copyLength);
+        buffer[..copyLength].CopyTo(result);
 
         // 如果不足，填充尾端 pad
         if (length > copyLength)
-            Array.Fill(result, pad, copyLength, length - copyLength);
+            result.AsSpan(copyLength).Fill(pad);
 
         return result;
     }
@@ -39,16 +44,23 @@ internal static class BufferSlice
     {
         ArgumentOutOfRangeException.ThrowIfNegative(length);
 
-        byte[] result = new byte[length];
         int copyLength = Math.Min(buffer.Length, length);
+
+        // 長度剛好，直接複製回傳
+        if (buffer.Length == length)
+            return buffer.ToArray();
+
+        byte[] result = new byte[length];
         int padLength = length - copyLength;
 
-        // 填充前面的 pad
+        // 前面補 pad
         if (padLength > 0)
-            Array.Fill(result, pad, 0, padLength);
+            result.AsSpan(0, padLength).Fill(pad);
 
         // 從 buffer 尾端複製到 result 後面
-        Array.Copy(buffer.ToArray(), buffer.Length - copyLength, result, padLength, copyLength);
+        buffer
+            .Slice(buffer.Length - copyLength, copyLength)
+            .CopyTo(result.AsSpan(padLength));
 
         return result;
     }
