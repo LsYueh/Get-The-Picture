@@ -32,6 +32,20 @@ public class CompTest
 
         CollectionAssert.AreEqual(expected, buffer);
     }
+
+    [TestMethod]
+    [DataTestMethod]
+    [DataRow("S9(04)", (short) 9999, new byte[] { 0x27, 0x0F })]
+    [DataRow("S9(18)", -999999999999999999L, new byte[] { 0xF2, 0x1F, 0x49, 0x4C, 0x58, 0x9C, 0x00, 0x01 })]
+    public void Encode_With_Change_Endian(string picString, object value, byte[] expected)
+    {
+        var pic = Pic.Parse(picString);
+        pic.Usage = PicUsage.Binary;
+
+        byte[] buffer = CodecBuilder.ForPic(pic).WithStrict().WithReversedBinary().Encode(value);
+
+        CollectionAssert.AreEqual(expected, buffer);
+    }
     
     // -------------------------
     // Decode
@@ -54,6 +68,20 @@ public class CompTest
         pic.Usage = PicUsage.Binary;
 
         var value = CodecBuilder.ForPic(pic).WithStrict().Decode(buffer);
+
+        Assert.AreEqual(expected, value);
+    }
+
+    [TestMethod]
+    [DataTestMethod]
+    [DataRow("S9(04)", (short) 9999, new byte[] { 0x27, 0x0F })]
+    [DataRow("S9(18)", -999999999999999999L, new byte[] { 0xF2, 0x1F, 0x49, 0x4C, 0x58, 0x9C, 0x00, 0x01 })]
+    public void Decode_With_Change_Endian(string picString, object expected, byte[] buffer)
+    {
+        var pic = Pic.Parse(picString);
+        pic.Usage = PicUsage.Binary;
+
+        var value = CodecBuilder.ForPic(pic).WithStrict().WithReversedBinary().Decode(buffer);
 
         Assert.AreEqual(expected, value);
     }

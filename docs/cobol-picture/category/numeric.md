@@ -21,6 +21,8 @@
 
 > 不支援超過`28`位的精度位數組合  
 
+<br>
+
 ## 使用方式:
 ```csharp
 using GetThePicture.Codec;
@@ -69,13 +71,13 @@ CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
 
     // Encode: CLR → COBOL
     CodecBuilder.ForPic(pic)
-        .WithUsage(PicUsage.PackedDecimal) // 動態指定 USAGE COMP-3
+        .Usage(PicUsage.PackedDecimal) // 動態指定 USAGE COMP-3
         .WithStrict()
         .Encode(52194); // >> [0x52, 0x19, 0x4F]
 
     // Decode: COBOL → CLR
     CodecBuilder.ForPic(pic)
-        .WithUsage(PicUsage.PackedDecimal) // 動態指定 USAGE COMP-3
+        .Usage(PicUsage.PackedDecimal) // 動態指定 USAGE COMP-3
         .WithStrict()
         .Decode([0x52, 0x19, 0x4C]); // >> 52194UL
     ```
@@ -118,6 +120,78 @@ CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
 
     // Decode: COBOL → CLR
     CodecBuilder.ForPic(pic).Decode([0x52, 0x19, 0x4D]); // >> -194L (-52194L)
+    ```
+
+<br>
+
+### COMP / COMP-5
+
+1. 指定 `Usage`  
+    ```csharp
+    using GetThePicture.Codec;
+    using GetThePicture.Codec.Utils;
+
+    using GetThePicture.Cobol.Picture.TypeBase; // 取得 PicUsage
+    ```
+
+    ```csharp
+    // PIC 9(04)  USAGE  COMP.
+    var pic = Pic.Parse("S9(04))");
+    pic.Usage = PicUsage.Binary;
+
+    // Encode: CLR → COBOL
+    CodecBuilder.ForPic(pic).WithStrict().Encode(9999); // >> 0x270F >> (Little Endian) >> [0x0F, 0x27]
+
+    // Decode: COBOL → CLR
+    CodecBuilder.ForPic(pic).WithStrict().Decode([0x0F, 0x27]); // >> (short) 9999
+    ```
+
+    ```csharp
+    // PIC 9(3)  USAGE  COMP.
+    var pic = Pic.Parse("S9(4)");
+    pic.Usage = PicUsage.PackedDecimal;
+
+    // Decode: COBOL → CLR
+    CodecBuilder.ForPic(pic).Decode([0x0F, 0x27]); // >> (ushort) 9999
+    ```
+
+<br>
+
+2. PIC 內的端序 `Endianness` 行為處理  
+    在使用 PIC 搭配二進位儲存格式（COMP/COMP-5） 時，數值在記憶體中的位元組排列順序（Endianness）會因執行平台而有所不同：  
+    - Big-Endian（BE）  
+    IBM z/OS 主機（Mainframe）環境傳統上採用 Big-Endian，高位元組（Most Significant Byte）儲存在較低的記憶體位址。  
+
+    - Little-Endian（LE）  
+    以 Intel 架構為基礎的平台（例如 x86 的 Linux 或 Windows 個人電腦）通常採用 Little-Endian，低位元組（Least Significant Byte）儲存在較低的記憶體位址。  
+
+    故在進行跨平台資料交換或解析 COBOL `COMP`/`COMP-5` 欄位時，必須明確指定並正確處理端序，否則可能導致數值資料轉換錯誤。
+
+    <br>
+
+    ```csharp
+    using GetThePicture.Codec;
+    using GetThePicture.Codec.Utils;
+
+    using GetThePicture.Cobol.Picture.TypeBase; // 取得 PicUsage
+    ```
+
+    ```csharp
+    // PIC 9(04)  USAGE  COMP.
+    var pic = Pic.Parse("S9(04))");
+    pic.Usage = PicUsage.Binary;
+
+    // Encode: CLR → COBOL
+    CodecBuilder.ForPic(pic)
+        .WithStrict()
+        .WithReversedBinary()
+        .Encode(9999); // >> 0x270F >> (Little Endian) >> (Binary Reverse) >> [0x27, 0x0F]
+
+    // Decode: COBOL → CLR
+    CodecBuilder.ForPic(pic)
+        .WithStrict()
+        .WithReversedBinary()
+        .Decode([0x27, 0x0F]); // >> (short) 9999
     ```
 
 <br><br>

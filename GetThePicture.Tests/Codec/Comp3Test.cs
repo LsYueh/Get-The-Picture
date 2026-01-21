@@ -22,7 +22,7 @@ public class Comp3Test
         var pic = Pic.Parse(picString);
 
         byte[] buffer = CodecBuilder.ForPic(pic)
-            .WithUsage(PicUsage.PackedDecimal)
+            .Usage(PicUsage.PackedDecimal)
             .WithStrict()
             .Encode(value);
 
@@ -55,7 +55,7 @@ public class Comp3Test
         var pic = Pic.Parse(picString);
 
         var value = CodecBuilder.ForPic(pic)
-            .WithUsage(PicUsage.PackedDecimal)
+            .Usage(PicUsage.PackedDecimal)
             .WithStrict()
             .Decode(buffer);
 
