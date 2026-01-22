@@ -1,4 +1,5 @@
-       01 CLIRTVO-REC.
+|...+.*..1....+....2....+....3....+....4....+....5....+....6....+....7..
+       01  CLIRTVO-REC.
            03 MESSAGE-HEADER.
                05 MSGIDA                       PIC  X(030).
                05 MSGLNG                       PIC  9(005).

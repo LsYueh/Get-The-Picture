@@ -56,6 +56,23 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 <br><br>
 
+# COBOL Coding Sheet (Reference Format)
+COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed Format）` 下很重要。主要分為 `Sequence Area`, `Indicator Area`, `Area A`, `Area B` 等區域。
+
+<br>
+
+| 位置 (Column) | 說明                                                                 |
+| ----------- | ------------------------------------------------------------------ |
+| 1–6         | **Sequence Number**（序號欄，可選）：用於列印或版本控制。                             |
+| 7           | **Indicator Area**（指示欄）：<br> - `*`：註解<br> - `/`：換頁<br> - `-`：延續上一行 |
+| 8–11        | **Area A**：段落名稱、Section 名稱、DIVISION 關鍵字等。                          |
+| 12–72       | **Area B**：語句、指令、變數宣告、程式碼本體。                                       |
+| 73–80       | **Identification Area**（識別欄，可選）：通常用於序號或其他控制用途。                     |
+
+> 現代 COBOL `(Free Format) ` 已經不限制欄位，但固定格式仍常用於舊系統。  
+
+<br><br>
+
 # Elementary Item
 
 在 COBOL 中，`Elementary Item`（基本項目）是 Data Division 中 Data Description Entry 的最基本單位。它通常是不能再被分解的欄位，也就是最小的資料單位，通常會直接對應到記憶體中的一段連續空間。  

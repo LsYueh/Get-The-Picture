@@ -8,7 +8,7 @@ namespace GetThePicture.Tests.Copybook.Compiler;
 [TestClass]
 public class FilePreprocessorTest
 {
-    private const string filePath = @"TestData/TEST-SAMPLE.CPY";
+    private const string filePath = @"TestData/sample-cobol-copybook.cpy";
 
     private static readonly Encoding cp950 = EncodingFactory.CP950;
 
@@ -17,8 +17,10 @@ public class FilePreprocessorTest
     {        
         using var reader = new StreamReader(filePath, cp950);
 
-        var docLines = FilePreprocessor.Process(reader);
+        var lines = FilePreprocessor.Process(reader);
 
-        Assert.IsTrue(docLines.Count > 0, "文件應該有內容");
+        Assert.IsTrue(lines.Count == 12);
+        Assert.AreEqual("01 CUSTOMER-RECORD.", lines[0].Line);
+        Assert.AreEqual("        'NEEDS TO BE CONTINUED ACROSS MULTIPLE LINES'.", lines[^1].Line);
     }
 }
