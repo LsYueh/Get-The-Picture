@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler.Base;
+namespace GetThePicture.Copybook.Base;
 
 public class CobolLine(int lineNumber)
 {
@@ -46,7 +46,27 @@ public class CobolLine(int lineNumber)
         return $"{Sequence,-6}{Indicator}{AreaA,-4}{AreaB,-61}{Remark,-8}";
     }
 
-    public static CobolLine Parse(string rawLine, int lineNumber = 0)
+    public static IReadOnlyList<CobolLine> FromStreamReader(StreamReader reader)
+    {
+        var lines = new List<CobolLine>();
+        int lineNumber = 1;
+
+        while (!reader.EndOfStream)
+        {
+            var rawLine = reader.ReadLine() ?? string.Empty;
+
+            var cobolLine = Parse(rawLine, lineNumber++);
+
+            // 忽略註解或空行
+            if (cobolLine.IsIgnored) continue;
+
+            lines.Add(cobolLine);
+        }
+
+        return lines;
+    }
+
+    private static CobolLine Parse(string rawLine, int lineNumber = 0)
     {
         var cobolLine = new CobolLine(lineNumber);
 

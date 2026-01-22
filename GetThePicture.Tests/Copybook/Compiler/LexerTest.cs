@@ -1,8 +1,8 @@
 using System.Text;
 
-using GetThePicture.Copybook.Compiler.LexerBase;
+using GetThePicture.Copybook.Compiler;
 
-namespace GetThePicture.Tests.Copybook.Compiler.LexerBase;
+namespace GetThePicture.Tests.Copybook.Compiler;
 
 [TestClass]
 public class LexerTest
@@ -27,12 +27,12 @@ public class LexerTest
         AssertToken(tokens[1], TokenType.Identifier   , "CUSTOMER-NAME");
         AssertToken(tokens[2], TokenType.Keyword      , "PIC");
         AssertToken(tokens[3], TokenType.Identifier   , "X");
-        AssertToken(tokens[4], TokenType.Symbol       , "(");
+        AssertToken(tokens[4], TokenType.LParen       , "(");
         AssertToken(tokens[5], TokenType.Number       , "10");
-        AssertToken(tokens[6], TokenType.Symbol       , ")");
+        AssertToken(tokens[6], TokenType.RParen       , ")");
         AssertToken(tokens[7], TokenType.Keyword      , "VALUE");
         AssertToken(tokens[8], TokenType.StringLiteral, "'ABC'");
-        AssertToken(tokens[9], TokenType.Symbol       , ".");
+        AssertToken(tokens[9], TokenType.Dot          , ".");
     }
 
     [TestMethod]
@@ -49,6 +49,6 @@ public class LexerTest
         AssertToken(tokens[1], TokenType.Identifier , "BGEN-XXXXX");
         AssertToken(tokens[2], TokenType.Keyword    , "OCCURS");
         AssertToken(tokens[3], TokenType.Number     , "4");
-        AssertToken(tokens[4], TokenType.Symbol     , ".");
+        AssertToken(tokens[4], TokenType.Dot        , ".");
     }
 }

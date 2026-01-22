@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler.LexerBase;
+namespace GetThePicture.Copybook.Compiler;
 
 /// <summary>
 /// Copybook 專用 Token 類型
@@ -12,6 +12,9 @@ public enum TokenType
     Number,
     StringLiteral,
     Symbol,
+    Dot,
+    LParen, // (
+    RParen, // )
     Unknown,
 }
 

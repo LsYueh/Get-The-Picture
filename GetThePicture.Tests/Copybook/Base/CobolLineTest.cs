@@ -1,23 +1,23 @@
 using System.Text;
 
 using GetThePicture.Codec.Utils;
-using GetThePicture.Copybook.Compiler;
+using GetThePicture.Copybook.Base;
 
-namespace GetThePicture.Tests.Copybook.Compiler;
+namespace GetThePicture.Tests.Copybook.Base;
 
 [TestClass]
-public class FilePreprocessorTest
+public class CobolLineTest
 {
     private const string filePath = @"TestData/sample-cobol-copybook.cpy";
 
     private static readonly Encoding cp950 = EncodingFactory.CP950;
 
     [TestMethod]
-    public void ToDocumentLine()
+    public void Reader_Test()
     {        
         using var reader = new StreamReader(filePath, cp950);
 
-        var lines = FilePreprocessor.Process(reader);
+        var lines = CobolLine.FromStreamReader(reader);
 
         Assert.IsTrue(lines.Count == 12);
         Assert.AreEqual("01 CUSTOMER-RECORD.", lines[0].Line);

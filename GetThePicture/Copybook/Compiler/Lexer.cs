@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler.LexerBase;
+namespace GetThePicture.Copybook.Compiler;
 
 public class Lexer
 {
@@ -61,7 +61,14 @@ public class Lexer
             // Symbol
             if (IsSymbol(line[i]))
             {
-                yield return new Token(TokenType.Symbol, line[i++].ToString(), lineNumber);
+                yield return line[i] switch 
+                {
+                    '(' => new Token(TokenType.LParen, line[i++].ToString(), lineNumber),
+                    ')' => new Token(TokenType.RParen, line[i++].ToString(), lineNumber),
+                    '.' => new Token(TokenType.Dot   , line[i++].ToString(), lineNumber),
+                     _  => new Token(TokenType.Symbol, line[i++].ToString(), lineNumber),
+                };
+                
                 continue;
             }
 
@@ -90,6 +97,20 @@ public class Lexer
         }
     }
 
+    private static Token ClassifyWord(string word, int lineNumber)
+    {
+        // Keywords
+        if (Keywords.Contains(word))
+            return new Token(TokenType.Keyword, word.ToUpperInvariant(), lineNumber);
+        
+        // Number
+        if (IsNumber(word))
+            return new Token(TokenType.Number, word, lineNumber);
+
+        // Identifier
+        return new Token(TokenType.Identifier, word, lineNumber);
+    }
+
     private static bool IsWordChar(char c)
     {
         return char.IsLetterOrDigit(c) || c == '-';
@@ -113,19 +134,4 @@ public class Lexer
 
         return true;
     }
-
-    private static Token ClassifyWord(string word, int lineNumber)
-    {
-        // Keywords
-        if (Keywords.Contains(word))
-            return new Token(TokenType.Keyword, word.ToUpperInvariant(), lineNumber);
-        
-        // Number
-        if (IsNumber(word))
-            return new Token(TokenType.Number, word, lineNumber);
-
-        // Identifier
-        return new Token(TokenType.Identifier, word, lineNumber);
-    }
-
 }
