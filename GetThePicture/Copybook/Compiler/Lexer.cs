@@ -4,24 +4,9 @@ public class Lexer
 {
     private static readonly HashSet<string> Keywords = new(StringComparer.OrdinalIgnoreCase)
     {
-        "PIC", "PICTURE",
-
-        "VALUE", "VALUES",
-
-        "USAGE", "DISPLAY",
-        "COMP", "COMP-1", "COMP-2", "COMP-3", "COMP-4", "COMP-5",
-        "BINARY", "PACKED-DECIMAL",
-
-        "OCCURS", "TIMES",
-        "TO", "DEPENDING",
-        "ON",
-
-        "REDEFINES", "RENAMES",
-
-        "FILLER",
-
+        "VALUES",
+        "TO", "DEPENDING", "ON",
         "SYNC", "JUSTIFIED", "RIGHT", "LEFT",
-
         "SIGN", "LEADING", "TRAILING", "SEPARATE"
     };
 
@@ -30,22 +15,18 @@ public class Lexer
     {
         int i = 0;
 
-        // Level number 必定在開頭
+        // Level Number
         if (char.IsDigit(line[i]))
         {
             var start = i;
             while (i < line.Length && char.IsDigit(line[i])) i++;
 
-            yield return new Token(
-                TokenType.LevelNumber,
-                line[start..i],
-                lineNumber
-            );
+            yield return new Token(TokenType.LevelNumber,line[start..i],lineNumber);
         }
 
         while (i < line.Length)
         {
-            // Word (IDENTIFIER / KEYWORD / NUMBER)
+            // Variable Name / Reserved Word / Identifier
             if (IsWordChar(line[i]))
             {
                 int start = i;
@@ -72,14 +53,14 @@ public class Lexer
                 continue;
             }
 
-            // String literal
+            // Alphanumeric Literal
             if (line[i] == '\'')
             {
                 int start = i++;
                 while (i < line.Length && line[i] != '\'') i++;
                     i++;
 
-                yield return new Token(TokenType.StringLiteral, line[start..i], lineNumber);
+                yield return new Token(TokenType.AlphanumericLiteral, line[start..i], lineNumber);
                 continue;
             }
 
@@ -99,16 +80,39 @@ public class Lexer
 
     private static Token ClassifyWord(string word, int lineNumber)
     {
+        // NumericLiteral
+        if (IsNumeric(word))
+            return new Token(TokenType.NumericLiteral, word, lineNumber);
+
         // Keywords
         if (Keywords.Contains(word))
             return new Token(TokenType.Keyword, word.ToUpperInvariant(), lineNumber);
-        
-        // Number
-        if (IsNumber(word))
-            return new Token(TokenType.Number, word, lineNumber);
 
-        // Identifier
-        return new Token(TokenType.Identifier, word, lineNumber);
+        if (IsBaseDataType(word))
+            return new Token(TokenType.Identifier, word, lineNumber);
+
+        return word switch
+        {
+            "PIC" or "PICTURE" => new Token(TokenType.Picture, word, lineNumber),
+            "USAGE"     => new Token(TokenType.Usage    , word, lineNumber),
+            "DISPLAY"   => new Token(TokenType.Display  , word, lineNumber),
+            "COMP"      => new Token(TokenType.Comp     , word, lineNumber),
+            "COMP-1"    => new Token(TokenType.Comp1    , word, lineNumber),
+            "COMP-2"    => new Token(TokenType.Comp2    , word, lineNumber),
+            "COMP-3"    => new Token(TokenType.Comp3    , word, lineNumber),
+            "COMP-4"    => new Token(TokenType.Comp4    , word, lineNumber),
+            "COMP-5"    => new Token(TokenType.Comp5    , word, lineNumber),
+            "BINARY"    => new Token(TokenType.Binary   , word, lineNumber),
+            "PACKED-DECIMAL" => new Token(TokenType.PackedDecimal, word, lineNumber),
+            "VALUE"     => new Token(TokenType.Value    , word, lineNumber),
+            "REDEFINES" => new Token(TokenType.Redefines, word, lineNumber),
+            "RENAMES"   => new Token(TokenType.Renames  , word, lineNumber),
+            "OCCURS"    => new Token(TokenType.Occurs   , word, lineNumber),
+            "TIMES"     => new Token(TokenType.Times    , word, lineNumber),
+            "FILLER"    => new Token(TokenType.Filler   , word, lineNumber),
+
+            _ => new Token(TokenType.VariableName, word, lineNumber),
+        }; 
     }
 
     private static bool IsWordChar(char c)
@@ -116,12 +120,28 @@ public class Lexer
         return char.IsLetterOrDigit(c) || c == '-';
     }
 
-    private static bool IsSymbol(char c)
+    /// <summary>
+    /// X / 9 / V / S / A
+    /// </summary>
+    /// <param name="word"></param>
+    /// <returns></returns>
+    private static bool IsBaseDataType(string word)
     {
-        return ".()".Contains(c);
+        foreach (char c in word)
+        {
+            if (!"X9VSA".Contains(c))
+                return false;
+        }
+
+        return true;
     }
 
-    private static bool IsNumber(string word)
+    private static bool IsSymbol(char c)
+    {
+        return @",.()".Contains(c);
+    }
+
+    private static bool IsNumeric(string word)
     {
         if (string.IsNullOrEmpty(word))
             return false;

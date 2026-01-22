@@ -6,15 +6,26 @@ namespace GetThePicture.Copybook.Compiler;
 public enum TokenType
 {
     LevelNumber,
-    Identifier,
-    Keyword,
-    PictureClause,
-    Number,
-    StringLiteral,
-    Symbol,
-    Dot,
-    LParen, // (
-    RParen, // )
+    VariableName,
+
+    Character,
+    AlphanumericLiteral,
+    NumericLiteral,
+    Comment,
+    Picture, Usage,
+    Display, Display1,
+    Binary, PackedDecimal, Comp, Comp1, Comp2, Comp3, Comp4, Comp5,
+    Date, Time,
+    National,
+    Filler,
+    Number66, Number77, Number88,
+    Occurs, Times,
+    Redefines, Reference, Renames,
+    Value, Values,
+    LParen, RParen,
+    Dot, EOF,
+    
+    Identifier, Keyword, Symbol,
     Unknown,
 }
 
