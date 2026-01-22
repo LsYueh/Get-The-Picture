@@ -19,7 +19,7 @@ public class Parser(List<Token> tokens)
 
     private Token Consume() => tokens[position++];
 
-    public Token Expect(TokenType type)
+    private Token Expect(TokenType type)
     {
         var current = Current ?? throw new Exception($"Expected {type} but got end of input");
         
@@ -33,15 +33,23 @@ public class Parser(List<Token> tokens)
     // Syntactic / Semantic Analysis
     // ----------------------------
 
-    public void Analyze()
+    /// <summary>
+    /// Syntactic / Semantic Analysis
+    /// </summary>
+    public object Analyze()
     {
         while (Current != null)
         {
             Consume();
+
+            // TODO: 要組中繼資料...
         }
+
+        return new object();
     }
 
     // ----------------------------
     // Grammar
     // ----------------------------
+
 }

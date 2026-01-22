@@ -1,5 +1,3 @@
-using System.Text;
-
 using GetThePicture.Copybook.Compiler;
 
 namespace GetThePicture.Tests.Copybook.Compiler;
