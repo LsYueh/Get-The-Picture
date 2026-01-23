@@ -21,12 +21,12 @@ public class Lexer
             var start = i;
             while (i < line.Length && char.IsDigit(line[i])) i++;
 
-            yield return new Token(TokenType.LevelNumber,line[start..i],lineNumber);
+            yield return new Token(TokenType.LevelNumber, line[start..i], lineNumber);
         }
 
         while (i < line.Length)
         {
-            // Variable Name / Reserved Word / Identifier
+            // Reserved Word / Alphanumeric Literal / Numeric Literal / Keyword / Identifier
             if (IsWordChar(line[i]))
             {
                 int start = i;
@@ -53,13 +53,35 @@ public class Lexer
                 continue;
             }
 
-            // Alphanumeric Literal
+            // Alphanumeric Literal (String Literal)
             if (line[i] == '\'')
             {
-                int start = i++;
-                while (i < line.Length && line[i] != '\'') i++;
-                    i++;
+                int start = i;
+                i++; // skip opening '
 
+                while (i < line.Length)
+                {
+                    if (line[i] == '\'')
+                    {
+                        // COBOL 兩個單引號代表內部單引號
+                        if (i + 1 < line.Length && line[i + 1] == '\'')
+                        {
+                            i += 2; // skip both ''
+                            continue;
+                        }
+                        else
+                        {
+                            i++; // closing '
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+
+                // 即使沒有閉合也會產生Token
                 yield return new Token(TokenType.AlphanumericLiteral, line[start..i], lineNumber);
                 continue;
             }
@@ -91,6 +113,7 @@ public class Lexer
         if (IsBaseDataType(word))
             return new Token(TokenType.Identifier, word, lineNumber);
 
+        // Reserved Word or Alphanumeric Literal
         return word switch
         {
             "PIC" or "PICTURE" => new Token(TokenType.Picture, word, lineNumber),
@@ -111,7 +134,7 @@ public class Lexer
             "TIMES"     => new Token(TokenType.Times    , word, lineNumber),
             "FILLER"    => new Token(TokenType.Filler   , word, lineNumber),
 
-            _ => new Token(TokenType.VariableName, word, lineNumber),
+            _ => new Token(TokenType.AlphanumericLiteral, word, lineNumber),
         }; 
     }
 
