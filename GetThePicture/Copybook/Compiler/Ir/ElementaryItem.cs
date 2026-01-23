@@ -2,11 +2,12 @@ using GetThePicture.Cobol.Picture;
 
 namespace GetThePicture.Copybook.Compiler.Ir;
 
-public sealed class ElementaryDataItem : IBaseItem
+public sealed class ElementaryDataItem(int level, string name, PicClause pic, int? occurs = null) : IDataItem
 {
-    public int Level { get; init; }
-    public string Name { get; init; } = "";
-    public int? Occurs { get; init; }
+    public int Level { get; init; } = level;
+    public string Name { get; init; } = name;
+    public int? Occurs { get; init; } = occurs;
 
-    public PicClause Pic { get; init; } = null!;
+    public PicClause Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
 }
+

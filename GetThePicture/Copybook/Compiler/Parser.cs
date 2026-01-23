@@ -40,9 +40,11 @@ public class Parser(List<Token> tokens)
     {
         while (Current != null)
         {
-            var level = Expect(TokenType.LevelNumber).Value;
+            // var level = Expect(TokenType.LevelNumber).Value;
 
-            // TODO: 要分析中繼資料...
+            Consume();
+
+            // TODO: 要分析中繼資料轉成IR...
         }
 
         return new object();
@@ -52,5 +54,4 @@ public class Parser(List<Token> tokens)
     // Grammar
     // ----------------------------
 
-    
 }
