@@ -1,3 +1,4 @@
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Codec.Utils;
 using GetThePicture.Copybook.Compiler.Ir;
 
@@ -97,14 +98,6 @@ public class Parser(List<Token> tokens)
         return subordinate;
     }
 
-    private (int Level, string Name) ParseDataItemHeader()
-    {
-        var level = int.Parse(Expect(TokenType.LevelNumber).Value);
-        var name  = Expect(TokenType.AlphanumericLiteral).Value;
-
-        return (level, name);
-    }
-
     private IDataItem ParseSingleDataItem()
     {
         var (level, name) = ParseDataItemHeader();
@@ -124,15 +117,7 @@ public class Parser(List<Token> tokens)
                 break;
 
             case TokenType.Picture:
-                Consume(); // PIC
-
-                string picString = "";
-                picString += Expect(TokenType.Identifier).Value;
-                picString += Expect(TokenType.LParen).Value;
-                picString += Expect(TokenType.NumericLiteral).Value;
-                picString += Expect(TokenType.RParen).Value;
-
-                var pic = Pic.Parse(picString);
+                PicClause pic = ParsePicClause();
                 item = new ElementaryDataItem(level, name, pic);
                 break;
 
@@ -145,4 +130,43 @@ public class Parser(List<Token> tokens)
         return item;
     }
 
+    private (int Level, string Name) ParseDataItemHeader()
+    {
+        var level = int.Parse(Expect(TokenType.LevelNumber).Value);
+        var name  = Expect(TokenType.AlphanumericLiteral).Value;
+
+        return (level, name);
+    }
+
+    private PicClause ParsePicClause()
+    {
+        Consume(); // PIC
+
+        string picString = "";
+        while (Current != null && Current.Type != TokenType.Dot)
+        {
+            switch (Current.Type)
+            {
+                case TokenType.Identifier: // X, 9, S, V, etc.
+                    picString += Consume().Value;
+                    break;
+
+                case TokenType.LParen: // 括號數量
+                    picString += Expect(TokenType.LParen).Value;
+                    picString += Expect(TokenType.NumericLiteral).Value;
+                    picString += Expect(TokenType.RParen).Value;
+                    break;
+
+                default:
+                    throw new CompileException(
+                        $"Invalid token in PIC clause: {Current.Value}",
+                        Current
+                    );
+            }
+        }
+
+        PicClause pic = Pic.Parse(picString);
+
+        return pic;
+    }
 }
