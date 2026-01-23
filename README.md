@@ -73,9 +73,28 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 <br><br>
 
-# Elementary Item
+# COBOL： `Elementary Data Item `and `Group Item` 
 
-在 COBOL 中，`Elementary Item`（基本項目）是 Data Division 中 Data Description Entry 的最基本單位。它通常是不能再被分解的欄位，也就是最小的資料單位，通常會直接對應到記憶體中的一段連續空間。  
+| 面向                    | Elementary Data Item    | Group Item             |
+| --------------------- | ----------------------- | ---------------------- |
+| 定義角色                  | **最小資料單位（leaf）**        | **結構性容器（composite）**   |
+| 是否可包含子項目              | ❌ 不可                    | ✅ 可                    |
+| 是否有 `PIC` 子句          | ✅ **必須有**               | ❌ **不可有**              |
+| 是否直接描述資料型態            | ✅ 是（數值、字元、COMP、COMP-3…） | ❌ 否（由子項目間接決定）          |
+| 是否可直接被 MOVE / COMPUTE | ✅ 可                     | ⚠️ 可（視情況，為整段記憶體移動）     |
+| 記憶體佔用                 | 由 `PIC` 決定              | 為所有子項目記憶體的總和           |
+| 可否有 `OCCURS`          | ✅ 可                     | ✅ 可                    |
+| 可否有 `REDEFINES`       | ✅ 可                     | ✅ 可                    |
+| 可否有 `VALUE`           | ✅ 可                     | ❌（標準上 group 不定義 VALUE） |
+| 是否為樹的葉節點              | ✅ 是                     | ❌ 否                    |
+| COBOL 規格名稱            | *Elementary data item*  | *Group item*           |
+
+
+<br><br>
+
+# Elementary Data Item
+
+在 COBOL 中，`Elementary Data Item`（基本項目）是 Data Division 中 Data Description Entry 的最基本單位。它通常是不能再被分解的欄位，也就是最小的資料單位，通常會直接對應到記憶體中的一段連續空間。  
 
 特性:  
 1. 不可分割：它不能再由其他子欄位構成（不像 Group Item 可以包含其他欄位）。  
@@ -87,12 +106,12 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 ```cobol
 01 CUSTOMER-RECORD.
-   05 CUSTOMER-ID       PIC 9(5).         *> Elementary item, 整數 5 位
-   05 CUSTOMER-NAME     PIC X(20).        *> Elementary item, 字元 20 位
-   05 CUSTOMER-BALANCE  PIC S9(7)V99.     *> Elementary item, 浮點數 (小數 2 位)
+   05 CUSTOMER-ID       PIC 9(5).         *> Elementary Data item, 整數 5 位
+   05 CUSTOMER-NAME     PIC X(20).        *> Elementary Data item, 字元 20 位
+   05 CUSTOMER-BALANCE  PIC S9(7)V99.     *> Elementary Data item, 浮點數 (小數 2 位)
 ```
 
-- `CUSTOMER-ID`、`CUSTOMER-NAME`、`CUSTOMER-BALANCE` 都是 Elementary Items。  
+- `CUSTOMER-ID`、`CUSTOMER-NAME`、`CUSTOMER-BALANCE` 都是 Elementary Data Items。  
 - `CUSTOMER-RECORD` 是 Group Item，因為它包含多個 Elementary Items。
 
 <br>
