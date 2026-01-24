@@ -41,6 +41,7 @@ public class ReaderTest
     }
 
     [TestMethod]
+    [TestCategory("Demo")]
     [Ignore]
     public void Example_Dump_T30_TSE_Demo()
     {
@@ -54,6 +55,7 @@ public class ReaderTest
     }
 
     [TestMethod]
+    [TestCategory("Demo")]
     [Ignore]
     public void Example_Dump_T30_OTC_Demo()
     {
