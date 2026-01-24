@@ -56,9 +56,45 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 <br><br>
 
-# Elementary Item
+# COBOL Coding Sheet (Reference Format)
+COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed Format）` 下很重要。主要分為 `Sequence Area`, `Indicator Area`, `Area A`, `Area B` 等區域。
 
-在 COBOL 中，`Elementary Item`（基本項目）是 Data Division 中 Data Description Entry 的最基本單位。它通常是不能再被分解的欄位，也就是最小的資料單位，通常會直接對應到記憶體中的一段連續空間。  
+<br>
+
+| 位置 (Column) | 說明                                                                 |
+| ----------- | ------------------------------------------------------------------ |
+| 1–6         | **Sequence Number**（序號欄，可選）：用於列印或版本控制。                             |
+| 7           | **Indicator Area**（指示欄）：<br> - `*`：註解<br> - `/`：換頁<br> - `-`：延續上一行 |
+| 8–11        | **Area A**：段落名稱、Section 名稱、DIVISION 關鍵字等。                          |
+| 12–72       | **Area B**：語句、指令、變數宣告、程式碼本體。                                       |
+| 73–80       | **Identification Area**（識別欄，可選）：通常用於序號或其他控制用途。                     |
+
+> 現代 COBOL `(Free Format) ` 已經不限制欄位，但固定格式仍常用於舊系統。  
+
+<br><br>
+
+# COBOL： `Elementary Data Item `and `Group Item` 
+
+| 面向                    | Elementary Data Item    | Group Item             |
+| --------------------- | ----------------------- | ---------------------- |
+| 定義角色                  | **最小資料單位（leaf）**        | **結構性容器（composite）**   |
+| 是否可包含子項目              | ❌ 不可                    | ✅ 可                    |
+| 是否有 `PIC` 子句          | ✅ **必須有**               | ❌ **不可有**              |
+| 是否直接描述資料型態            | ✅ 是（數值、字元、COMP、COMP-3…） | ❌ 否（由子項目間接決定）          |
+| 是否可直接被 MOVE / COMPUTE | ✅ 可                     | ⚠️ 可（視情況，為整段記憶體移動）     |
+| 記憶體佔用                 | 由 `PIC` 決定              | 為所有子項目記憶體的總和           |
+| 可否有 `OCCURS`          | ✅ 可                     | ✅ 可                    |
+| 可否有 `REDEFINES`       | ✅ 可                     | ✅ 可                    |
+| 可否有 `VALUE`           | ✅ 可                     | ❌（標準上 group 不定義 VALUE） |
+| 是否為樹的葉節點              | ✅ 是                     | ❌ 否                    |
+| COBOL 規格名稱            | *Elementary data item*  | *Group item*           |
+
+
+<br><br>
+
+# Elementary Data Item
+
+在 COBOL 中，`Elementary Data Item`（基本項目）是 Data Division 中 Data Description Entry 的最基本單位。它通常是不能再被分解的欄位，也就是最小的資料單位，通常會直接對應到記憶體中的一段連續空間。  
 
 特性:  
 1. 不可分割：它不能再由其他子欄位構成（不像 Group Item 可以包含其他欄位）。  
@@ -70,12 +106,12 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 ```cobol
 01 CUSTOMER-RECORD.
-   05 CUSTOMER-ID       PIC 9(5).         *> Elementary item, 整數 5 位
-   05 CUSTOMER-NAME     PIC X(20).        *> Elementary item, 字元 20 位
-   05 CUSTOMER-BALANCE  PIC S9(7)V99.     *> Elementary item, 浮點數 (小數 2 位)
+   05 CUSTOMER-ID       PIC 9(5).         *> Elementary Data item, 整數 5 位
+   05 CUSTOMER-NAME     PIC X(20).        *> Elementary Data item, 字元 20 位
+   05 CUSTOMER-BALANCE  PIC S9(7)V99.     *> Elementary Data item, 浮點數 (小數 2 位)
 ```
 
-- `CUSTOMER-ID`、`CUSTOMER-NAME`、`CUSTOMER-BALANCE` 都是 Elementary Items。  
+- `CUSTOMER-ID`、`CUSTOMER-NAME`、`CUSTOMER-BALANCE` 都是 Elementary Data Items。  
 - `CUSTOMER-RECORD` 是 Group Item，因為它包含多個 Elementary Items。
 
 <br>
@@ -148,6 +184,11 @@ Copybook 通常包含：
 
 由於 Copybook 直接對應到位元與位元組配置，它不僅是程式碼的一部分，更是系統間共用的資料規格說明書。  
 
+<br>
+
+## 使用方式:
+
+`demo.cpy`
 ```cobol
        * Sample COBOL Copybook
        * Defines a fixed-length record layout
@@ -157,6 +198,36 @@ Copybook 通常包含：
            05  CUSTOMER-ID       PIC 9(8).             *> Numeric ID
            05  CUSTOMER-NAME     PIC X(10).            *> Text
            05  ACCOUNT-BALANCE   PIC S9(5)V99  COMP-3. *> Packed decimal
+```
+
+<br>
+
+範例程式:  
+```csharp
+using GetThePicture.Codec.Utils;
+using GetThePicture.Copybook;
+using GetThePicture.Copybook.Compiler.Ir;
+```
+
+```csharp
+Encoding cp950 = EncodingFactory.CP950;
+using var streamReader = new StreamReader(@"TestData/demo.cpy", cp950);
+
+Document document = Reader.FromStreamReader(streamReader);
+
+// Debug / dump
+document.Dump(Console.Out);
+```
+
+<br>
+
+輸出結果:  
+```shell
+COPYBOOK
+  1 CUSTOMER-RECORD
+    5 CUSTOMER-ID >> PIC: Class='Numeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
+    5 CUSTOMER-NAME >> PIC: Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
+    5 ACCOUNT-BALANCE >> PIC: Class='Numeric' (Semantic='None'), Signed=True, Int=5, Dec=2, Len=7, Usage='PackedDecimal'
 ```
 
 <br><br>
