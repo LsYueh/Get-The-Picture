@@ -1,5 +1,16 @@
 # Changelog
 
+## [26.2.0] – 2026-01-25
+
+### 新增
+- 加入 `Writer` 供 `Document` 後續可支援多種格式輸出。
+- `Writer` 支援 `JSON` 格式輸出。
+
+### 改進
+- `GroupItem` 與 `ElementaryItem` 支援 COBOL 2002 的 `Floating comment` (`*>`) 解析處理。
+
+<br><br>
+
 ## [26.1.0] – 2026-01-24
 
 ### 新增
@@ -8,6 +19,8 @@
   - `GroupItem` 可以包含子節點 (`Children`)。
   - `ElementaryItem` 表示基本資料欄位，無子節點。
   - 遞迴解析任意層次的 group/elementary 結構。
+
+### 改進
 - 解析器改進：
   - `ParseDataItem` 支援遞迴解析子項目。
   - 自動判斷下一個項目層級，正確建立 parent-child 關係。
