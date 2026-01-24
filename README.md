@@ -184,6 +184,11 @@ Copybook 通常包含：
 
 由於 Copybook 直接對應到位元與位元組配置，它不僅是程式碼的一部分，更是系統間共用的資料規格說明書。  
 
+<br>
+
+## 使用方式:
+
+`demo.cpy`
 ```cobol
        * Sample COBOL Copybook
        * Defines a fixed-length record layout
@@ -194,6 +199,37 @@ Copybook 通常包含：
            05  CUSTOMER-NAME     PIC X(10).            *> Text
            05  ACCOUNT-BALANCE   PIC S9(5)V99  COMP-3. *> Packed decimal
 ```
+
+<br>
+
+範例程式:  
+```csharp
+using GetThePicture.Codec.Utils;
+using GetThePicture.Copybook;
+using GetThePicture.Copybook.Compiler.Ir;
+```
+
+```csharp
+Encoding cp950 = EncodingFactory.CP950;
+using var reader = new StreamReader(@"TestData/demo.cpy", cp950);
+
+GroupItem model = ModelBuilder.FromStreamReader(reader);
+
+// Debug / dump
+model.Dump(Console.Out);
+```
+
+<br>
+
+輸出結果:  
+```shell
+1 CUSTOMER-RECORD
+  5 CUSTOMER-ID >> PIC: Class='Numeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
+  5 CUSTOMER-NAME >> PIC: Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
+  5 ACCOUNT-BALANCE >> PIC: Class='Numeric' (Semantic='None'), Signed=True, Int=5, Dec=2, Len=7, Usage='PackedDecimal'
+```
+
+> ⚠️ 目前單一檔案只解析第一個Group Item
 
 <br><br>
 

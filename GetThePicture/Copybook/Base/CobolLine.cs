@@ -46,14 +46,14 @@ public class CobolLine(int lineNumber)
         return $"{Sequence,-6}{Indicator}{AreaA,-4}{AreaB,-61}{Remark,-8}";
     }
 
-    public static IReadOnlyList<CobolLine> FromStreamReader(StreamReader reader)
+    public static IReadOnlyList<CobolLine> FromStreamReader(StreamReader streamReader)
     {
         var lines = new List<CobolLine>();
         int lineNumber = 1;
 
-        while (!reader.EndOfStream)
+        while (!streamReader.EndOfStream)
         {
-            var rawLine = reader.ReadLine() ?? string.Empty;
+            var rawLine = streamReader.ReadLine() ?? string.Empty;
 
             var cobolLine = Parse(rawLine, lineNumber++);
 
