@@ -115,4 +115,24 @@ public class LexerTest
         AssertToken(tokens[3], TokenType.NumericLiteral, "005");
         AssertToken(tokens[4], TokenType.RParen        , ")");
     }
+
+    [TestMethod]
+    public void Tokenize_Test_07()
+    {        
+        string line = "01 STOCK-NO PIC X(6). *> 股票代號     ";
+
+        var tokens = lexer.Tokenize(line, 0).ToList();
+
+        Assert.AreEqual(9, tokens.Count);
+
+        AssertToken(tokens[0], TokenType.NumericLiteral     , "01");
+        AssertToken(tokens[1], TokenType.AlphanumericLiteral, "STOCK-NO");
+        AssertToken(tokens[2], TokenType.Picture            , "PIC");
+        AssertToken(tokens[3], TokenType.AlphanumericLiteral, "X");
+        AssertToken(tokens[4], TokenType.LParen             , "(");
+        AssertToken(tokens[5], TokenType.NumericLiteral     , "6");
+        AssertToken(tokens[6], TokenType.RParen             , ")");
+        AssertToken(tokens[7], TokenType.Dot                , ".");
+        AssertToken(tokens[8], TokenType.Comment            , "股票代號");
+    }
 }

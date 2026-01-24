@@ -61,6 +61,16 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 <br>
 
+```cobol
+|...+.*..1....+....2....+....3....+....4....+....5....+....6....+....7..
+       01 ORDER-RECORD.
+           05 ORDER-ID           PIC 9(6).
+           05 ORDER-DATE         PIC 9(8).
+           05 ORDER-AMOUNT       PIC S9(7)V99 COMP-3.
+```
+
+<br>
+
 | 位置 (Column) | 說明                                                                 |
 | ----------- | ------------------------------------------------------------------ |
 | 1–6         | **Sequence Number**（序號欄，可選）：用於列印或版本控制。                             |
@@ -89,45 +99,9 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 | 是否為樹的葉節點              | ✅ 是                     | ❌ 否                    |
 | COBOL 規格名稱            | *Elementary data item*  | *Group item*           |
 
-
-<br><br>
-
-# Elementary Data Item
-
-在 COBOL 中，`Elementary Data Item`（基本項目）是 Data Division 中 Data Description Entry 的最基本單位。它通常是不能再被分解的欄位，也就是最小的資料單位，通常會直接對應到記憶體中的一段連續空間。  
-
-特性:  
-1. 不可分割：它不能再由其他子欄位構成（不像 Group Item 可以包含其他欄位）。  
-2. 有 PIC 描述：Elementary Item 通常會有 PIC（Picture）子句，定義它的類型和長度，例如數字、字母或字元。  
-3. 記憶體映射：每個 Elementary Item 對應到一段實際記憶體，可用來存放資料。  
-4. 可使用 VALUE 初始化：可以設定初始值。  
-
 <br>
 
-```cobol
-01 CUSTOMER-RECORD.
-   05 CUSTOMER-ID       PIC 9(5).         *> Elementary Data item, 整數 5 位
-   05 CUSTOMER-NAME     PIC X(20).        *> Elementary Data item, 字元 20 位
-   05 CUSTOMER-BALANCE  PIC S9(7)V99.     *> Elementary Data item, 浮點數 (小數 2 位)
-```
-
-- `CUSTOMER-ID`、`CUSTOMER-NAME`、`CUSTOMER-BALANCE` 都是 Elementary Data Items。  
-- `CUSTOMER-RECORD` 是 Group Item，因為它包含多個 Elementary Items。
-
-<br>
-
-## 記憶體對應
-
-```python
-CUSTOMER-RECORD (Group Item)
-┌─────────────┬───────────────────────┬──────────────────┐
-│ CUSTOMER-ID │ CUSTOMER-NAME         │ CUSTOMER-BALANCE │
-│ 5 bytes     │ 20 bytes              │ 9 bytes          │  <- Memory Layout
-└─────────────┴───────────────────────┴──────────────────┘
-```
-
-- 每個 Elementary Item 對應記憶體連續區塊  
-- Group Item 只是 容器，本身不直接存資料  
+• [Elementary Data Item](docs/cobol/ElementaryDataItem.md)  
 
 <br><br>
 
@@ -157,14 +131,14 @@ CUSTOMER-RECORD (Group Item)
 | :--------: | :----------: | :-----: | :-----------------: |
 | PIC A.. <br> PIC A(n) | PIC X.. <br> PIC X(n) | PIC 9... <br> PIC 9(n) <br> PIC 9...V9... <br> PIC 9(n)V9(m) <br> PIC 9(n)V9... | PIC S9... <br> PIC S9(n) <br> PIC S9...V9... <br> PIC S9(n)V9(m) <br> PIC S9(n)V9... |
 
-<br><br>
+<br>
 
 ## 類別(`Category`)資料
 
 • [文字 (`Alphabetic`/`Alphanumeric`)](docs/cobol-picture/category/alphabetic-alphanumeric.md)  
 • [數字 (`Numeric`)](docs/cobol-picture/category/numeric.md)  
 
-<br><br>
+<br>
 
 ## 語意(`Semantic`)資料
 
@@ -186,14 +160,14 @@ Copybook 通常包含：
 
 <br>
 
-## 使用方式:
+## Reader
 
 `demo.cpy`
 ```cobol
-       * Sample COBOL Copybook
-       * Defines a fixed-length record layout
-       * Total length: 23 bytes
-
+      * Sample COBOL Copybook
+      * Defines a fixed-length record layout
+      * Total length: 23 bytes
+|...+.*..1....+....2....+....3....+....4....+....5....+....6....+....7..
        01  CUSTOMER-RECORD.
            05  CUSTOMER-ID       PIC 9(8).             *> Numeric ID
            05  CUSTOMER-NAME     PIC X(10).            *> Text
@@ -218,16 +192,86 @@ Document document = Reader.FromStreamReader(streamReader);
 // Debug / dump
 document.Dump(Console.Out);
 ```
+呼叫 `FromStreamReader()` 後會產出中繼資料，可搭配 `Writer` 做其他格式輸出。  
 
 <br>
 
-輸出結果:  
+Dump 輸出內容:  
 ```shell
 COPYBOOK
   1 CUSTOMER-RECORD
     5 CUSTOMER-ID >> PIC: Class='Numeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
     5 CUSTOMER-NAME >> PIC: Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
     5 ACCOUNT-BALANCE >> PIC: Class='Numeric' (Semantic='None'), Signed=True, Int=5, Dec=2, Len=7, Usage='PackedDecimal'
+```
+
+<br>
+
+## Writer
+
+### JSON
+
+```csharp
+var doc = Reader.FromStreamReader(new StreamReader(@"TestData/t30-tse.cpy", cp950));
+
+using var stream = new MemoryStream();
+using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions {
+    Indented = true,
+    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+});
+
+var jsonWriter = new JsonWriter();
+
+jsonWriter.Write(writer, doc);
+writer.Flush();
+
+string json = Encoding.UTF8.GetString(stream.ToArray());
+
+Console.WriteLine(json);
+```
+
+<br>
+
+輸出內容:
+```json
+{
+  "Type": "Document",
+  "DataItem": [
+    {
+      "Type": "ElementaryDataItem",
+      "Level": 1,
+      "Name": "STOCK-NO",
+      "Comment": "股票代號",
+      "Pic": {
+        "Class": "Alphanumeric",
+        "Semantic": "None",
+        "Usage": "Display",
+        "Info": {
+          "Signed": false,
+          "DigitCount": 6,
+          "StorageOccupied": 6
+        }
+      }
+    },
+    {
+      "Type": "ElementaryDataItem",
+      "Level": 1,
+      "Name": "BULL-PRICE",
+      "Comment": "漲停價",
+      "Pic": {
+        "Class": "Numeric",
+        "Semantic": "None",
+        "Usage": "Display",
+        "Info": {
+          "Signed": false,
+          "DigitCount": 9,
+          "StorageOccupied": 9
+        }
+      }
+    },
+    (以下省略...)
+  ]
+}
 ```
 
 <br><br>

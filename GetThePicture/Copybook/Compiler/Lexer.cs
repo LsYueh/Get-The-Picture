@@ -43,6 +43,14 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
         {
             char Current = line[_pos];
             
+            // Floating comment: *>（最優先）
+            if (_pos + 1 < line.Length && line[_pos] == '*' && line[_pos + 1] == '>')
+            {
+                string comment = line[(_pos + 2)..].Trim();
+                yield return new Token(TokenType.Comment, comment, lineNumber);
+                break; // ⚠️ 結束 while（本行），不是整個 Tokenize 呼叫
+            }
+            
             if (IsWordChar(Current))
             {
                 yield return ScanWord(line, lineNumber);

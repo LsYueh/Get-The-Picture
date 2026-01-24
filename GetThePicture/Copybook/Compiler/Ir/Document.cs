@@ -5,6 +5,7 @@ public sealed class Document(string name = "COPYBOOK") : IDataItem
     public int Level { get; init; } = 0;
     public string Name { get; init; } = name;
     public int? Occurs { get; init; } = null;
+    public string? Comment { get; } = null;
 
     private readonly List<IDataItem> _dataItems = [];
 
@@ -28,5 +29,5 @@ public sealed class Document(string name = "COPYBOOK") : IDataItem
         foreach (var dataItem in _dataItems) dataItem.Dump(w, indent + 1);
     }
 
-    private static string Indent(int i) => new string(' ', i * 2);    
+    private static string Indent(int i) => new(' ', i * 2);    
 }
