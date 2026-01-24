@@ -160,7 +160,7 @@ Copybook 通常包含：
 
 <br>
 
-## 使用方式:
+## Reader
 
 `demo.cpy`
 ```cobol
@@ -192,16 +192,86 @@ Document document = Reader.FromStreamReader(streamReader);
 // Debug / dump
 document.Dump(Console.Out);
 ```
+呼叫 `FromStreamReader()` 後會產出中繼資料，可搭配 `Writer` 做其他格式輸出。  
 
 <br>
 
-輸出結果:  
+Dump 輸出內容:  
 ```shell
 COPYBOOK
   1 CUSTOMER-RECORD
     5 CUSTOMER-ID >> PIC: Class='Numeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
     5 CUSTOMER-NAME >> PIC: Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
     5 ACCOUNT-BALANCE >> PIC: Class='Numeric' (Semantic='None'), Signed=True, Int=5, Dec=2, Len=7, Usage='PackedDecimal'
+```
+
+<br>
+
+## Writer
+
+### JSON
+
+```csharp
+var doc = Reader.FromStreamReader(new StreamReader(@"TestData/t30-tse.cpy", cp950));
+
+using var stream = new MemoryStream();
+using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions {
+    Indented = true,
+    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+});
+
+var jsonWriter = new JsonWriter();
+
+jsonWriter.Write(writer, doc);
+writer.Flush();
+
+string json = Encoding.UTF8.GetString(stream.ToArray());
+
+Console.WriteLine(json);
+```
+
+<br>
+
+輸出內容:
+```json
+{
+  "Type": "Document",
+  "DataItem": [
+    {
+      "Type": "ElementaryDataItem",
+      "Level": 1,
+      "Name": "STOCK-NO",
+      "Comment": "股票代號",
+      "Pic": {
+        "Class": "Alphanumeric",
+        "Semantic": "None",
+        "Usage": "Display",
+        "Info": {
+          "Signed": false,
+          "DigitCount": 6,
+          "StorageOccupied": 6
+        }
+      }
+    },
+    {
+      "Type": "ElementaryDataItem",
+      "Level": 1,
+      "Name": "BULL-PRICE",
+      "Comment": "漲停價",
+      "Pic": {
+        "Class": "Numeric",
+        "Semantic": "None",
+        "Usage": "Display",
+        "Info": {
+          "Signed": false,
+          "DigitCount": 9,
+          "StorageOccupied": 9
+        }
+      }
+    },
+    (以下省略...)
+  ]
+}
 ```
 
 <br><br>
