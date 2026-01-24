@@ -20,7 +20,7 @@ public enum TokenType
     Redefines, Reference, Renames,
     Value, Values,
     LParen, RParen,
-    Dot,
+    Dot, Hyphen,
     Unknown,
 }
 

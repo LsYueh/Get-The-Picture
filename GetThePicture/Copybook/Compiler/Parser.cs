@@ -1,3 +1,5 @@
+using System.Text;
+
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Utils;
@@ -309,12 +311,60 @@ public class Parser(List<Token> tokens)
         if (Current == null)
             throw new CompileException("VALUE clause requires a literal.", Previous);
 
-        return Current.Type switch
+        var sb = new StringBuilder();
+
+        while (Current != null && Current.Type != TokenType.Dot)
         {
-            TokenType.AlphanumericLiteral => Consume().Value,
-            TokenType.NumericLiteral      => Consume().Value,
-            _ => throw new CompileException($"Invalid VALUE literal: {Current.Value}", Current),
-        };
+            switch (Current.Type)
+            {
+                case TokenType.AlphanumericLiteral:
+                    var raw = Consume().Value;
+                    var unquoted = UnquoteValuel(raw);
+                    sb.Append(unquoted);
+                    break;
+
+                case TokenType.NumericLiteral:
+                    sb.Append(Consume().Value);
+                    break;
+
+                case TokenType.Hyphen:
+                    Consume(); // continuation indicator, skip
+                    break;
+
+                default:
+                    // VALUE 結束（例如遇到 DOT 或下一個 clause）
+                    return sb.ToString();
+            }
+        }
+
+
+        return sb.ToString();
     }
 
+    // ----------------------------
+    // Helpers
+    // ----------------------------
+
+    private static string UnquoteValuel(string tokenValue)
+    {
+        if (string.IsNullOrEmpty(tokenValue))
+            return tokenValue;
+
+        char quote = tokenValue[0];
+
+        // 只接受 ' 或 "
+        if (quote != '\'' && quote != '"')
+            return tokenValue;
+
+        // 必須成對
+        if (tokenValue.Length < 2 || tokenValue[^1] != quote)
+            return tokenValue; // 不完整 literal，保持原樣
+
+        // 去掉外層 quote
+        string inner = tokenValue[1..^1];
+
+        // COBOL escape: '' 或 ""
+        string escaped = new([quote, quote]);
+        return inner.Replace(escaped, quote.ToString());
+    }
 }

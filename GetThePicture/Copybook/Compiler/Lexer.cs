@@ -21,6 +21,13 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
         {
             var l = _lines[lineNumber];
 
+            // Column 7 是延續符號
+            if (l.Indicator == '-')
+            {
+                var token = new Token(TokenType.Hyphen, l.Indicator.ToString(), lineNumber);
+                allTokens.Add(token);
+            }
+
             var tokens = Tokenize(l.Line, l.LineNumber).ToList();
             allTokens.AddRange(tokens);
         }
@@ -143,6 +150,10 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
         string tokenText = line[start.._pos];
         return new Token(TokenType.AlphanumericLiteral, tokenText, lineNumber);
     }
+
+    // ----------------------------
+    // Helpers
+    // ----------------------------
 
     private static Token ClassifyWord(string word, int lineNumber)
     {
