@@ -211,25 +211,24 @@ using GetThePicture.Copybook.Compiler.Ir;
 
 ```csharp
 Encoding cp950 = EncodingFactory.CP950;
-using var reader = new StreamReader(@"TestData/demo.cpy", cp950);
+using var streamReader = new StreamReader(@"TestData/demo.cpy", cp950);
 
-GroupItem model = ModelBuilder.FromStreamReader(reader);
+Document document = Reader.FromStreamReader(streamReader);
 
 // Debug / dump
-model.Dump(Console.Out);
+document.Dump(Console.Out);
 ```
 
 <br>
 
 輸出結果:  
 ```shell
-1 CUSTOMER-RECORD
-  5 CUSTOMER-ID >> PIC: Class='Numeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
-  5 CUSTOMER-NAME >> PIC: Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
-  5 ACCOUNT-BALANCE >> PIC: Class='Numeric' (Semantic='None'), Signed=True, Int=5, Dec=2, Len=7, Usage='PackedDecimal'
+COPYBOOK
+  1 CUSTOMER-RECORD
+    5 CUSTOMER-ID >> PIC: Class='Numeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
+    5 CUSTOMER-NAME >> PIC: Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
+    5 ACCOUNT-BALANCE >> PIC: Class='Numeric' (Semantic='None'), Signed=True, Int=5, Dec=2, Len=7, Usage='PackedDecimal'
 ```
-
-> ⚠️ 目前單一檔案只解析第一個Group Item
 
 <br><br>
 

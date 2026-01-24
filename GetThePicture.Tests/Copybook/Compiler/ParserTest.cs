@@ -64,13 +64,17 @@ public class ParserTest
 
         Parser parser = new(tokens);
 
-        GroupItem? root = (GroupItem?) parser.Analyze();
-        
+        Document root = parser.Analyze();
         Assert.IsNotNull(root);
-        Assert.AreEqual(1, root.Level);
-        Assert.IsNotNull(root.Subordinates);
+        Assert.AreEqual(0, root.Level);
+        Assert.IsNotNull(root.DataItems);
+        
+        GroupItem? groupItem_01 = (GroupItem?) root.DataItems[0];
+        Assert.IsNotNull(groupItem_01);
+        Assert.AreEqual(1, groupItem_01.Level);
+        Assert.IsNotNull(groupItem_01.Subordinates);
 
-        GroupItem? subordinate_03 =  (GroupItem?) root.Subordinates[0];
+        GroupItem? subordinate_03 =  (GroupItem?) groupItem_01.Subordinates[0];
         Assert.IsNotNull(subordinate_03);
         Assert.AreEqual(3, subordinate_03.Level);
         Assert.IsNotNull(subordinate_03.Subordinates);
@@ -98,13 +102,17 @@ public class ParserTest
 
         Parser parser = new(tokens);
 
-        GroupItem? root = (GroupItem?) parser.Analyze();
-        
+        Document root = parser.Analyze();
         Assert.IsNotNull(root);
-        Assert.AreEqual(1, root.Level);
-        Assert.IsNotNull(root.Subordinates);
+        Assert.AreEqual(0, root.Level);
+        Assert.IsNotNull(root.DataItems);
 
-        GroupItem? subordinate_03 =  (GroupItem?) root.Subordinates[0];
+        GroupItem? groupItem_01 = (GroupItem?) root.DataItems[0];
+        Assert.IsNotNull(groupItem_01);
+        Assert.AreEqual(1, groupItem_01.Level);
+        Assert.IsNotNull(groupItem_01.Subordinates);
+
+        GroupItem? subordinate_03 =  (GroupItem?) groupItem_01.Subordinates[0];
         Assert.IsNotNull(subordinate_03);
         Assert.AreEqual(3, subordinate_03.Level);
         Assert.AreEqual(5, subordinate_03.Subordinates.Count);
@@ -143,14 +151,17 @@ public class ParserTest
 
         Parser parser = new(tokens);
 
-        GroupItem? root = (GroupItem?) parser.Analyze();
-        
+        Document root = parser.Analyze();
         Assert.IsNotNull(root);
-        Assert.AreEqual(1, root.Level);
-        Assert.IsNotNull(root.Subordinates);
-        Assert.AreEqual(6, root.Subordinates.Count);
+        Assert.AreEqual(0, root.Level);
+        Assert.IsNotNull(root.DataItems);
+
+        GroupItem? groupItem_01 = (GroupItem?) root.DataItems[0];
+        Assert.IsNotNull(groupItem_01);
+        Assert.AreEqual(1, groupItem_01.Level);
+        Assert.IsNotNull(groupItem_01.Subordinates);
         
-        GroupItem? subordinate_05 =  (GroupItem?) root.Subordinates[1];
+        GroupItem? subordinate_05 =  (GroupItem?) groupItem_01.Subordinates[1];
         Assert.IsNotNull(subordinate_05);
         Assert.AreEqual(5, subordinate_05.Level);
         Assert.AreEqual(3, subordinate_05.Subordinates.Count);

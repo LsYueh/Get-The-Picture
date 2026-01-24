@@ -19,8 +19,8 @@ public class CobolLineTest
 
         var lines = CobolLine.FromStreamReader(reader);
 
-        Assert.AreEqual(4, lines.Count);
-        Assert.AreEqual("01 LONG-DESCRIPTION.", lines[0].Line);
+        Assert.AreEqual(12, lines.Count);
+        Assert.AreEqual("01 CUSTOMER-RECORD.", lines[0].Line);
         Assert.AreEqual("        'NEEDS TO BE CONTINUED ACROSS MULTIPLE LINES'.", lines[^1].Line);
     }
 }

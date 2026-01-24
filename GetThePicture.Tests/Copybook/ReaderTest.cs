@@ -8,7 +8,7 @@ namespace GetThePicture.Tests.Copybook;
 
 [TestClass]
 
-public class ModelBuilderTest
+public class ReaderTest
 {
     private const string filePath = @"TestData/sample-cobol-copybook.cpy";
     private const string expected = "THIS IS A VERY LONG DESCRIPTION THAT NEEDS TO BE CONTINUED ACROSS MULTIPLE LINES";
@@ -20,18 +20,24 @@ public class ModelBuilderTest
     {        
         using var sr = new StreamReader(filePath, cp950);
        
-        GroupItem model = Reader.FromStreamReader(sr);
-        Assert.IsNotNull(model);
-        Assert.AreEqual(1, model.Level);
-        Assert.IsNotNull(model.Subordinates);
+        Document doc = Reader.FromStreamReader(sr);
+        Assert.IsNotNull(doc);
+        Assert.AreEqual(0, doc.Level);
+        Assert.IsNotNull(doc.DataItems);
+        Assert.AreEqual(3, doc.DataItems.Count);
 
-        ElementaryDataItem? subordinate_05 =  (ElementaryDataItem?) model.Subordinates[0];
-        Assert.IsNotNull(subordinate_05);
-        Assert.AreEqual(5, subordinate_05.Level);
-        Assert.IsNotNull(subordinate_05.Pic);
-        Assert.IsFalse(subordinate_05.IsFiller);
+        GroupItem? groupItem = (GroupItem?) doc.DataItems[2];
+        Assert.IsNotNull(groupItem);
 
-        Assert.AreEqual(expected, subordinate_05.Value);
+        ElementaryDataItem? elementaryDataItem_05 =  (ElementaryDataItem?) groupItem.Subordinates[0];
+        Assert.IsNotNull(elementaryDataItem_05);
+        Assert.AreEqual(5, elementaryDataItem_05.Level);
+        Assert.IsNotNull(elementaryDataItem_05.Pic);
+        Assert.IsFalse(elementaryDataItem_05.IsFiller);
+
+        Assert.AreEqual(expected, elementaryDataItem_05.Value);
+
+        // doc.Dump(Console.Out);
     }
 
     [TestMethod]
@@ -39,8 +45,10 @@ public class ModelBuilderTest
     {
         using var sr = new StreamReader(@"TestData/demo.cpy", cp950);
        
-        GroupItem model = Reader.FromStreamReader(sr);
+        Document document = Reader.FromStreamReader(sr);
 
-        model.Dump(Console.Out);
+        Assert.IsNotNull(document);
+
+        // document.Dump(Console.Out);
     }
 }

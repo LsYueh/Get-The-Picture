@@ -6,7 +6,7 @@ namespace GetThePicture.Copybook;
 
 public sealed class Reader
 {
-    public static GroupItem FromStreamReader(StreamReader streamReader)
+    public static Document FromStreamReader(StreamReader streamReader)
     {
         ArgumentNullException.ThrowIfNull(streamReader);
 
@@ -17,8 +17,8 @@ public sealed class Reader
         Parser parser = new(tokens);
 
         var ir = parser.Analyze();
-        if (ir is not GroupItem model)
-            throw new Exception("Copybook root must be a GroupItem.");
+        if (ir is not Document model)
+            throw new Exception("Copybook root must be a Document.");
 
         return model;
     }

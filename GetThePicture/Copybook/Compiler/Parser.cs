@@ -59,7 +59,7 @@ public class Parser(List<Token> tokens)
     /// <summary>
     /// Syntactic / Semantic Analysis
     /// </summary>
-    public IDataItem? Analyze()
+    public Document Analyze()
     {
         // ParseDataItem (Recursive)
         // │
@@ -75,7 +75,14 @@ public class Parser(List<Token> tokens)
         //            ├─ while nextLevel > currentGroup.Level
         //            └─ ParseDataItem(item) recursively
 
-        return ParseDataItem();
+        Document root = new();
+
+        while (Current != null)
+        {
+            ParseDataItem(root);
+        }
+
+        return root;
     }
 
     // ----------------------------
@@ -88,7 +95,7 @@ public class Parser(List<Token> tokens)
     /// <param name="parent"></param>
     /// <returns></returns>
     /// <exception cref="CompileException"></exception>
-    private IDataItem? ParseDataItem(GroupItem? parent = null)
+    private IDataItem? ParseDataItem(IDataItem? parent = null)
     {
         // 遞迴終止
         if (Current == null) return null;
@@ -96,7 +103,12 @@ public class Parser(List<Token> tokens)
         // 解析
         IDataItem subordinate = ParseSingleDataItem();
 
-        parent?.AddSubordinate(subordinate);
+        // 加入 parent 的 Subordinates
+        switch (parent)
+        {
+            case GroupItem g: g.AddSubordinate(subordinate); break;
+            case Document  d: d.AddSubordinate(subordinate); break;
+        }
 
         // 解析子項目（只有 GroupItem 才能有 subordinate）
         if (subordinate is GroupItem group)
