@@ -45,6 +45,6 @@ public class PicClause
 
     public override string ToString()
     {
-        return $"{BaseClass} ({Semantic}), Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={DigitCount}";
+        return $"Class='{BaseClass}' (Semantic='{Semantic}'), Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={DigitCount}";
     }
 }

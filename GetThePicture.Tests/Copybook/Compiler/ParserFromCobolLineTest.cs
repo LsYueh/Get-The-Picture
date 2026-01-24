@@ -39,5 +39,7 @@ public class ParserFromCobolLineTest
         Assert.IsFalse(subordinate_05.IsFiller);
 
         Assert.AreEqual(expected, subordinate_05.Value);
+
+        root.Dump(Console.Out);
     }
 }

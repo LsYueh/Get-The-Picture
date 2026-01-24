@@ -14,5 +14,27 @@ public sealed class ElementaryDataItem(
     public bool? IsFiller { get; init; } = isFiller;
 
     public PicClause Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
+
+    // ----------------------------
+    // Dump
+    // ----------------------------
+
+    public void Dump(TextWriter w, int indent = 0)
+    {
+        w.Write($"{Indent(indent)}{Level} {Name} >>");
+
+        if (Pic != null)
+            w.Write($" PIC: {Pic}");
+
+        if (Occurs is > 1)
+            w.Write($" OCCURS: {Occurs}");
+
+        if (Value != null)
+            w.Write($" VALUE: \"{Value}\"");
+
+        w.WriteLine();
+    }
+
+    private static string Indent(int i) => new(' ', i * 2);
 }
 
