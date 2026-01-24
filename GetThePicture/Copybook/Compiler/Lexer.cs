@@ -15,18 +15,9 @@ public class Lexer
     {
         int i = 0;
 
-        // Level Number
-        if (char.IsDigit(line[i]))
-        {
-            var start = i;
-            while (i < line.Length && char.IsDigit(line[i])) i++;
-
-            yield return new Token(TokenType.LevelNumber, line[start..i], lineNumber);
-        }
-
         while (i < line.Length)
         {
-            // Reserved Word / Alphanumeric Literal / Numeric Literal / Keyword / Identifier
+            // Reserved Word / Alphanumeric Literal / Numeric Literal / Keyword
             if (IsWordChar(line[i]))
             {
                 int start = i;
@@ -53,7 +44,7 @@ public class Lexer
                 continue;
             }
 
-            // Alphanumeric Literal (String Literal)
+            // Alphanumeric Literal (String Literal ')
             if (line[i] == '\'')
             {
                 int start = i;
@@ -72,6 +63,39 @@ public class Lexer
                         else
                         {
                             i++; // closing '
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        i++;
+                    }
+                }
+
+                // 即使沒有閉合也會產生Token
+                yield return new Token(TokenType.AlphanumericLiteral, line[start..i], lineNumber);
+                continue;
+            }
+
+            // Alphanumeric Literal (String Literal ")
+            if (line[i] == '"')
+            {
+                int start = i;
+                i++; // skip opening "
+
+                while (i < line.Length)
+                {
+                    if (line[i] == '"')
+                    {
+                        // COBOL 兩個單引號代表內部單引號
+                        if (i + 1 < line.Length && line[i + 1] == '"')
+                        {
+                            i += 2; // skip both ""
+                            continue;
+                        }
+                        else
+                        {
+                            i++; // closing "
                             break;
                         }
                     }
@@ -110,9 +134,6 @@ public class Lexer
         if (Keywords.Contains(word))
             return new Token(TokenType.Keyword, word.ToUpperInvariant(), lineNumber);
 
-        if (IsBaseDataType(word))
-            return new Token(TokenType.Identifier, word, lineNumber);
-
         // Reserved Word or Alphanumeric Literal
         return word switch
         {
@@ -141,22 +162,6 @@ public class Lexer
     private static bool IsWordChar(char c)
     {
         return char.IsLetterOrDigit(c) || c == '-';
-    }
-
-    /// <summary>
-    /// X / 9 / V / S / A
-    /// </summary>
-    /// <param name="word"></param>
-    /// <returns></returns>
-    private static bool IsBaseDataType(string word)
-    {
-        foreach (char c in word)
-        {
-            if (!"X9VSA".Contains(c))
-                return false;
-        }
-
-        return true;
     }
 
     private static bool IsSymbol(char c)

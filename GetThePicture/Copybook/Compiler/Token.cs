@@ -5,8 +5,6 @@ namespace GetThePicture.Copybook.Compiler;
 /// </summary>
 public enum TokenType
 {
-    LevelNumber,
-
     Character,
     AlphanumericLiteral,
     NumericLiteral,
@@ -24,7 +22,7 @@ public enum TokenType
     LParen, RParen,
     Dot,
     
-    Identifier, Keyword, Symbol,
+    Keyword, Symbol,
 
     Unknown,
 }
