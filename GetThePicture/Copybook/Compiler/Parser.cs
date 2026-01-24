@@ -153,6 +153,9 @@ public class Parser(List<Token> tokens)
         PicClause? pic = null;
         string? value = null;
         int? occurs = null;
+        var comments = new List<string>();
+
+        CollectComments(comments); // 行首 comment（很少，但合法）
 
         var (level, name, isFiller) = ParseDataItemHeader();
 
@@ -177,12 +180,15 @@ public class Parser(List<Token> tokens)
             }
         }
 
-        Expect(TokenType.Dot); // 結束
+        Expect(TokenType.Dot);
+
+        CollectComments(comments);
         
         IDataItem item = BuildDataItem(
             level, name, pic,
             occurs, value,
-            isFiller
+            isFiller,
+            (comments.Count == 0) ? null : string.Join(", ", comments)
         );
 
         return item;
@@ -204,7 +210,8 @@ public class Parser(List<Token> tokens)
 
     private static IDataItem BuildDataItem(
         int level, string name, PicClause? pic,
-        int? occurs, string? value, bool isFiller = false 
+        int? occurs, string? value, bool isFiller = false,
+        string? comment = null
     )
     {
         if (pic != null)
@@ -214,25 +221,67 @@ public class Parser(List<Token> tokens)
                 Occurs = occurs,
                 Value = value,
                 IsFiller = isFiller,
+                Comment = comment,
             };
         }
 
         return new GroupItem(level, name)
         {
             Occurs = occurs,
+            Comment = comment,
         };
     }
 
     private bool IsNextDataItemStart()
     {
-        var previousType = Previous?.Type;
-        var currentType  = Current?.Type;
-        
-        // Note: ParseSingleDataItem() 已經 Expect(TokenType.Dot)，所以要看 Previous
+        // DataItem 的結束一定是 Dot (.)
+        // 但 Dot 後面可能會插入 Floating Comment (TokenType.Comment)
+        //
+        // 例如：
+        //   05 A PIC X.
+        //   *> comment
+        //   05 B PIC 9.
+        //
+        // Token 串實際上會是：
+        //   Dot -> Comment -> NumericLiteral(05)
+        //
+        // 因此：
+        //   - Comment 不影響結構判斷
+        //   - 必須找「前一個非 Comment token」
+        //     以及「下一個非 Comment token」來判斷邊界
 
-        return Current != null
-            && previousType == TokenType.Dot
-            && currentType == TokenType.NumericLiteral;
+        return PreviousMeaningfulType() == TokenType.Dot
+            && CurrentMeaningfulType()  == TokenType.NumericLiteral;
+    }
+
+    /// <summary>
+    /// 找前一個有語意的 token（忽略 Comment）
+    /// </summary>
+    /// <returns></returns>
+    private TokenType? PreviousMeaningfulType()
+    {
+        for (int i = -1; ; i--)
+        {
+            var t = Lookahead(i);
+            if (t == null) return null;
+            if (t.Type != TokenType.Comment)
+                return t.Type;
+        }
+    }
+
+    /// <summary>
+    /// 找下一個有語意的 token（忽略 Comment）
+    /// </summary>
+    /// <returns></returns>
+    private TokenType? CurrentMeaningfulType()
+    {
+        for (int i = 0; ; i++)
+        {
+            var t = Lookahead(i);
+            if (t == null) return null;
+            if (t.Type != TokenType.Comment)
+                return t.Type;
+        }
     }
 
     // ----------------------------
@@ -356,6 +405,16 @@ public class Parser(List<Token> tokens)
     // ----------------------------
     // Helpers
     // ----------------------------
+
+    private void CollectComments(List<string> target)
+    {
+        while (Current != null &&
+            Current.Type == TokenType.Comment)
+        {
+            target.Add(Current.Value.Trim());
+            Consume();
+        }
+    }
 
     private static string UnquoteValuel(string tokenValue)
     {

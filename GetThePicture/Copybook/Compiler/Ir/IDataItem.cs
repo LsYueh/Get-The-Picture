@@ -8,6 +8,7 @@ public interface IDataItem
     int Level { get; }
     string Name { get; }
     int? Occurs { get; }
+    string? Comment { get; }
 
     void Dump(TextWriter writer, int indent = 0);
 }

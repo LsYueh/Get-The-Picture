@@ -5,13 +5,14 @@ namespace GetThePicture.Copybook.Compiler.Ir;
 public sealed class ElementaryDataItem(
     int level, string name, PicClause pic,
     int? occurs = null, string? value = null,
-    bool? isFiller = false) : IDataItem
+    bool? isFiller = false, string? comment = null) : IDataItem
 {
     public int Level { get; init; } = level;
     public string Name { get; init; } = name;
     public int? Occurs { get; init; } = occurs;
     public string? Value { get; init; } = value;
     public bool? IsFiller { get; init; } = isFiller;
+    public string? Comment { get; init; } = comment;
 
     public PicClause Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
 
@@ -20,8 +21,8 @@ public sealed class ElementaryDataItem(
     // ----------------------------
 
     public void Dump(TextWriter w, int indent = 0)
-    {
-        w.Write($"{Indent(indent)}{Level} {Name} >>");
+    {        
+        w.Write($"{Indent(indent)}{Level} {Name}{FormatComment()} >>");
 
         if (Pic != null)
             w.Write($" PIC: {Pic}");
@@ -34,6 +35,8 @@ public sealed class ElementaryDataItem(
 
         w.WriteLine();
     }
+
+    private string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
 
     private static string Indent(int i) => new(' ', i * 2);
 }

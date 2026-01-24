@@ -41,14 +41,28 @@ public class ReaderTest
     }
 
     [TestMethod]
-    public void Example_Dump_From_Demo()
+    // [Ignore]
+    public void Example_Dump_T30_TSE_Demo()
     {
-        using var sr = new StreamReader(@"TestData/demo.cpy", cp950);
+        using var sr = new StreamReader(@"TestData/t30-tse.cpy", cp950);
        
         Document document = Reader.FromStreamReader(sr);
 
         Assert.IsNotNull(document);
 
-        // document.Dump(Console.Out);
+        document.Dump(Console.Out);
+    }
+
+    [TestMethod]
+    [Ignore]
+    public void Example_Dump_T30_OTC_Demo()
+    {
+        using var sr = new StreamReader(@"TestData/t30-otc.cpy", cp950);
+       
+        Document document = Reader.FromStreamReader(sr);
+
+        Assert.IsNotNull(document);
+
+        document.Dump(Console.Out);
     }
 }
