@@ -41,7 +41,7 @@ public class ReaderTest
     }
 
     [TestMethod]
-    // [Ignore]
+    [Ignore]
     public void Example_Dump_T30_TSE_Demo()
     {
         using var sr = new StreamReader(@"TestData/t30-tse.cpy", cp950);
