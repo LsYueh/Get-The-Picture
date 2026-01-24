@@ -21,9 +21,6 @@ public enum TokenType
     Value, Values,
     LParen, RParen,
     Dot,
-    
-    Keyword, Symbol,
-
     Unknown,
 }
 

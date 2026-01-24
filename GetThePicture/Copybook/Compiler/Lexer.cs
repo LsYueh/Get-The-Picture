@@ -1,127 +1,147 @@
+using GetThePicture.Copybook.Base;
+
 namespace GetThePicture.Copybook.Compiler;
 
-public class Lexer
+public class Lexer(IReadOnlyList<CobolLine>? lines = null)
 {
-    private static readonly HashSet<string> Keywords = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "VALUES",
-        "TO", "DEPENDING", "ON",
-        "SYNC", "JUSTIFIED", "RIGHT", "LEFT",
-        "SIGN", "LEADING", "TRAILING", "SEPARATE"
-    };
-
+    private readonly IReadOnlyList<CobolLine>? _lines = lines;
     
-    public static IEnumerable<Token> Tokenize(string line, int lineNumber)
+    /// <summary>
+    /// Current Char Index.
+    /// </summary>
+    private int _pos = 0;
+    
+    public List<Token> Tokenize()
     {
-        int i = 0;
+        if (_lines == null) throw new InvalidOperationException("CobolLine not provided.");
+        
+        var allTokens = new List<Token>();
 
-        while (i < line.Length)
+        for (int lineNumber = 0; lineNumber < _lines.Count; lineNumber++)
         {
-            // Reserved Word / Alphanumeric Literal / Numeric Literal / Keyword
-            if (IsWordChar(line[i]))
+            var l = _lines[lineNumber];
+
+            var tokens = Tokenize(l.Line, l.LineNumber).ToList();
+            allTokens.AddRange(tokens);
+        }
+
+        return allTokens;
+    }
+
+    internal IEnumerable<Token> Tokenize(string line, int lineNumber)
+    {
+        _pos = 0;
+
+        while (_pos < line.Length)
+        {
+            char Current = line[_pos];
+            
+            if (IsWordChar(Current))
             {
-                int start = i;
-                while (i < line.Length && IsWordChar(line[i]))
-                    i++;
-
-                string word = line[start..i];
-
-                yield return ClassifyWord(word, lineNumber);
+                yield return ScanWord(line, lineNumber);
                 continue;
             }
 
-            // Symbol
-            if (IsSymbol(line[i]))
+            // Alphanumeric Literal (String Literal)
+            if (Current == '\'')
             {
-                yield return line[i] switch 
-                {
-                    '(' => new Token(TokenType.LParen, line[i++].ToString(), lineNumber),
-                    ')' => new Token(TokenType.RParen, line[i++].ToString(), lineNumber),
-                    '.' => new Token(TokenType.Dot   , line[i++].ToString(), lineNumber),
-                     _  => new Token(TokenType.Symbol, line[i++].ToString(), lineNumber),
-                };
-                
+                yield return ScanAlphanumericLiteral(line, lineNumber, '\'');
                 continue;
             }
 
-            // Alphanumeric Literal (String Literal ')
-            if (line[i] == '\'')
+            // Alphanumeric Literal (String Literal)
+            if (Current == '"')
             {
-                int start = i;
-                i++; // skip opening '
-
-                while (i < line.Length)
-                {
-                    if (line[i] == '\'')
-                    {
-                        // COBOL 兩個單引號代表內部單引號
-                        if (i + 1 < line.Length && line[i + 1] == '\'')
-                        {
-                            i += 2; // skip both ''
-                            continue;
-                        }
-                        else
-                        {
-                            i++; // closing '
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                }
-
-                // 即使沒有閉合也會產生Token
-                yield return new Token(TokenType.AlphanumericLiteral, line[start..i], lineNumber);
+                yield return ScanAlphanumericLiteral(line, lineNumber, '"');
                 continue;
             }
 
-            // Alphanumeric Literal (String Literal ")
-            if (line[i] == '"')
+            if (Current == '(')
             {
-                int start = i;
-                i++; // skip opening "
-
-                while (i < line.Length)
-                {
-                    if (line[i] == '"')
-                    {
-                        // COBOL 兩個單引號代表內部單引號
-                        if (i + 1 < line.Length && line[i + 1] == '"')
-                        {
-                            i += 2; // skip both ""
-                            continue;
-                        }
-                        else
-                        {
-                            i++; // closing "
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        i++;
-                    }
-                }
-
-                // 即使沒有閉合也會產生Token
-                yield return new Token(TokenType.AlphanumericLiteral, line[start..i], lineNumber);
+                yield return new Token(TokenType.LParen, line[_pos++].ToString(), lineNumber);
                 continue;
             }
 
-            // Whitespace
-            if (char.IsWhiteSpace(line[i]))
+            if (Current == ')')
             {
-                i++;
+                yield return new Token(TokenType.RParen, line[_pos++].ToString(), lineNumber);
+                continue;
+            }
+
+            if (Current == '.')
+            {
+                yield return new Token(TokenType.Dot, line[_pos++].ToString(), lineNumber);
+                continue;
+            }
+
+            if (char.IsWhiteSpace(Current))
+            {
+                _pos++;
                 continue;
             }
 
             // ----------------------------
             // Fallback: Unknown char
             // ----------------------------
-            yield return new Token(TokenType.Unknown, line[i++].ToString(), lineNumber);
+            yield return new Token(TokenType.Unknown, line[_pos++].ToString(), lineNumber);
         }
+    }
+
+    // ----------------------------
+    // Scanners
+    // ----------------------------
+
+    /// <summary>
+    /// 掃描單詞 token，包括： <br/>
+    /// - Reserved Word (如 PIC, VALUE, OCCURS) <br/>
+    /// - Alphanumeric Literal (識別字/名稱) <br/>
+    /// - Numeric Literal <br/>
+    /// </summary>
+    /// <param name="line"></param>
+    /// <param name="lineNumber"></param>
+    /// <returns></returns>
+    private Token ScanWord(string line, int lineNumber)
+    {
+        int start = _pos;
+
+        while (_pos < line.Length && IsWordChar(line[_pos]))
+            _pos++;
+
+        string word = line[start.._pos];
+
+        return ClassifyWord(word, lineNumber);
+    }
+
+    private Token ScanAlphanumericLiteral(string line, int lineNumber, char quoteChar = '\'')
+    {
+        int start = _pos;
+        _pos++; // skip opening quote
+
+        while (_pos < line.Length)
+        {
+            if (line[_pos] == quoteChar)
+            {
+                // COBOL 雙引號內的兩個 quote 表示內部 quote
+                if (_pos + 1 < line.Length && line[_pos + 1] == quoteChar)
+                {
+                    _pos += 2; // skip both quotes
+                    continue;
+                }
+                else
+                {
+                    _pos++; // closing quote
+                    break;
+                }
+            }
+            else
+            {
+                _pos++;
+            }
+        }
+
+        // 即使沒有閉合也會生成 Token
+        string tokenText = line[start.._pos];
+        return new Token(TokenType.AlphanumericLiteral, tokenText, lineNumber);
     }
 
     private static Token ClassifyWord(string word, int lineNumber)
@@ -129,10 +149,6 @@ public class Lexer
         // NumericLiteral
         if (IsNumeric(word))
             return new Token(TokenType.NumericLiteral, word, lineNumber);
-
-        // Keywords
-        if (Keywords.Contains(word))
-            return new Token(TokenType.Keyword, word.ToUpperInvariant(), lineNumber);
 
         // Reserved Word or Alphanumeric Literal
         return word switch
@@ -162,11 +178,6 @@ public class Lexer
     private static bool IsWordChar(char c)
     {
         return char.IsLetterOrDigit(c) || c == '-';
-    }
-
-    private static bool IsSymbol(char c)
-    {
-        return @",.()".Contains(c);
     }
 
     private static bool IsNumeric(string word)

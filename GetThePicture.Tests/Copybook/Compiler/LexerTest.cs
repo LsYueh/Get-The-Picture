@@ -11,12 +11,14 @@ public class LexerTest
         Assert.AreEqual(text, token.Value);
     }
 
+    private static readonly Lexer lexer = new();
+
     [TestMethod]
     public void Tokenize_Test_01()
     {        
         string line = "05 CUSTOMER-NAME PIC X(10) VALUE 'ABC'.";
 
-        var tokens = Lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0).ToList();
 
         Assert.AreEqual(10, tokens.Count);
 
@@ -37,7 +39,7 @@ public class LexerTest
     {        
         string line = "05 BGEN-XXXXX  OCCURS 4.";
 
-        var tokens = Lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0).ToList();
 
         Assert.AreEqual(5, tokens.Count);
 
@@ -53,7 +55,7 @@ public class LexerTest
     {        
         string line = "07 BGEN-XXXXX-TRANS-NO3     PIC S9(05)V(03) COMP-3.";
 
-        var tokens = Lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0).ToList();
 
         Assert.AreEqual(13, tokens.Count);
 
@@ -77,7 +79,7 @@ public class LexerTest
     {        
         string line = "VALUE 'O''NEIL'";
 
-        var tokens = Lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0).ToList();
 
         Assert.AreEqual(2, tokens.Count);
 
@@ -90,7 +92,7 @@ public class LexerTest
     {        
         string line = "VALUE 'ABC.";
 
-        var tokens = Lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0).ToList();
 
         Assert.AreEqual(2, tokens.Count);
 
@@ -103,7 +105,7 @@ public class LexerTest
     {        
         string line = "PIC  9(005)";
 
-        var tokens = Lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0).ToList();
 
         Assert.AreEqual(5, tokens.Count);
 
