@@ -83,7 +83,7 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 <br><br>
 
-# COBOL： `Elementary Data Item `and `Group Item` 
+# COBOL： `Elementary Data Item` and `Group Item` 
 
 | 面向                    | Elementary Data Item    | Group Item             |
 | --------------------- | ----------------------- | ---------------------- |
@@ -111,6 +111,7 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 - DISPLAY（預設）：以可讀字元存放，每個數字或字母對應一個 byte，便於輸入輸出與檢視。DISPLAY numeric 可能包含 Overpunch 符號。  
 - COMP / COMP-5（Binary）：以二進位形式存放，運算效率高，但不可直接讀取文字。  
 - COMP-3（Packed Decimal）：將兩個數字壓縮在一個 nibble，最後一個 nibble 用於符號，節省空間且方便算術運算。  
+  - [`COMPUTATIONAL` 轉換規則](docs/other-topics/cobol-computational.md)  
 
 <br>
 
@@ -135,16 +136,17 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 ## 類別(`Category`)資料
 
-• [文字 (`Alphabetic`/`Alphanumeric`)](docs/cobol-picture/category/alphabetic-alphanumeric.md)  
-• [數字 (`Numeric`)](docs/cobol-picture/category/numeric.md)  
+- [文字 (`Alphabetic`/`Alphanumeric`)](docs/cobol-picture/category/alphabetic-alphanumeric.md)  
+- [數字 (`Numeric`)](docs/cobol-picture/category/numeric.md)  
+  - [`S9`數字轉換規則](docs/other-topics/pic-s9-overpunch.md)  
 
 <br>
 
 ## 語意(`Semantic`)資料
 
-• [日期 (`Date`)](docs/cobol-picture/semantic/date-time/date.md)  
-• [時間 (`Time`)](docs/cobol-picture/semantic/date-time/time.md)  
-• [時間戳記 (`Timestamp`)](docs/cobol-picture/semantic/date-time/timestamp.md)  
+- [日期 (`Date`)](docs/cobol-picture/semantic/date-time/date.md)  
+- [時間 (`Time`)](docs/cobol-picture/semantic/date-time/time.md)  
+- [時間戳記 (`Timestamp`)](docs/cobol-picture/semantic/date-time/timestamp.md)  
 
 <br><br>
 
@@ -209,77 +211,18 @@ COPYBOOK
 
 ## Writer
 
-### JSON
-
-```csharp
-var doc = Reader.FromStreamReader(new StreamReader(@"TestData/t30-tse.cpy", cp950));
-
-using var stream = new MemoryStream();
-using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions {
-    Indented = true,
-    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-});
-
-var jsonWriter = new JsonWriter();
-
-jsonWriter.Write(writer, doc);
-writer.Flush();
-
-string json = Encoding.UTF8.GetString(stream.ToArray());
-
-Console.WriteLine(json);
-```
+- [JSON](docs/copybook/writer/json-writer.md)
 
 <br>
 
-輸出內容:
-```json
-{
-  "Type": "Document",
-  "DataItem": [
-    {
-      "Type": "ElementaryDataItem",
-      "Level": 1,
-      "Name": "STOCK-NO",
-      "Comment": "股票代號",
-      "Pic": {
-        "Class": "Alphanumeric",
-        "Semantic": "None",
-        "Usage": "Display",
-        "Info": {
-          "Signed": false,
-          "DigitCount": 6,
-          "StorageOccupied": 6
-        }
-      }
-    },
-    {
-      "Type": "ElementaryDataItem",
-      "Level": 1,
-      "Name": "BULL-PRICE",
-      "Comment": "漲停價",
-      "Pic": {
-        "Class": "Numeric",
-        "Semantic": "None",
-        "Usage": "Display",
-        "Info": {
-          "Signed": false,
-          "DigitCount": 9,
-          "StorageOccupied": 9
-        }
-      }
-    },
-    (以下省略...)
-  ]
-}
-```
+## SerDes
+SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）的合稱，用於資料在不同系統或存儲之間的轉換。  
 
-<br><br>
+1. Serialization（序列化）
+    - 將程式中的物件或資料結構轉換成一種 `可存儲` 或 `傳輸` 的格式。
 
-# 其他說明
-
-• [`S9`數字轉換規則](docs/other-topics/pic-s9-overpunch.md)  
-• [`COMPUTATIONAL` 轉換規則](docs/other-topics/cobol-computational.md)  
+2. Deserialization（反序列化）
+    - 將序列化後的資料恢復成程式中的 `物件` 或 `資料結構`。
 
 <br><br>
 
