@@ -3,18 +3,19 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 
 using GetThePicture.Codec.Utils;
-using GetThePicture.Copybook;
-using GetThePicture.Copybook.Writer;
+using GetThePicture.Copybook.Obsolete.Writer;
+using GetThePicture.Copybook.SerDes.Schema;
 
-namespace GetThePicture.Tests.Copybook.Writer;
+namespace GetThePicture.Tests.Copybook.Obsolete.Writer;
 
 [TestClass]
+[Ignore]
 public class JsonWriterTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
     [TestMethod]
-    [TestCategory("Demo")]
+    [TestCategory("Obsolete")]
     [Ignore]
     public void Writer_Demo()
     {

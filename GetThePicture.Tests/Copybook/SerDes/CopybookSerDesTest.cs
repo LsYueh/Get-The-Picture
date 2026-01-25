@@ -1,13 +1,14 @@
 using System.Text;
 
 using GetThePicture.Codec.Utils;
-using GetThePicture.Copybook;
 using GetThePicture.Copybook.SerDes;
+using GetThePicture.Copybook.SerDes.Record;
+using GetThePicture.Copybook.SerDes.Schema;
 
 namespace GetThePicture.Tests.Copybook.SerDes;
 
 [TestClass]
-public class SerDesTest
+public class CopybookSerDesTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
@@ -18,7 +19,7 @@ public class SerDesTest
 
         Assert.AreEqual(100, schema.StorageOccupied);
     
-        var serDes = new RecordSerDes(schema);
+        var serDes = new CbSerDes(schema);
 
         using var reader = new StreamReader(@"TestData/t30-otc-lite.dat", cp950);
 
@@ -34,7 +35,7 @@ public class SerDesTest
             Assert.AreEqual(19, record.Fields.Count);
             record.Fields.TryGetValue("MARK-W-DETAILS", out object? value);
             
-            if (value is RecordValue subRecord)
+            if (value is RecValue subRecord)
                 Assert.AreEqual(4, subRecord.Fields.Count);
             else
             {

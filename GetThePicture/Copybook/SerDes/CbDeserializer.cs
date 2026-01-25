@@ -1,19 +1,15 @@
-using System.Text;
-
 using GetThePicture.Codec;
-using GetThePicture.Codec.Utils;
 using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.SerDes.Record;
 
 namespace GetThePicture.Copybook.SerDes
 ;
 
-public class Deserializer
+internal class CbDeserializer
 {
-    private static readonly Encoding cp950 = EncodingFactory.CP950;
-
-    internal static RecordValue DesDocument(Document schema, ref RecordCursor cursor)
+    internal static RecValue DesDocument(Document schema, ref RecCursor cursor)
     {
-        var result = new RecordValue();
+        var result = new RecValue();
 
         foreach (var dataItem in schema.DataItems)
         {
@@ -35,9 +31,9 @@ public class Deserializer
         return result;
     }
 
-    private static RecordValue DesGroupItem(GroupItem item, ref RecordCursor cursor)
+    private static RecValue DesGroupItem(GroupItem item, ref RecCursor cursor)
     {
-        var result = new RecordValue();
+        var result = new RecValue();
 
         foreach (var subordinate in item.Subordinates)
         {
@@ -59,7 +55,7 @@ public class Deserializer
         return result;
     }
 
-    private static void DesNestedGroupItem(GroupItem item, ref RecordCursor cursor, RecordValue target)
+    private static void DesNestedGroupItem(GroupItem item, ref RecCursor cursor, RecValue target)
     {
         int occurs = item.Occurs ?? 1;
 
@@ -69,7 +65,7 @@ public class Deserializer
         }
         else
         {
-            var values = new RecordValue[occurs];
+            var values = new RecValue[occurs];
 
             for (int i = 0; i < occurs; i++)
             {
@@ -80,7 +76,7 @@ public class Deserializer
         }
     }
 
-    private static void DesElementaryDataItem(ElementaryDataItem item, ref RecordCursor cursor, RecordValue target)
+    private static void DesElementaryDataItem(ElementaryDataItem item, ref RecCursor cursor, RecValue target)
     {
         int occurs = item.Occurs ?? 1;
 

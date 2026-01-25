@@ -1,10 +1,10 @@
 using System.Text;
 
 using GetThePicture.Codec.Utils;
-using GetThePicture.Copybook;
 using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.SerDes.Schema;
 
-namespace GetThePicture.Tests.Copybook;
+namespace GetThePicture.Tests.Copybook.SerDes.Schema;
 
 [TestClass]
 

@@ -2,7 +2,7 @@ using GetThePicture.Copybook.Base;
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Ir;
 
-namespace GetThePicture.Copybook;
+namespace GetThePicture.Copybook.SerDes.Schema;
 
 public sealed class Reader
 {
