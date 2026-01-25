@@ -10,6 +10,7 @@ public sealed class GroupItem(
     public string? Comment { get; init; } = comment;
 
     private readonly List<IDataItem> _subordinates = [];
+    public int StorageOccupied { get; private set; }
 
     public IReadOnlyList<IDataItem> Subordinates => _subordinates;
 
@@ -18,6 +19,26 @@ public sealed class GroupItem(
         ArgumentNullException.ThrowIfNull(subordinate);
 
         _subordinates.Add(subordinate);
+    }
+
+    public void CalculateStorage()
+    {
+        int total = 0;
+
+        foreach (var subordinate in Subordinates)
+        {
+            if (subordinate is ElementaryDataItem e)
+            {
+                total += e.Pic.StorageOccupied * (e.Occurs ?? 1);
+            }
+            else if (subordinate is GroupItem g)
+            {
+                g.CalculateStorage();
+                total += g.StorageOccupied * (g.Occurs ?? 1);
+            }
+        }
+
+        StorageOccupied = total;
     }
 
     // ----------------------------

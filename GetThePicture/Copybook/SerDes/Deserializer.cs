@@ -1,9 +1,11 @@
 using System.Text;
 
+using GetThePicture.Codec;
 using GetThePicture.Codec.Utils;
 using GetThePicture.Copybook.Compiler.Ir;
 
-namespace GetThePicture.Copybook.SerDesBase;
+namespace GetThePicture.Copybook.SerDes
+;
 
 public class Deserializer
 {
@@ -86,10 +88,10 @@ public class Deserializer
         {
             var raw = cursor.Read(item.Pic.StorageOccupied);
 
-            // 如果是 FILLER，直接跳過，不寫入 target
+            // 是 FILLER，直接跳過
             if (item.IsFiller != true)
             {
-                target[item.Name] = cp950.GetString(raw); // TODO: ...
+                target[item.Name] = CodecBuilder.ForPic(item.Pic).Decode(raw);
             }
         }
         else
@@ -100,10 +102,10 @@ public class Deserializer
             {
                 var raw = cursor.Read(item.Pic.StorageOccupied);
 
-                // FILLER 也要跳過
+                // 是 FILLER，直接跳過
                 if (item.IsFiller != true)
                 {
-                    target[item.Name] = cp950.GetString(raw); // TODO: ...
+                    target[item.Name] = CodecBuilder.ForPic(item.Pic).Decode(raw);
                 }
             }
 

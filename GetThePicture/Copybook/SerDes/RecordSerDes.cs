@@ -1,15 +1,13 @@
 using GetThePicture.Copybook.Compiler.Ir;
 using GetThePicture.Copybook.SerDes.Schema;
 
-namespace GetThePicture.Copybook.SerDesBase;
+namespace GetThePicture.Copybook.SerDes;
 
-public sealed class SerDes(Document schema)
+public sealed class RecordSerDes(Document schema)
 {
-    
-    
     private readonly Document _schema = schema ?? throw new ArgumentNullException(nameof(schema));
 
-    public SerDes(ISchemaProvider provider): this(provider.GetSchema())
+    public RecordSerDes(ISchemaProvider provider): this(provider.GetSchema())
     {
     }
 

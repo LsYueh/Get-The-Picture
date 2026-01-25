@@ -20,6 +20,8 @@ public sealed class Reader
         if (ir is not Document model)
             throw new Exception("Copybook root must be a Document.");
 
+        model.CalculateStorage();
+
         return model;
     }
 }

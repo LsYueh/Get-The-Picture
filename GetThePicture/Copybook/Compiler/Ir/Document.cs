@@ -10,12 +10,33 @@ public sealed class Document(string name = "COPYBOOK") : IDataItem
     private readonly List<IDataItem> _dataItems = [];
 
     public IReadOnlyList<IDataItem> DataItems => _dataItems;
+    public int StorageOccupied { get; private set; }
 
     public void AddSubordinate(IDataItem dataItem)
     {
         ArgumentNullException.ThrowIfNull(dataItem);
 
         _dataItems.Add(dataItem);
+    }
+
+    public void CalculateStorage()
+    {
+        int total = 0;
+
+        foreach (var dataItem in DataItems)
+        {
+            if (dataItem is ElementaryDataItem e)
+            {
+                total += e.Pic.StorageOccupied * (e.Occurs ?? 1);
+            }
+            else if (dataItem is GroupItem g)
+            {
+                g.CalculateStorage();
+                total += g.StorageOccupied * (g.Occurs ?? 1);
+            }
+        }
+
+        StorageOccupied = total;
     }
 
     // ----------------------------

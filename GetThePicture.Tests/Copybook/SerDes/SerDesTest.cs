@@ -2,9 +2,9 @@ using System.Text;
 
 using GetThePicture.Codec.Utils;
 using GetThePicture.Copybook;
-using GetThePicture.Copybook.SerDesBase;
+using GetThePicture.Copybook.SerDes;
 
-namespace GetThePicture.Tests.Copybook.SerDesBase;
+namespace GetThePicture.Tests.Copybook.SerDes;
 
 [TestClass]
 public class SerDesTest
@@ -15,8 +15,10 @@ public class SerDesTest
     public void Deserialize_T30_OTC_Test()
     {
         var schema = Reader.FromStreamReader(new StreamReader(@"TestData/t30-otc.cpy", cp950));
+
+        Assert.AreEqual(100, schema.StorageOccupied);
     
-        var serDes = new SerDes(schema);
+        var serDes = new RecordSerDes(schema);
 
         using var reader = new StreamReader(@"TestData/t30-otc-lite.dat", cp950);
 
@@ -24,6 +26,9 @@ public class SerDesTest
         while ((line = reader.ReadLine()) != null)
         {
             var bytes = cp950.GetBytes(line);
+
+            Assert.AreEqual(schema.StorageOccupied, bytes.Length);
+
             var record = serDes.Deserialize(bytes);
 
             Assert.AreEqual(19, record.Fields.Count);
