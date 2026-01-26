@@ -1,0 +1,202 @@
+using System.Collections.ObjectModel;
+
+using GetThePicture.PictureClause.Base.Options;
+
+namespace GetThePicture.PictureClause.Base.Overpunch;
+
+/// <summary>
+/// Overpunch Codex
+/// </summary>
+internal static class OpCodex
+{
+    public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>> Map;
+    public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>> ReversedMap;
+
+    static OpCodex()
+    {
+        Map = BuildMap();
+        ReversedMap = BuildReversedMap();
+    }
+
+    private static ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>> BuildMap()
+    {
+        var dictionary = new Dictionary<DataStorageOptions, Dictionary<char, OpVal>>
+        {
+            { DataStorageOptions.CA, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_01) },
+            { DataStorageOptions.CB, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_02) },
+            { DataStorageOptions.CI, Merge(OpCodexBase.OP_POSITIVE_02, OpCodexBase.OP_NEGATIVE_01) },
+            { DataStorageOptions.CM, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_03) },
+            { DataStorageOptions.CN, Merge(OpCodexBase.OP_POSITIVE_02, OpCodexBase.OP_NEGATIVE_01) },
+            { DataStorageOptions.CR, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_04) },
+        };
+        
+        return new ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>>(dictionary);
+    }
+
+    private static Dictionary<char, OpVal> Merge(
+        Dictionary<char, OpVal> a,
+        Dictionary<char, OpVal> b)
+    {
+        var dict = new Dictionary<char, OpVal>(a.Count + b.Count);
+        foreach (var kv in a) dict[kv.Key] = kv.Value;
+        foreach (var kv in b) dict[kv.Key] = kv.Value;
+        return dict;
+    }
+
+    private static ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>> BuildReversedMap()
+    {
+        var dictionary = new Dictionary<DataStorageOptions, Dictionary<OpVal, char>>
+        {
+            { DataStorageOptions.CA, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_01_REVERSE) },
+            { DataStorageOptions.CB, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_02_REVERSE) },
+            { DataStorageOptions.CI, MergeRev(OpCodexBase.OP_POSITIVE_02_REVERSE, OpCodexBase.OP_NEGATIVE_01_REVERSE) },
+            { DataStorageOptions.CM, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_03_REVERSE) },
+            { DataStorageOptions.CN, MergeRev(OpCodexBase.OP_POSITIVE_02_REVERSE, OpCodexBase.OP_NEGATIVE_01_REVERSE) },
+            { DataStorageOptions.CR, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_04_REVERSE) },
+        };
+        
+        return new ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>>(dictionary);
+    }
+
+    private static Dictionary<OpVal, char> MergeRev(
+        Dictionary<OpVal, char> a,
+        Dictionary<OpVal, char> b)
+    {
+        var dict = new Dictionary<OpVal, char>(a.Count + b.Count);
+        foreach (var kv in a) dict[kv.Key] = kv.Value;
+        foreach (var kv in b) dict[kv.Key] = kv.Value;
+        return dict;
+    }
+}
+
+/// <summary>
+/// Overpunch Value
+/// </summary>
+/// <param name="sign"></param>
+/// <param name="digit"></param>
+internal readonly struct OpVal(decimal sign, char digit)
+{
+    public decimal Sign { get; } = sign;
+    public char Digit { get; } = digit;
+}
+
+/// <summary>
+/// Overpunch Codex<br/>
+/// Data Description Entry : <see href="https://docs.rocketsoftware.com/zh-TW/bundle/acucobolgt_dg_1050_html/page/BKRFRFDATAS043.html">USAGE Clause</see>
+/// </summary>
+internal static class OpCodexBase
+{
+    /// <summary>
+    /// -Dca, -Dcb, -Dcm, -Dcr
+    /// </summary>
+    public static readonly Dictionary<char, OpVal> OP_POSITIVE_01 = new()
+    {
+        { '0', new OpVal(1.0m, '0') },
+        { '1', new OpVal(1.0m, '1') },
+        { '2', new OpVal(1.0m, '2') },
+        { '3', new OpVal(1.0m, '3') },
+        { '4', new OpVal(1.0m, '4') },
+        { '5', new OpVal(1.0m, '5') },
+        { '6', new OpVal(1.0m, '6') },
+        { '7', new OpVal(1.0m, '7') },
+        { '8', new OpVal(1.0m, '8') },
+        { '9', new OpVal(1.0m, '9') },
+    };
+
+    public static readonly Dictionary<OpVal, char> OP_POSITIVE_01_REVERSE = OP_POSITIVE_01.ToDictionary(kv => kv.Value, kv => kv.Key);
+
+    /// <summary>
+    /// -Dci, -Dcn
+    /// </summary>
+    public static readonly Dictionary<char, OpVal> OP_POSITIVE_02 = new()
+    {
+        { '{', new OpVal(1.0m, '0') },
+        { 'A', new OpVal(1.0m, '1') },
+        { 'B', new OpVal(1.0m, '2') },
+        { 'C', new OpVal(1.0m, '3') },
+        { 'D', new OpVal(1.0m, '4') },
+        { 'E', new OpVal(1.0m, '5') },
+        { 'F', new OpVal(1.0m, '6') },
+        { 'G', new OpVal(1.0m, '7') },
+        { 'H', new OpVal(1.0m, '8') },
+        { 'I', new OpVal(1.0m, '9') },
+    };
+
+    public static readonly Dictionary<OpVal, char> OP_POSITIVE_02_REVERSE = OP_POSITIVE_02.ToDictionary(kv => kv.Value, kv => kv.Key);
+
+    /// <summary>
+    /// -Dca, -Dci, -Dcn
+    /// </summary>
+    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_01 = new()
+    {
+        { '}', new OpVal(-1.0m, '0') },
+        { 'J', new OpVal(-1.0m, '1') },
+        { 'K', new OpVal(-1.0m, '2') },
+        { 'L', new OpVal(-1.0m, '3') },
+        { 'M', new OpVal(-1.0m, '4') },
+        { 'N', new OpVal(-1.0m, '5') },
+        { 'O', new OpVal(-1.0m, '6') },
+        { 'P', new OpVal(-1.0m, '7') },
+        { 'Q', new OpVal(-1.0m, '8') },
+        { 'R', new OpVal(-1.0m, '9') },
+    };
+
+    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_01_REVERSE = OP_NEGATIVE_01.ToDictionary(kv => kv.Value, kv => kv.Key);
+
+    /// <summary>
+    /// -Dcb
+    /// </summary>
+    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_02 = new()
+    {
+        { '@', new OpVal(-1.0m, '0') },
+        { 'A', new OpVal(-1.0m, '1') },
+        { 'B', new OpVal(-1.0m, '2') },
+        { 'C', new OpVal(-1.0m, '3') },
+        { 'D', new OpVal(-1.0m, '4') },
+        { 'E', new OpVal(-1.0m, '5') },
+        { 'F', new OpVal(-1.0m, '6') },
+        { 'G', new OpVal(-1.0m, '7') },
+        { 'H', new OpVal(-1.0m, '8') },
+        { 'I', new OpVal(-1.0m, '9') },
+    };
+
+    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_02_REVERSE = OP_NEGATIVE_02.ToDictionary(kv => kv.Value, kv => kv.Key);
+
+    /// <summary>
+    /// -Dcm
+    /// </summary>
+    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_03 = new()
+    {
+        { 'p', new OpVal(-1.0m, '0') },
+        { 'q', new OpVal(-1.0m, '1') },
+        { 'r', new OpVal(-1.0m, '2') },
+        { 's', new OpVal(-1.0m, '3') },
+        { 't', new OpVal(-1.0m, '4') },
+        { 'u', new OpVal(-1.0m, '5') },
+        { 'v', new OpVal(-1.0m, '6') },
+        { 'w', new OpVal(-1.0m, '7') },
+        { 'x', new OpVal(-1.0m, '8') },
+        { 'y', new OpVal(-1.0m, '9') },
+    };
+
+    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_03_REVERSE = OP_NEGATIVE_03.ToDictionary(kv => kv.Value, kv => kv.Key);
+
+    /// <summary>
+    /// -Dcr
+    /// </summary>
+    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_04 = new()
+    {
+        { ' ', new OpVal(-1.0m, '0') }, // (space)
+        { '!', new OpVal(-1.0m, '1') },
+        { '"', new OpVal(-1.0m, '2') }, // (double-quote)
+        { '#', new OpVal(-1.0m, '3') },
+        { '$', new OpVal(-1.0m, '4') },
+        { '%', new OpVal(-1.0m, '5') },
+        { '&', new OpVal(-1.0m, '6') },
+        { '\'',new OpVal(-1.0m, '7') }, // (single-quote)
+        { '(', new OpVal(-1.0m, '8') },
+        { ')', new OpVal(-1.0m, '9') },
+    };
+
+    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_04_REVERSE = OP_NEGATIVE_04.ToDictionary(kv => kv.Value, kv => kv.Key);
+}

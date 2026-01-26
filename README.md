@@ -83,7 +83,7 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 <br><br>
 
-# COBOL： `Elementary Data Item `and `Group Item` 
+# COBOL： `Elementary Data Item` and `Group Item` 
 
 | 面向                    | Elementary Data Item    | Group Item             |
 | --------------------- | ----------------------- | ---------------------- |
@@ -111,6 +111,7 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 - DISPLAY（預設）：以可讀字元存放，每個數字或字母對應一個 byte，便於輸入輸出與檢視。DISPLAY numeric 可能包含 Overpunch 符號。  
 - COMP / COMP-5（Binary）：以二進位形式存放，運算效率高，但不可直接讀取文字。  
 - COMP-3（Packed Decimal）：將兩個數字壓縮在一個 nibble，最後一個 nibble 用於符號，節省空間且方便算術運算。  
+  - [`COMPUTATIONAL` 轉換規則](docs/other-topics/cobol-computational.md)  
 
 <br>
 
@@ -135,16 +136,17 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 ## 類別(`Category`)資料
 
-• [文字 (`Alphabetic`/`Alphanumeric`)](docs/cobol-picture/category/alphabetic-alphanumeric.md)  
-• [數字 (`Numeric`)](docs/cobol-picture/category/numeric.md)  
+- [文字 (`Alphabetic`/`Alphanumeric`)](docs/cobol-picture/category/alphabetic-alphanumeric.md)  
+- [數字 (`Numeric`)](docs/cobol-picture/category/numeric.md)  
+  - [`S9`數字轉換規則](docs/other-topics/pic-s9-overpunch.md)  
 
 <br>
 
 ## 語意(`Semantic`)資料
 
-• [日期 (`Date`)](docs/cobol-picture/semantic/date-time/date.md)  
-• [時間 (`Time`)](docs/cobol-picture/semantic/date-time/time.md)  
-• [時間戳記 (`Timestamp`)](docs/cobol-picture/semantic/date-time/timestamp.md)  
+- [日期 (`Date`)](docs/cobol-picture/semantic/date-time/date.md)  
+- [時間 (`Time`)](docs/cobol-picture/semantic/date-time/time.md)  
+- [時間戳記 (`Timestamp`)](docs/cobol-picture/semantic/date-time/timestamp.md)  
 
 <br><br>
 
@@ -160,132 +162,83 @@ Copybook 通常包含：
 
 <br>
 
-## Reader
-
-`demo.cpy`
-```cobol
-      * Sample COBOL Copybook
-      * Defines a fixed-length record layout
-      * Total length: 23 bytes
-|...+.*..1....+....2....+....3....+....4....+....5....+....6....+....7..
-       01  CUSTOMER-RECORD.
-           05  CUSTOMER-ID       PIC 9(8).             *> Numeric ID
-           05  CUSTOMER-NAME     PIC X(10).            *> Text
-           05  ACCOUNT-BALANCE   PIC S9(5)V99  COMP-3. *> Packed decimal
-```
+## Copybook SerDes
+SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）的合稱，用於資料在不同系統或存儲之間的轉換。  
 
 <br>
 
-範例程式:  
-```csharp
-using GetThePicture.Codec.Utils;
-using GetThePicture.Copybook;
-using GetThePicture.Copybook.Compiler.Ir;
-```
+1. Deserialization（反序列化）
+    - 將序列化後的資料恢復成程式中的 `物件` 或 `資料結構` (目前採用Dictionary)。 
 
-```csharp
-Encoding cp950 = EncodingFactory.CP950;
-using var streamReader = new StreamReader(@"TestData/demo.cpy", cp950);
+    ```csharp
+    // 將 Copybook 轉成 schema
+    var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/t30-otc.cpy", cp950));
+    var serDes = new CbSerDes(schema);
 
-Document document = Reader.FromStreamReader(streamReader);
+    // 讀取檔案 (編碼: CP950 / ASCII)
+    using var reader = new StreamReader(@"TestData/t30-otc-lite.dat", cp950);
 
-// Debug / dump
-document.Dump(Console.Out);
-```
-呼叫 `FromStreamReader()` 後會產出中繼資料，可搭配 `Writer` 做其他格式輸出。  
-
-<br>
-
-Dump 輸出內容:  
-```shell
-COPYBOOK
-  1 CUSTOMER-RECORD
-    5 CUSTOMER-ID >> PIC: Class='Numeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
-    5 CUSTOMER-NAME >> PIC: Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
-    5 ACCOUNT-BALANCE >> PIC: Class='Numeric' (Semantic='None'), Signed=True, Int=5, Dec=2, Len=7, Usage='PackedDecimal'
-```
-
-<br>
-
-## Writer
-
-### JSON
-
-```csharp
-var doc = Reader.FromStreamReader(new StreamReader(@"TestData/t30-tse.cpy", cp950));
-
-using var stream = new MemoryStream();
-using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions {
-    Indented = true,
-    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-});
-
-var jsonWriter = new JsonWriter();
-
-jsonWriter.Write(writer, doc);
-writer.Flush();
-
-string json = Encoding.UTF8.GetString(stream.ToArray());
-
-Console.WriteLine(json);
-```
-
-<br>
-
-輸出內容:
-```json
-{
-  "Type": "Document",
-  "DataItem": [
+    string? line;
+    while ((line = reader.ReadLine()) != null)
     {
-      "Type": "ElementaryDataItem",
-      "Level": 1,
-      "Name": "STOCK-NO",
-      "Comment": "股票代號",
-      "Pic": {
-        "Class": "Alphanumeric",
-        "Semantic": "None",
-        "Usage": "Display",
-        "Info": {
-          "Signed": false,
-          "DigitCount": 6,
-          "StorageOccupied": 6
-        }
-      }
-    },
-    {
-      "Type": "ElementaryDataItem",
-      "Level": 1,
-      "Name": "BULL-PRICE",
-      "Comment": "漲停價",
-      "Pic": {
-        "Class": "Numeric",
-        "Semantic": "None",
-        "Usage": "Display",
-        "Info": {
-          "Signed": false,
-          "DigitCount": 9,
-          "StorageOccupied": 9
-        }
-      }
-    },
-    (以下省略...)
-  ]
-}
-```
+      var byte = cp950.GetBytes(line);
 
-<br><br>
+      // 根據Copybook的schema來反序列化資料
+      var record = serDes.Deserialize(expected);
 
-# 其他說明
+      Console.WriteLine("==== Record ====");
+      RecordValuePrinter.Print(record);
+      Console.WriteLine("================\n");
+    }
+    ```
 
-• [`S9`數字轉換規則](docs/other-topics/pic-s9-overpunch.md)  
-• [`COMPUTATIONAL` 轉換規則](docs/other-topics/cobol-computational.md)  
+    輸出: 
+    ```shell
+    ...
+    ==== Record ====
+    STOCK-NO: 19094
+    BULL-PRICE: 105.80000
+    LDC-PRICE: 96.20000
+    BEAR-PRICE: 86.60000
+    LAST-MTH-DATE: 20251111
+    SETTYPE: 0
+    MARK-W: 0
+    MARK-P: 0
+    MARK-L: 0
+    IND-CODE: 00
+    IND-SUB-CODE: 
+    MARK-M: 0
+    STOCK-NAME: 榮成四
+    MARK-W-DETAILS:
+      MATCH-INTERVAL: 0
+      ORDER-LIMIT: 0
+      ORDERS-LIMIT: 0
+      PREPAY-RATE: 0
+    MARK-S: 0
+    STK-MARK: 0
+    MARK-F: 0
+    MARK-DAY-TRADE: 
+    STK-CTGCD: 0
+    ================
+    ...
+    ```
+
+<br>
+
+2. Serialization（序列化）
+    - 將程式中的物件或資料結構轉換成一種 `可存儲` 或 `傳輸` 的格式。
+
+    ```csharp
+    var serialized = serDes.Serialize(record);
+    ```
+
+- [Copybook Compiler](docs/copybook/compiler.md)
 
 <br><br>
 
 # 參考
 
-Rocket Software ACUCOBOL-GT extend (V10.5.0) : [USAGE Clause](https://docs.rocketsoftware.com/zh-TW/bundle/acucobolgt_dg_1050_html/page/BKRFRFDATAS043.html)  
+Rocket Software ACUCOBOL-GT extend (V10.5.0) : [USAGE Clause](https://docs.rocketsoftware.com/bundle/acucobolgt_dg_1050_html/page/BKRFRFDATAS043.html)  
 IBM Enterprise COBOL for z/OS (6.5.0) : [USAGE clause](https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=entry-usage-clause)  
 IBM COBOL for Linux on x86 (1.2.0) : [Classes and categories of data](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=relationships-classes-categories-data)  
 

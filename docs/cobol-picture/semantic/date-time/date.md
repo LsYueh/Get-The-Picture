@@ -7,29 +7,29 @@
 
 ## 使用方式:
 ```csharp
-using GetThePicture.Codec;
-using GetThePicture.Codec.Utils;
+using GetThePicture.PictureClause;      // PicClauseCodec
+using GetThePicture.PictureClause.Base; // PicMeta
 ```
 
 ```csharp
-var pic = Pic.Parse("9(8)"); // X(8) ok!
+var pic = PicMeta.Parse("9(8)"); // X(8) ok!
 pic.Semantic = PicSemantic.GregorianDate; // (YYYYMMDD)
 
 // Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(new DateOnly(2024, 1, 15)); // >> "20240115"
+PicClauseCodec.ForMeta(pic).Encode(new DateOnly(2024, 1, 15)); // >> "20240115"
 
 // Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("20240115"); // >> DateOnly(2024, 1, 15)
+PicClauseCodec.ForMeta(pic).Decode("20240115"); // >> DateOnly(2024, 1, 15)
 ```
 
 ```csharp
-var pic = Pic.Parse("9(7)"); // X(7) ok!
+var pic = PicMeta.Parse("9(7)"); // X(7) ok!
 pic.Semantic = PicSemantic.MinguoDate; // (YYYMMDD)
 
 // Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(new DateOnly(2024, 1, 15)); // >> "1130115"
+PicClauseCodec.ForMeta(pic).Encode(new DateOnly(2024, 1, 15)); // >> "1130115"
 
 // Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("1130115"); // >> DateOnly(2024, 1, 15)
+PicClauseCodec.ForMeta(pic).Decode("1130115"); // >> DateOnly(2024, 1, 15)
 ```
 <br><br>

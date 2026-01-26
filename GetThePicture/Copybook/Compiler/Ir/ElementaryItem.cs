@@ -1,9 +1,9 @@
-using GetThePicture.Cobol.Picture;
+using GetThePicture.PictureClause.Base;
 
 namespace GetThePicture.Copybook.Compiler.Ir;
 
 public sealed class ElementaryDataItem(
-    int level, string name, PicClause pic,
+    int level, string name, PicMeta pic,
     int? occurs = null, string? value = null,
     bool? isFiller = false, string? comment = null) : IDataItem
 {
@@ -14,7 +14,7 @@ public sealed class ElementaryDataItem(
     public bool? IsFiller { get; init; } = isFiller;
     public string? Comment { get; init; } = comment;
 
-    public PicClause Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
+    public PicMeta Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
 
     // ----------------------------
     // Dump

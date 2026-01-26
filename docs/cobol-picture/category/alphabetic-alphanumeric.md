@@ -8,33 +8,33 @@
 
 ## 使用方式: 
 ```csharp
-using GetThePicture.Codec;
-using GetThePicture.Codec.Utils;
+using GetThePicture.PictureClause;      // PicClauseCodec
+using GetThePicture.PictureClause.Base; // PicMeta
 ```
 
 ```csharp
-var pic = Pic.Parse("X(5)");
+var pic = PicMeta.Parse("X(5)");
 
 // Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode("AbC"); // >> "AbC  "
+PicClauseCodec.ForMeta(pic).Encode("AbC"); // >> "AbC  "
 
 // Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("ABC  "); // >> "ABC"
+PicClauseCodec.ForMeta(pic).Decode("ABC  "); // >> "ABC"
 ```
 
 ```csharp
-var pic = Pic.Parse("X(7)");
+var pic = PicMeta.Parse("X(7)");
 
-CodecBuilder.ForPic(pic).Decode("中文字 "); // >> "中文字"
+PicClauseCodec.ForMeta(pic).Decode("中文字 "); // >> "中文字"
 
-CodecBuilder.ForPic(pic).Encode("中文字"); // >> "中文字 "
+PicClauseCodec.ForMeta(pic).Encode("中文字"); // >> "中文字 "
 ```
 
 ```csharp
-var pic = Pic.Parse("X(5)");
+var pic = PicMeta.Parse("X(5)");
 
 // 宣告長度不夠
-CodecBuilder.ForPic(pic).Encode("中文字"); // >> "中文?"
+PicClauseCodec.ForMeta(pic).Encode("中文字"); // >> "中文?"
 ```
 
 <br><br>

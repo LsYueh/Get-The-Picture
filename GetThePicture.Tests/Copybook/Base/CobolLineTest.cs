@@ -1,7 +1,7 @@
 using System.Text;
 
-using GetThePicture.Codec.Utils;
 using GetThePicture.Copybook.Base;
+using GetThePicture.PictureClause.Utils;
 
 namespace GetThePicture.Tests.Copybook.Base;
 
