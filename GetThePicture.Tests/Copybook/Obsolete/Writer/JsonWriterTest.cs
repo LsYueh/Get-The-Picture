@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
-using GetThePicture.Codec.Utils;
+using GetThePicture.Cobol.Utils;
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Obsolete.Writer;
 

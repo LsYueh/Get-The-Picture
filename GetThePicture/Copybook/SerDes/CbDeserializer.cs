@@ -1,6 +1,6 @@
-using GetThePicture.Codec;
 using GetThePicture.Copybook.Compiler.Ir;
 using GetThePicture.Copybook.SerDes.Record;
+using GetThePicture.PictureClause;
 
 namespace GetThePicture.Copybook.SerDes
 ;

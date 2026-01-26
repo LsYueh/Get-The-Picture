@@ -1,8 +1,7 @@
 using System.Text;
 
+using GetThePicture.Cobol.Options;
 using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Codec.Options;
-using GetThePicture.Codec.Utils;
 
 namespace GetThePicture.Cobol.Picture.OverpunchBase;
 
@@ -43,7 +42,7 @@ public static class Overpunch
 
         EnsureAllAsciiDigits(buffer);
 
-        Encoding cp950 = EncodingFactory.CP950;
+        Encoding cp950 = Utils.EncodingFactory.CP950;
         string numeric = cp950.GetString(buffer); // 數字文
 
         return numeric;
@@ -59,7 +58,7 @@ public static class Overpunch
     /// <returns></returns>
     public static byte[] Encode(decimal sign, string numeric, PicClause pic, CodecOptions options)
     {
-        Encoding cp950 = EncodingFactory.CP950;
+        Encoding cp950 = Utils.EncodingFactory.CP950;
 
         byte[] buffer = cp950.GetBytes(numeric);
 

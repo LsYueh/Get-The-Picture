@@ -1,6 +1,6 @@
 using System.Text;
 
-using GetThePicture.Codec.Utils;
+using GetThePicture.Cobol.Utils;
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.SerDes;
 using GetThePicture.Copybook.SerDes.Record;

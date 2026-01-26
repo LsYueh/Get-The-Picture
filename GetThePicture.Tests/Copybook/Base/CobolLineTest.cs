@@ -1,6 +1,6 @@
 using System.Text;
 
-using GetThePicture.Codec.Utils;
+using GetThePicture.Cobol.Utils;
 using GetThePicture.Copybook.Base;
 
 namespace GetThePicture.Tests.Copybook.Base;

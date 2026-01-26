@@ -2,7 +2,7 @@ using GetThePicture.Cobol.Elementary;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Cobol.Picture.ComputationalBase;
-using GetThePicture.Codec.Utils;
+using GetThePicture.Cobol.Utils;
 
 namespace GetThePicture.Tests.Cobol.Picture.ComputationalBase;
 

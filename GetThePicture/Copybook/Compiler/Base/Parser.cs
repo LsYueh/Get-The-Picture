@@ -2,7 +2,7 @@ using System.Text;
 
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Codec.Utils;
+using GetThePicture.Cobol.Utils;
 using GetThePicture.Copybook.Compiler.Ir;
 
 namespace GetThePicture.Copybook.Compiler.Base;
