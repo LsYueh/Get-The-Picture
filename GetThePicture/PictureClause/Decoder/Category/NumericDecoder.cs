@@ -19,9 +19,9 @@ internal static class NumericDecoder
     /// <param name="dataStorageOptions"></param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, CodecOptions? options = null)
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, CobOptions? options = null)
     {
-        options ??= new CodecOptions();
+        options ??= new CobOptions();
 
         // Note: COBOL資料記憶體先被S9(n)截位再轉處裡，一般COBOL應該也是這樣的狀況
 
@@ -38,7 +38,7 @@ internal static class NumericDecoder
         };
     }
 
-    private static object Display_Decode(ReadOnlySpan<byte> fieldBytes, PicClause pic, CodecOptions options)
+    private static object Display_Decode(ReadOnlySpan<byte> fieldBytes, PicMeta pic, CobOptions options)
     {
         string numeric = Overpunch.Decode(fieldBytes, pic, options, out decimal sign);
         return ParseToValue(numeric, sign, pic);
@@ -51,7 +51,7 @@ internal static class NumericDecoder
     /// <param name="sign">(+/-)</param>
     /// <param name="pic"></param>
     /// <returns></returns>
-    private static object ParseToValue(string numeric, decimal sign, PicClause pic)
+    private static object ParseToValue(string numeric, decimal sign, PicMeta pic)
     {
         if (pic.DigitCount > 28)
             throw new OverflowException( $"PIC {pic} has {pic.IntegerDigits} + {pic.DecimalDigits} = {pic.DigitCount} digit(s), which exceeds the supported maximum (28 digits).");
@@ -81,7 +81,7 @@ internal static class NumericDecoder
     /// <param name="value"></param>
     /// <param name="pic"></param>
     /// <returns></returns>
-    private static object ConvertToClr(decimal value, PicClause pic)
+    private static object ConvertToClr(decimal value, PicMeta pic)
     {
         int totalDigits = pic.IntegerDigits;
         bool signed = pic.Signed;

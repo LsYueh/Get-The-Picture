@@ -1,7 +1,7 @@
 using System.Text;
 
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Cobol.Utils;
 using GetThePicture.PictureClause;
 
 namespace GetThePicture.Tests.PictureClause.Decoder.Semantic;
@@ -25,12 +25,12 @@ public class TimestampDecoderTest
         int minute,
         int second)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         pic.Semantic = semantic;
 
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object result = CodecBuilder.ForPic(pic).Decode(buffer);
+        object result = PicClauseCodec.ForMeta(pic).Decode(buffer);
 
         var expected = new DateTime(
             year, month, day,
@@ -47,22 +47,22 @@ public class TimestampDecoderTest
     [TestMethod]
     public void Decode_SignedNumeric_ThrowsNotSupportedException()
     {
-        var pic = Pic.Parse("S9(14)");
+        var pic = PicMeta.Parse("S9(14)");
         pic.Semantic = PicSemantic.Timestamp14;
 
         byte[] buffer = Encoding.ASCII.GetBytes("20240115123045");
 
-        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode(buffer));
+        Assert.ThrowsException<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
     [TestMethod]
     public void Decode_InvalidTimestamp14_ThrowsFormatException()
     {
-        var pic = Pic.Parse("9(14)");
+        var pic = PicMeta.Parse("9(14)");
         pic.Semantic = PicSemantic.Timestamp14;
 
         byte[] buffer = Encoding.ASCII.GetBytes("20241301120000");// invalid month
 
-        Assert.ThrowsException<FormatException>(() => CodecBuilder.ForPic(pic).Decode(buffer));
+        Assert.ThrowsException<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 }

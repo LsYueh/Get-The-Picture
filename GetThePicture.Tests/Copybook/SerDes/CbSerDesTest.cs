@@ -8,7 +8,7 @@ using GetThePicture.Copybook.SerDes.Record;
 namespace GetThePicture.Tests.Copybook.SerDes;
 
 [TestClass]
-public class CopybookSerDesTest
+public class CbSerDesTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     

@@ -1,5 +1,5 @@
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Cobol.Utils;
 using GetThePicture.PictureClause;
 
 namespace GetThePicture.Tests.PictureClause;
@@ -18,9 +18,9 @@ public class Comp3Test
     [DataRow("S9(5)", -52194, new byte[] { 0x52, 0x19, 0x4D })]
     public void Encode_Combination_Test(string picString, object value, byte[] expected)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
 
-        byte[] buffer = CodecBuilder.ForPic(pic)
+        byte[] buffer = PicClauseCodec.ForMeta(pic)
             .Usage(PicUsage.PackedDecimal)
             .WithStrict()
             .Encode(value);
@@ -31,10 +31,10 @@ public class Comp3Test
     [TestMethod]
     public void Encode_With_Sign_Lesser()
     {
-        var pic = Pic.Parse("S9(3)");
+        var pic = PicMeta.Parse("S9(3)");
         pic.Usage = PicUsage.PackedDecimal;
 
-        byte[] buffer = CodecBuilder.ForPic(pic).Encode(-52194);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).Encode(-52194);
 
         CollectionAssert.AreEqual(new byte[] { 0x19, 0x4D }, buffer);
     }
@@ -51,9 +51,9 @@ public class Comp3Test
     [DataRow("S9(5)", -52194L , new byte[] { 0x52, 0x19, 0x4D })]
     public void Decode_Combination_Test(string picString, object expected, byte[] buffer)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
 
-        var value = CodecBuilder.ForPic(pic)
+        var value = PicClauseCodec.ForMeta(pic)
             .Usage(PicUsage.PackedDecimal)
             .WithStrict()
             .Decode(buffer);
@@ -64,10 +64,10 @@ public class Comp3Test
     [TestMethod]
     public void Decode_With_Sign_Lesser()
     {
-        var pic = Pic.Parse("S9(3)");
+        var pic = PicMeta.Parse("S9(3)");
         pic.Usage = PicUsage.PackedDecimal;
 
-        var value = CodecBuilder.ForPic(pic).Decode([0x52, 0x19, 0x4D]);
+        var value = PicClauseCodec.ForMeta(pic).Decode([0x52, 0x19, 0x4D]);
 
         Assert.AreEqual(-194L, value);
     }
@@ -80,9 +80,9 @@ public class Comp3Test
     [ExpectedException(typeof(OverflowException))]
     public void Decode_Without_Sign_Negative_ThrowsOverflowException()
     {
-        var pic = Pic.Parse("9(5)");
+        var pic = PicMeta.Parse("9(5)");
         pic.Usage = PicUsage.PackedDecimal;
         
-        CodecBuilder.ForPic(pic).Decode([0x52, 0x19, 0x4D]);
+        PicClauseCodec.ForMeta(pic).Decode([0x52, 0x19, 0x4D]);
     }
 }

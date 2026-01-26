@@ -1,8 +1,9 @@
 using System.Globalization;
-using GetThePicture.Cobol.Elementary;
+
+using GetThePicture.Cobol.Meta;
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.ComputationalBase;
 using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Cobol.Utils;
 
 namespace GetThePicture.Tests.Cobol.Picture.ComputationalBase;
 
@@ -33,7 +34,7 @@ public class PackedDecimalTest
     [DataRow("S9(3)",   "000C",      0L)] // 邊界測試
     public void Decode_Integer(string picText, string hex, long expected)
     {
-        var pic = Pic.Parse(picText);
+        var pic = PicMeta.Parse(picText);
         pic.Usage = PicUsage.PackedDecimal;
 
         byte[] buffer = HexToBytes(hex);
@@ -51,7 +52,7 @@ public class PackedDecimalTest
     [DataRow("9(03)",         "000F",     0UL)] // 邊界測試
     public void Decode_Unsigned_Integer(string picText, string hex, ulong expected)
     {
-        var pic = Pic.Parse(picText);
+        var pic = PicMeta.Parse(picText);
         pic.Usage = PicUsage.PackedDecimal;
 
         byte[] buffer = HexToBytes(hex);
@@ -68,7 +69,7 @@ public class PackedDecimalTest
     [DataRow("S9(3)V9(2)", "12345D"  ,  "-123.45")]
     public void Decode_Decimal(string picText, string hex, string expectedValue)
     {
-        var pic = Pic.Parse(picText);
+        var pic = PicMeta.Parse(picText);
         pic.Usage = PicUsage.PackedDecimal;
 
         byte[] buffer = HexToBytes(hex);
@@ -82,7 +83,7 @@ public class PackedDecimalTest
     [ExpectedException(typeof(FormatException))]
     public void Decode_Invalid_Sign_Nibble_Should_Throw()
     {
-        var pic = Pic.Parse("S9(3)");
+        var pic = PicMeta.Parse("S9(3)");
         pic.Usage = PicUsage.PackedDecimal;
 
         // invalid sign = 0xA
@@ -94,8 +95,8 @@ public class PackedDecimalTest
     [TestMethod]
     public void Encode_Unsigned_Should_Use_F_Sign()
     {
-        var pic = Pic.Parse("9(5)");
-        ElementaryMeta meta = ElementaryMeta.FromNumber("12345");
+        var pic = PicMeta.Parse("9(5)");
+        CobMeta meta = CobMeta.FromNumber("12345");
 
         byte[] buffer = COMP3.Encode(meta, pic);
 

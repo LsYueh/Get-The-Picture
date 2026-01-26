@@ -4,15 +4,27 @@ using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.PictureClause;
 
-public static class CodecBuilder
+/// <summary>
+/// Codec Builder
+/// </summary>
+public static class PicClauseCodec
 {
-    public static DecodeContext ForPic(PicClause pic) => new(pic);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="meta"></param>
+    /// <returns></returns>
+    public static CodecContext ForMeta(PicMeta meta) => new(meta);
 }
 
-public sealed class DecodeContext(PicClause pic)
+/// <summary>
+/// COBOL PICTURE Clause Codec Context
+/// </summary>
+/// <param name="meta">PicMeta</param>
+public sealed class CodecContext(PicMeta meta)
 {
-    private readonly PicClause _pic = pic;
-    private readonly CodecOptions _codecOptions = new();
+    private readonly PicMeta _picMeta = meta;
+    private readonly CobOptions _cobOptions = new();
 
     // -------------------------
     // COBOL Compile Options
@@ -22,9 +34,9 @@ public sealed class DecodeContext(PicClause pic)
     /// Data Length Enforcement
     /// </summary>
     /// <returns></returns>
-    public DecodeContext WithStrict()
+    public CodecContext WithStrict()
     {
-        _codecOptions.Strict = true;
+        _cobOptions.Strict = true;
         return this;
     }
 
@@ -33,9 +45,9 @@ public sealed class DecodeContext(PicClause pic)
     /// </summary>
     /// <param name="opt"></param>
     /// <returns></returns>
-    public DecodeContext WithDataStorageOption(DataStorageOptions? opt)
+    public CodecContext WithDataStorageOption(DataStorageOptions? opt)
     {
-        _codecOptions.DataStorage = opt ?? DataStorageOptions.CI;
+        _cobOptions.DataStorage = opt ?? DataStorageOptions.CI;
         return this;
     }
 
@@ -43,9 +55,9 @@ public sealed class DecodeContext(PicClause pic)
     /// For PIC S9 DISPLAY. (Overpunch Codex)
     /// </summary>
     /// <returns></returns>
-    public DecodeContext WithSignIsLeading()
+    public CodecContext WithSignIsLeading()
     {
-        _codecOptions.Sign = SignOptions.IsLeading;
+        _cobOptions.Sign = SignOptions.IsLeading;
         return this;
     }
 
@@ -53,9 +65,9 @@ public sealed class DecodeContext(PicClause pic)
     /// For COMP/COMP-5 use only.
     /// </summary>
     /// <returns></returns>
-    public DecodeContext WithReversedBinary()
+    public CodecContext WithReversedBinary()
     {
-        _codecOptions.Binary = BinaryOptions.Reversed;
+        _cobOptions.Binary = BinaryOptions.Reversed;
         return this;
     }
 
@@ -63,15 +75,15 @@ public sealed class DecodeContext(PicClause pic)
     // COBOL PICTURE Clause 
     // -------------------------
 
-    public DecodeContext AsSemantic(PicSemantic picSemantic = PicSemantic.None)
+    public CodecContext AsSemantic(PicSemantic picSemantic = PicSemantic.None)
     {
-        _pic.Semantic = picSemantic;
+        _picMeta.Semantic = picSemantic;
         return this;
     }
 
-    public DecodeContext Usage(PicUsage Usage = PicUsage.Display)
+    public CodecContext Usage(PicUsage Usage = PicUsage.Display)
     {
-        _pic.Usage = Usage;
+        _picMeta.Usage = Usage;
         return this;
     }
 
@@ -90,7 +102,7 @@ public sealed class DecodeContext(PicClause pic)
         if (buffer.Length == 0)
             throw new ArgumentException("Buffer is empty.", nameof(buffer));
         
-        return Decoder.PicDecoder.Decode(buffer, _pic, _codecOptions);
+        return Decoder.PicDecoder.Decode(buffer, _picMeta, _cobOptions);
     }
 
     /// <summary>
@@ -102,6 +114,6 @@ public sealed class DecodeContext(PicClause pic)
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return Encoder.PicEncoder.Encode(value, _pic, _codecOptions);
+        return Encoder.PicEncoder.Encode(value, _picMeta, _cobOptions);
     }
 }

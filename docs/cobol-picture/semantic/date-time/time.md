@@ -7,30 +7,30 @@
 
 ## 使用方式:
 ```csharp
-using GetThePicture.Codec;
-using GetThePicture.Codec.Utils;
+using GetThePicture.Cobol.Picture;
+using GetThePicture.PictureClause;
 ```
 
 ```csharp
-var pic = Pic.Parse("9(6)"); // X(6) ok!
+var pic = PicMeta.Parse("9(6)"); // X(6) ok!
 pic.Semantic = PicSemantic.Time6; // (HHmmss)
 
 // Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(new TimeOnly(23, 59, 59, 0)); // >> "235959"
+PicClauseCodec.ForMeta(pic).Encode(new TimeOnly(23, 59, 59, 0)); // >> "235959"
 
 // Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("235959"); // >> TimeOnly(23, 59, 59, 0)
+PicClauseCodec.ForMeta(pic).Decode("235959"); // >> TimeOnly(23, 59, 59, 0)
 ```
 
 ```csharp
-var pic = Pic.Parse("9(9)"); // X(9) ok!
+var pic = PicMeta.Parse("9(9)"); // X(9) ok!
 pic.Semantic = PicSemantic.Time9; // (HHmmssfff)
 
 // Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(new TimeOnly(12, 30, 45, 678)); // >> "123045678"
+PicClauseCodec.ForMeta(pic).Encode(new TimeOnly(12, 30, 45, 678)); // >> "123045678"
 
 // Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("123045678"); // >> TimeOnly(12, 30, 45, 678)
+PicClauseCodec.ForMeta(pic).Decode("123045678"); // >> TimeOnly(12, 30, 45, 678)
 ```
 
 <br><br>

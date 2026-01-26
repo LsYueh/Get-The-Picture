@@ -1,4 +1,4 @@
-using GetThePicture.Cobol.Elementary;
+using GetThePicture.Cobol.Meta;
 using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Cobol.Picture.ComputationalBase;
@@ -50,7 +50,7 @@ internal static class COMP3
     // - Total bytes = (number_of_digits + 1) / 2
     //
 
-    public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, DataStorageOptions ds = DataStorageOptions.CI)
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
         PackedNumber pn = DecodePacked(buffer, pic.DigitCount); // 根據 PIC 長度解碼 BCD
 
@@ -68,7 +68,7 @@ internal static class COMP3
         return DecodeInt64(pn);
     }
 
-    public static byte[] Encode(ElementaryMeta meta, PicClause pic, DataStorageOptions ds = DataStorageOptions.CI)
+    public static byte[] Encode(CobMeta meta, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
         if (meta.Number is null)
             throw new ArgumentNullException(nameof(meta));
@@ -184,7 +184,7 @@ internal static class COMP3
     }
 
 
-    private static decimal DecodeDecimal(PackedNumber pn, PicClause pic)
+    private static decimal DecodeDecimal(PackedNumber pn, PicMeta pic)
     {
         decimal value = 0m;
         foreach (char c in pn.Digits)

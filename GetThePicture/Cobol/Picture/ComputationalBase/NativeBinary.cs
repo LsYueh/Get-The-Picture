@@ -1,4 +1,4 @@
-using GetThePicture.Cobol.Elementary;
+using GetThePicture.Cobol.Meta;
 using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Cobol.Picture.ComputationalBase;
@@ -8,7 +8,7 @@ namespace GetThePicture.Cobol.Picture.ComputationalBase;
 /// </summary>
 internal static class COMP5
 {
-    public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
     {
         int length = GetByteLength(pic);
         
@@ -30,7 +30,7 @@ internal static class COMP5
         };
     }
 
-    public static byte[] Encode(ElementaryMeta meta, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static byte[] Encode(CobMeta meta, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
     {
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException($"COMP does not support decimal digits. PIC has {pic.DecimalDigits} decimal digits.");
@@ -88,7 +88,7 @@ internal static class COMP5
         return bytes.ToArray();
     }
 
-    public static int GetByteLength(PicClause pic)
+    public static int GetByteLength(PicMeta pic)
     {
         int digits = pic.DigitCount;
 

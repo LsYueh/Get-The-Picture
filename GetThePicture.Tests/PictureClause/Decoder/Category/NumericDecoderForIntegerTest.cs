@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-using GetThePicture.Cobol.Utils;
+using GetThePicture.Cobol.Picture;
 using GetThePicture.PictureClause;
 
 namespace GetThePicture.Tests.PictureClause.Decoder.Category;
@@ -34,10 +34,10 @@ public class NumericDecoderForIntegerTest
     [DataRow("9R", "S9(2)", typeof(sbyte), (sbyte)-99)]
     public void Decode_Default_Byte(string text, string picString, Type expectedType, object expectedValue)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object value = CodecBuilder.ForPic(pic).Decode(buffer);
+        object value = PicClauseCodec.ForMeta(pic).Decode(buffer);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(expectedValue, value);
@@ -54,10 +54,10 @@ public class NumericDecoderForIntegerTest
     [DataRow("999Q", "S9(4)", typeof (short),  (short)-9998)]
     public void Decode_Default_Short(string text, string picString, Type expectedType, object expectedValue)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object value = CodecBuilder.ForPic(pic).Decode(buffer);
+        object value = PicClauseCodec.ForMeta(pic).Decode(buffer);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(expectedValue, value);
@@ -74,10 +74,10 @@ public class NumericDecoderForIntegerTest
     [DataRow("99999999P", "S9(9)", typeof (int),  (int)-999999997)]
     public void Decode_Default_Int(string text, string picString, Type expectedType, object expectedValue)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object value = CodecBuilder.ForPic(pic).Decode(buffer);
+        object value = PicClauseCodec.ForMeta(pic).Decode(buffer);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(expectedValue, value);
@@ -94,10 +94,10 @@ public class NumericDecoderForIntegerTest
     [DataRow("99999999999999999O", "S9(18)", typeof (long),  (long)-999999999999999996)]
     public void Decode_Default_Long(string text, string picString, Type expectedType, object expectedValue)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object value = CodecBuilder.ForPic(pic).Decode(buffer);
+        object value = PicClauseCodec.ForMeta(pic).Decode(buffer);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(expectedValue, value);
@@ -114,10 +114,10 @@ public class NumericDecoderForIntegerTest
     [DataRow("999999999999999999999999999N", "S9(28)", typeof(decimal), "-9999999999999999999999999995")]
     public void Decode_Default_DecimalWithScaleZero(string text, string picString, Type expectedType, string expectedValue)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object value = CodecBuilder.ForPic(pic).Decode(buffer);
+        object value = PicClauseCodec.ForMeta(pic).Decode(buffer);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(decimal.Parse(expectedValue, CultureInfo.InvariantCulture), value);
@@ -131,10 +131,10 @@ public class NumericDecoderForIntegerTest
     [TestMethod]
     public void Decode_With_LeadingSign()
     {
-        var pic = Pic.Parse("S9(5)");
+        var pic = PicMeta.Parse("S9(5)");
         byte[] buffer = Encoding.ASCII.GetBytes("}0123");
 
-        object value = CodecBuilder.ForPic(pic).WithSignIsLeading().Decode(buffer);
+        object value = PicClauseCodec.ForMeta(pic).WithSignIsLeading().Decode(buffer);
 
         Assert.IsInstanceOfType(value, typeof(int));
         Assert.AreEqual(-123, value);
@@ -153,10 +153,10 @@ public class NumericDecoderForIntegerTest
     [ExpectedException(typeof(OverflowException))]
     public void Decode_ThrowsOverflowException(string text, string picString, Type expectedType, string expectedValue)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object value = CodecBuilder.ForPic(pic).Decode(buffer);
+        object value = PicClauseCodec.ForMeta(pic).Decode(buffer);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(decimal.Parse(expectedValue, CultureInfo.InvariantCulture), value);
@@ -166,9 +166,9 @@ public class NumericDecoderForIntegerTest
     [ExpectedException(typeof(FormatException))]
     public void Decode_NumericWithNonDigit_ThrowsFormatException()
     {
-        var pic = Pic.Parse("9(5)");
+        var pic = PicMeta.Parse("9(5)");
         byte[] buffer = Encoding.ASCII.GetBytes("12A34");
 
-        CodecBuilder.ForPic(pic).Decode(buffer);
+        PicClauseCodec.ForMeta(pic).Decode(buffer);
     }
 }

@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 
-using GetThePicture.Cobol.Utils;
+using GetThePicture.Cobol.Picture;
 using GetThePicture.PictureClause;
 
 namespace GetThePicture.Tests.PictureClause.Decoder.Category;
@@ -17,10 +17,10 @@ public class NumericDecoderForDecimalTest
     [DataRow( "1234N", "S9(3)V9(2)", typeof(decimal), "-123.45")]
     public void Decode_Default_Decimal(string text, string picString, Type expectedType, string expectedValue)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object value = CodecBuilder.ForPic(pic).Decode(buffer);
+        object value = PicClauseCodec.ForMeta(pic).Decode(buffer);
 
         Assert.IsInstanceOfType(value, expectedType);
         Assert.AreEqual(decimal.Parse(expectedValue, CultureInfo.InvariantCulture), value);

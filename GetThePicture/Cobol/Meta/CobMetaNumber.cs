@@ -1,6 +1,6 @@
-namespace GetThePicture.Cobol.Elementary;
+namespace GetThePicture.Cobol.Meta;
 
-internal readonly struct EleNumber(bool isNegative, string digits, int decimalDigits, decimal? value = null)
+internal readonly struct CobMetaNumber(bool isNegative, string digits, int decimalDigits, decimal? value = null)
 {
     public bool IsNegative { get; } = isNegative;
     /// <summary>

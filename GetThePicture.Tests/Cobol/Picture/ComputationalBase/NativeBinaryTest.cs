@@ -1,15 +1,14 @@
-using GetThePicture.Cobol.Elementary;
+using GetThePicture.Cobol.Meta;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Cobol.Picture.ComputationalBase;
-using GetThePicture.Cobol.Utils;
 
 namespace GetThePicture.Tests.Cobol.Picture.ComputationalBase;
 
 [TestClass]
 public class NativeBinaryTest
 {
-    private static Type GetExpectedType(PicClause pic)
+    private static Type GetExpectedType(PicMeta pic)
     {
         int length = pic.DigitCount switch
         {
@@ -34,9 +33,9 @@ public class NativeBinaryTest
     [DataRow("9(4)", false, "65535", ushort.MaxValue)]
     public void Codec_Halfword(string picString, bool isNegative, string digits, ushort expected)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         
-        var meta = ElementaryMeta.FromNumber(isNegative, digits, decimalDigits: 0);
+        var meta = CobMeta.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
         byte[] bytesLE = COMP5.Encode(meta, pic, BinaryOptions.Normal); // x86/x86-64
@@ -62,9 +61,9 @@ public class NativeBinaryTest
     [DataRow("S9(4)",  true, "32768", short.MinValue)]
     public void Codec_Sign_Halfword(string picString, bool isNegative, string digits, short expected)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         
-        var meta = ElementaryMeta.FromNumber(isNegative, digits, decimalDigits: 0);
+        var meta = CobMeta.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
         byte[] bytesLE = COMP5.Encode(meta, pic, BinaryOptions.Normal); // x86/x86-64
@@ -90,9 +89,9 @@ public class NativeBinaryTest
     [DataRow("9(9)", false, "4294967295", uint.MaxValue)]
     public void Codec_Fullword(string picString, bool isNegative, string digits, uint expected)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         
-        var meta = ElementaryMeta.FromNumber(isNegative, digits, decimalDigits: 0);
+        var meta = CobMeta.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
         byte[] bytesLE = COMP5.Encode(meta, pic, BinaryOptions.Normal); // x86/x86-64
@@ -118,9 +117,9 @@ public class NativeBinaryTest
     [DataRow("S9(9)",  true, "2147483648", int.MinValue)]
     public void Codec_Sign_Fullword(string picString, bool isNegative, string digits, int expected)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         
-        var meta = ElementaryMeta.FromNumber(isNegative, digits, decimalDigits: 0);
+        var meta = CobMeta.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
         byte[] bytesLE = COMP5.Encode(meta, pic, BinaryOptions.Normal); // x86/x86-64
@@ -146,9 +145,9 @@ public class NativeBinaryTest
     [DataRow("9(18)", false, "18446744073709551615", ulong.MaxValue)]
     public void Codec_Doubleword(string picString, bool isNegative, string digits, ulong expected)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         
-        var meta = ElementaryMeta.FromNumber(isNegative, digits, decimalDigits: 0);
+        var meta = CobMeta.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
         byte[] bytesLE = COMP5.Encode(meta, pic, BinaryOptions.Normal); // x86/x86-64
@@ -174,9 +173,9 @@ public class NativeBinaryTest
     [DataRow("S9(18)",  true, "9223372036854775808", long.MinValue)]
     public void Codec_Sign_Doubleword(string picString, bool isNegative, string digits, long expected)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         
-        var meta = ElementaryMeta.FromNumber(isNegative, digits, decimalDigits: 0);
+        var meta = CobMeta.FromNumber(isNegative, digits, decimalDigits: 0);
         
         // Encode
         byte[] bytesLE = COMP5.Encode(meta, pic, BinaryOptions.Normal); // x86/x86-64
@@ -208,9 +207,9 @@ public class NativeBinaryTest
     [DataRow("S9(18)", false, "9223372036854775808")]
     public void Codec_Numeric_Overflow(string picString, bool isNegative, string digits)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         
-        var meta = ElementaryMeta.FromNumber(isNegative, digits, decimalDigits: 0);
+        var meta = CobMeta.FromNumber(isNegative, digits, decimalDigits: 0);
 
         Assert.ThrowsException<OverflowException>(() => COMP5.Encode(meta, pic));
     }
@@ -221,9 +220,9 @@ public class NativeBinaryTest
     [DataRow("S9(2)V99", false, "1")]
     public void Codec_Numeric_WithDecimal(string picString, bool isNegative, string digits)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         
-        var meta = ElementaryMeta.FromNumber(isNegative, digits, decimalDigits: 0);
+        var meta = CobMeta.FromNumber(isNegative, digits, decimalDigits: 0);
 
         Assert.ThrowsException<NotSupportedException>(() => COMP5.Encode(meta, pic));
     }

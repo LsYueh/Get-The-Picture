@@ -8,19 +8,19 @@
 
 ## 使用方式:
 ```csharp
-using GetThePicture.Codec;
-using GetThePicture.Codec.Utils;
+using GetThePicture.Cobol.Picture;
+using GetThePicture.PictureClause;
 ```
 
 ```csharp
-var pic = Pic.Parse("9(14))"); // X(14) ok!
+var pic = PicMeta.Parse("9(14))"); // X(14) ok!
 pic.Semantic = PicSemantic.Timestamp14; // (HHmmss)
 
 // Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(new DateTime(2024,  1, 15, 12, 30, 45)); // >> "20240115123045"
+PicClauseCodec.ForMeta(pic).Encode(new DateTime(2024,  1, 15, 12, 30, 45)); // >> "20240115123045"
 
 // Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("19991231235959"); // >> DateTime(1999, 12, 31, 23, 59, 59)
+PicClauseCodec.ForMeta(pic).Decode("19991231235959"); // >> DateTime(1999, 12, 31, 23, 59, 59)
 ```
 
 <br><br>

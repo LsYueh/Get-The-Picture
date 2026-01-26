@@ -1,10 +1,10 @@
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Cobol.Utils;
 
-namespace GetThePicture.Tests.Cobol.Utils;
+namespace GetThePicture.Tests.Cobol.Picture;
 
 [TestClass]
-public class PicTest
+public class PicMetaTest
 {
     // ─────────────────────────
     // Alphabetic (A)
@@ -13,7 +13,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_A_DefaultLength()
     {
-        var pic = Pic.Parse("A");
+        var pic = PicMeta.Parse("A");
 
         Assert.AreEqual(PicBaseClass.Alphabetic, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
@@ -25,7 +25,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_A_ExplicitLength()
     {
-        var pic = Pic.Parse("A(20)");
+        var pic = PicMeta.Parse("A(20)");
 
         Assert.AreEqual(PicBaseClass.Alphabetic, pic.BaseClass);
         Assert.AreEqual(20, pic.IntegerDigits);
@@ -37,7 +37,7 @@ public class PicTest
      [TestMethod]
     public void Parse_PIC_A_ExplicitLength_OnlyOnce()
     {
-        var pic = Pic.Parse("A(1)");
+        var pic = PicMeta.Parse("A(1)");
 
         Assert.AreEqual(PicBaseClass.Alphabetic, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
@@ -53,7 +53,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_X_DefaultLength()
     {
-        var pic = Pic.Parse("X");
+        var pic = PicMeta.Parse("X");
 
         Assert.AreEqual(PicBaseClass.Alphanumeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
@@ -65,7 +65,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_X_ExplicitLength()
     {
-        var pic = Pic.Parse("X(20)");
+        var pic = PicMeta.Parse("X(20)");
 
         Assert.AreEqual(PicBaseClass.Alphanumeric, pic.BaseClass);
         Assert.AreEqual(20, pic.IntegerDigits);
@@ -77,7 +77,7 @@ public class PicTest
      [TestMethod]
     public void Parse_PIC_X_ExplicitLength_OnlyOnce()
     {
-        var pic = Pic.Parse("X(1)");
+        var pic = PicMeta.Parse("X(1)");
 
         Assert.AreEqual(PicBaseClass.Alphanumeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
@@ -93,7 +93,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_9_Default()
     {
-        var pic = Pic.Parse("9");
+        var pic = PicMeta.Parse("9");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
@@ -105,7 +105,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_9_WithRepeat()
     {
-        var pic = Pic.Parse("9(4)");
+        var pic = PicMeta.Parse("9(4)");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(4, pic.IntegerDigits);
@@ -117,7 +117,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_9_WithRepeat_OnlyOnce()
     {
-        var pic = Pic.Parse("9(1)");
+        var pic = PicMeta.Parse("9(1)");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
@@ -129,7 +129,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_999()
     {
-        var pic = Pic.Parse("999");
+        var pic = PicMeta.Parse("999");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(3, pic.IntegerDigits);
@@ -145,7 +145,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_S9()
     {
-        var pic = Pic.Parse("S9");
+        var pic = PicMeta.Parse("S9");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
@@ -157,7 +157,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_S9_WithRepeat()
     {
-        var pic = Pic.Parse("S9(5)");
+        var pic = PicMeta.Parse("S9(5)");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(5, pic.IntegerDigits);
@@ -173,7 +173,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_9V9()
     {
-        var pic = Pic.Parse("9V9");
+        var pic = PicMeta.Parse("9V9");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
@@ -185,7 +185,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_9_Repeat_V_Repeat()
     {
-        var pic = Pic.Parse("9(3)V9(2)");
+        var pic = PicMeta.Parse("9(3)V9(2)");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(3, pic.IntegerDigits);
@@ -197,7 +197,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_999V99()
     {
-        var pic = Pic.Parse("999V99");
+        var pic = PicMeta.Parse("999V99");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(3, pic.IntegerDigits);
@@ -213,7 +213,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_S9V9()
     {
-        var pic = Pic.Parse("S9V9");
+        var pic = PicMeta.Parse("S9V9");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
@@ -225,7 +225,7 @@ public class PicTest
     [TestMethod]
     public void Parse_PIC_S9_Repeat_V_Repeat()
     {
-        var pic = Pic.Parse("S9(5)V99");
+        var pic = PicMeta.Parse("S9(5)V99");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(5, pic.IntegerDigits);
@@ -241,7 +241,7 @@ public class PicTest
     [TestMethod]
     public void Parse_LowerCase_WithSpaces()
     {
-        var pic = Pic.Parse("    s9(2) v9 ");
+        var pic = PicMeta.Parse("    s9(2) v9 ");
 
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(2, pic.IntegerDigits);
@@ -258,13 +258,13 @@ public class PicTest
     public void Parse_Empty_ShouldThrow()
     {
         Assert.ThrowsException<ArgumentException>(() =>
-            Pic.Parse(""));
+            PicMeta.Parse(""));
     }
 
     [TestMethod]
     public void Parse_With_PIC_Keyword_ShouldThrow()
     {
         Assert.ThrowsException<NotSupportedException>(() =>
-            Pic.Parse("PIC 9(3)"));
+            PicMeta.Parse("PIC 9(3)"));
     }
 }

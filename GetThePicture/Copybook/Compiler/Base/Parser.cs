@@ -150,7 +150,7 @@ public class Parser(List<Token> tokens)
         //     ├─ PIC exists  ──► ElementaryDataItem
         //     └─ no PIC      ──► GroupItem
         
-        PicClause? pic = null;
+        PicMeta? pic = null;
         string? value = null;
         int? occurs = null;
         var comments = new List<string>();
@@ -209,7 +209,7 @@ public class Parser(List<Token> tokens)
     }
 
     private static IDataItem BuildDataItem(
-        int level, string name, PicClause? pic,
+        int level, string name, PicMeta? pic,
         int? occurs, string? value, bool isFiller = false,
         string? comment = null
     )
@@ -288,7 +288,7 @@ public class Parser(List<Token> tokens)
     // Clause Parsers
     // ----------------------------
 
-    private PicClause ParsePicClause()
+    private PicMeta ParsePicClause()
     {
         Consume(); // PIC
 
@@ -345,7 +345,7 @@ public class Parser(List<Token> tokens)
             }
         }
 
-        PicClause pic = Pic.Parse(picString);
+        PicMeta pic = PicMeta.Parse(picString);
         pic.Usage = usage;
 
         return pic;

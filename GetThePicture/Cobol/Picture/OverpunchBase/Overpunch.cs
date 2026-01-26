@@ -16,7 +16,7 @@ public static class Overpunch
     /// <param name="sign">符號</param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    public static string Decode(ReadOnlySpan<byte> fieldBytes, PicClause pic, CodecOptions options, out decimal sign)
+    public static string Decode(ReadOnlySpan<byte> fieldBytes, PicMeta pic, CobOptions options, out decimal sign)
     {
         byte[] buffer = new byte[fieldBytes.Length];
         fieldBytes.CopyTo(buffer);
@@ -56,7 +56,7 @@ public static class Overpunch
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static byte[] Encode(decimal sign, string numeric, PicClause pic, CodecOptions options)
+    public static byte[] Encode(decimal sign, string numeric, PicMeta pic, CobOptions options)
     {
         Encoding cp950 = Utils.EncodingFactory.CP950;
 

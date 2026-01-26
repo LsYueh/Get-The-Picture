@@ -13,7 +13,7 @@ internal static class AlphabeticDecoder
     /// <param name="buffer">ASCII/CP950</param>
     /// <param name="pic"></param>
     /// <returns></returns>
-    public static string Decode(ReadOnlySpan<byte> buffer, PicClause pic)
+    public static string Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"PIC A does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");

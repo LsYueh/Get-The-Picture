@@ -94,7 +94,7 @@ public class JsonWriter
         writer.WriteEndObject();
     }
 
-    private static void WritePic(Utf8JsonWriter writer, PicClause pic)
+    private static void WritePic(Utf8JsonWriter writer, PicMeta pic)
     {
         writer.WriteStartObject();
 
@@ -108,7 +108,7 @@ public class JsonWriter
         writer.WriteEndObject();
     }
 
-    private static void WritePicInfo(Utf8JsonWriter writer, PicClause pic)
+    private static void WritePicInfo(Utf8JsonWriter writer, PicMeta pic)
     {
         writer.WriteStartObject();
         writer.WriteBoolean("Signed", pic.Signed);

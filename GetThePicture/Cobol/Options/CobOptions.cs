@@ -2,7 +2,10 @@ using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Cobol.Options;
 
-public sealed class CodecOptions
+/// <summary>
+/// COBOL 資料編碼與解碼所需的行為與條件選項。
+/// </summary>
+public sealed class CobOptions
 {
     /// <summary>
     /// 嚴格長度驗證 (預設 false)

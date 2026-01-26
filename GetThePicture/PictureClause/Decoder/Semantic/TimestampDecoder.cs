@@ -8,7 +8,7 @@ namespace GetThePicture.PictureClause.Decoder.Semantic;
 
 internal static class TimestampDecoder
 {
-    public static DateTime Decode(ReadOnlySpan<byte> buffer, PicClause pic)
+    public static DateTime Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
         if (pic.BaseClass == PicBaseClass.Numeric && pic.Signed)
             throw new NotSupportedException($"Unsupported DateTime base type: PIC S9");

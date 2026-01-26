@@ -1,5 +1,6 @@
 using System.Text;
 
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Utils;
 using GetThePicture.PictureClause;
 
@@ -13,8 +14,8 @@ public class AlphabeticEncoderTest
     [TestMethod]
     public void Encode_Alphabetic()
     {
-        var pic = Pic.Parse("A(5)");
-        byte[] buffer = CodecBuilder.ForPic(pic).Encode("AbC");
+        var pic = PicMeta.Parse("A(5)");
+        byte[] buffer = PicClauseCodec.ForMeta(pic).Encode("AbC");
 
         string result = cp950.GetString(buffer);
 
@@ -24,8 +25,8 @@ public class AlphabeticEncoderTest
     [TestMethod]
     public void Encode_Alphabetic_Extra()
     {
-        var pic = Pic.Parse("A(5)");
-        byte[] buffer = CodecBuilder.ForPic(pic).Encode("AbC  fGh");
+        var pic = PicMeta.Parse("A(5)");
+        byte[] buffer = PicClauseCodec.ForMeta(pic).Encode("AbC  fGh");
 
         string result = cp950.GetString(buffer);
 
@@ -40,26 +41,26 @@ public class AlphabeticEncoderTest
     [ExpectedException(typeof(FormatException))]
     public void Encode_Alphanumeric_ThrowsFormatException()
     {
-        var pic = Pic.Parse("A(5)");
+        var pic = PicMeta.Parse("A(5)");
 
-        CodecBuilder.ForPic(pic).Encode("AbC@ ");
+        PicClauseCodec.ForMeta(pic).Encode("AbC@ ");
     }
 
     [TestMethod]
     [ExpectedException(typeof(FormatException))]
     public void Encode_Numeric_ThrowsFormatException()
     {
-        var pic = Pic.Parse("A(5)");
+        var pic = PicMeta.Parse("A(5)");
 
-        CodecBuilder.ForPic(pic).Encode("12345");
+        PicClauseCodec.ForMeta(pic).Encode("12345");
     }
 
     [TestMethod]
     [ExpectedException(typeof(FormatException))]
     public void Encode_CP950_ThrowsFormatException()
     {
-        var pic = Pic.Parse("A(7)");
+        var pic = PicMeta.Parse("A(7)");
 
-        CodecBuilder.ForPic(pic).Encode("中文字 ");
+        PicClauseCodec.ForMeta(pic).Encode("中文字 ");
     }
 }

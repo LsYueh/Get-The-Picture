@@ -25,32 +25,32 @@
 
 ## 使用方式:
 ```csharp
-using GetThePicture.Codec;
-using GetThePicture.Codec.Utils;
+using GetThePicture.Cobol.Picture;
+using GetThePicture.PictureClause;
 ```
 
 ```csharp
-var pic = Pic.Parse("9(3)");
+var pic = PicMeta.Parse("9(3)");
 
 // Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode(123); // >> "123"
+PicClauseCodec.ForMeta(pic).Encode(123); // >> "123"
 
 // Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("123"); // >> 123
+PicClauseCodec.ForMeta(pic).Decode("123"); // >> 123
 ```
 
 ```csharp
-var pic = Pic.Parse("S9(3)V9");
+var pic = PicMeta.Parse("S9(3)V9");
 
 // Encode: CLR → COBOL PICTURE
-CodecBuilder.ForPic(pic).Encode( 12.3); // >> "012C"
-CodecBuilder.ForPic(pic).Encode(-12.3); // >> "012L"
+PicClauseCodec.ForMeta(pic).Encode( 12.3); // >> "012C"
+PicClauseCodec.ForMeta(pic).Encode(-12.3); // >> "012L"
 
 // Encode: CLR → COBOL PICTURE (ACUCOBOL)
-CodecBuilder.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Decode(12.3); // >> "0123"
+PicClauseCodec.ForMeta(pic).WithDataStorageOption(DataStorageOptions.CA).Decode(12.3); // >> "0123"
 
 // Decode: COBOL PICTURE → CLR
-CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
+PicClauseCodec.ForMeta(pic).Decode("12L"); // >> -12.3
 ```
 
 <br>
@@ -67,16 +67,16 @@ CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
 
     ```csharp
     // PIC 9(5).
-    var pic = Pic.Parse("9(5)");
+    var pic = PicMeta.Parse("9(5)");
 
     // Encode: CLR → COBOL
-    CodecBuilder.ForPic(pic)
+    PicClauseCodec.ForMeta(pic)
         .Usage(PicUsage.PackedDecimal) // 動態指定 USAGE COMP-3
         .WithStrict()
         .Encode(52194); // >> [0x52, 0x19, 0x4F]
 
     // Decode: COBOL → CLR
-    CodecBuilder.ForPic(pic)
+    PicClauseCodec.ForMeta(pic)
         .Usage(PicUsage.PackedDecimal) // 動態指定 USAGE COMP-3
         .WithStrict()
         .Decode([0x52, 0x19, 0x4C]); // >> 52194UL
@@ -86,16 +86,16 @@ CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
 
     ```csharp
     // PIC 9(5)  USAGE  COMP-3.
-    var pic = Pic.Parse("9(5)");
+    var pic = PicMeta.Parse("9(5)");
     pic.Usage = PicUsage.PackedDecimal; // 預先指定
 
     // Encode: CLR → COBOL
-    CodecBuilder.ForPic(pic)
+    PicClauseCodec.ForMeta(pic)
         .WithStrict()
         .Encode(52194); // >> [0x52, 0x19, 0x4F]
 
     // Decode: COBOL → CLR
-    CodecBuilder.ForPic(pic)
+    PicClauseCodec.ForMeta(pic)
         .WithStrict()
         .Decode([0x52, 0x19, 0x4C]); // >> 52194UL
     ```
@@ -112,14 +112,14 @@ CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
 
     ```csharp
     // PIC 9(3)  USAGE  COMP-3.
-    var pic = Pic.Parse("S9(3)");
+    var pic = PicMeta.Parse("S9(3)");
     pic.Usage = PicUsage.PackedDecimal;
 
     // Encode: CLR → COBOL
-    CodecBuilder.ForPic(pic).Encode(-52194); // >> [0x19, 0x4D]
+    PicClauseCodec.ForMeta(pic).Encode(-52194); // >> [0x19, 0x4D]
 
     // Decode: COBOL → CLR
-    CodecBuilder.ForPic(pic).Decode([0x52, 0x19, 0x4D]); // >> -194L (-52194L)
+    PicClauseCodec.ForMeta(pic).Decode([0x52, 0x19, 0x4D]); // >> -194L (-52194L)
     ```
 
 <br>
@@ -136,23 +136,23 @@ CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
 
     ```csharp
     // PIC 9(04)  USAGE  COMP.
-    var pic = Pic.Parse("S9(04))");
+    var pic = PicMeta.Parse("S9(04))");
     pic.Usage = PicUsage.Binary;
 
     // Encode: CLR → COBOL
-    CodecBuilder.ForPic(pic).WithStrict().Encode(9999); // >> 0x270F >> (Little Endian) >> [0x0F, 0x27]
+    PicClauseCodec.ForMeta(pic).WithStrict().Encode(9999); // >> 0x270F >> (Little Endian) >> [0x0F, 0x27]
 
     // Decode: COBOL → CLR
-    CodecBuilder.ForPic(pic).WithStrict().Decode([0x0F, 0x27]); // >> (short) 9999
+    PicClauseCodec.ForMeta(pic).WithStrict().Decode([0x0F, 0x27]); // >> (short) 9999
     ```
 
     ```csharp
     // PIC 9(3)  USAGE  COMP.
-    var pic = Pic.Parse("S9(4)");
+    var pic = PicMeta.Parse("S9(4)");
     pic.Usage = PicUsage.PackedDecimal;
 
     // Decode: COBOL → CLR
-    CodecBuilder.ForPic(pic).Decode([0x0F, 0x27]); // >> (ushort) 9999
+    PicClauseCodec.ForMeta(pic).Decode([0x0F, 0x27]); // >> (ushort) 9999
     ```
 
 <br>
@@ -178,17 +178,17 @@ CodecBuilder.ForPic(pic).Decode("12L"); // >> -12.3
 
     ```csharp
     // PIC 9(04)  USAGE  COMP.
-    var pic = Pic.Parse("S9(04))");
+    var pic = PicMeta.Parse("S9(04))");
     pic.Usage = PicUsage.Binary;
 
     // Encode: CLR → COBOL
-    CodecBuilder.ForPic(pic)
+    PicClauseCodec.ForMeta(pic)
         .WithStrict()
         .WithReversedBinary()
         .Encode(9999); // >> 0x270F >> (Little Endian) >> (Binary Reverse) >> [0x27, 0x0F]
 
     // Decode: COBOL → CLR
-    CodecBuilder.ForPic(pic)
+    PicClauseCodec.ForMeta(pic)
         .WithStrict()
         .WithReversedBinary()
         .Decode([0x27, 0x0F]); // >> (short) 9999

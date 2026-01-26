@@ -1,5 +1,5 @@
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Cobol.Utils;
 using GetThePicture.PictureClause;
 
 namespace GetThePicture.Tests.PictureClause;
@@ -24,10 +24,10 @@ public class CompTest
     [DataRow("S9(18)", -999999999999999999L , new byte[] { 0x01, 0x00, 0x9C, 0x58, 0x4C, 0x49, 0x1F, 0xF2 })]
     public void Encode_Combination_Test(string picString, object value, byte[] expected)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         pic.Usage = PicUsage.Binary;
 
-        byte[] buffer = CodecBuilder.ForPic(pic).WithStrict().Encode(value);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).WithStrict().Encode(value);
 
         CollectionAssert.AreEqual(expected, buffer);
     }
@@ -38,10 +38,10 @@ public class CompTest
     [DataRow("S9(18)", -999999999999999999L, new byte[] { 0xF2, 0x1F, 0x49, 0x4C, 0x58, 0x9C, 0x00, 0x01 })]
     public void Encode_With_Change_Endian(string picString, object value, byte[] expected)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         pic.Usage = PicUsage.Binary;
 
-        byte[] buffer = CodecBuilder.ForPic(pic).WithStrict().WithReversedBinary().Encode(value);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).WithStrict().WithReversedBinary().Encode(value);
 
         CollectionAssert.AreEqual(expected, buffer);
     }
@@ -63,10 +63,10 @@ public class CompTest
     [DataRow("S9(18)", -999999999999999999L , new byte[] { 0x01, 0x00, 0x9C, 0x58, 0x4C, 0x49, 0x1F, 0xF2 })]
     public void Decode_Combination_Test(string picString, object expected, byte[] buffer)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         pic.Usage = PicUsage.Binary;
 
-        var value = CodecBuilder.ForPic(pic).WithStrict().Decode(buffer);
+        var value = PicClauseCodec.ForMeta(pic).WithStrict().Decode(buffer);
 
         Assert.AreEqual(expected, value);
     }
@@ -77,10 +77,10 @@ public class CompTest
     [DataRow("S9(18)", -999999999999999999L, new byte[] { 0xF2, 0x1F, 0x49, 0x4C, 0x58, 0x9C, 0x00, 0x01 })]
     public void Decode_With_Change_Endian(string picString, object expected, byte[] buffer)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         pic.Usage = PicUsage.Binary;
 
-        var value = CodecBuilder.ForPic(pic).WithStrict().WithReversedBinary().Decode(buffer);
+        var value = PicClauseCodec.ForMeta(pic).WithStrict().WithReversedBinary().Decode(buffer);
 
         Assert.AreEqual(expected, value);
     }
@@ -94,9 +94,9 @@ public class CompTest
     public void Encode_Without_Sign_Negative_ThrowsOverflowException()
     {
         // PIC 9(4) COMP.
-        var pic = Pic.Parse("9(4)");
+        var pic = PicMeta.Parse("9(4)");
         pic.Usage = PicUsage.Binary;
 
-        CodecBuilder.ForPic(pic).WithStrict().Encode(-9999);
+        PicClauseCodec.ForMeta(pic).WithStrict().Encode(-9999);
     }
 }

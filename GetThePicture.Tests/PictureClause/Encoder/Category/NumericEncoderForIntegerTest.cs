@@ -1,5 +1,6 @@
 using System.Text;
 
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Utils;
 using GetThePicture.PictureClause;
 
@@ -18,8 +19,8 @@ public class NumericEncoderForIntegerTest
     [DataRow((ulong) 999999999999999999, "9(18)", "999999999999999999")]
     public void Encode_Integer_Default(object value, string picString, string expected)
     {
-        var pic = Pic.Parse(picString);
-        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+        var pic = PicMeta.Parse(picString);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).Encode(value);
 
         string result = cp950.GetString(buffer);
 

@@ -1,5 +1,6 @@
 using System.Text;
 
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Cobol.Utils;
 using GetThePicture.PictureClause;
@@ -19,11 +20,11 @@ public class DateEncoderTest
     [DataRow("9(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
     public void Encode_DateOnly(string picString, PicSemantic semantic, string expected, int year, int month, int day)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         pic.Semantic = semantic;
 
         var value = new DateOnly(year, month, day);
-        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).Encode(value);
 
         string result = cp950.GetString(buffer);
 
@@ -38,10 +39,10 @@ public class DateEncoderTest
     [DataRow("9(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
     public void Encode_DateOnly_AsSemantic(string picString, PicSemantic semantic, string expected, int year, int month, int day)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
 
         var value = new DateOnly(year, month, day);
-        byte[] buffer = CodecBuilder.ForPic(pic).AsSemantic(semantic).Encode(value);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).AsSemantic(semantic).Encode(value);
 
         string result = cp950.GetString(buffer);
 

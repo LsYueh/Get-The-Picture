@@ -1,4 +1,4 @@
-using GetThePicture.Cobol.Elementary;
+using GetThePicture.Cobol.Meta;
 using GetThePicture.Cobol.Picture.TypeBase;
 
 namespace GetThePicture.Cobol.Picture.ComputationalBase;
@@ -39,14 +39,14 @@ internal static class COMP
     //
     // https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=options-trunc
     
-    public static object Decode(ReadOnlySpan<byte> buffer, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
     {
         // TODO: 只實作 TRUNC STD
         
         return COMP5.Decode(buffer, pic, endian);
     }
 
-    public static byte[] Encode(ElementaryMeta meta, PicClause pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static byte[] Encode(CobMeta meta, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
     {
        // TODO: 只實作 TRUNC STD
        

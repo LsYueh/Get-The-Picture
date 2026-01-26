@@ -1,5 +1,6 @@
 using System.Text;
 
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Cobol.Utils;
 using GetThePicture.PictureClause;
@@ -27,14 +28,14 @@ public class TimestampEncoderTest
         int minute,
         int second)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         pic.Semantic = semantic;
         
         var value = new DateTime(
             year, month, day,
             hour, minute, second,
             DateTimeKind.Unspecified);
-        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).Encode(value);
 
         string result = cp950.GetString(buffer);
 

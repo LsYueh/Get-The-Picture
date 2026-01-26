@@ -1,5 +1,6 @@
 using System.Text;
 
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Cobol.Utils;
 using GetThePicture.PictureClause;
@@ -19,8 +20,8 @@ public class NumericEncoderTest
     [DataRow( 12.3 , "9(1)V9(3)",  "2300")]
     public void Encode_Double_Default(object value, string picString, string expected)
     {
-        var pic = Pic.Parse(picString);
-        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+        var pic = PicMeta.Parse(picString);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).Encode(value);
 
         string result = cp950.GetString(buffer);
 
@@ -35,8 +36,8 @@ public class NumericEncoderTest
     [DataRow( 12.3 , "S9(1)V9(3)",  "230{")]
     public void Encode_Double_With_Sign_Default(object value, string picString, string expected)
     {
-        var pic = Pic.Parse(picString);
-        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+        var pic = PicMeta.Parse(picString);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).Encode(value);
 
         string result = cp950.GetString(buffer);
 
@@ -53,8 +54,8 @@ public class NumericEncoderTest
     [DataRow( -12.3 , "S9(1)V9(3)",  "230}")]
     public void Encode_Negative_Double_With_Sign_Default(object value, string picString, string expected)
     {
-        var pic = Pic.Parse(picString);
-        byte[] buffer = CodecBuilder.ForPic(pic).Encode(value);
+        var pic = PicMeta.Parse(picString);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).Encode(value);
 
         string result = cp950.GetString(buffer);
 
@@ -67,8 +68,8 @@ public class NumericEncoderTest
     [DataRow(-12.3 , "S9(3)V9"   , "012L")]
     public void Encode_WithDataStorageOption_ACUCOBOL(object value, string picString, string expected)
     {
-        var pic = Pic.Parse(picString);
-        byte[] buffer = CodecBuilder.ForPic(pic).WithDataStorageOption(DataStorageOptions.CA).Encode(value);
+        var pic = PicMeta.Parse(picString);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).WithDataStorageOption(DataStorageOptions.CA).Encode(value);
 
         string result = cp950.GetString(buffer);
         
@@ -82,8 +83,8 @@ public class NumericEncoderTest
     [TestMethod]
     public void Encode_With_String_Value_Cause_Exception()
     {
-        var pic = Pic.Parse("S9(5)V9");
+        var pic = PicMeta.Parse("S9(5)V9");
 
-        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Encode("中文字"));
+        Assert.ThrowsException<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Encode("中文字"));
     }
 }

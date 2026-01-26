@@ -1,11 +1,10 @@
 ﻿using System.Text.RegularExpressions;
 
-using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
 
-namespace GetThePicture.Cobol.Utils;
+namespace GetThePicture.Cobol.Picture;
 
-public static partial class Pic
+internal static partial class PicMetaBuilder
 {
     [GeneratedRegex(@"^(S)?((9(\(\d+\))?)|9+)(V((9(\(\d+\))?)|9+))?$", RegexOptions.IgnoreCase)]
     private static partial Regex NumericRegex();
@@ -16,7 +15,7 @@ public static partial class Pic
     [GeneratedRegex(@"^A(\((\d+)\))?$", RegexOptions.IgnoreCase)]
     private static partial Regex ARegex();
             
-    public static PicClause Parse(string input, PicSemantic semantic = PicSemantic.None, PicUsage Usage = PicUsage.Display)
+    public static PicMeta Parse(string input, PicSemantic semantic = PicSemantic.None, PicUsage Usage = PicUsage.Display)
     {
         if (string.IsNullOrWhiteSpace(input))
             throw new ArgumentException("PIC clause is empty.");
@@ -34,7 +33,7 @@ public static partial class Pic
             int intDigits = CountDigits(numMatch.Groups[2].Value);
             int decDigits = numMatch.Groups[6].Success ? CountDigits(numMatch.Groups[6].Value) : 0;
 
-            return new PicClause
+            return new PicMeta
             {
                 BaseClass = PicBaseClass.Numeric,
                 Semantic = semantic,
@@ -53,7 +52,7 @@ public static partial class Pic
         {
             int len = xMatch.Groups[2].Success ? int.Parse(xMatch.Groups[2].Value) : 1;
 
-            return new PicClause
+            return new PicMeta
             {
                 BaseClass = PicBaseClass.Alphanumeric,
                 Semantic = semantic,
@@ -72,7 +71,7 @@ public static partial class Pic
         {
             int len = aMatch.Groups[2].Success ? int.Parse(aMatch.Groups[2].Value) : 1;
 
-            return new PicClause
+            return new PicMeta
             {
                 BaseClass = PicBaseClass.Alphabetic,
                 Semantic = semantic,

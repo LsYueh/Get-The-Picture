@@ -8,7 +8,7 @@ namespace GetThePicture.PictureClause.Decoder.Semantic;
 
 internal static class DateDecoder
 {
-    public static DateOnly Decode(ReadOnlySpan<byte> buffer, PicClause pic)
+    public static DateOnly Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
         if (pic.BaseClass == PicBaseClass.Numeric && pic.Signed)
             throw new NotSupportedException($"Unsupported DateOnly base type: PIC S9");

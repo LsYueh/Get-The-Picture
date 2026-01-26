@@ -8,7 +8,7 @@ namespace GetThePicture.PictureClause.Decoder.Semantic;
 
 internal static class TimeDecoder
 {
-    public static TimeOnly Decode(ReadOnlySpan<byte> buffer, PicClause pic)
+    public static TimeOnly Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
         if (pic.BaseClass == PicBaseClass.Numeric && pic.Signed)
             throw new NotSupportedException($"Unsupported TimeOnly base type: PIC S9");

@@ -6,7 +6,7 @@ namespace GetThePicture.Cobol.Picture;
 /// <summary>
 /// COBOL PICTURE Metadata Class
 /// </summary>
-public class PicClause
+public class PicMeta
 {
     public PicBaseClass BaseClass { get; set; }
     public PicSemantic Semantic { get; set; }
@@ -47,4 +47,8 @@ public class PicClause
     {
         return $"Class='{BaseClass}' (Semantic='{Semantic}'), Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={DigitCount}, Usage='{Usage}'";
     }
+
+    public static PicMeta Parse(
+        string input, PicSemantic semantic = PicSemantic.None, PicUsage Usage = PicUsage.Display
+    ) => PicMetaBuilder.Parse(input, semantic, Usage);
 }

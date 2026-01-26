@@ -1,6 +1,4 @@
-using System.Text;
-
-using GetThePicture.Cobol.Elementary;
+using GetThePicture.Cobol.Meta;
 using GetThePicture.Cobol.Options;
 using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.ComputationalBase;
@@ -11,19 +9,17 @@ namespace GetThePicture.PictureClause.Encoder.Category;
 
 internal static class NumericEncoder
 {
-    private static readonly Encoding cp950 = Cobol.Utils.EncodingFactory.CP950;
-
     /// <summary>
-    /// Elementary Meta → Overpunch Encode → COBOL Elementary Item (buffer)
+    /// Meta → Overpunch Encode → COBOL Elementary Item (buffer)
     /// </summary>
     /// <param name="meta"></param>
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
-    public static byte[] Encode(ElementaryMeta meta, PicClause pic, CodecOptions? options = null)
+    public static byte[] Encode(CobMeta meta, PicMeta pic, CobOptions? options = null)
     {
-        options ??= new CodecOptions();
+        options ??= new CobOptions();
 
         byte[] buffer = pic.Usage switch
         {
@@ -41,11 +37,11 @@ internal static class NumericEncoder
         return normalized;
     }
 
-    private static byte[] Display_Encode(ElementaryMeta meta, PicClause pic, CodecOptions options)
+    private static byte[] Display_Encode(CobMeta meta, PicMeta pic, CobOptions options)
     {
         string numeric = meta switch
         {
-            { Type: EleType.Number, Number: { } n } => n.Digits,
+            { Type: CobMetaType.Number, Number: { } n } => n.Digits,
             _ => throw new NotSupportedException($"Unsupported meta type '{meta.Type}' for Numeric Text"),
         };
 

@@ -1,7 +1,7 @@
 using System.Text;
 
+using GetThePicture.Cobol.Picture;
 using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Cobol.Utils;
 using GetThePicture.PictureClause;
 
 namespace GetThePicture.Tests.PictureClause.Decoder.Semantic;
@@ -20,12 +20,12 @@ public class TimeDecoderTest
         string text,
         int hour, int minute, int second, int millisecond)
     {
-        var pic = Pic.Parse(picString);
+        var pic = PicMeta.Parse(picString);
         pic.Semantic = semantic;
 
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object result = CodecBuilder.ForPic(pic).Decode(buffer);
+        object result = PicClauseCodec.ForMeta(pic).Decode(buffer);
 
         var expected = new TimeOnly(hour, minute, second, millisecond);
         Assert.AreEqual(expected, result);
@@ -38,22 +38,22 @@ public class TimeDecoderTest
     [TestMethod]
     public void Decode_SignedNumeric_ThrowsNotSupportedException()
     {
-        var pic = Pic.Parse("S9(6)");
+        var pic = PicMeta.Parse("S9(6)");
         pic.Semantic = PicSemantic.Time6;
 
         byte[] buffer = Encoding.ASCII.GetBytes("123456");
 
-        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode(buffer));
+        Assert.ThrowsException<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
     [TestMethod]
     public void Decode_InvalidTime6_ThrowsFormatException()
     {
-        var pic = Pic.Parse("S9(6)");
+        var pic = PicMeta.Parse("S9(6)");
         pic.Semantic = PicSemantic.Time6;
 
         byte[] buffer = Encoding.ASCII.GetBytes("246060"); // invalid time
 
-        Assert.ThrowsException<NotSupportedException>(() => CodecBuilder.ForPic(pic).Decode(buffer));
+        Assert.ThrowsException<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 }
