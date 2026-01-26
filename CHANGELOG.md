@@ -1,5 +1,18 @@
 # Changelog
 
+## [26.3.0] – 2026-01-26
+
+### 新增
+- 新增 Copybook 的 `Serializer` 與 `Deserializer` 功能。
+
+### 移除
+- 移除 `Reader` 改為 `Compiler`。
+- 移除 `Writer`。
+  - 原為除錯用的工具，與現有 `Dump` 功能雷同。
+  - 後續將由 Copybook 的 `Deserializer` 解手處理格式轉換的功能。
+
+<br><br>
+
 ## [26.2.0] – 2026-01-25
 
 ### 新增
