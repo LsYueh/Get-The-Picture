@@ -1,12 +1,12 @@
 using GetThePicture.Copybook.Base;
-using GetThePicture.Copybook.Compiler;
+using GetThePicture.Copybook.Compiler.Base;
 using GetThePicture.Copybook.Compiler.Ir;
 
-namespace GetThePicture.Copybook.SerDes.Schema;
+namespace GetThePicture.Copybook.Compiler;
 
-public sealed class Reader
+public sealed class CbCompiler
 {
-    public static Document FromStreamReader(StreamReader streamReader)
+    public static CbSchema FromStreamReader(StreamReader streamReader)
     {
         ArgumentNullException.ThrowIfNull(streamReader);
 
@@ -17,7 +17,7 @@ public sealed class Reader
         Parser parser = new(tokens);
 
         var ir = parser.Analyze();
-        if (ir is not Document model)
+        if (ir is not CbSchema model)
             throw new Exception("Copybook root must be a Document.");
 
         model.CalculateStorage();

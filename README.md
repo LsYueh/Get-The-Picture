@@ -171,7 +171,7 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 2. Deserialization（反序列化）
     - 將序列化後的資料恢復成程式中的 `物件` 或 `資料結構`。
 
-- [Reader](docs/copybook/serdes/reader.md)
+- [Copybook Compiler](docs/copybook/compiler.md)
 
 <br><br>
 

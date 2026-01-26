@@ -3,8 +3,8 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 
 using GetThePicture.Codec.Utils;
+using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Obsolete.Writer;
-using GetThePicture.Copybook.SerDes.Schema;
 
 namespace GetThePicture.Tests.Copybook.Obsolete.Writer;
 
@@ -19,15 +19,15 @@ public class JsonWriterTest
     [Ignore]
     public void Writer_Demo()
     {
-        var doc = Reader.FromStreamReader(new StreamReader(@"TestData/t30-tse.cpy", cp950));
-        Assert.IsNotNull(doc);
+        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/t30-tse.cpy", cp950));
+        Assert.IsNotNull(schema);
 
         using var stream = new MemoryStream();
         using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true, Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping });
 
         var jsonWriter = new JsonWriter();
        
-        jsonWriter.Write(writer, doc);
+        jsonWriter.Write(writer, schema);
         writer.Flush();
 
         string json = Encoding.UTF8.GetString(stream.ToArray());

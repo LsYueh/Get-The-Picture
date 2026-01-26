@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler;
+namespace GetThePicture.Copybook.Compiler.Base;
 
 /// <summary>
 /// Copybook 專用 Token 類型

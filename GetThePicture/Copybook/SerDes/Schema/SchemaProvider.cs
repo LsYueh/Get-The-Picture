@@ -1,3 +1,4 @@
+using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Ir;
 
 namespace GetThePicture.Copybook.SerDes.Schema;
@@ -7,7 +8,7 @@ namespace GetThePicture.Copybook.SerDes.Schema;
 /// </summary>
 public sealed class SchemaProvider(StreamReader reader) : ISchemaProvider
 {
-    private readonly Lazy<Document> _schema = new(() => Reader.FromStreamReader(reader));
+    private readonly Lazy<CbSchema> _schema = new(() => CbCompiler.FromStreamReader(reader));
 
-    public Document GetSchema() => _schema.Value;
+    public CbSchema GetSchema() => _schema.Value;
 }

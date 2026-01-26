@@ -7,7 +7,7 @@ namespace GetThePicture.Copybook.SerDes
 
 internal class CbDeserializer
 {
-    internal static RecValue DesDocument(Document schema, ref RecCursor cursor)
+    internal static RecValue DesDocument(CbSchema schema, ref RecCursor cursor)
     {
         var result = new RecValue();
 

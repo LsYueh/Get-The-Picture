@@ -19,7 +19,7 @@ public class JsonWriter
     {
         switch (item)
         {
-            case Document document:
+            case CbSchema document:
                 WriteDocument(writer, document);
                 break;
 
@@ -37,7 +37,7 @@ public class JsonWriter
         }
     }
 
-    private void WriteDocument(Utf8JsonWriter writer, Document document)
+    private void WriteDocument(Utf8JsonWriter writer, CbSchema document)
     {
         writer.WriteStartObject();
 

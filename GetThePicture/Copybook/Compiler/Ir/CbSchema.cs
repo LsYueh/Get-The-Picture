@@ -1,6 +1,6 @@
 namespace GetThePicture.Copybook.Compiler.Ir;
 
-public sealed class Document(string name = "COPYBOOK") : IDataItem
+public sealed class CbSchema(string name = "COPYBOOK-SCHEMA") : IDataItem
 {
     public int Level { get; init; } = 0;
     public string Name { get; init; } = name;

@@ -4,5 +4,5 @@ namespace GetThePicture.Copybook.SerDes.Schema;
 
 public interface ISchemaProvider
 {
-    Document GetSchema();
+    CbSchema GetSchema();
 }

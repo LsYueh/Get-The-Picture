@@ -4,9 +4,9 @@ using GetThePicture.Copybook.SerDes.Schema;
 
 namespace GetThePicture.Copybook.SerDes;
 
-public sealed class CbSerDes(Document schema)
+public sealed class CbSerDes(CbSchema schema)
 {
-    private readonly Document _schema = schema ?? throw new ArgumentNullException(nameof(schema));
+    private readonly CbSchema _schema = schema ?? throw new ArgumentNullException(nameof(schema));
 
     public CbSerDes(ISchemaProvider provider): this(provider.GetSchema())
     {

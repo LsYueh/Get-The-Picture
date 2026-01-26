@@ -1,10 +1,12 @@
-# Copybook Writer - JSON
+# Copybook Schema Writer - JSON
 
+> 已由 `IR` 內的 `Dump()` 取代
+ 
 <br>
 
 使用`Reader`建立`IR`
 ```csharp
-var doc = Reader.FromStreamReader(new StreamReader(@"TestData/t30-tse.cpy", cp950));
+var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/t30-tse.cpy", cp950));
 ```
 
 <br>
@@ -24,7 +26,7 @@ using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions {
 ```csharp
 var jsonWriter = new JsonWriter();
 
-jsonWriter.Write(writer, doc);
+jsonWriter.Write(writer, schema);
 writer.Flush();
 
 string json = Encoding.UTF8.GetString(stream.ToArray());
@@ -37,7 +39,7 @@ Console.WriteLine(json);
 輸出內容:
 ```json
 {
-  "Type": "Document",
+  "Type": "Schema",
   "DataItem": [
     {
       "Type": "ElementaryDataItem",

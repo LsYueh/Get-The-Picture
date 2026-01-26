@@ -5,7 +5,7 @@ using GetThePicture.Cobol.Picture.TypeBase;
 using GetThePicture.Codec.Utils;
 using GetThePicture.Copybook.Compiler.Ir;
 
-namespace GetThePicture.Copybook.Compiler;
+namespace GetThePicture.Copybook.Compiler.Base;
 
 public sealed record DataItemHeader(
     int Level,
@@ -59,7 +59,7 @@ public class Parser(List<Token> tokens)
     /// <summary>
     /// Syntactic / Semantic Analysis
     /// </summary>
-    public Document Analyze()
+    public CbSchema Analyze()
     {
         // ParseDataItem (Recursive)
         // │
@@ -75,7 +75,7 @@ public class Parser(List<Token> tokens)
         //            ├─ while nextLevel > currentGroup.Level
         //            └─ ParseDataItem(item) recursively
 
-        Document root = new();
+        CbSchema root = new();
 
         while (Current != null)
         {
@@ -107,7 +107,7 @@ public class Parser(List<Token> tokens)
         switch (parent)
         {
             case GroupItem g: g.AddSubordinate(subordinate); break;
-            case Document  d: d.AddSubordinate(subordinate); break;
+            case CbSchema  d: d.AddSubordinate(subordinate); break;
         }
 
         // 解析子項目（只有 GroupItem 才能有 subordinate）

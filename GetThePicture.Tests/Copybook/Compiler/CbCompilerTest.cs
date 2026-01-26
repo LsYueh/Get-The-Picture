@@ -1,14 +1,14 @@
 using System.Text;
 
 using GetThePicture.Codec.Utils;
+using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Ir;
-using GetThePicture.Copybook.SerDes.Schema;
 
-namespace GetThePicture.Tests.Copybook.SerDes.Schema;
+namespace GetThePicture.Tests.Copybook.Compiler;
 
 [TestClass]
 
-public class ReaderTest
+public class CbCompilerTest
 {
     private const string filePath = @"TestData/sample-cobol-copybook.cpy";
     private const string expected = "THIS IS A VERY LONG DESCRIPTION THAT NEEDS TO BE CONTINUED ACROSS MULTIPLE LINES";
@@ -16,17 +16,17 @@ public class ReaderTest
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
     [TestMethod]
-    public void Reader_Test()
+    public void Copybook_Compiler_Test()
     {        
         using var sr = new StreamReader(filePath, cp950);
-       
-        Document doc = Reader.FromStreamReader(sr);
-        Assert.IsNotNull(doc);
-        Assert.AreEqual(0, doc.Level);
-        Assert.IsNotNull(doc.DataItems);
-        Assert.AreEqual(3, doc.DataItems.Count);
 
-        GroupItem? groupItem = (GroupItem?) doc.DataItems[2];
+        CbSchema schema = CbCompiler.FromStreamReader(sr);
+        Assert.IsNotNull(schema);
+        Assert.AreEqual(0, schema.Level);
+        Assert.IsNotNull(schema.DataItems);
+        Assert.AreEqual(3, schema.DataItems.Count);
+
+        GroupItem? groupItem = (GroupItem?) schema.DataItems[2];
         Assert.IsNotNull(groupItem);
 
         ElementaryDataItem? elementaryDataItem_05 =  (ElementaryDataItem?) groupItem.Subordinates[0];
@@ -43,28 +43,28 @@ public class ReaderTest
     [TestMethod]
     [TestCategory("Demo")]
     [Ignore]
-    public void Example_Dump_T30_TSE_Demo()
+    public void Example_Schema_Dump_T30_TSE()
     {
         using var sr = new StreamReader(@"TestData/t30-tse.cpy", cp950);
-       
-        Document document = Reader.FromStreamReader(sr);
 
-        Assert.IsNotNull(document);
+        CbSchema schema = CbCompiler.FromStreamReader(sr);
 
-        document.Dump(Console.Out);
+        Assert.IsNotNull(schema);
+
+        schema.Dump(Console.Out);
     }
 
     [TestMethod]
     [TestCategory("Demo")]
     [Ignore]
-    public void Example_Dump_T30_OTC_Demo()
+    public void Example_Schema_Dump_T30_OTC()
     {
         using var sr = new StreamReader(@"TestData/t30-otc.cpy", cp950);
-       
-        Document document = Reader.FromStreamReader(sr);
 
-        Assert.IsNotNull(document);
+        CbSchema schema = CbCompiler.FromStreamReader(sr);
 
-        document.Dump(Console.Out);
+        Assert.IsNotNull(schema);
+
+        schema.Dump(Console.Out);
     }
 }

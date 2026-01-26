@@ -1,6 +1,6 @@
 using GetThePicture.Copybook.Base;
 
-namespace GetThePicture.Copybook.Compiler;
+namespace GetThePicture.Copybook.Compiler.Base;
 
 public class Lexer(IReadOnlyList<CobolLine>? lines = null)
 {

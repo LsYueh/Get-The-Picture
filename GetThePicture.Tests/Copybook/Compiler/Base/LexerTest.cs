@@ -1,6 +1,6 @@
-using GetThePicture.Copybook.Compiler;
+using GetThePicture.Copybook.Compiler.Base;
 
-namespace GetThePicture.Tests.Copybook.Compiler;
+namespace GetThePicture.Tests.Copybook.Compiler.Base;
 
 [TestClass]
 public class LexerTest
