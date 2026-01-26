@@ -1,6 +1,5 @@
 using System.Text;
 
-using GetThePicture.Cobol.Options;
 using GetThePicture.PictureClause.Base.Options;
 
 namespace GetThePicture.PictureClause.Base.Overpunch;

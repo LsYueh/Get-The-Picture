@@ -4,7 +4,7 @@ using GetThePicture.PictureClause.Base.Options;
 namespace GetThePicture.PictureClause.Base.Computational;
 
 /// <summary>
-/// 
+/// Ref. <see href="https://docs.rocketsoftware.com/bundle/acucobolgt_dg_1050_html/page/BKUSUSCOMPUS2.2.10.html">Data Storage Options</see>
 /// </summary>
 internal static class NibbleCodex
 {
@@ -25,8 +25,9 @@ internal static class NibbleCodex
             { DataStorageOptions.CB, Merge(NiCodex.OP_UNSIGNED_01, NiCodex.OP_POSITIVE_02, NiCodex.OP_NEGATIVE_01) },
             { DataStorageOptions.CI, Merge(NiCodex.OP_UNSIGNED_01, NiCodex.OP_POSITIVE_02, NiCodex.OP_NEGATIVE_01) },
             { DataStorageOptions.CM, Merge(NiCodex.OP_UNSIGNED_01, NiCodex.OP_POSITIVE_02, NiCodex.OP_NEGATIVE_01) },
-            // { DataStorageOptions.CN, Merge(NiCodex., NiCodex., NiCodex.) },
+            { DataStorageOptions.CN, Merge(NiCodex.OP_UNSIGNED_01, NiCodex.OP_POSITIVE_03, NiCodex.OP_NEGATIVE_01) },
             { DataStorageOptions.CR, Merge(NiCodex.OP_UNSIGNED_01, NiCodex.OP_POSITIVE_02, NiCodex.OP_NEGATIVE_01) },
+            { DataStorageOptions.CV, Merge(NiCodex.OP_UNSIGNED_02, NiCodex.OP_POSITIVE_02, NiCodex.OP_NEGATIVE_01) },
         };
         
         return new ReadOnlyDictionary<DataStorageOptions, Dictionary<NibbleSign, byte>>(dictionary);
@@ -49,8 +50,9 @@ internal static class NibbleCodex
             { DataStorageOptions.CB, MergeRev(NiCodex.OP_UNSIGNED_01_REVERSE, NiCodex.OP_POSITIVE_02_REVERSE, NiCodex.OP_NEGATIVE_01_REVERSE) },
             { DataStorageOptions.CI, MergeRev(NiCodex.OP_UNSIGNED_01_REVERSE, NiCodex.OP_POSITIVE_02_REVERSE, NiCodex.OP_NEGATIVE_01_REVERSE) },
             { DataStorageOptions.CM, MergeRev(NiCodex.OP_UNSIGNED_01_REVERSE, NiCodex.OP_POSITIVE_02_REVERSE, NiCodex.OP_NEGATIVE_01_REVERSE) },
-            // { DataStorageOptions.CN, MergeRev(NiCodex., NiCodex., NiCodex.) },
+            { DataStorageOptions.CN, MergeRev(NiCodex.OP_UNSIGNED_01_REVERSE, NiCodex.OP_POSITIVE_03_REVERSE, NiCodex.OP_NEGATIVE_01_REVERSE) },
             { DataStorageOptions.CR, MergeRev(NiCodex.OP_UNSIGNED_01_REVERSE, NiCodex.OP_POSITIVE_02_REVERSE, NiCodex.OP_NEGATIVE_01_REVERSE) },
+            { DataStorageOptions.CV, MergeRev(NiCodex.OP_UNSIGNED_02_REVERSE, NiCodex.OP_POSITIVE_02_REVERSE, NiCodex.OP_NEGATIVE_01_REVERSE) },
         };
         
         return new ReadOnlyDictionary<DataStorageOptions, Dictionary<byte, NibbleSign>>(dictionary);
@@ -81,7 +83,7 @@ public enum NibbleSign {
 public static class NiCodex
 {
     /// <summary>
-    /// -Dca
+    /// -Dca (0x0F)
     /// </summary>
     public static readonly Dictionary<NibbleSign, byte> OP_POSITIVE_01 = new()
     {
@@ -91,7 +93,7 @@ public static class NiCodex
     public static readonly Dictionary<byte, NibbleSign> OP_POSITIVE_01_REVERSE = OP_POSITIVE_01.ToDictionary(kv => kv.Value, kv => kv.Key);
 
     /// <summary>
-    /// -Dcb/-Dci/-Dcm/-Dcr
+    /// -Dcb/-Dci/-Dcm/-Dcr (0x0C)
     /// </summary>
     public static readonly Dictionary<NibbleSign, byte> OP_POSITIVE_02 = new()
     {
@@ -101,7 +103,17 @@ public static class NiCodex
     public static readonly Dictionary<byte, NibbleSign> OP_POSITIVE_02_REVERSE = OP_POSITIVE_02.ToDictionary(kv => kv.Value, kv => kv.Key);
 
     /// <summary>
-    /// -Dca/-Dcb/-Dci/-Dcm/-Dcr
+    /// -Dcn (0x0B)
+    /// </summary>
+    public static readonly Dictionary<NibbleSign, byte> OP_POSITIVE_03 = new()
+    {
+        { NibbleSign.Positive, 0x0B },
+    };
+
+    public static readonly Dictionary<byte, NibbleSign> OP_POSITIVE_03_REVERSE = OP_POSITIVE_03.ToDictionary(kv => kv.Value, kv => kv.Key);
+
+    /// <summary>
+    /// -Dca/-Dcb/-Dci/-Dcm/-Dcr (0x0D)
     /// </summary>
     public static readonly Dictionary<NibbleSign, byte> OP_NEGATIVE_01 = new()
     {
@@ -111,7 +123,7 @@ public static class NiCodex
     public static readonly Dictionary<byte, NibbleSign> OP_NEGATIVE_01_REVERSE = OP_NEGATIVE_01.ToDictionary(kv => kv.Value, kv => kv.Key);
 
     /// <summary>
-    /// -Dca/-Dcb/-Dci/-Dcm/-Dcr
+    /// -Dca/-Dcb/-Dci/-Dcm/-Dcr (0x0F)
     /// </summary>
     public static readonly Dictionary<NibbleSign, byte> OP_UNSIGNED_01 = new()
     {
@@ -121,7 +133,7 @@ public static class NiCodex
     public static readonly Dictionary<byte, NibbleSign> OP_UNSIGNED_01_REVERSE = OP_UNSIGNED_01.ToDictionary(kv => kv.Value, kv => kv.Key);
 
     /// <summary>
-    /// -Dcv
+    /// -Dcv (0x0C)
     /// </summary>
     public static readonly Dictionary<NibbleSign, byte> OP_UNSIGNED_02 = new()
     {

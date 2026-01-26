@@ -2,7 +2,7 @@ using System.Text;
 
 using GetThePicture.PictureClause;
 using GetThePicture.PictureClause.Base;
-using GetThePicture.PictureClause.Base.Items;
+using GetThePicture.PictureClause.Base.ClauseItems;
 
 namespace GetThePicture.Tests.PictureClause.Decoder.Semantic;
 

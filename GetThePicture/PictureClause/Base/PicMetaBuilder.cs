@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-using GetThePicture.PictureClause.Base.Items;
+using GetThePicture.PictureClause.Base.ClauseItems;
 
 namespace GetThePicture.PictureClause.Base;
 

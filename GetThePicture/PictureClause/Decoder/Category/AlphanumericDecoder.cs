@@ -1,7 +1,7 @@
 using System.Text;
 
 using GetThePicture.PictureClause.Base;
-using GetThePicture.PictureClause.Base.Items;
+using GetThePicture.PictureClause.Base.ClauseItems;
 
 namespace GetThePicture.PictureClause.Decoder.Category;
 

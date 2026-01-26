@@ -1,6 +1,5 @@
-using GetThePicture.Cobol.Options;
 using GetThePicture.PictureClause.Base;
-using GetThePicture.PictureClause.Base.Items;
+using GetThePicture.PictureClause.Base.ClauseItems;
 using GetThePicture.PictureClause.Base.Options;
 
 namespace GetThePicture.PictureClause;

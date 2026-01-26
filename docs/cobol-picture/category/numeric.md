@@ -62,7 +62,7 @@ using GetThePicture.PictureClause.Base; // PicMeta
 ```
 
 ```csharp
-using GetThePicture.PictureClause.Base.Items; // PicUsage
+using GetThePicture.PictureClause.Base.ClauseItems; // PicUsage
 ```
 
 <br>
@@ -127,7 +127,7 @@ using GetThePicture.PictureClause.Base; // PicMeta
 ```
 
 ```csharp
-using GetThePicture.PictureClause.Base.Items; // PicUsage
+using GetThePicture.PictureClause.Base.ClauseItems; // PicUsage
 ```
 
 <br>

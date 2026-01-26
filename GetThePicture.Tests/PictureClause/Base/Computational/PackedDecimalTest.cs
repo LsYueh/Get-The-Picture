@@ -2,7 +2,7 @@ using System.Globalization;
 
 using GetThePicture.Cobol.Meta;
 using GetThePicture.PictureClause.Base;
-using GetThePicture.PictureClause.Base.Items;
+using GetThePicture.PictureClause.Base.ClauseItems;
 using GetThePicture.PictureClause.Base.Computational;
 
 namespace GetThePicture.Tests.PictureClause.Base.Computational;

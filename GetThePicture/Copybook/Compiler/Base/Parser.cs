@@ -2,7 +2,7 @@ using System.Text;
 
 using GetThePicture.Copybook.Compiler.Ir;
 using GetThePicture.PictureClause.Base;
-using GetThePicture.PictureClause.Base.Items;
+using GetThePicture.PictureClause.Base.ClauseItems;
 
 namespace GetThePicture.Copybook.Compiler.Base;
 

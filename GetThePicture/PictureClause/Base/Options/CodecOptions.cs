@@ -1,6 +1,5 @@
-using GetThePicture.PictureClause.Base.Options;
 
-namespace GetThePicture.Cobol.Options;
+namespace GetThePicture.PictureClause.Base.Options;
 
 /// <summary>
 /// COBOL 資料編碼與解碼所需的行為與條件選項。
