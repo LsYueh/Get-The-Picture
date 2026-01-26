@@ -2,8 +2,8 @@ using System.Globalization;
 
 using GetThePicture.Cobol.Meta;
 using GetThePicture.Cobol.Options;
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
 
 namespace GetThePicture.PictureClause.Encoder;
 
@@ -18,7 +18,7 @@ internal static class PicEncoder
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
     /// <exception cref="FormatException"></exception>
-    public static byte[] Encode(object value, PicMeta pic, CobOptions options)
+    public static byte[] Encode(object value, PicMeta pic, CodecOptions options)
     {
         ArgumentNullException.ThrowIfNull(value);
         ArgumentNullException.ThrowIfNull(pic);

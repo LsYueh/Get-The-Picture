@@ -8,8 +8,8 @@
 
 ## 使用方式: 
 ```csharp
-using GetThePicture.Cobol.Picture;
-using GetThePicture.PictureClause;
+using GetThePicture.PictureClause;      // PicClauseCodec
+using GetThePicture.PictureClause.Base; // PicMeta
 ```
 
 ```csharp

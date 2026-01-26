@@ -1,14 +1,14 @@
 using System.Text;
 
 using GetThePicture.Cobol.Meta;
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
 
 namespace GetThePicture.PictureClause.Encoder.Category;
 
 internal static class AlphanumericEncoder
 {
-    private static readonly Encoding cp950 = Cobol.Utils.EncodingFactory.CP950;
+    private static readonly Encoding cp950 = Utils.EncodingFactory.CP950;
 
     public static byte[] Encode(CobMeta meta, PicMeta pic)
     {
@@ -24,7 +24,7 @@ internal static class AlphanumericEncoder
 
         byte[] buffer = cp950.GetBytes(text);
 
-        byte[] normalized = Cobol.Utils.BufferSlice.SlicePadEnd(buffer, pic.DigitCount);
+        byte[] normalized = Utils.BufferSlice.SlicePadEnd(buffer, pic.DigitCount);
 
         return normalized;
     }

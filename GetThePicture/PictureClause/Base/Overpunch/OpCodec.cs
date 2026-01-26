@@ -1,11 +1,14 @@
 using System.Text;
 
 using GetThePicture.Cobol.Options;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base.Options;
 
-namespace GetThePicture.Cobol.Picture.OverpunchBase;
+namespace GetThePicture.PictureClause.Base.Overpunch;
 
-public static class Overpunch
+/// <summary>
+/// Overpunch Codec
+/// </summary>
+public static class OpCodec
 {
     /// <summary>
     /// PIC 9/S9 → 符號(sign)與數字文(numeric)
@@ -16,7 +19,7 @@ public static class Overpunch
     /// <param name="sign">符號</param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    public static string Decode(ReadOnlySpan<byte> fieldBytes, PicMeta pic, CobOptions options, out decimal sign)
+    public static string Decode(ReadOnlySpan<byte> fieldBytes, PicMeta pic, CodecOptions options, out decimal sign)
     {
         byte[] buffer = new byte[fieldBytes.Length];
         fieldBytes.CopyTo(buffer);
@@ -56,7 +59,7 @@ public static class Overpunch
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static byte[] Encode(decimal sign, string numeric, PicMeta pic, CobOptions options)
+    public static byte[] Encode(decimal sign, string numeric, PicMeta pic, CodecOptions options)
     {
         Encoding cp950 = Utils.EncodingFactory.CP950;
 
@@ -92,7 +95,7 @@ public static class Overpunch
     /// <exception cref="FormatException"></exception>
     private static OpVal GetOpValue(char key, DataStorageOptions ds)
     {
-        if (!OverpunchCodex.Map.TryGetValue(ds, out Dictionary<char, OpVal>? codex))
+        if (!OpCodex.Map.TryGetValue(ds, out Dictionary<char, OpVal>? codex))
             throw new FormatException($"Unsupported DataStorage: {ds}");
 
         if (!codex.TryGetValue(key, out OpVal value))
@@ -110,7 +113,7 @@ public static class Overpunch
     /// <exception cref="FormatException"></exception>
     private static char GetOpKey(OpVal value, DataStorageOptions ds)
     {
-        if (!OverpunchCodex.ReversedMap.TryGetValue(ds, out Dictionary<OpVal, char>? codex))
+        if (!OpCodex.ReversedMap.TryGetValue(ds, out Dictionary<OpVal, char>? codex))
             throw new FormatException($"Unsupported DataStorage: {ds}");
 
         if (!codex.TryGetValue(value, out char key))

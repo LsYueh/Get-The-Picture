@@ -2,10 +2,8 @@
 using System.Globalization;
 
 using GetThePicture.Cobol.Options;
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.ComputationalBase;
-using GetThePicture.Cobol.Picture.OverpunchBase;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
 
 namespace GetThePicture.PictureClause.Decoder.Category;
 
@@ -19,28 +17,28 @@ internal static class NumericDecoder
     /// <param name="dataStorageOptions"></param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, CobOptions? options = null)
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, CodecOptions? options = null)
     {
-        options ??= new CobOptions();
+        options ??= new CodecOptions();
 
         // Note: COBOL資料記憶體先被S9(n)截位再轉處裡，一般COBOL應該也是這樣的狀況
 
         // 截位或補字處理
-        ReadOnlySpan<byte> fieldBytes = Cobol.Utils.BufferSlice.SlicePadStart(buffer, pic.StorageOccupied);
+        ReadOnlySpan<byte> fieldBytes = Utils.BufferSlice.SlicePadStart(buffer, pic.StorageOccupied);
 
         return pic.Usage switch
         {
             PicUsage.Display       => Display_Decode(fieldBytes, pic, options),
-            PicUsage.Binary        =>    COMP.Decode(fieldBytes, pic, options.Binary),
-            PicUsage.PackedDecimal =>   COMP3.Decode(fieldBytes, pic),
-            PicUsage.NativeBinary  =>   COMP5.Decode(fieldBytes, pic, options.Binary),
+            PicUsage.Binary        =>    Base.Computational.COMP.Decode(fieldBytes, pic, options.Binary),
+            PicUsage.PackedDecimal =>   Base.Computational.COMP3.Decode(fieldBytes, pic),
+            PicUsage.NativeBinary  =>   Base.Computational.COMP5.Decode(fieldBytes, pic, options.Binary),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
     }
 
-    private static object Display_Decode(ReadOnlySpan<byte> fieldBytes, PicMeta pic, CobOptions options)
+    private static object Display_Decode(ReadOnlySpan<byte> fieldBytes, PicMeta pic, CodecOptions options)
     {
-        string numeric = Overpunch.Decode(fieldBytes, pic, options, out decimal sign);
+        string numeric = Base.Overpunch.OpCodec.Decode(fieldBytes, pic, options, out decimal sign);
         return ParseToValue(numeric, sign, pic);
     }
 

@@ -1,8 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base.Items;
 
-namespace GetThePicture.Cobol.Picture;
+namespace GetThePicture.PictureClause.Base;
 
 internal static partial class PicMetaBuilder
 {

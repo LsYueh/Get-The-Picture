@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text;
 
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
 
 namespace GetThePicture.PictureClause.Decoder.Semantic;
 

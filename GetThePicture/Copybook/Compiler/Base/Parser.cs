@@ -1,9 +1,8 @@
 using System.Text;
 
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Cobol.Utils;
 using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
 
 namespace GetThePicture.Copybook.Compiler.Base;
 

@@ -1,7 +1,7 @@
-using GetThePicture.Cobol.Picture.ComputationalBase;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base.Computational;
+using GetThePicture.PictureClause.Base.Options;
 
-namespace GetThePicture.Tests.Cobol.Picture.ComputationalBase;
+namespace GetThePicture.Tests.PictureClause.Base.Computational;
 
 [TestClass]
 public class NibbleCodexTest

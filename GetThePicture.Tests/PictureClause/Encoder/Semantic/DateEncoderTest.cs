@@ -1,9 +1,9 @@
 using System.Text;
 
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Cobol.Utils;
 using GetThePicture.PictureClause;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
+using GetThePicture.PictureClause.Utils;
 
 namespace GetThePicture.Tests.PictureClause.Encoder.Semantic;
 

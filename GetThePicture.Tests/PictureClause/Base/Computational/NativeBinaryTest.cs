@@ -1,9 +1,9 @@
 using GetThePicture.Cobol.Meta;
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.TypeBase;
-using GetThePicture.Cobol.Picture.ComputationalBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Computational;
+using GetThePicture.PictureClause.Base.Options;
 
-namespace GetThePicture.Tests.Cobol.Picture.ComputationalBase;
+namespace GetThePicture.Tests.PictureClause.Base.Computational;
 
 [TestClass]
 public class NativeBinaryTest

@@ -25,8 +25,8 @@
 
 ## 使用方式:
 ```csharp
-using GetThePicture.Cobol.Picture;
-using GetThePicture.PictureClause;
+using GetThePicture.PictureClause;      // PicClauseCodec
+using GetThePicture.PictureClause.Base; // PicMeta
 ```
 
 ```csharp
@@ -56,15 +56,18 @@ PicClauseCodec.ForMeta(pic).Decode("12L"); // >> -12.3
 <br>
 
 ### COMP-3
+```csharp
+using GetThePicture.PictureClause;      // PicClauseCodec
+using GetThePicture.PictureClause.Base; // PicMeta
+```
+
+```csharp
+using GetThePicture.PictureClause.Base.Items; // PicUsage
+```
+
+<br>
 
 1. 指定 `Usage`  
-    ```csharp
-    using GetThePicture.Codec;
-    using GetThePicture.Codec.Utils;
-
-    using GetThePicture.Cobol.Picture.TypeBase; // 取得 PicUsage
-    ```
-
     ```csharp
     // PIC 9(5).
     var pic = PicMeta.Parse("9(5)");
@@ -104,13 +107,6 @@ PicClauseCodec.ForMeta(pic).Decode("12L"); // >> -12.3
 
 2. PIC 的 Truncate 行為  
     ```csharp
-    using GetThePicture.Codec;
-    using GetThePicture.Codec.Utils;
-
-    using GetThePicture.Cobol.Picture.TypeBase; // 取得 PicUsage
-    ```
-
-    ```csharp
     // PIC 9(3)  USAGE  COMP-3.
     var pic = PicMeta.Parse("S9(3)");
     pic.Usage = PicUsage.PackedDecimal;
@@ -125,15 +121,18 @@ PicClauseCodec.ForMeta(pic).Decode("12L"); // >> -12.3
 <br>
 
 ### COMP / COMP-5
+```csharp
+using GetThePicture.PictureClause;      // PicClauseCodec
+using GetThePicture.PictureClause.Base; // PicMeta
+```
+
+```csharp
+using GetThePicture.PictureClause.Base.Items; // PicUsage
+```
+
+<br>
 
 1. 指定 `Usage`  
-    ```csharp
-    using GetThePicture.Codec;
-    using GetThePicture.Codec.Utils;
-
-    using GetThePicture.Cobol.Picture.TypeBase; // 取得 PicUsage
-    ```
-
     ```csharp
     // PIC 9(04)  USAGE  COMP.
     var pic = PicMeta.Parse("S9(04))");
@@ -168,13 +167,6 @@ PicClauseCodec.ForMeta(pic).Decode("12L"); // >> -12.3
     故在進行跨平台資料交換或解析 COBOL `COMP`/`COMP-5` 欄位時，必須明確指定並正確處理端序，否則可能導致數值資料轉換錯誤。
 
     <br>
-
-    ```csharp
-    using GetThePicture.Codec;
-    using GetThePicture.Codec.Utils;
-
-    using GetThePicture.Cobol.Picture.TypeBase; // 取得 PicUsage
-    ```
 
     ```csharp
     // PIC 9(04)  USAGE  COMP.

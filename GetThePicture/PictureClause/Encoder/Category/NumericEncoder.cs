@@ -1,9 +1,7 @@
 using GetThePicture.Cobol.Meta;
 using GetThePicture.Cobol.Options;
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.ComputationalBase;
-using GetThePicture.Cobol.Picture.OverpunchBase;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
 
 namespace GetThePicture.PictureClause.Encoder.Category;
 
@@ -17,27 +15,27 @@ internal static class NumericEncoder
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
-    public static byte[] Encode(CobMeta meta, PicMeta pic, CobOptions? options = null)
+    public static byte[] Encode(CobMeta meta, PicMeta pic, CodecOptions? options = null)
     {
-        options ??= new CobOptions();
+        options ??= new CodecOptions();
 
         byte[] buffer = pic.Usage switch
         {
-            PicUsage.Display       => Display_Encode(meta, pic, options),
-            PicUsage.Binary        =>    COMP.Encode(meta, pic, options.Binary),
-            PicUsage.PackedDecimal =>   COMP3.Encode(meta, pic),
-            PicUsage.NativeBinary  =>   COMP5.Encode(meta, pic, options.Binary),
+            PicUsage.Display       =>                  Display_Encode(meta, pic, options),
+            PicUsage.Binary        =>  Base.Computational.COMP.Encode(meta, pic, options.Binary),
+            PicUsage.PackedDecimal => Base.Computational.COMP3.Encode(meta, pic),
+            PicUsage.NativeBinary  => Base.Computational.COMP5.Encode(meta, pic, options.Binary),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
 
         // Note: 模擬COBOL資料記憶體被S9(n)截位的輸出結果
         
-        byte[] normalized = Cobol.Utils.BufferSlice.SlicePadStart(buffer, pic.StorageOccupied);
+        byte[] normalized = Utils.BufferSlice.SlicePadStart(buffer, pic.StorageOccupied);
 
         return normalized;
     }
 
-    private static byte[] Display_Encode(CobMeta meta, PicMeta pic, CobOptions options)
+    private static byte[] Display_Encode(CobMeta meta, PicMeta pic, CodecOptions options)
     {
         string numeric = meta switch
         {
@@ -47,7 +45,7 @@ internal static class NumericEncoder
 
         decimal sign = meta.Sign;
 
-        byte[] buffer = Overpunch.Encode(sign, numeric, pic, options);
+        byte[] buffer = Base.Overpunch.OpCodec.Encode(sign, numeric, pic, options);
 
         return buffer;
     }

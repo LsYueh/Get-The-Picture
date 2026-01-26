@@ -1,8 +1,8 @@
 using System.Text;
 
-namespace GetThePicture.Cobol.Utils;
+namespace GetThePicture.PictureClause.Utils;
 
-internal static class EncodingFactory
+public static class EncodingFactory
 {
     public static readonly Encoding StrictCP950;
     public static readonly Encoding CP950;

@@ -1,15 +1,15 @@
-using GetThePicture.Cobol.Picture.OverpunchBase;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base.Options;
+using GetThePicture.PictureClause.Base.Overpunch;
 
-namespace GetThePicture.Tests.Cobol.Picture.OverpunchBase;
+namespace GetThePicture.Tests.PictureClause.Base.Overpunch;
 
 [TestClass]
-public class OverpunchCodexTest
+public class OpCodexTest
 {
     [TestMethod]
     public void OverpunchCode_Positive_CI()
     {
-        var OpCode = OverpunchCodex.Map[DataStorageOptions.CI];
+        var OpCode = OpCodex.Map[DataStorageOptions.CI];
 
         OpCode.TryGetValue('C', out var info);
 
@@ -20,7 +20,7 @@ public class OverpunchCodexTest
     [TestMethod]
     public void OverpunchCode_Negative_CI()
     {
-        var OpCode = OverpunchCodex.Map[DataStorageOptions.CI];
+        var OpCode = OpCodex.Map[DataStorageOptions.CI];
 
         OpCode.TryGetValue('}', out var info);
 
@@ -31,7 +31,7 @@ public class OverpunchCodexTest
     [TestMethod]
     public void OverpunchCode_Negative_CR()
     {
-        var OpCode = OverpunchCodex.Map[DataStorageOptions.CR];
+        var OpCode = OpCodex.Map[DataStorageOptions.CR];
 
         OpCode.TryGetValue(' ', out var info_0);
         Assert.AreEqual(-1, info_0.Sign);

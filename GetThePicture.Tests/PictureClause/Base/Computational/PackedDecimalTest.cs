@@ -1,11 +1,11 @@
 using System.Globalization;
 
 using GetThePicture.Cobol.Meta;
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.ComputationalBase;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
+using GetThePicture.PictureClause.Base.Computational;
 
-namespace GetThePicture.Tests.Cobol.Picture.ComputationalBase;
+namespace GetThePicture.Tests.PictureClause.Base.Computational;
 
 [TestClass]
 public class PackedDecimalTest

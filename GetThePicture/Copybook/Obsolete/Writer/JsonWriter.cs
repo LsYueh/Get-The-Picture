@@ -1,7 +1,7 @@
 using System.Text.Json;
 
-using GetThePicture.Cobol.Picture;
 using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.PictureClause.Base;
 
 namespace GetThePicture.Copybook.Obsolete.Writer;
 

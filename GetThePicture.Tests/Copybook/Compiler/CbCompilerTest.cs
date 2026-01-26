@@ -1,8 +1,8 @@
 using System.Text;
 
-using GetThePicture.Cobol.Utils;
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.PictureClause.Utils;
 
 namespace GetThePicture.Tests.Copybook.Compiler;
 

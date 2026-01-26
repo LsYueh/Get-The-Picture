@@ -1,6 +1,7 @@
 using GetThePicture.Cobol.Options;
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
+using GetThePicture.PictureClause.Base.Options;
 
 namespace GetThePicture.PictureClause;
 
@@ -24,7 +25,7 @@ public static class PicClauseCodec
 public sealed class CodecContext(PicMeta meta)
 {
     private readonly PicMeta _picMeta = meta;
-    private readonly CobOptions _cobOptions = new();
+    private readonly CodecOptions _options = new();
 
     // -------------------------
     // COBOL Compile Options
@@ -36,7 +37,7 @@ public sealed class CodecContext(PicMeta meta)
     /// <returns></returns>
     public CodecContext WithStrict()
     {
-        _cobOptions.Strict = true;
+        _options.Strict = true;
         return this;
     }
 
@@ -47,7 +48,7 @@ public sealed class CodecContext(PicMeta meta)
     /// <returns></returns>
     public CodecContext WithDataStorageOption(DataStorageOptions? opt)
     {
-        _cobOptions.DataStorage = opt ?? DataStorageOptions.CI;
+        _options.DataStorage = opt ?? DataStorageOptions.CI;
         return this;
     }
 
@@ -57,7 +58,7 @@ public sealed class CodecContext(PicMeta meta)
     /// <returns></returns>
     public CodecContext WithSignIsLeading()
     {
-        _cobOptions.Sign = SignOptions.IsLeading;
+        _options.Sign = SignOptions.IsLeading;
         return this;
     }
 
@@ -67,7 +68,7 @@ public sealed class CodecContext(PicMeta meta)
     /// <returns></returns>
     public CodecContext WithReversedBinary()
     {
-        _cobOptions.Binary = BinaryOptions.Reversed;
+        _options.Binary = BinaryOptions.Reversed;
         return this;
     }
 
@@ -102,7 +103,7 @@ public sealed class CodecContext(PicMeta meta)
         if (buffer.Length == 0)
             throw new ArgumentException("Buffer is empty.", nameof(buffer));
         
-        return Decoder.PicDecoder.Decode(buffer, _picMeta, _cobOptions);
+        return Decoder.PicDecoder.Decode(buffer, _picMeta, _options);
     }
 
     /// <summary>
@@ -114,6 +115,6 @@ public sealed class CodecContext(PicMeta meta)
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return Encoder.PicEncoder.Encode(value, _picMeta, _cobOptions);
+        return Encoder.PicEncoder.Encode(value, _picMeta, _options);
     }
 }

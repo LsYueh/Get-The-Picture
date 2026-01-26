@@ -1,7 +1,7 @@
 using GetThePicture.Cobol.Meta;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base.Options;
 
-namespace GetThePicture.Cobol.Picture.ComputationalBase;
+namespace GetThePicture.PictureClause.Base.Computational;
 
 /// <summary>
 /// COMP-3 (Packed Decimal)

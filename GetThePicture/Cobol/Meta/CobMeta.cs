@@ -10,7 +10,7 @@ internal enum CobMetaType
 }
 
 /// <summary>
-/// COBOL Elementary Meta
+/// COBOL Elementary Meta (For Encoding Purpose)
 /// </summary>
 internal sealed class CobMeta
 {

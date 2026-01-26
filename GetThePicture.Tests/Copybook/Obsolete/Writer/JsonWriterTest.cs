@@ -2,9 +2,9 @@ using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 
-using GetThePicture.Cobol.Utils;
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Obsolete.Writer;
+using GetThePicture.PictureClause.Utils;
 
 namespace GetThePicture.Tests.Copybook.Obsolete.Writer;
 

@@ -1,8 +1,8 @@
 using System.Globalization;
 using System.Text;
 
-using GetThePicture.Cobol.Picture;
 using GetThePicture.PictureClause;
+using GetThePicture.PictureClause.Base;
 
 namespace GetThePicture.Tests.PictureClause.Decoder.Category;
 

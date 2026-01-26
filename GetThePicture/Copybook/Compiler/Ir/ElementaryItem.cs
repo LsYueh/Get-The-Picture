@@ -1,4 +1,4 @@
-using GetThePicture.Cobol.Picture;
+using GetThePicture.PictureClause.Base;
 
 namespace GetThePicture.Copybook.Compiler.Ir;
 

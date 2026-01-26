@@ -1,8 +1,8 @@
 using System.Globalization;
 
 using GetThePicture.Cobol.Meta;
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
 using GetThePicture.PictureClause.Encoder;
 
 namespace GetThePicture.Tests.PictureClause.Encoder;

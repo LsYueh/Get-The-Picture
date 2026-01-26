@@ -1,18 +1,18 @@
 using System.Collections.ObjectModel;
 
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base.Options;
 
-namespace GetThePicture.Cobol.Picture.OverpunchBase;
+namespace GetThePicture.PictureClause.Base.Overpunch;
 
 /// <summary>
-/// 
+/// Overpunch Codex
 /// </summary>
-internal static class OverpunchCodex
+internal static class OpCodex
 {
     public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>> Map;
     public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>> ReversedMap;
 
-    static OverpunchCodex()
+    static OpCodex()
     {
         Map = BuildMap();
         ReversedMap = BuildReversedMap();
@@ -22,12 +22,12 @@ internal static class OverpunchCodex
     {
         var dictionary = new Dictionary<DataStorageOptions, Dictionary<char, OpVal>>
         {
-            { DataStorageOptions.CA, Merge(OpCodex.OP_POSITIVE_01, OpCodex.OP_NEGATIVE_01) },
-            { DataStorageOptions.CB, Merge(OpCodex.OP_POSITIVE_01, OpCodex.OP_NEGATIVE_02) },
-            { DataStorageOptions.CI, Merge(OpCodex.OP_POSITIVE_02, OpCodex.OP_NEGATIVE_01) },
-            { DataStorageOptions.CM, Merge(OpCodex.OP_POSITIVE_01, OpCodex.OP_NEGATIVE_03) },
-            { DataStorageOptions.CN, Merge(OpCodex.OP_POSITIVE_02, OpCodex.OP_NEGATIVE_01) },
-            { DataStorageOptions.CR, Merge(OpCodex.OP_POSITIVE_01, OpCodex.OP_NEGATIVE_04) },
+            { DataStorageOptions.CA, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_01) },
+            { DataStorageOptions.CB, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_02) },
+            { DataStorageOptions.CI, Merge(OpCodexBase.OP_POSITIVE_02, OpCodexBase.OP_NEGATIVE_01) },
+            { DataStorageOptions.CM, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_03) },
+            { DataStorageOptions.CN, Merge(OpCodexBase.OP_POSITIVE_02, OpCodexBase.OP_NEGATIVE_01) },
+            { DataStorageOptions.CR, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_04) },
         };
         
         return new ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>>(dictionary);
@@ -47,12 +47,12 @@ internal static class OverpunchCodex
     {
         var dictionary = new Dictionary<DataStorageOptions, Dictionary<OpVal, char>>
         {
-            { DataStorageOptions.CA, MergeRev(OpCodex.OP_POSITIVE_01_REVERSE, OpCodex.OP_NEGATIVE_01_REVERSE) },
-            { DataStorageOptions.CB, MergeRev(OpCodex.OP_POSITIVE_01_REVERSE, OpCodex.OP_NEGATIVE_02_REVERSE) },
-            { DataStorageOptions.CI, MergeRev(OpCodex.OP_POSITIVE_02_REVERSE, OpCodex.OP_NEGATIVE_01_REVERSE) },
-            { DataStorageOptions.CM, MergeRev(OpCodex.OP_POSITIVE_01_REVERSE, OpCodex.OP_NEGATIVE_03_REVERSE) },
-            { DataStorageOptions.CN, MergeRev(OpCodex.OP_POSITIVE_02_REVERSE, OpCodex.OP_NEGATIVE_01_REVERSE) },
-            { DataStorageOptions.CR, MergeRev(OpCodex.OP_POSITIVE_01_REVERSE, OpCodex.OP_NEGATIVE_04_REVERSE) },
+            { DataStorageOptions.CA, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_01_REVERSE) },
+            { DataStorageOptions.CB, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_02_REVERSE) },
+            { DataStorageOptions.CI, MergeRev(OpCodexBase.OP_POSITIVE_02_REVERSE, OpCodexBase.OP_NEGATIVE_01_REVERSE) },
+            { DataStorageOptions.CM, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_03_REVERSE) },
+            { DataStorageOptions.CN, MergeRev(OpCodexBase.OP_POSITIVE_02_REVERSE, OpCodexBase.OP_NEGATIVE_01_REVERSE) },
+            { DataStorageOptions.CR, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_04_REVERSE) },
         };
         
         return new ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>>(dictionary);
@@ -74,7 +74,7 @@ internal static class OverpunchCodex
 /// </summary>
 /// <param name="sign"></param>
 /// <param name="digit"></param>
-public readonly struct OpVal(decimal sign, char digit)
+internal readonly struct OpVal(decimal sign, char digit)
 {
     public decimal Sign { get; } = sign;
     public char Digit { get; } = digit;
@@ -84,7 +84,7 @@ public readonly struct OpVal(decimal sign, char digit)
 /// Overpunch Codex<br/>
 /// Data Description Entry : <see href="https://docs.rocketsoftware.com/zh-TW/bundle/acucobolgt_dg_1050_html/page/BKRFRFDATAS043.html">USAGE Clause</see>
 /// </summary>
-public static class OpCodex
+internal static class OpCodexBase
 {
     /// <summary>
     /// -Dca, -Dcb, -Dcm, -Dcr

@@ -1,4 +1,4 @@
-namespace GetThePicture.Cobol.Picture.TypeBase;
+namespace GetThePicture.PictureClause.Base.Items;
 
 /// <summary>
 /// Class of elementary items.

@@ -1,4 +1,4 @@
-namespace GetThePicture.Cobol.Utils;
+namespace GetThePicture.PictureClause.Utils;
 
 internal static class BufferSlice
 {

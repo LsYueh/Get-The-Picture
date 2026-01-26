@@ -16,16 +16,17 @@
 
 範例程式:  
 ```csharp
-using GetThePicture.Codec.Utils;
-using GetThePicture.Copybook.Compiler;
-using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler;    // CbCompiler
+using GetThePicture.Copybook.Compiler.Ir; // CbSchema
+
+using GetThePicture.PictureClause.Utils;  // EncodingFactory
 ```
 
 ```csharp
 Encoding cp950 = EncodingFactory.CP950;
 using var streamReader = new StreamReader(@"TestData/demo.cpy", cp950);
 
-CbSchema schema = CbCompiler.Reader.FromStreamReader(streamReader);
+CbSchema schema = CbCompiler.FromStreamReader(streamReader);
 
 schema.Dump(Console.Out);
 ```

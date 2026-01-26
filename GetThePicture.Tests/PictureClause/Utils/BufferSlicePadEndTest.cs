@@ -1,8 +1,8 @@
 using System.Text;
 
-using GetThePicture.Cobol.Utils;
+using GetThePicture.PictureClause.Utils;
 
-namespace GetThePicture.Tests.Cobol.Utils;
+namespace GetThePicture.Tests.PictureClause.Utils;
 
 [TestClass]
 public class BufferSlicePadEndTest

@@ -1,7 +1,7 @@
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
 
-namespace GetThePicture.Tests.Cobol.Picture;
+namespace GetThePicture.Tests.PictureClause.Base;
 
 [TestClass]
 public class PicMetaTest

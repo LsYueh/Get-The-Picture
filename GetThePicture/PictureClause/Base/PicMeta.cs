@@ -1,7 +1,6 @@
-using GetThePicture.Cobol.Picture.ComputationalBase;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base.Items;
 
-namespace GetThePicture.Cobol.Picture;
+namespace GetThePicture.PictureClause.Base;
 
 /// <summary>
 /// COBOL PICTURE Metadata Class
@@ -37,9 +36,9 @@ public class PicMeta
         Usage switch
         {
             PicUsage.Display       => DigitCount,
-            PicUsage.Binary        => COMP5.GetByteLength(this),
+            PicUsage.Binary        => Computational.COMP5.GetByteLength(this),
             PicUsage.PackedDecimal => (DigitCount + 1) / 2,
-            PicUsage.NativeBinary  => COMP5.GetByteLength(this),
+            PicUsage.NativeBinary  => Computational.COMP5.GetByteLength(this),
             _ => throw new NotSupportedException()
         };
 

@@ -1,6 +1,6 @@
 using GetThePicture.Cobol.Options;
-using GetThePicture.Cobol.Picture;
-using GetThePicture.Cobol.Picture.TypeBase;
+using GetThePicture.PictureClause.Base;
+using GetThePicture.PictureClause.Base.Items;
 
 namespace GetThePicture.PictureClause.Decoder;
 
@@ -14,7 +14,7 @@ internal static class PicDecoder
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, CobOptions options)
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, CodecOptions options)
     {
         ArgumentNullException.ThrowIfNull(pic);
 
@@ -37,7 +37,7 @@ internal static class PicDecoder
 #pragma warning restore IDE0066 // Convert switch statement to expression
     }
 
-    private static object DecodeBaseType(ReadOnlySpan<byte> buffer, PicMeta pic, CobOptions options)
+    private static object DecodeBaseType(ReadOnlySpan<byte> buffer, PicMeta pic, CodecOptions options)
     {
 #pragma warning disable IDE0066 // Convert switch statement to expression
         switch (pic.BaseClass)
