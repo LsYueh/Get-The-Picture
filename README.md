@@ -165,11 +165,72 @@ Copybook 通常包含：
 ## Copybook SerDes
 SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）的合稱，用於資料在不同系統或存儲之間的轉換。  
 
-1. Serialization（序列化）
+<br>
+
+1. Deserialization（反序列化）
+    - 將序列化後的資料恢復成程式中的 `物件` 或 `資料結構` (目前採用Dictionary)。 
+
+    ```csharp
+    // 將 Copybook 轉成 schema
+    var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/t30-otc.cpy", cp950));
+    var serDes = new CbSerDes(schema);
+
+    // 讀取檔案 (編碼: CP950 / ASCII)
+    using var reader = new StreamReader(@"TestData/t30-otc-lite.dat", cp950);
+
+    string? line;
+    while ((line = reader.ReadLine()) != null)
+    {
+      var byte = cp950.GetBytes(line);
+
+      // 根據Copybook的schema來反序列化資料
+      var record = serDes.Deserialize(expected);
+
+      Console.WriteLine("==== Record ====");
+      RecordValuePrinter.Print(record);
+      Console.WriteLine("================\n");
+    }
+    ```
+
+    輸出: 
+    ```shell
+    ...
+    ==== Record ====
+    STOCK-NO: 19094
+    BULL-PRICE: 105.80000
+    LDC-PRICE: 96.20000
+    BEAR-PRICE: 86.60000
+    LAST-MTH-DATE: 20251111
+    SETTYPE: 0
+    MARK-W: 0
+    MARK-P: 0
+    MARK-L: 0
+    IND-CODE: 00
+    IND-SUB-CODE: 
+    MARK-M: 0
+    STOCK-NAME: 榮成四
+    MARK-W-DETAILS:
+      MATCH-INTERVAL: 0
+      ORDER-LIMIT: 0
+      ORDERS-LIMIT: 0
+      PREPAY-RATE: 0
+    MARK-S: 0
+    STK-MARK: 0
+    MARK-F: 0
+    MARK-DAY-TRADE: 
+    STK-CTGCD: 0
+    ================
+    ...
+    ```
+
+<br>
+
+2. Serialization（序列化）
     - 將程式中的物件或資料結構轉換成一種 `可存儲` 或 `傳輸` 的格式。
 
-2. Deserialization（反序列化）
-    - 將序列化後的資料恢復成程式中的 `物件` 或 `資料結構`。
+    ```csharp
+    var serialized = serDes.Serialize(record);
+    ```
 
 - [Copybook Compiler](docs/copybook/compiler.md)
 
