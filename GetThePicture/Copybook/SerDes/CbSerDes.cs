@@ -21,11 +21,11 @@ public sealed class CbSerDes(CbSchema schema)
     {
         var cursor = new RecCursor(record);
 
-        return CbDeserializer.DesDocument(_schema, ref cursor);
+        return CbDeserializer.DesSchema(_schema, ref cursor);
     }
 
-    public byte[] Serialize(object value)
+    public byte[] Serialize(RecValue value)
     {
-        throw new NotImplementedException();
+        return CbSerializer.SerSchema(_schema, value);
     }
 }

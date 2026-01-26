@@ -2,12 +2,11 @@ using GetThePicture.Copybook.Compiler.Ir;
 using GetThePicture.Copybook.SerDes.Record;
 using GetThePicture.PictureClause;
 
-namespace GetThePicture.Copybook.SerDes
-;
+namespace GetThePicture.Copybook.SerDes;
 
 internal class CbDeserializer
 {
-    internal static RecValue DesDocument(CbSchema schema, ref RecCursor cursor)
+    internal static RecValue DesSchema(CbSchema schema, ref RecCursor cursor)
     {
         var result = new RecValue();
 

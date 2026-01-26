@@ -13,7 +13,7 @@ public class CbSerDesTest
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
     [TestMethod]
-    public void Deserialize_T30_OTC_Test()
+    public void Deserialize_Serialize_T30_OTC_Test()
     {
         var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/t30-otc.cpy", cp950));
 
@@ -26,11 +26,15 @@ public class CbSerDesTest
         string? line;
         while ((line = reader.ReadLine()) != null)
         {
-            var bytes = cp950.GetBytes(line);
+            var expected = cp950.GetBytes(line);
 
-            Assert.AreEqual(schema.StorageOccupied, bytes.Length);
+            Assert.AreEqual(schema.StorageOccupied, expected.Length);
 
-            var record = serDes.Deserialize(bytes);
+            var record = serDes.Deserialize(expected);
+
+            // Console.WriteLine("==== Record ====");
+            // RecordValuePrinter.Print(record);
+            // Console.WriteLine("================\n");
 
             Assert.AreEqual(19, record.Fields.Count);
             record.Fields.TryGetValue("MARK-W-DETAILS", out object? value);
@@ -42,9 +46,9 @@ public class CbSerDesTest
                 Assert.Fail();
             }
 
-            // Console.WriteLine("==== Record ====");
-            // RecordValuePrinter.Print(record);
-            // Console.WriteLine("================\n");
+            var serialized = serDes.Serialize(record);
+
+            CollectionAssert.AreEqual(expected, serialized);
         }
     }
 }
