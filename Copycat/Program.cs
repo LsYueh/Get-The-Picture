@@ -4,6 +4,7 @@ namespace Copycat;
 
 class Program
 {
+    [Verb("run")]
     public sealed class Options
     {
         [Option('f', "file", Required = true, HelpText = "Input copybook file.")]
@@ -15,10 +16,11 @@ class Program
 
     static int Main(string[] args)
     {      
-        return Parser.Default.ParseArguments<Options>(args).MapResult(
-            RunOptions,
-            errs => HandleParseError(errs)
-        );
+        return Parser.Default.ParseArguments<Options>(args)
+            .MapResult(
+                RunOptions,
+                errs => HandleParseError(errs)
+            );
     }
 
     // ----------------------------------------
