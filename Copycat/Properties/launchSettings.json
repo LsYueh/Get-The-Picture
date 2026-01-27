@@ -3,13 +3,14 @@
     "profiles": {
         "Debug": {
             "commandName": "Project",
+            "workingDirectory": "$(ProjectDir)/../GetThePicture.Tests/TestData",
             "dotnetRunMessages": true,
             "launchBrowser": false,
             "applicationUrl": null,
             "environmentVariables": {
                 "DOTNET_ENVIRONMENT": "Development"
             },
-            "commandLineArgs": ""
+            "commandLineArgs": "--file t30-otc-adv.cpy --verbose"
         },
     }
 }
