@@ -51,4 +51,30 @@ public class CbSerDesTest
             CollectionAssert.AreEqual(expected, serialized);
         }
     }
+
+    [TestMethod]
+    [TestCategory("Demo")]
+    [Ignore]
+    public void SerDes_T30_Test()
+    {
+        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/t30-otc-adv.cpy", cp950));
+        var serDes = new CbSerDes(schema);
+
+        using var reader = new StreamReader(@"TestData/t30-otc-lite.dat", cp950);
+
+        string? line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            var expected = cp950.GetBytes(line);
+            var record = serDes.Deserialize(expected);
+
+            Console.WriteLine("==== Record ====");
+            RecordValuePrinter.Print(record);
+            Console.WriteLine("================\n");
+
+            var serialized = serDes.Serialize(record);
+
+            CollectionAssert.AreEqual(expected, serialized);
+        }
+    }
 }
