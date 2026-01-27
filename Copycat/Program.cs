@@ -13,37 +13,37 @@ class Program
         public bool Verbose { get; set; }
     }
 
-    static void Main(string[] args)
+    static int Main(string[] args)
     {      
-        Parser.Default.ParseArguments<Options>(args)
-            .WithParsed(RunOptions)
-            .WithNotParsed(HandleParseError);
+        return Parser.Default.ParseArguments<Options>(args).MapResult(
+            RunOptions,
+            errs => HandleParseError(errs)
+        );
     }
 
     // ----------------------------------------
 
-    private static void RunOptions(Options opts)
+    private static int RunOptions(Options opts)
     {
         ArgumentNullException.ThrowIfNull(opts.File);
 
         if (!opts.File.Exists)
         {
             Console.Error.WriteLine($"File not found: {opts.File.FullName}");
-            Environment.Exit(1);
+            return 1;
         }
 
         ReadFile(opts.File, opts.Verbose);
+
+        return 0;
     }
 
-    private static void HandleParseError(IEnumerable<Error> errors)
+    private static int HandleParseError(IEnumerable<Error> errors)
     {
-        if (errors.Any(e => e is HelpRequestedError or VersionRequestedError))
-        {
-            Environment.Exit(0); // 使用者只是要看 help
-        }
-
-        Environment.Exit(1);
+        return errors.Any(e => e is HelpRequestedError or VersionRequestedError) ? 0 : 1;
     }
+
+    // ----------------------------------------
 
     static void ReadFile(FileInfo? file, bool verbose = true)
     {
