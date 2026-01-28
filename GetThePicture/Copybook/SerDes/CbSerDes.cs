@@ -17,14 +17,14 @@ public sealed class CbSerDes(CbSchema schema)
     /// </summary>
     /// <param name="record"></param>
     /// <returns></returns>
-    public RecValue Deserialize(ReadOnlySpan<byte> record)
+    public CbRecord Deserialize(ReadOnlySpan<byte> record)
     {
         var cursor = new RecCursor(record);
 
         return CbDeserializer.DesSchema(_schema, ref cursor);
     }
 
-    public byte[] Serialize(RecValue value)
+    public byte[] Serialize(CbRecord value)
     {
         return CbSerializer.SerSchema(_schema, value);
     }

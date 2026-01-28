@@ -184,10 +184,10 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
       var byte = cp950.GetBytes(line);
 
       // 根據Copybook的schema來反序列化資料
-      var record = serDes.Deserialize(expected);
+      CbRecord record = serDes.Deserialize(expected);
 
       Console.WriteLine("==== Record ====");
-      RecordValuePrinter.Print(record);
+      record.Print();
       Console.WriteLine("================\n");
     }
     ```

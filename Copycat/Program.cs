@@ -1,14 +1,18 @@
 ﻿using CommandLine;
 
+using Copycat.Commands;
+
 namespace Copycat;
 
 class Program
 {
-    [Verb("run")]
     public sealed class Options
     {
-        [Option('f', "file", Required = true, HelpText = "Input copybook file.")]
-        public FileInfo? File { get; set; }
+        [Option('s', "schema", Required = true, HelpText = "Input copybook schema.")]
+        public FileInfo? Schema { get; set; }
+
+        [Option('f', "file", Required = false, HelpText = "Input COBOL data file.")]
+        public FileInfo? Data { get; set; }
 
         [Option('v', "verbose", HelpText = "Enable verbose output.")]
         public bool Verbose { get; set; }
@@ -27,15 +31,13 @@ class Program
 
     private static int RunOptions(Options opts)
     {
-        ArgumentNullException.ThrowIfNull(opts.File);
-
-        if (!opts.File.Exists)
+        if (!opts.Schema!.Exists)
         {
-            Console.Error.WriteLine($"File not found: {opts.File.FullName}");
+            Console.Error.WriteLine($"File not found: {opts.Schema.FullName}");
             return 1;
         }
 
-        ReadFile(opts.File, opts.Verbose);
+        var schema = SchemaCmd.ReadSchema(opts.Schema, opts.Verbose);
 
         return 0;
     }
@@ -43,21 +45,6 @@ class Program
     private static int HandleParseError(IEnumerable<Error> errors)
     {
         return errors.Any(e => e is HelpRequestedError or VersionRequestedError) ? 0 : 1;
-    }
-
-    // ----------------------------------------
-
-    static void ReadFile(FileInfo? file, bool verbose = true)
-    {
-        ArgumentNullException.ThrowIfNull(file);
-
-        if (!file.Exists)
-            throw new FileNotFoundException($"File not found: {file.FullName}", file.FullName);
-
-        foreach (string line in File.ReadLines(file.FullName))
-        {
-            if (verbose) Console.WriteLine(line);
-        }
     }
 }
 

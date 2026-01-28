@@ -33,13 +33,13 @@ public class CbSerDesTest
             var record = serDes.Deserialize(expected);
 
             // Console.WriteLine("==== Record ====");
-            // RecordValuePrinter.Print(record);
+            // record.Print();
             // Console.WriteLine("================\n");
 
             Assert.AreEqual(19, record.Fields.Count);
             record.Fields.TryGetValue("MARK-W-DETAILS", out object? value);
             
-            if (value is RecValue subRecord)
+            if (value is CbRecord subRecord)
                 Assert.AreEqual(4, subRecord.Fields.Count);
             else
             {
@@ -69,7 +69,7 @@ public class CbSerDesTest
             var record = serDes.Deserialize(expected);
 
             Console.WriteLine("==== Record ====");
-            RecordValuePrinter.Print(record);
+            record.Print();
             Console.WriteLine("================\n");
 
             var serialized = serDes.Serialize(record);

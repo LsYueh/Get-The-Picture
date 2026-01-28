@@ -6,7 +6,7 @@ namespace GetThePicture.Copybook.SerDes;
 
 internal class CbSerializer
 {
-    public static byte[] SerSchema(CbSchema schema, RecValue record)
+    public static byte[] SerSchema(CbSchema schema, CbRecord record)
     {
         ArgumentNullException.ThrowIfNull(schema);
         ArgumentNullException.ThrowIfNull(record);
@@ -19,7 +19,7 @@ internal class CbSerializer
         return ms.ToArray();
     }
 
-    private static void WriteItem(BinaryWriter writer, IDataItem item, RecValue current)
+    private static void WriteItem(BinaryWriter writer, IDataItem item, CbRecord current)
     {
         switch (item)
         {
@@ -40,7 +40,7 @@ internal class CbSerializer
         }
     }
 
-    private static void WriteSchema(BinaryWriter writer, CbSchema schema, RecValue current)
+    private static void WriteSchema(BinaryWriter writer, CbSchema schema, CbRecord current)
     {
         foreach (var dataItem in schema.DataItems)
         {
@@ -48,11 +48,11 @@ internal class CbSerializer
         }
     }
     
-    private static void WriteGroup(BinaryWriter writer, GroupItem group, RecValue current)
+    private static void WriteGroup(BinaryWriter writer, GroupItem group, CbRecord current)
     {
         if (group.Name != null)
         {
-            if (current[group.Name] is not RecValue child)
+            if (current[group.Name] is not CbRecord child)
                 throw new Exception($"Group '{group.Name}' requires a RecValue.");
 
             current = child;
@@ -64,7 +64,7 @@ internal class CbSerializer
         }
     }
 
-    private static void WriteElementary(BinaryWriter writer, ElementaryDataItem item, RecValue current)
+    private static void WriteElementary(BinaryWriter writer, ElementaryDataItem item, CbRecord current)
     {
         var pic = item.Pic ?? throw new InvalidOperationException($"Elementary item '{item.Name}' has no PIC clause.");
 

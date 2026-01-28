@@ -6,9 +6,9 @@ namespace GetThePicture.Copybook.SerDes;
 
 internal class CbDeserializer
 {
-    internal static RecValue DesSchema(CbSchema schema, ref RecCursor cursor)
+    internal static CbRecord DesSchema(CbSchema schema, ref RecCursor cursor)
     {
-        var result = new RecValue();
+        var result = new CbRecord();
 
         foreach (var dataItem in schema.DataItems)
         {
@@ -30,9 +30,9 @@ internal class CbDeserializer
         return result;
     }
 
-    private static RecValue DesGroupItem(GroupItem item, ref RecCursor cursor)
+    private static CbRecord DesGroupItem(GroupItem item, ref RecCursor cursor)
     {
-        var result = new RecValue();
+        var result = new CbRecord();
 
         foreach (var subordinate in item.Subordinates)
         {
@@ -54,7 +54,7 @@ internal class CbDeserializer
         return result;
     }
 
-    private static void DesNestedGroupItem(GroupItem item, ref RecCursor cursor, RecValue target)
+    private static void DesNestedGroupItem(GroupItem item, ref RecCursor cursor, CbRecord target)
     {
         int occurs = item.Occurs ?? 1;
 
@@ -64,7 +64,7 @@ internal class CbDeserializer
         }
         else
         {
-            var values = new RecValue[occurs];
+            var values = new CbRecord[occurs];
 
             for (int i = 0; i < occurs; i++)
             {
@@ -75,7 +75,7 @@ internal class CbDeserializer
         }
     }
 
-    private static void DesElementaryDataItem(ElementaryDataItem item, ref RecCursor cursor, RecValue target)
+    private static void DesElementaryDataItem(ElementaryDataItem item, ref RecCursor cursor, CbRecord target)
     {
         int occurs = item.Occurs ?? 1;
 
