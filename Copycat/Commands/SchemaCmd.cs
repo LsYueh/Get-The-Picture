@@ -5,6 +5,11 @@ using GetThePicture.Copybook.Compiler.Ir;
 
 namespace Copycat.Commands;
 
+/// <summary>
+/// 提供 Copybook Schema 相關的 CLI 功能。 <br />
+/// 將已解析的 CbSchema 轉換成對應的 C# 資料模型 (.cs)。 <br />
+/// 生成 Copybook 對應的 record struct 或 class。 <br />
+/// </summary>
 public static class SchemaCmd
 {
     private static readonly Encoding CP950 = Core.EncodingResolver.CP950;
