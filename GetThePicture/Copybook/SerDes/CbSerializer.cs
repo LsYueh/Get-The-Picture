@@ -14,66 +14,105 @@ internal class CbSerializer
         using var ms = new MemoryStream();
         using var writer = new BinaryWriter(ms);
 
-        WriteItem(writer, schema, record);
+        WriteGroupItems(writer, schema, record);
 
         return ms.ToArray();
     }
 
-    private static void WriteItem(BinaryWriter writer, IDataItem item, CbRecord current)
+    private static void WriteGroupItems(BinaryWriter writer, IDataItem item, CbRecord current)
     {
-        switch (item)
+        foreach (var child in item.Children)
         {
-            case CbSchema schema:
-                WriteSchema(writer, schema, current);
-                break;
-            case GroupItem group:
-                WriteGroup(writer, group, current);
-                break;
+            switch (child)
+            {
+                case GroupItem g:
+                    WriteNestedGroupItem(writer, g, current);
+                    break;
 
-            case ElementaryDataItem elementary:
-                WriteElementary(writer, elementary, current);
-                break;
+                case ElementaryDataItem e:
+                    WriteElementaryDataItem(writer, e, current);
+                    break;
 
-            default:
-                throw new NotSupportedException(
-                    $"Unsupported IDataItem type: {item.GetType().Name}");
-        }
-    }
-
-    private static void WriteSchema(BinaryWriter writer, CbSchema schema, CbRecord current)
-    {
-        foreach (var child in schema.Children)
-        {
-            WriteItem(writer, child, current);
+                default:
+                    throw new NotSupportedException(
+                        $"Unsupported IDataItem type: {item.GetType().Name}");
+            }
         }
     }
     
-    private static void WriteGroup(BinaryWriter writer, GroupItem group, CbRecord current)
+    private static void WriteNestedGroupItem(BinaryWriter writer, GroupItem group, CbRecord current)
     {
-        if (group.Name != null)
-        {
-            if (current[group.Name] is not CbRecord child)
-                throw new Exception($"Group '{group.Name}' requires a RecValue.");
+        // 取得 GroupItem 的資料來源
+        object? value = (group.Name != null ? current[group.Name] : current) ?? throw new Exception($"Group '{group.Name}' requires a CbRecord(s).");
 
-            current = child;
-        }
-        
-        foreach (var child in group.Children)
+        int occurs = group.Occurs ?? 1;
+
+        if (occurs == 1)
         {
-            WriteItem(writer, child, current);
+            if (value is not CbRecord record)
+                throw new Exception($"Group '{group.Name}' requires a CbRecord.");
+
+            WriteGroupItems(writer, group, record);
+        }
+        else
+        {
+            // OCCURS 對應 CbRecord[]
+            
+            if (value is not IReadOnlyList<CbRecord> records)
+                throw new Exception($"Group '{group.Name}' OCCURS {occurs} TIMES requires a list.");
+
+            if (records.Count != occurs)
+                throw new Exception($"Group '{group.Name}' OCCURS {occurs} TIMES but got {records.Count}.");
+
+            foreach (var record in records)
+            {
+                WriteGroupItems(writer, group, record);
+            }
         }
     }
 
-    private static void WriteElementary(BinaryWriter writer, ElementaryDataItem item, CbRecord current)
+    private static void WriteElementaryDataItem(BinaryWriter writer, ElementaryDataItem item, CbRecord current)
     {
-        var pic = item.Pic ?? throw new InvalidOperationException($"Elementary item '{item.Name}' has no PIC clause.");
+        var pic = item.Pic ?? throw new InvalidOperationException($"Elementary data item '{item.Name}' has no PIC clause.");
 
-        object? value = current[item.Name];
+        int occurs = item.Occurs ?? 1;
+        
+        // FILLER
+        if (item.IsFiller == true)
+        {
+            for (int i = 0; i < occurs; i++)
+            {
+                writer.Write(Enumerable.Repeat((byte)' ', pic.StorageOccupied).ToArray());
+            }
 
-        byte[] bytes = (item.IsFiller == true)
-            ? [.. Enumerable.Repeat((byte)' ', pic.StorageOccupied)]
-            : PicClauseCodec.ForMeta(pic).WithStrict().Encode(value);
+            return;
+        }
 
-        writer.Write(bytes);
+        // 取得 ElementaryDataItem 的資料來源
+        object? value = current[item.Name] ?? throw new InvalidOperationException($"Elementary data item '{item.Name}' requires a Object(s).");
+
+        if (occurs == 1)
+        {
+            byte[] bytes = PicClauseCodec.ForMeta(pic).WithStrict().Encode(value);
+
+            writer.Write(bytes);
+        }
+        else
+        {
+            // OCCURS 對應 object[]
+
+            if (value is not IReadOnlyList<object> values)
+                throw new InvalidOperationException($"Elementary data item '{item.Name}' OCCURS {occurs} TIMES requires a list.");
+        
+            if (values.Count != occurs)
+                throw new InvalidOperationException($"Elementary data item '{item.Name}' OCCURS {occurs} TIMES but got {values.Count}.");
+        
+            foreach (var v in values)
+            {
+                byte[] bytes = PicClauseCodec.ForMeta(pic).WithStrict().Encode(v);
+
+                writer.Write(bytes);
+            }
+        }
     }
 }

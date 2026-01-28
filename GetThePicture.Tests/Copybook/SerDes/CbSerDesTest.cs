@@ -54,6 +54,31 @@ public class CbSerDesTest
 
     [TestMethod]
     [TestCategory("Demo")]
+    public void SerDes_Nested_Occurs_Record_Test()
+    {
+        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/nested-occurs-record.cpy", cp950));
+        var serDes = new CbSerDes(schema);
+
+        using var reader = new StreamReader(@"TestData/nested-occurs-record.dat", cp950);
+
+        string? line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            var expected = cp950.GetBytes(line);
+            var record = serDes.Deserialize(expected);
+
+            // Console.WriteLine("==== Record ====");
+            // record.Print();
+            // Console.WriteLine("================\n");
+
+            var serialized = serDes.Serialize(record);
+
+            CollectionAssert.AreEqual(expected, serialized);
+        }
+    }
+
+    [TestMethod]
+    [TestCategory("Demo")]
     [Ignore]
     public void SerDes_T30_Test()
     {

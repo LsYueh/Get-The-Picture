@@ -8,29 +8,15 @@ internal class CbDeserializer
 {
     internal static CbRecord DesSchema(CbSchema schema, ref RecCursor cursor)
     {
-        var result = new CbRecord();
-
-        foreach (var child in schema.Children)
-        {
-            switch (child)
-            {
-                case GroupItem g:
-                    DesNestedGroupItem(g, ref cursor, result);
-                    break;
-
-                case ElementaryDataItem e :
-                    DesElementaryDataItem(e, ref cursor, result);
-                    break;
-                    
-                default:
-                    throw new InvalidOperationException($"Unsupported data item type: {child.GetType().Name}");
-            };
-        }
+        if (schema.StorageOccupied != cursor.Size)
+            throw new InvalidOperationException($"Record size mismatch: schema={schema.StorageOccupied}, actual={cursor.Size}");
+        
+        var result = ReadGroupItems(schema, ref cursor);
 
         return result;
     }
 
-    private static CbRecord DesGroupItem(GroupItem item, ref RecCursor cursor)
+    private static CbRecord ReadGroupItems(IDataItem item, ref RecCursor cursor)
     {
         var result = new CbRecord();
 
@@ -39,11 +25,11 @@ internal class CbDeserializer
             switch (child)
             {
                 case GroupItem g:
-                    DesNestedGroupItem(g, ref cursor, result);
+                    ReadNestedGroupItem(g, ref cursor, result);
                     break;
 
                 case ElementaryDataItem e :
-                    DesElementaryDataItem(e, ref cursor, result);
+                    ReadElementaryDataItem(e, ref cursor, result);
                     break;
 
                 default:
@@ -54,13 +40,13 @@ internal class CbDeserializer
         return result;
     }
 
-    private static void DesNestedGroupItem(GroupItem item, ref RecCursor cursor, CbRecord target)
+    private static void ReadNestedGroupItem(GroupItem item, ref RecCursor cursor, CbRecord target)
     {
         int occurs = item.Occurs ?? 1;
 
         if (occurs == 1)
         {
-            target[item.Name] = DesGroupItem(item, ref cursor);
+            target[item.Name] = ReadGroupItems(item, ref cursor);
         }
         else
         {
@@ -68,14 +54,14 @@ internal class CbDeserializer
 
             for (int i = 0; i < occurs; i++)
             {
-                values[i] = DesGroupItem(item, ref cursor);
+                values[i] = ReadGroupItems(item, ref cursor);
             }
 
             target[item.Name] = values;
         }
     }
 
-    private static void DesElementaryDataItem(ElementaryDataItem item, ref RecCursor cursor, CbRecord target)
+    private static void ReadElementaryDataItem(ElementaryDataItem item, ref RecCursor cursor, CbRecord target)
     {
         int occurs = item.Occurs ?? 1;
 
