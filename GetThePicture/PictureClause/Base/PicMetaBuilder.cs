@@ -35,6 +35,7 @@ internal static partial class PicMetaBuilder
 
             return new PicMeta
             {
+                Raw = input,
                 BaseClass = PicBaseClass.Numeric,
                 Semantic = semantic,
                 Usage = Usage,
@@ -54,6 +55,7 @@ internal static partial class PicMetaBuilder
 
             return new PicMeta
             {
+                Raw = input,
                 BaseClass = PicBaseClass.Alphanumeric,
                 Semantic = semantic,
                 Usage = PicUsage.Display,
@@ -73,6 +75,7 @@ internal static partial class PicMetaBuilder
 
             return new PicMeta
             {
+                Raw = input,
                 BaseClass = PicBaseClass.Alphabetic,
                 Semantic = semantic,
                 Usage = PicUsage.Display,

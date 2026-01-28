@@ -7,6 +7,8 @@ namespace GetThePicture.PictureClause.Base;
 /// </summary>
 public class PicMeta
 {
+    public string Raw { get; init; } = null!;
+
     public PicBaseClass BaseClass { get; set; }
     public PicSemantic Semantic { get; set; }
 
@@ -44,7 +46,7 @@ public class PicMeta
 
     public override string ToString()
     {
-        return $"Class='{BaseClass}' (Semantic='{Semantic}'), Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={DigitCount}, Usage='{Usage}'";
+        return $"[{Raw}] Class='{BaseClass}' (Semantic='{Semantic}'), Signed={Signed}, Int={IntegerDigits}, Dec={DecimalDigits}, Len={DigitCount}, Usage='{Usage}'";
     }
 
     public static PicMeta Parse(

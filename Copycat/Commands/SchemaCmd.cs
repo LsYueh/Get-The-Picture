@@ -1,7 +1,5 @@
 using System.Text;
 
-using Copycat.Core;
-
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Ir;
 using GetThePicture.PictureClause.Base;
@@ -33,7 +31,7 @@ public static class SchemaCmd
         return schema;
     }
 
-    public static void CodeGen (CbSchema schema, string fileName = "Out.cs", bool skipRoot = true)
+    public static void CodeGen (CbSchema schema, string fileName = "Out.cs")
     {
         using var writer = new StreamWriter(fileName, false, Encoding.UTF8);
 
@@ -41,20 +39,19 @@ public static class SchemaCmd
         writer.WriteLine($"namespace GeneratedCopybook;");
         writer.WriteLine();
 
-        if (skipRoot)
+        writer.WriteLine($"/// <summary>");
+        writer.WriteLine($"/// Record Size : {schema.StorageOccupied} <br />");
+        writer.WriteLine($"/// </summary>");
+
+        // 遍歷第一層的 Children
+        foreach (var child in schema.Children)
         {
-            // 遍歷第一層的 Children
-            foreach (var child in schema.Children)
-            {
-                string className = NamingHelper.ToPascalCase(child.Name);
-                GenerateClass(writer, className, child.Children, 0);
-            }
+            string className = Core.NamingHelper.ToPascalCase(child.Name);
+            GenerateClass(writer, className, child.Children, 0);
         }
-        else
-        {
-            // 生成 Root class
-            GenerateClass(writer, schema.Name, schema.Children, 0);
-        }
+
+        // 生成 Root class
+        // GenerateClass(writer, schema.Name, schema.Children, 0);
     }
 
     private static void GenerateClass(StreamWriter writer, string className, IReadOnlyList<IDataItem> children, int indentLevel = 0)
@@ -68,23 +65,23 @@ public static class SchemaCmd
         {
             string propIndent = new(' ', (indentLevel + 1) * 4);
 
-            string fieldName = NamingHelper.ToPascalCase(child.Name);
-
-            if (!string.IsNullOrEmpty(child.Comment))
-            {
-                writer.WriteLine($"{propIndent}/// <summary>");
-                writer.WriteLine($"{propIndent}/// {child.Comment}");
-                writer.WriteLine($"{propIndent}/// </summary>");
-            }
+            string fieldName = Core.NamingHelper.ToPascalCase(child.Name);
 
             switch (child)
             {
                 case GroupItem g:
                     string subClassName = $"{fieldName}_t";
                     GenerateClass(writer, subClassName, g.Children, indentLevel + 1);
-                    writer.WriteLine($"{propIndent}public {subClassName} {fieldName} {{ get; set; }} = new();");
+
+                    GenerateComment(writer, g, indentLevel);
+
+                    string resolveName = ResolveName(fieldName);
+                    writer.WriteLine($"{propIndent}public {subClassName} {resolveName} {{ get; set; }} = new();");
+                    writer.WriteLine();
                     break;
                 case ElementaryDataItem e :
+                    GenerateComment(writer, e, indentLevel);
+
                     if (e.IsFiller!.Value) break;
 
                     string csType = TypeToCSharp(e.Pic);
@@ -98,6 +95,7 @@ public static class SchemaCmd
                         : "";
 
                     writer.WriteLine($"{propIndent}public {csType} {fieldName} {{ get; set; }}{initializer}");
+                    writer.WriteLine();
                     break;
                 default:
                     throw new InvalidOperationException($"Unsupported DataItem type: {child.GetType().Name}");
@@ -105,6 +103,63 @@ public static class SchemaCmd
         }
 
         writer.WriteLine($"{indent}}}");
+    }
+
+    private static void GenerateComment(StreamWriter writer, IDataItem? child, int indentLevel = 0)
+    {
+        string propIndent = new(' ', (indentLevel + 1) * 4);
+
+        switch (child)
+        {
+            case GroupItem g:
+                if (!string.IsNullOrEmpty(g.Comment))
+                {
+                    writer.WriteLine($"{propIndent}/// <summary>");
+                    writer.WriteLine($"{propIndent}/// {child.Comment}");
+                    writer.WriteLine($"{propIndent}/// </summary>");
+                }
+                break;
+            case ElementaryDataItem e :
+                var storageOccupied = e.Pic.StorageOccupied;
+                string prefix = $"{e.Pic.Raw} [{storageOccupied}]";
+
+                if (e.IsFiller!.Value)
+                {
+                    writer.WriteLine($"{propIndent}/// <summary>");
+                    writer.WriteLine($"{propIndent}/// {prefix} : FILLER");
+                    writer.WriteLine($"{propIndent}/// </summary>");
+
+                    break;
+                }
+
+                if (!string.IsNullOrEmpty(e.Comment))
+                {
+                    writer.WriteLine($"{propIndent}/// <summary>");
+                    writer.WriteLine($"{propIndent}/// {prefix} : {child.Comment}");
+                    writer.WriteLine($"{propIndent}/// </summary>");
+                }
+                else
+                {
+                    writer.WriteLine($"{propIndent}/// <summary>");
+                    writer.WriteLine($"{propIndent}/// {prefix}");
+                    writer.WriteLine($"{propIndent}/// </summary>");
+                }
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 處理一些特別名稱，如: REC-KEY. 可以直接轉成 Key
+    /// </summary>
+    /// <param name="className"></param>
+    /// <returns></returns>
+    private static string ResolveName(string className)
+    {
+        return className switch
+        {
+            var n when n.EndsWith("Key", StringComparison.OrdinalIgnoreCase) => "Key",
+            _ => className
+        };
     }
 
     private static string TypeToCSharp(PicMeta pic)

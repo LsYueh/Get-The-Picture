@@ -10,7 +10,7 @@
             "environmentVariables": {
                 "DOTNET_ENVIRONMENT": "Development"
             },
-            "commandLineArgs": "--schema t30-otc-adv.cpy --verbose"
+            "commandLineArgs": "--schema t30-otc-adv.cpy"
         },
     }
 }
