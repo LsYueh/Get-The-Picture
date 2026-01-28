@@ -16,6 +16,8 @@ public sealed class ElementaryDataItem(
 
     public PicMeta Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
 
+    public IReadOnlyList<IDataItem> Children => [];
+
     // ----------------------------
     // Dump
     // ----------------------------

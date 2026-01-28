@@ -42,9 +42,9 @@ internal class CbSerializer
 
     private static void WriteSchema(BinaryWriter writer, CbSchema schema, CbRecord current)
     {
-        foreach (var dataItem in schema.DataItems)
+        foreach (var child in schema.Children)
         {
-            WriteItem(writer, dataItem, current);
+            WriteItem(writer, child, current);
         }
     }
     
@@ -58,9 +58,9 @@ internal class CbSerializer
             current = child;
         }
         
-        foreach (var subordinate in group.Subordinates)
+        foreach (var child in group.Children)
         {
-            WriteItem(writer, subordinate, current);
+            WriteItem(writer, child, current);
         }
     }
 

@@ -10,9 +10,9 @@ internal class CbDeserializer
     {
         var result = new CbRecord();
 
-        foreach (var dataItem in schema.DataItems)
+        foreach (var child in schema.Children)
         {
-            switch (dataItem)
+            switch (child)
             {
                 case GroupItem g:
                     DesNestedGroupItem(g, ref cursor, result);
@@ -23,7 +23,7 @@ internal class CbDeserializer
                     break;
                     
                 default:
-                    throw new InvalidOperationException($"Unsupported data item type: {dataItem.GetType().Name}");
+                    throw new InvalidOperationException($"Unsupported data item type: {child.GetType().Name}");
             };
         }
 
@@ -34,9 +34,9 @@ internal class CbDeserializer
     {
         var result = new CbRecord();
 
-        foreach (var subordinate in item.Subordinates)
+        foreach (var child in item.Children)
         {
-            switch (subordinate)
+            switch (child)
             {
                 case GroupItem g:
                     DesNestedGroupItem(g, ref cursor, result);
@@ -47,7 +47,7 @@ internal class CbDeserializer
                     break;
 
                 default:
-                    throw new InvalidOperationException($"Unsupported subordinate type: {subordinate.GetType().Name}");
+                    throw new InvalidOperationException($"Unsupported subordinate type: {child.GetType().Name}");
             }
         }
 

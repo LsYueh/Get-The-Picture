@@ -11,6 +11,9 @@ class Program
         [Option('s', "schema", Required = true, HelpText = "Input copybook schema.")]
         public FileInfo? Schema { get; set; }
 
+        [Option('o', "output", Required = false, HelpText = "Output C# Value Objects file.")]
+        public string? Output { get; set; }
+
         [Option('f', "file", Required = false, HelpText = "Input COBOL data file.")]
         public FileInfo? Data { get; set; }
 
@@ -38,6 +41,8 @@ class Program
         }
 
         var schema = SchemaCmd.ReadSchema(opts.Schema, opts.Verbose);
+
+        SchemaCmd.CodeGen(schema);
 
         return 0;
     }
