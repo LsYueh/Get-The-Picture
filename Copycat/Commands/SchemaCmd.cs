@@ -31,7 +31,7 @@ public static class SchemaCmd
         return schema;
     }
 
-    public static void CodeGen (CbSchema schema, string fileName = "Out.cs")
+    public static void CodeGen (CbSchema schema, string fileName = "Out.cs", bool skipRoot = true)
     {
         using var writer = new StreamWriter(fileName, false, Encoding.UTF8);
 
@@ -43,109 +43,175 @@ public static class SchemaCmd
         writer.WriteLine($"/// Record Size : {schema.StorageOccupied} <br />");
         writer.WriteLine($"/// </summary>");
 
-        // 遍歷第一層的 Children
+        if (!skipRoot) // 生成 Schema root class
+        {
+            string schemaName = Core.NamingHelper.ToPascalCase(schema.Name);
+            GenerateClass(writer, schemaName, schema, 0);
+            return;
+        }
+
+        // 遍歷 Schema 第一層的 Children
         foreach (var child in schema.Children)
         {
             string className = Core.NamingHelper.ToPascalCase(child.Name);
-            GenerateClass(writer, className, child.Children, 0);
+            GenerateClass(writer, className, child, 0);
         }
-
-        // 生成 Root class
-        // GenerateClass(writer, schema.Name, schema.Children, 0);
     }
 
-    private static void GenerateClass(StreamWriter writer, string className, IReadOnlyList<IDataItem> children, int indentLevel = 0)
+    /// <summary>
+    /// Generates a C# sealed class definition from a Copybook IDataItem,
+    /// recursively emitting nested classes for group items and properties
+    /// for elementary items.
+    /// </summary>
+    private static void GenerateClass(StreamWriter writer, string className, IDataItem item, int indentLevel = 0)
     {
         string indent = new(' ', indentLevel * 4);
 
         writer.WriteLine($"{indent}public sealed class {className}");
         writer.WriteLine($"{indent}{{");
 
-        foreach (var child in children)
+        foreach (var child in item.Children)
         {
-            string propIndent = new(' ', (indentLevel + 1) * 4);
-
             string fieldName = Core.NamingHelper.ToPascalCase(child.Name);
 
             switch (child)
             {
                 case GroupItem g:
-                    string subClassName = $"{fieldName}_t";
-                    GenerateClass(writer, subClassName, g.Children, indentLevel + 1);
-
-                    GenerateComment(writer, g, indentLevel);
-
-                    string resolveName = ResolveName(fieldName);
-                    writer.WriteLine($"{propIndent}public {subClassName} {resolveName} {{ get; set; }} = new();");
-                    writer.WriteLine();
+                    GenerateNestedClass(writer, fieldName, g, indentLevel + 1);
                     break;
+                
                 case ElementaryDataItem e :
-                    GenerateComment(writer, e, indentLevel);
-
-                    if (e.IsFiller!.Value) break;
-
-                    string csType = TypeToCSharp(e.Pic);
-
-                    bool isReferenceType =
-                        csType == "string" ||
-                        csType.StartsWith("List<");
-
-                    string initializer = isReferenceType
-                        ? csType.StartsWith("List<") ? " = new();" : " = null!;"
-                        : "";
-
-                    writer.WriteLine($"{propIndent}public {csType} {fieldName} {{ get; set; }}{initializer}");
-                    writer.WriteLine();
+                    GenerateProps(writer, fieldName, e, indentLevel + 1);
                     break;
+                
                 default:
                     throw new InvalidOperationException($"Unsupported DataItem type: {child.GetType().Name}");
             }
+
+            writer.WriteLine();
         }
 
         writer.WriteLine($"{indent}}}");
     }
 
-    private static void GenerateComment(StreamWriter writer, IDataItem? child, int indentLevel = 0)
+    private static void GenerateNestedClass(StreamWriter writer, string className, IDataItem item, int indentLevel = 0)
     {
-        string propIndent = new(' ', (indentLevel + 1) * 4);
+        string indent = new(' ', indentLevel * 4);
 
-        switch (child)
+        string nestedClassName = $"{className}_t";
+
+        // 產生 Nested Class 定義
+        GenerateClass(writer, nestedClassName, item, indentLevel);
+
+        writer.WriteLine();
+
+        // 註解
+        GenerateComment(writer, item, indentLevel);
+
+        int occurs = item.Occurs ?? 1;
+        string propName = ResolveName(className);
+
+        // 根據 OCCURS 決定 property 型別
+        if (occurs > 1)
         {
-            case GroupItem g:
-                if (!string.IsNullOrEmpty(g.Comment))
-                {
-                    writer.WriteLine($"{propIndent}/// <summary>");
-                    writer.WriteLine($"{propIndent}/// {child.Comment}");
-                    writer.WriteLine($"{propIndent}/// </summary>");
-                }
-                break;
-            case ElementaryDataItem e :
-                var storageOccupied = e.Pic.StorageOccupied;
-                string prefix = $"{e.Pic.Raw} [{storageOccupied}]";
+            string elementIndent = new(' ', (indentLevel + 1) * 4);
 
-                if (e.IsFiller!.Value)
-                {
-                    writer.WriteLine($"{propIndent}/// <summary>");
-                    writer.WriteLine($"{propIndent}/// {prefix} : FILLER");
-                    writer.WriteLine($"{propIndent}/// </summary>");
+            writer.WriteLine($"{indent}public {nestedClassName}[] {propName} {{ get; }} = [");
 
-                    break;
-                }
-
-                if (!string.IsNullOrEmpty(e.Comment))
-                {
-                    writer.WriteLine($"{propIndent}/// <summary>");
-                    writer.WriteLine($"{propIndent}/// {prefix} : {child.Comment}");
-                    writer.WriteLine($"{propIndent}/// </summary>");
-                }
-                else
-                {
-                    writer.WriteLine($"{propIndent}/// <summary>");
-                    writer.WriteLine($"{propIndent}/// {prefix}");
-                    writer.WriteLine($"{propIndent}/// </summary>");
-                }
-                break;
+            for (int i = 0; i < occurs; i++)
+            {
+                string comma = (i < occurs - 1) ? "," : "";
+                writer.WriteLine($"{elementIndent}new {nestedClassName}(){comma}");
+            }
+            
+            writer.WriteLine($"{indent}];"); 
         }
+        else
+        {
+            writer.WriteLine($"{indent}public {nestedClassName} {propName} {{ get; set; }} = new();");
+        }
+    }
+
+    private static void GenerateProps(StreamWriter writer, string propName, ElementaryDataItem item, int indentLevel = 0)
+    {
+        string indent = new(' ', indentLevel * 4);
+
+        GenerateComment(writer, item, indentLevel);
+
+        if (item.IsFiller!.Value) return;
+
+        string csType = TypeToCSharp(item.Pic);
+
+        int occurs = item.Occurs ?? 1;
+
+        if (occurs > 1)
+        {
+            // OCCURS > 1 → 陣列 property
+            writer.WriteLine($"{indent}public {csType}[] {propName} {{ get; }} = new {csType}[{occurs}];");
+        }
+        else
+        {
+            bool isReferenceType = csType == "string";
+
+            // 單筆 property
+            string initializer = isReferenceType ? " = null!;" : "";
+            writer.WriteLine($"{indent}public {csType} {propName} {{ get; set; }}{initializer}");
+        }
+    }
+
+    private static void GenerateComment(StreamWriter writer, IDataItem item, int indentLevel = 0)
+    {
+        switch (item)
+        {
+            case GroupItem g: GenGroupItemComment(writer, g, indentLevel); break;
+            case ElementaryDataItem e: GenElementaryDataItemComment(writer, e, indentLevel); break;
+        }
+    }
+
+    private static void GenGroupItemComment(StreamWriter writer, GroupItem g, int indentLevel = 0)
+    {
+        string indent = new(' ', indentLevel * 4);
+
+        string occursText = (g.Occurs is > 1) ? $" Occurs: {g.Occurs}" : "";
+
+        if (string.IsNullOrEmpty(g.Comment) && string.IsNullOrEmpty(occursText)) return;
+
+        writer.WriteLine($"{indent}/// <summary>");
+
+        if (!string.IsNullOrEmpty(g.Comment))
+            writer.WriteLine($"{indent}/// {g.Comment}{occursText}");
+        else
+            writer.WriteLine($"{indent}/// {occursText.TrimStart()}");
+
+        writer.WriteLine($"{indent}/// </summary>");
+    }
+
+    private static void GenElementaryDataItemComment(StreamWriter writer, ElementaryDataItem e, int indentLevel = 0)
+    {
+        string indent = new(' ', indentLevel * 4);
+
+        string occursText = (e.Occurs is > 1) ? $" Occurs: {e.Occurs}" : "";
+
+        var storageOccupied = e.Pic.StorageOccupied;
+        string prefix = $"{e.Pic.Raw} [{storageOccupied}]";
+
+         writer.WriteLine($"{indent}/// <summary>");
+
+        if (e.IsFiller == true)
+        {
+            writer.WriteLine($"{indent}/// {prefix} : FILLER{occursText}");
+        }
+        else if (!string.IsNullOrEmpty(e.Comment))
+        {
+            writer.WriteLine($"{indent}/// {prefix} : {e.Comment}{occursText}");
+        }
+        else
+        {
+            // 沒 Comment、沒 FILLER，也一定要輸出 Pic 內容
+            writer.WriteLine($"{indent}/// {prefix}{occursText}");
+        }
+
+        writer.WriteLine($"{indent}/// </summary>");
     }
 
     /// <summary>
@@ -205,31 +271,5 @@ public static class SchemaCmd
                 throw new NotSupportedException($"Unsupported PIC Data Type [Decode] : {pic.BaseClass}");
         }
     }
-    
-    // public static void Exec(FileInfo file, FileInfo data, bool verbose = true)
-    // {
-    //     var srSchema = new StreamReader(file.FullName, CP950);
-        
-    //     var deserializer = new Core.Deserializer(srSchema);
-
-    //     foreach (string line in File.ReadLines(data.FullName, CP950))
-    //     {
-    //         var buffer = CP950.GetBytes(line);
-
-    //         CbRecord? record = deserializer.Exec(buffer);
-
-    //         if (record is null)
-    //         {
-    //             if (verbose) Console.Error.WriteLine($"[WARN] Skip invalid record: {line}");
-    //             continue;
-    //         }
-            
-    //         if (verbose) {
-    //             Console.WriteLine("==== Record ====");
-    //             record.Print();
-    //             Console.WriteLine("================\n");
-    //         }
-    //     }
-    // }
 }
  

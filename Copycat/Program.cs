@@ -42,7 +42,10 @@ class Program
 
         var schema = SchemaCmd.ReadSchema(opts.Schema, opts.Verbose);
 
-        SchemaCmd.CodeGen(schema);
+        string fileName = opts.Output ?? "Out.cs";
+        SchemaCmd.CodeGen(schema, fileName);
+
+        Console.WriteLine($"New sealed class generated: \"{Path.GetFullPath(fileName)}\"");
 
         return 0;
     }
