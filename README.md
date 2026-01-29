@@ -72,100 +72,6 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 <br><br>
 
-# COBOL Coding Sheet (Reference Format)
-COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed Format）` 下很重要。主要分為 `Sequence Area`, `Indicator Area`, `Area A`, `Area B` 等區域。
-
-<br>
-
-```cobol
-|...+.*..1....+....2....+....3....+....4....+....5....+....6....+....7..
-       01 ORDER-RECORD.
-           05 ORDER-ID           PIC 9(6).
-           05 ORDER-DATE         PIC 9(8).
-           05 ORDER-AMOUNT       PIC S9(7)V99 COMP-3.
-```
-
-<br>
-
-| 位置 (Column) | 說明                                                                 |
-| ----------- | ------------------------------------------------------------------ |
-| 1–6         | **Sequence Number**（序號欄，可選）：用於列印或版本控制。                             |
-| 7           | **Indicator Area**（指示欄）：<br> - `*`：註解<br> - `/`：換頁<br> - `-`：延續上一行 |
-| 8–11        | **Area A**：段落名稱、Section 名稱、DIVISION 關鍵字等。                          |
-| 12–72       | **Area B**：語句、指令、變數宣告、程式碼本體。                                       |
-| 73–80       | **Identification Area**（識別欄，可選）：通常用於序號或其他控制用途。                     |
-
-> 現代 COBOL `(Free Format) ` 已經不限制欄位，但固定格式仍常用於舊系統。  
-
-<br><br>
-
-# COBOL： `Elementary Data Item` and `Group Item` 
-
-| 面向                    | Elementary Data Item    | Group Item             |
-| --------------------- | ----------------------- | ---------------------- |
-| 定義角色                  | **最小資料單位（leaf）**        | **結構性容器（composite）**   |
-| 是否可包含子項目              | ❌ 不可                    | ✅ 可                    |
-| 是否有 `PIC` 子句          | ✅ **必須有**               | ❌ **不可有**              |
-| 是否直接描述資料型態            | ✅ 是（數值、字元、COMP、COMP-3…） | ❌ 否（由子項目間接決定）          |
-| 是否可直接被 MOVE / COMPUTE | ✅ 可                     | ⚠️ 可（視情況，為整段記憶體移動）     |
-| 記憶體佔用                 | 由 `PIC` 決定              | 為所有子項目記憶體的總和           |
-| 可否有 `OCCURS`          | ✅ 可                     | ✅ 可                    |
-| 可否有 `REDEFINES`       | ✅ 可                     | ✅ 可                    |
-| 可否有 `VALUE`           | ✅ 可                     | ❌（標準上 group 不定義 VALUE） |
-| 是否為樹的葉節點              | ✅ 是                     | ❌ 否                    |
-| COBOL 規格名稱            | *Elementary data item*  | *Group item*           |
-
-<br>
-
-• [Elementary Data Item](docs/cobol/ElementaryDataItem.md)  
-
-<br><br>
-
-# Usage 子句
-
-`USAGE` 定義欄位在記憶體中的儲存方式，影響資料的物理編碼與運算行為。  
-- DISPLAY（預設）：以可讀字元存放，每個數字或字母對應一個 byte，便於輸入輸出與檢視。DISPLAY numeric 可能包含 Overpunch 符號。  
-- COMP / COMP-5（Binary）：以二進位形式存放，運算效率高，但不可直接讀取文字。  
-- COMP-3（Packed Decimal）：將兩個數字壓縮在一個 nibble，最後一個 nibble 用於符號，節省空間且方便算術運算。  
-  - [`COMPUTATIONAL` 轉換規則](docs/other-topics/cobol-computational.md)  
-
-<br>
-
-| Class | Category/Semantic | Usage |
-| :---: | :---------------: | ----- |
-| Alphabetic | Alphabetic | DISPLAY |
-| Alphanumeric | Alphanumeric | DISPLAY |
-| Date-Time <br> (Alphanumeric) | Date <br> Time <Timestamp> | DISPLAY |
-| Numeric | Numeric | DISPLAY <br> COMP (Binary) <br> COMP-3 (Packed Decimal) <br> COMP-5 (Native Binary) |
-
-<br><br>
-
-# PICTURE (PIC) 子句
-
-支援PIC語法  
-
-| Alphabetic | Alphanumeric | Numeric | Numeric (With Sign) |
-| :--------: | :----------: | :-----: | :-----------------: |
-| PIC A.. <br> PIC A(n) | PIC X.. <br> PIC X(n) | PIC 9... <br> PIC 9(n) <br> PIC 9...V9... <br> PIC 9(n)V9(m) <br> PIC 9(n)V9... | PIC S9... <br> PIC S9(n) <br> PIC S9...V9... <br> PIC S9(n)V9(m) <br> PIC S9(n)V9... |
-
-<br>
-
-## 類別(`Category`)資料
-
-- [文字 (`Alphabetic`/`Alphanumeric`)](docs/cobol-picture/category/alphabetic-alphanumeric.md)  
-- [數字 (`Numeric`)](docs/cobol-picture/category/numeric.md)  
-  - [`S9`數字轉換規則](docs/other-topics/pic-s9-overpunch.md)  
-
-<br>
-
-## 語意(`Semantic`)資料
-
-- [日期 (`Date`)](docs/cobol-picture/semantic/date-time/date.md)  
-- [時間 (`Time`)](docs/cobol-picture/semantic/date-time/time.md)  
-- [時間戳記 (`Timestamp`)](docs/cobol-picture/semantic/date-time/timestamp.md)  
-
-<br><br>
-
 # COBOL Copybook
 `Copybook` 是 COBOL 中用來定義資料結構的重用檔案，透過 COPY 指令引入，常用於描述檔案格式、資料欄位配置與記憶體布局。在大型主機與金融系統中，Copybook 是資料交換與系統整合的核心。  
 
@@ -250,7 +156,122 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 
 <br>
 
-- 更多關於 [Copybook Compiler](docs/copybook/compiler.md) ...
+- 更多關於 [Copybook Compiler](docs/get-the-picture/copybook/compiler.md) ...
+
+<br><br>
+
+# COBOL Coding Sheet (Reference Format)
+COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed Format）` 下很重要。主要分為 `Sequence Area`, `Indicator Area`, `Area A`, `Area B` 等區域。
+
+<br>
+
+```cobol
+|...+.*..1....+....2....+....3....+....4....+....5....+....6....+....7..
+       01 ORDER-RECORD.
+           05 ORDER-ID           PIC 9(6).
+           05 ORDER-DATE         PIC 9(8).
+           05 ORDER-AMOUNT       PIC S9(7)V99 COMP-3.
+```
+
+<br>
+
+| 位置 (Column) | 說明                                                                 |
+| ----------- | ------------------------------------------------------------------ |
+| 1–6         | **Sequence Number**（序號欄，可選）：用於列印或版本控制。                             |
+| 7           | **Indicator Area**（指示欄）：<br> - `*`：註解<br> - `/`：換頁<br> - `-`：延續上一行 |
+| 8–11        | **Area A**：段落名稱、Section 名稱、DIVISION 關鍵字等。                          |
+| 12–72       | **Area B**：語句、指令、變數宣告、程式碼本體。                                       |
+| 73–80       | **Identification Area**（識別欄，可選）：通常用於序號或其他控制用途。                     |
+
+> 現代 COBOL `(Free Format) ` 已經不限制欄位，但固定格式仍常用於舊系統。  
+
+<br><br>
+
+# COBOL Level Numbers 基本概念
+
+COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
+
+| Level         | 用途             | 說明                  |
+| ------------- | -------------- | ------------------- |
+| **01**        | 主結構            | 定義檔案或記錄的頂層結構        |
+| **05/10/15…** | 子結構            | 01 之下的子群組或欄位，形成巢狀結構 |
+| **66**        | RENAMES        | 將已有欄位重新命名或形成別名區段    |
+| **77**        | 單一變數           | 不屬於群組，獨立使用          |
+| **88**        | Condition Name | 定義邏輯條件（True/False）  |
+
+> ⚠️ Level number 越小層級越高，01 是最外層。
+
+## 詳細說明
+- Level [66 — RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md) (暫不支援)  
+- Level [77 — Standalone Variable (單一變數)](docs/get-the-picture/cobol-level-numbers/lv77.md) (暫不支援)  
+- Level [88 — Condition Name](docs/get-the-picture/cobol-level-numbers/lv88.md)  
+
+<br><br>
+
+# `Elementary Data Item` and `Group Item` 
+
+| 面向                    | Elementary Data Item    | Group Item             |
+| --------------------- | ----------------------- | ---------------------- |
+| 定義角色                  | **最小資料單位（leaf）**        | **結構性容器（composite）**   |
+| 是否可包含子項目              | ❌ 不可                    | ✅ 可                    |
+| 是否有 `PIC` 子句          | ✅ **必須有**               | ❌ **不可有**              |
+| 是否直接描述資料型態            | ✅ 是（數值、字元、COMP、COMP-3…） | ❌ 否（由子項目間接決定）          |
+| 是否可直接被 MOVE / COMPUTE | ✅ 可                     | ⚠️ 可（視情況，為整段記憶體移動）     |
+| 記憶體佔用                 | 由 `PIC` 決定              | 為所有子項目記憶體的總和           |
+| 可否有 `OCCURS`          | ✅ 可                     | ✅ 可                    |
+| 可否有 `REDEFINES`       | ✅ 可                     | ✅ 可                    |
+| 可否有 `VALUE`           | ✅ 可                     | ❌（標準上 group 不定義 VALUE） |
+| 是否為樹的葉節點              | ✅ 是                     | ❌ 否                    |
+| COBOL 規格名稱            | *Elementary data item*  | *Group item*           |
+
+<br>
+
+• [Elementary Data Item](docs/get-the-picture/cobol/ElementaryDataItem.md)  
+
+<br><br>
+
+# Usage 子句
+
+`USAGE` 定義欄位在記憶體中的儲存方式，影響資料的物理編碼與運算行為。  
+- DISPLAY（預設）：以可讀字元存放，每個數字或字母對應一個 byte，便於輸入輸出與檢視。DISPLAY numeric 可能包含 Overpunch 符號。  
+- COMP / COMP-5（Binary）：以二進位形式存放，運算效率高，但不可直接讀取文字。  
+- COMP-3（Packed Decimal）：將兩個數字壓縮在一個 nibble，最後一個 nibble 用於符號，節省空間且方便算術運算。  
+  - [`COMPUTATIONAL` 轉換規則](docs/get-the-picture/other-topics/cobol-computational.md)  
+
+<br>
+
+| Class | Category/Semantic | Usage |
+| :---: | :---------------: | ----- |
+| Alphabetic | Alphabetic | DISPLAY |
+| Alphanumeric | Alphanumeric | DISPLAY |
+| Date-Time <br> (Alphanumeric) | Date <br> Time <Timestamp> | DISPLAY |
+| Numeric | Numeric | DISPLAY <br> COMP (Binary) <br> COMP-3 (Packed Decimal) <br> COMP-5 (Native Binary) |
+
+<br><br>
+
+# PICTURE (PIC) 子句
+
+支援PIC語法  
+
+| Alphabetic | Alphanumeric | Numeric | Numeric (With Sign) |
+| :--------: | :----------: | :-----: | :-----------------: |
+| PIC A.. <br> PIC A(n) | PIC X.. <br> PIC X(n) | PIC 9... <br> PIC 9(n) <br> PIC 9...V9... <br> PIC 9(n)V9(m) <br> PIC 9(n)V9... | PIC S9... <br> PIC S9(n) <br> PIC S9...V9... <br> PIC S9(n)V9(m) <br> PIC S9(n)V9... |
+
+<br>
+
+## 類別(`Category`)資料
+
+- [文字 (`Alphabetic`/`Alphanumeric`)](docs/get-the-picture/cobol-picture/category/alphabetic-alphanumeric.md)  
+- [數字 (`Numeric`)](docs/get-the-picture/cobol-picture/category/numeric.md)  
+  - [`S9`數字轉換規則](docs/get-the-picture/other-topics/pic-s9-overpunch.md)  
+
+<br>
+
+## 語意(`Semantic`)資料
+
+- [日期 (`Date`)](docs/get-the-picture/cobol-picture/semantic/date-time/date.md)  
+- [時間 (`Time`)](docs/get-the-picture/cobol-picture/semantic/date-time/time.md)  
+- [時間戳記 (`Timestamp`)](docs/get-the-picture/cobol-picture/semantic/date-time/timestamp.md)  
 
 <br><br>
 
