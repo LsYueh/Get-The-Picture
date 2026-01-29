@@ -1,5 +1,16 @@
 # Changelog
 
+## [26.4.0] – 2026-01-29
+
+### 新增
+- 新增Console專案: `Copycat`，用於產出 C# 用的資料物件 (sealed class)。
+
+### 改進
+- 修正 `反序列化 (Deserialize)` COBOL資料時，沒有檢查資料長度是否與Copybook長度符合的問題。
+- 改善 `SerDes` 功能相關程式碼閱讀性。
+
+<br><br>
+
 ## [26.3.0] – 2026-01-26
 
 ### 新增
