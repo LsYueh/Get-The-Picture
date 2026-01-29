@@ -1,9 +1,20 @@
 # Get The Picture
-> 讀懂你COBOL的明白  
+Modern .NET library for working with COBOL Copybook–based data  
+用於處理以 COBOL Copybook 為基礎資料的現代 .NET 類別庫  
 
-<br>
+> **讀懂你 COBOL 的明白**  
 
-## 專案目的
+## 開發需求
+- **.NET 8.0** 或更新版本
+- **C# 12** 或相容版本（.NET 8 預設）
+
+## 輸入格式需求
+- COBOL Copybook (`.cpy`) 純文字檔案
+- ASCII / CP950 編碼
+
+<br><br>
+
+# 專案目的
 > 透過簡單的文字 `X` 與數字 `9 / S9`，我們建構出長達百年的金融體系。  
 
 <br>
@@ -53,6 +64,11 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 * COBOL 與現代服務的資料交換層
 * 舊系統重構或漸進式汰換
 * 對 PIC 規格進行靜態分析或測試驗證
+
+<br>
+
+## 延伸工具  
+  - [Copycat](docs/copycat/README.md) - 將 `Copybook` 內容轉換成可在 `C#` 使用的強型別資料模型(Sealed Class)。
 
 <br><br>
 
@@ -235,13 +251,6 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 <br>
 
 - 更多關於 [Copybook Compiler](docs/copybook/compiler.md) ...
-
-<br><br>
-
-# 相關工具
-
-[Copycat](docs/copycat/README.md) : 一個將 `Copybook` 內容轉換成可在 C# 使用的強型別資料模型生成工具。
-
 
 <br><br>
 
