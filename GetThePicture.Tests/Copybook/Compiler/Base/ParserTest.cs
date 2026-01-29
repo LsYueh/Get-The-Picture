@@ -67,19 +67,19 @@ public class ParserTest
         CbSchema schema = parser.Analyze();
         Assert.IsNotNull(schema);
         Assert.AreEqual(0, schema.Level);
-        Assert.IsNotNull(schema.DataItems);
+        Assert.IsNotNull(schema.Children);
         
-        GroupItem? groupItem_01 = (GroupItem?) schema.DataItems[0];
+        GroupItem? groupItem_01 = (GroupItem?) schema.Children[0];
         Assert.IsNotNull(groupItem_01);
         Assert.AreEqual(1, groupItem_01.Level);
-        Assert.IsNotNull(groupItem_01.Subordinates);
+        Assert.IsNotNull(groupItem_01.Children);
 
-        GroupItem? subordinate_03 =  (GroupItem?) groupItem_01.Subordinates[0];
+        GroupItem? subordinate_03 =  (GroupItem?) groupItem_01.Children[0];
         Assert.IsNotNull(subordinate_03);
         Assert.AreEqual(3, subordinate_03.Level);
-        Assert.IsNotNull(subordinate_03.Subordinates);
+        Assert.IsNotNull(subordinate_03.Children);
 
-        ElementaryDataItem? subordinate_05 =  (ElementaryDataItem?) subordinate_03.Subordinates[0];
+        ElementaryDataItem? subordinate_05 =  (ElementaryDataItem?) subordinate_03.Children[0];
         Assert.IsNotNull(subordinate_05);
         Assert.AreEqual(5, subordinate_05.Level);
         Assert.IsNotNull(subordinate_05.Pic);
@@ -105,19 +105,19 @@ public class ParserTest
         CbSchema schema = parser.Analyze();
         Assert.IsNotNull(schema);
         Assert.AreEqual(0, schema.Level);
-        Assert.IsNotNull(schema.DataItems);
+        Assert.IsNotNull(schema.Children);
 
-        GroupItem? groupItem_01 = (GroupItem?) schema.DataItems[0];
+        GroupItem? groupItem_01 = (GroupItem?) schema.Children[0];
         Assert.IsNotNull(groupItem_01);
         Assert.AreEqual(1, groupItem_01.Level);
-        Assert.IsNotNull(groupItem_01.Subordinates);
+        Assert.IsNotNull(groupItem_01.Children);
 
-        GroupItem? subordinate_03 =  (GroupItem?) groupItem_01.Subordinates[0];
+        GroupItem? subordinate_03 =  (GroupItem?) groupItem_01.Children[0];
         Assert.IsNotNull(subordinate_03);
         Assert.AreEqual(3, subordinate_03.Level);
-        Assert.AreEqual(5, subordinate_03.Subordinates.Count);
+        Assert.AreEqual(5, subordinate_03.Children.Count);
 
-        ElementaryDataItem? subordinate_05 =  (ElementaryDataItem?) subordinate_03.Subordinates[3];
+        ElementaryDataItem? subordinate_05 =  (ElementaryDataItem?) subordinate_03.Children[3];
         Assert.IsNotNull(subordinate_05);
         Assert.AreEqual(5, subordinate_05.Level);
         Assert.IsNotNull(subordinate_05.Pic);
@@ -154,25 +154,25 @@ public class ParserTest
         CbSchema schema = parser.Analyze();
         Assert.IsNotNull(schema);
         Assert.AreEqual(0, schema.Level);
-        Assert.IsNotNull(schema.DataItems);
+        Assert.IsNotNull(schema.Children);
 
-        GroupItem? groupItem_01 = (GroupItem?) schema.DataItems[0];
+        GroupItem? groupItem_01 = (GroupItem?) schema.Children[0];
         Assert.IsNotNull(groupItem_01);
         Assert.AreEqual(1, groupItem_01.Level);
-        Assert.IsNotNull(groupItem_01.Subordinates);
+        Assert.IsNotNull(groupItem_01.Children);
         
-        GroupItem? subordinate_05 =  (GroupItem?) groupItem_01.Subordinates[1];
+        GroupItem? subordinate_05 =  (GroupItem?) groupItem_01.Children[1];
         Assert.IsNotNull(subordinate_05);
         Assert.AreEqual(5, subordinate_05.Level);
-        Assert.AreEqual(3, subordinate_05.Subordinates.Count);
+        Assert.AreEqual(3, subordinate_05.Children.Count);
 
-        GroupItem? subordinate_10 =  (GroupItem?) subordinate_05.Subordinates[2];
+        GroupItem? subordinate_10 =  (GroupItem?) subordinate_05.Children[2];
         Assert.IsNotNull(subordinate_10);
         Assert.AreEqual(10, subordinate_10.Level);
         Assert.AreEqual("ALTERNATE-CONTACT", subordinate_10.Name);
-        Assert.AreEqual(3, subordinate_10.Subordinates.Count);
+        Assert.AreEqual(3, subordinate_10.Children.Count);
 
-        ElementaryDataItem? subordinate_15 =  (ElementaryDataItem?) subordinate_10.Subordinates[2];
+        ElementaryDataItem? subordinate_15 =  (ElementaryDataItem?) subordinate_10.Children[2];
         Assert.IsNotNull(subordinate_15);
         Assert.AreEqual(15, subordinate_15.Level);
         Assert.IsNotNull(subordinate_15.Pic);

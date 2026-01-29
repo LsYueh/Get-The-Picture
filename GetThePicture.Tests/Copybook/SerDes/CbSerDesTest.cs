@@ -33,18 +33,69 @@ public class CbSerDesTest
             var record = serDes.Deserialize(expected);
 
             // Console.WriteLine("==== Record ====");
-            // RecordValuePrinter.Print(record);
+            // record.Print();
             // Console.WriteLine("================\n");
 
             Assert.AreEqual(19, record.Fields.Count);
             record.Fields.TryGetValue("MARK-W-DETAILS", out object? value);
             
-            if (value is RecValue subRecord)
+            if (value is CbRecord subRecord)
                 Assert.AreEqual(4, subRecord.Fields.Count);
             else
             {
                 Assert.Fail();
             }
+
+            var serialized = serDes.Serialize(record);
+
+            CollectionAssert.AreEqual(expected, serialized);
+        }
+    }
+
+    [TestMethod]
+    [TestCategory("Demo")]
+    public void SerDes_Nested_Occurs_Record_Test()
+    {
+        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/nested-occurs-record.cpy", cp950));
+        var serDes = new CbSerDes(schema);
+
+        using var reader = new StreamReader(@"TestData/nested-occurs-record.dat", cp950);
+
+        string? line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            var expected = cp950.GetBytes(line);
+            var record = serDes.Deserialize(expected);
+
+            // Console.WriteLine("==== Record ====");
+            // record.Print();
+            // Console.WriteLine("================\n");
+
+            var serialized = serDes.Serialize(record);
+
+            CollectionAssert.AreEqual(expected, serialized);
+        }
+    }
+
+    [TestMethod]
+    [TestCategory("Demo")]
+    [Ignore]
+    public void SerDes_T30_Test()
+    {
+        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/t30-otc-adv.cpy", cp950));
+        var serDes = new CbSerDes(schema);
+
+        using var reader = new StreamReader(@"TestData/t30-otc-lite.dat", cp950);
+
+        string? line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            var expected = cp950.GetBytes(line);
+            var record = serDes.Deserialize(expected);
+
+            Console.WriteLine("==== Record ====");
+            record.Print();
+            Console.WriteLine("================\n");
 
             var serialized = serDes.Serialize(record);
 

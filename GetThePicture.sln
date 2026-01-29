@@ -1,10 +1,12 @@
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetThePicture", "GetThePicture\GetThePicture.csproj", "{E8CC61D1-EF2B-8AF8-AEBF-568B87AEEBDB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GetThePicture.Tests", "GetThePicture.Tests\GetThePicture.Tests.csproj", "{6995A653-4381-ACC9-0623-8E1C993964D9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Copycat", "Copycat\Copycat.csproj", "{43383CFB-5165-4464-B468-2282858CBF8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +22,10 @@ Global
 		{6995A653-4381-ACC9-0623-8E1C993964D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6995A653-4381-ACC9-0623-8E1C993964D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6995A653-4381-ACC9-0623-8E1C993964D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43383CFB-5165-4464-B468-2282858CBF8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43383CFB-5165-4464-B468-2282858CBF8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43383CFB-5165-4464-B468-2282858CBF8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43383CFB-5165-4464-B468-2282858CBF8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

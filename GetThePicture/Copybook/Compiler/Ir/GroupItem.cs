@@ -9,29 +9,30 @@ public sealed class GroupItem(
     public int? Occurs { get; init; } = occurs;
     public string? Comment { get; init; } = comment;
 
-    private readonly List<IDataItem> _subordinates = [];
+    private readonly List<IDataItem> _children = [];
+
+    public IReadOnlyList<IDataItem> Children => _children;
     public int StorageOccupied { get; private set; }
 
-    public IReadOnlyList<IDataItem> Subordinates => _subordinates;
 
     public void AddSubordinate(IDataItem subordinate)
     {
         ArgumentNullException.ThrowIfNull(subordinate);
 
-        _subordinates.Add(subordinate);
+        _children.Add(subordinate);
     }
 
     public void CalculateStorage()
     {
         int total = 0;
 
-        foreach (var subordinate in Subordinates)
+        foreach (var child in Children)
         {
-            if (subordinate is ElementaryDataItem e)
+            if (child is ElementaryDataItem e)
             {
                 total += e.Pic.StorageOccupied * (e.Occurs ?? 1);
             }
-            else if (subordinate is GroupItem g)
+            else if (child is GroupItem g)
             {
                 g.CalculateStorage();
                 total += g.StorageOccupied * (g.Occurs ?? 1);
@@ -49,7 +50,7 @@ public sealed class GroupItem(
     {
         w.WriteLine($"{Indent(indent)}{Level} {Name}{FormatOccurs()}{FormatComment()}");
 
-        foreach (var subordinate in _subordinates) subordinate.Dump(w, indent + 1);
+        foreach (var child in _children) child.Dump(w, indent + 1);
     }
 
     private string FormatOccurs() => Occurs is > 1 ? $" OCCURS {Occurs}" : "";

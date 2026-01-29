@@ -6,76 +6,62 @@ namespace GetThePicture.Copybook.SerDes;
 
 internal class CbDeserializer
 {
-    internal static RecValue DesSchema(CbSchema schema, ref RecCursor cursor)
+    internal static CbRecord DesSchema(CbSchema schema, ref RecCursor cursor)
     {
-        var result = new RecValue();
-
-        foreach (var dataItem in schema.DataItems)
-        {
-            switch (dataItem)
-            {
-                case GroupItem g:
-                    DesNestedGroupItem(g, ref cursor, result);
-                    break;
-
-                case ElementaryDataItem e :
-                    DesElementaryDataItem(e, ref cursor, result);
-                    break;
-                    
-                default:
-                    throw new InvalidOperationException($"Unsupported data item type: {dataItem.GetType().Name}");
-            };
-        }
+        if (schema.StorageOccupied != cursor.Size)
+            throw new InvalidOperationException($"Record size mismatch: schema={schema.StorageOccupied}, actual={cursor.Size}");
+        
+        var result = ReadGroupItems(schema, ref cursor);
 
         return result;
     }
 
-    private static RecValue DesGroupItem(GroupItem item, ref RecCursor cursor)
+    private static CbRecord ReadGroupItems(IDataItem item, ref RecCursor cursor)
     {
-        var result = new RecValue();
+        var result = new CbRecord();
 
-        foreach (var subordinate in item.Subordinates)
+        foreach (var child in item.Children)
         {
-            switch (subordinate)
+            switch (child)
             {
                 case GroupItem g:
-                    DesNestedGroupItem(g, ref cursor, result);
+                    ReadNestedGroupItem(g, ref cursor, result);
                     break;
 
                 case ElementaryDataItem e :
-                    DesElementaryDataItem(e, ref cursor, result);
+                    ReadElementaryDataItem(e, ref cursor, result);
                     break;
 
                 default:
-                    throw new InvalidOperationException($"Unsupported subordinate type: {subordinate.GetType().Name}");
+                    throw new InvalidOperationException($"Unsupported subordinate type: {child.GetType().Name}");
             }
         }
 
         return result;
     }
 
-    private static void DesNestedGroupItem(GroupItem item, ref RecCursor cursor, RecValue target)
+    private static void ReadNestedGroupItem(GroupItem item, ref RecCursor cursor, CbRecord target)
     {
         int occurs = item.Occurs ?? 1;
 
         if (occurs == 1)
         {
-            target[item.Name] = DesGroupItem(item, ref cursor);
+            target[item.Name] = ReadGroupItems(item, ref cursor);
         }
         else
         {
-            var values = new RecValue[occurs];
+            var values = new CbRecord[occurs];
 
             for (int i = 0; i < occurs; i++)
             {
-                values[i] = DesGroupItem(item, ref cursor);
+                values[i] = ReadGroupItems(item, ref cursor);
             }
 
             target[item.Name] = values;
         }
     }
 
-    private static void DesElementaryDataItem(ElementaryDataItem item, ref RecCursor cursor, RecValue target)
+    private static void ReadElementaryDataItem(ElementaryDataItem item, ref RecCursor cursor, CbRecord target)
     {
         int occurs = item.Occurs ?? 1;
 

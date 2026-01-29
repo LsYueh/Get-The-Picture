@@ -10,5 +10,7 @@ public interface IDataItem
     int? Occurs { get; }
     string? Comment { get; }
 
+    public IReadOnlyList<IDataItem> Children { get; }
+
     void Dump(TextWriter writer, int indent = 0);
 }

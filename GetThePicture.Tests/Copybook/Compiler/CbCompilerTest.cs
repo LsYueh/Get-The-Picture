@@ -23,13 +23,13 @@ public class CbCompilerTest
         CbSchema schema = CbCompiler.FromStreamReader(sr);
         Assert.IsNotNull(schema);
         Assert.AreEqual(0, schema.Level);
-        Assert.IsNotNull(schema.DataItems);
-        Assert.AreEqual(3, schema.DataItems.Count);
+        Assert.IsNotNull(schema.Children);
+        Assert.AreEqual(3, schema.Children.Count);
 
-        GroupItem? groupItem = (GroupItem?) schema.DataItems[2];
+        GroupItem? groupItem = (GroupItem?) schema.Children[2];
         Assert.IsNotNull(groupItem);
 
-        ElementaryDataItem? elementaryDataItem_05 =  (ElementaryDataItem?) groupItem.Subordinates[0];
+        ElementaryDataItem? elementaryDataItem_05 =  (ElementaryDataItem?) groupItem.Children[0];
         Assert.IsNotNull(elementaryDataItem_05);
         Assert.AreEqual(5, elementaryDataItem_05.Level);
         Assert.IsNotNull(elementaryDataItem_05.Pic);
@@ -57,9 +57,9 @@ public class CbCompilerTest
     [TestMethod]
     [TestCategory("Demo")]
     [Ignore]
-    public void Example_Schema_Dump_T30_OTC()
+    public void Example_Schema_Dump_Nested_Occurs_Record()
     {
-        using var sr = new StreamReader(@"TestData/t30-otc.cpy", cp950);
+        using var sr = new StreamReader(@"TestData/nested-occurs-record.cpy", cp950);
 
         CbSchema schema = CbCompiler.FromStreamReader(sr);
 

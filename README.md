@@ -184,10 +184,10 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
       var byte = cp950.GetBytes(line);
 
       // 根據Copybook的schema來反序列化資料
-      var record = serDes.Deserialize(expected);
+      CbRecord record = serDes.Deserialize(expected);
 
       Console.WriteLine("==== Record ====");
-      RecordValuePrinter.Print(record);
+      record.Print();
       Console.WriteLine("================\n");
     }
     ```
@@ -232,7 +232,16 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
     var serialized = serDes.Serialize(record);
     ```
 
-- [Copybook Compiler](docs/copybook/compiler.md)
+<br>
+
+- 更多關於 [Copybook Compiler](docs/copybook/compiler.md) ...
+
+<br><br>
+
+# 相關工具
+
+[Copycat](docs/copycat/README.md) : 一個將 `Copybook` 內容轉換成可在 C# 使用的強型別資料模型生成工具。
+
 
 <br><br>
 

@@ -15,6 +15,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("A");
 
+        Assert.AreEqual("A", pic.Raw);
         Assert.AreEqual(PicBaseClass.Alphabetic, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -27,6 +28,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("A(20)");
 
+        Assert.AreEqual("A(20)", pic.Raw);
         Assert.AreEqual(PicBaseClass.Alphabetic, pic.BaseClass);
         Assert.AreEqual(20, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -39,6 +41,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("A(1)");
 
+        Assert.AreEqual("A(1)", pic.Raw);
         Assert.AreEqual(PicBaseClass.Alphabetic, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -55,6 +58,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("X");
 
+        Assert.AreEqual("X", pic.Raw);
         Assert.AreEqual(PicBaseClass.Alphanumeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -67,6 +71,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("X(20)");
 
+        Assert.AreEqual("X(20)", pic.Raw);
         Assert.AreEqual(PicBaseClass.Alphanumeric, pic.BaseClass);
         Assert.AreEqual(20, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -79,6 +84,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("X(1)");
 
+        Assert.AreEqual("X(1)", pic.Raw);
         Assert.AreEqual(PicBaseClass.Alphanumeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -95,6 +101,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("9");
 
+        Assert.AreEqual("9", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -107,6 +114,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("9(4)");
 
+        Assert.AreEqual("9(4)", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(4, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -119,6 +127,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("9(1)");
 
+        Assert.AreEqual("9(1)", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -131,6 +140,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("999");
 
+        Assert.AreEqual("999", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(3, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -147,6 +157,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("S9");
 
+        Assert.AreEqual("S9", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -159,6 +170,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("S9(5)");
 
+        Assert.AreEqual("S9(5)", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(5, pic.IntegerDigits);
         Assert.AreEqual(0, pic.DecimalDigits);
@@ -175,6 +187,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("9V9");
 
+        Assert.AreEqual("9V9", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(1, pic.DecimalDigits);
@@ -187,6 +200,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("9(3)V9(2)");
 
+        Assert.AreEqual("9(3)V9(2)", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(3, pic.IntegerDigits);
         Assert.AreEqual(2, pic.DecimalDigits);
@@ -199,6 +213,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("999V99");
 
+        Assert.AreEqual("999V99", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(3, pic.IntegerDigits);
         Assert.AreEqual(2, pic.DecimalDigits);
@@ -215,6 +230,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("S9V9");
 
+        Assert.AreEqual("S9V9", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(1, pic.IntegerDigits);
         Assert.AreEqual(1, pic.DecimalDigits);
@@ -227,6 +243,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("S9(5)V99");
 
+        Assert.AreEqual("S9(5)V99", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(5, pic.IntegerDigits);
         Assert.AreEqual(2, pic.DecimalDigits);
@@ -243,6 +260,7 @@ public class PicMetaTest
     {
         var pic = PicMeta.Parse("    s9(2) v9 ");
 
+        Assert.AreEqual("S9(2)V9", pic.Raw);
         Assert.AreEqual(PicBaseClass.Numeric, pic.BaseClass);
         Assert.AreEqual(2, pic.IntegerDigits);
         Assert.AreEqual(1, pic.DecimalDigits);
