@@ -18,6 +18,7 @@ public enum TokenType
     Occurs, Times,
     Redefines, Reference, Renames,
     Value, Values,
+    Through,
     LParen, RParen,
     Dot, Hyphen,
     Unknown,

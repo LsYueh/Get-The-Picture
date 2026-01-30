@@ -135,4 +135,38 @@ public class LexerTest
         AssertToken(tokens[7], TokenType.Dot                , ".");
         AssertToken(tokens[8], TokenType.Comment            , "股票代號");
     }
+
+    [TestMethod]
+    public void Tokenize_Test_08()
+    {
+        string line = "88 FLAG-ALPHA        VALUES 'AA' 'AB' 'AC'";
+
+        var tokens = lexer.Tokenize(line, 0).ToList();
+
+        Assert.AreEqual(6, tokens.Count);
+
+        AssertToken(tokens[0], TokenType.NumericLiteral     , "88");
+        AssertToken(tokens[1], TokenType.AlphanumericLiteral, "FLAG-ALPHA");
+        AssertToken(tokens[2], TokenType.Values             , "VALUES");
+        AssertToken(tokens[3], TokenType.AlphanumericLiteral, "'AA'");
+        AssertToken(tokens[4], TokenType.AlphanumericLiteral, "'AB'");
+        AssertToken(tokens[5], TokenType.AlphanumericLiteral, "'AC'");
+    }
+
+    [TestMethod]
+    public void Tokenize_Test_09()
+    {
+        string line = "88 FLAG-NUMERIC      VALUE 11 THRU 99";
+
+        var tokens = lexer.Tokenize(line, 0).ToList();
+
+        Assert.AreEqual(6, tokens.Count);
+
+        AssertToken(tokens[0], TokenType.NumericLiteral     , "88");
+        AssertToken(tokens[1], TokenType.AlphanumericLiteral, "FLAG-NUMERIC");
+        AssertToken(tokens[2], TokenType.Value              , "VALUE");
+        AssertToken(tokens[3], TokenType.NumericLiteral     , "11");
+        AssertToken(tokens[4], TokenType.Through            , "THRU");
+        AssertToken(tokens[5], TokenType.NumericLiteral     , "99");
+    }
 }

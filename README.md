@@ -67,7 +67,7 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 <br>
 
-## 延伸工具  
+## 輔助工具  
   - [Copycat](docs/copycat/README.md) - 將 `Copybook` 內容轉換成可在 `C#` 使用的強型別資料模型(Sealed Class)。
 
 <br><br>

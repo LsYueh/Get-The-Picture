@@ -10,7 +10,7 @@
             "environmentVariables": {
                 "DOTNET_ENVIRONMENT": "Development"
             },
-            "commandLineArgs": "--schema nested-occurs-record.cpy --verbose"
+            "commandLineArgs": "--schema employee-record-with-levle-88.cpy --verbose"
         },
     }
 }
