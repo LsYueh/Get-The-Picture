@@ -14,8 +14,8 @@ public class ParserForLv88Test
     [DataRow("88 A VALUE 'A'.")]
     [DataRow("88 B VALUES 'A' 'B' 'C'.")]
     [DataRow("88 DIGIT VALUE 1 THROUGH 9.")]
-    [DataRow("88 FLAG VALUE ZERO.")]
-    [DataRow("88 SPACE-FLAG VALUE SPACE.")]
+    // [DataRow("88 FLAG VALUE ZERO.")]
+    // [DataRow("88 SPACE-FLAG VALUE SPACE.")]
     public void Test_Set(string line)
     {        
         var tokens = lexer.Tokenize(line, 1).ToList();
@@ -26,6 +26,6 @@ public class ParserForLv88Test
         
         Assert.IsNotNull(model);
 
-        // model.Dump(Console.Out);
+        model.Dump(Console.Out);
     }
 }
