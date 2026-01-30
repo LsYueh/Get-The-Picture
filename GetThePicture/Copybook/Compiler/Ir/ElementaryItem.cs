@@ -5,24 +5,21 @@ namespace GetThePicture.Copybook.Compiler.Ir;
 public sealed class ElementaryDataItem(
     int level, string name, PicMeta pic,
     int? occurs = null, string? value = null,
-    bool? isFiller = false, string? comment = null) : IDataItem
+    bool? isFiller = false, string? comment = null) : DataItem(level, name, occurs, comment)
 {
-    public int Level { get; init; } = level;
-    public string Name { get; init; } = name;
-    public int? Occurs { get; init; } = occurs;
     public string? Value { get; init; } = value;
+
     public bool? IsFiller { get; init; } = isFiller;
-    public string? Comment { get; init; } = comment;
 
     public PicMeta Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
 
-    public IReadOnlyList<IDataItem> Children => [];
+    public override IReadOnlyList<IDataItem> Children => [];
 
     // ----------------------------
     // Dump
     // ----------------------------
 
-    public void Dump(TextWriter w, int indent = 0)
+    public override void Dump(TextWriter w, int indent = 0)
     {        
         w.Write($"{Indent(indent)}{Level} {Name}{FormatComment()} >>");
 

@@ -31,7 +31,7 @@ public static class SchemaCmd
         return schema;
     }
 
-    public static void CodeGen (CbSchema schema, string fileName = "Out.cs", bool skipRoot = true)
+    public static void CodeGen(CbSchema schema, string fileName = "Out.cs", bool skipRoot = true)
     {
         using var writer = new StreamWriter(fileName, false, Encoding.UTF8);
 

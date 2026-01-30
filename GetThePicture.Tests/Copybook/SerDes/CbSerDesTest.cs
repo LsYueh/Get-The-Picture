@@ -15,13 +15,13 @@ public class CbSerDesTest
     [TestMethod]
     public void Deserialize_Serialize_T30_OTC_Test()
     {
-        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/t30-otc.cpy", cp950));
+        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/twse/t30-otc.cpy", cp950));
 
         Assert.AreEqual(100, schema.StorageOccupied);
     
         var serDes = new CbSerDes(schema);
 
-        using var reader = new StreamReader(@"TestData/t30-otc-lite.dat", cp950);
+        using var reader = new StreamReader(@"TestData/twse/t30-otc-lite.dat", cp950);
 
         string? line;
         while ((line = reader.ReadLine()) != null)

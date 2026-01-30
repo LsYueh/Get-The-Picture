@@ -1,15 +1,10 @@
 namespace GetThePicture.Copybook.Compiler.Ir;
 
-public sealed class CbSchema(string name = "COPYBOOK-SCHEMA") : IDataItem
+public sealed class CbSchema() : DataItem(0, "COPYBOOK-SCHEMA")
 {
-    public int Level { get; init; } = 0;
-    public string Name { get; init; } = name;
-    public int? Occurs { get; init; } = null;
-    public string? Comment { get; } = null;
-
     private readonly List<IDataItem> _children = [];
+    public override IReadOnlyList<IDataItem> Children => _children;
 
-    public IReadOnlyList<IDataItem> Children => _children;
     public int StorageOccupied { get; private set; }
 
     public void AddSubordinate(IDataItem dataItem)
@@ -43,7 +38,7 @@ public sealed class CbSchema(string name = "COPYBOOK-SCHEMA") : IDataItem
     // Dump
     // ----------------------------
 
-    public void Dump(TextWriter w, int indent = 0)
+    public override void Dump(TextWriter w, int indent = 0)
     {
         w.WriteLine($"{Indent(indent)}{Name}");
 

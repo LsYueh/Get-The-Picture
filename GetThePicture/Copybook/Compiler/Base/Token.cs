@@ -15,7 +15,6 @@ public enum TokenType
     Date, Time,
     National,
     Filler,
-    Number66, Number77, Number88,
     Occurs, Times,
     Redefines, Reference, Renames,
     Value, Values,
