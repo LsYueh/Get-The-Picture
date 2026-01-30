@@ -1,3 +1,4 @@
+using GetThePicture.Copybook.Compiler.Ir.Base;
 using GetThePicture.PictureClause.Base;
 
 namespace GetThePicture.Copybook.Compiler.Ir;
@@ -13,7 +14,15 @@ public sealed class ElementaryDataItem(
 
     public PicMeta Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
 
-    public override IReadOnlyList<IDataItem> Children => [];
+    private readonly List<Condition88Item> _conditions = [];
+    public IReadOnlyList<Condition88Item> Conditions => _conditions;
+
+    public override IReadOnlyList<IDataItem> Children => _conditions;
+
+    internal void AddCondition(Condition88Item condition)
+    {
+        _conditions.Add(condition);
+    }
 
     // ----------------------------
     // Dump
@@ -33,10 +42,10 @@ public sealed class ElementaryDataItem(
             w.Write($" VALUE: \"{Value}\"");
 
         w.WriteLine();
+
+        foreach (var c in _conditions) c.Dump(w, indent + 1);
     }
 
     private string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
-
-    private static string Indent(int i) => new(' ', i * 2);
 }
 

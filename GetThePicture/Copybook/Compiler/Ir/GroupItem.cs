@@ -1,3 +1,5 @@
+using GetThePicture.Copybook.Compiler.Ir.Base;
+
 namespace GetThePicture.Copybook.Compiler.Ir;
 
 public sealed class GroupItem(
@@ -50,6 +52,4 @@ public sealed class GroupItem(
     private string FormatOccurs() => Occurs is > 1 ? $" OCCURS {Occurs}" : "";
 
     private string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
-
-    private static string Indent(int i) => new(' ', i * 2);    
 }

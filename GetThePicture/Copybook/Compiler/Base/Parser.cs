@@ -1,6 +1,7 @@
 using System.Text;
 
 using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler.Ir.Base;
 using GetThePicture.PictureClause.Base;
 using GetThePicture.PictureClause.Base.ClauseItems;
 
@@ -66,8 +67,7 @@ public class Parser(List<Token> tokens)
         // │     ├─ Parse Header (Level + Name/FILLER)
         // │     ├─ Parse Clauses (PIC / VALUE / OCCURS)
         // │     └─ Build Item
-        // │           ├─ PIC exists → ElementaryDataItem
-        // │           └─ No PIC     → GroupItem
+        // │           └─ ElementaryDataItem / GroupItem / etc...
         // │
         // └─ 2. Parse Subordinate Items (Group only)
         //       └─ if item is GroupItem
@@ -100,30 +100,45 @@ public class Parser(List<Token> tokens)
         if (Current == null) return null;
 
         // 解析
-        IDataItem subordinate = ParseSingleDataItem();
+        IDataItem item = ParseSingleDataItem();
 
-        // 加入 parent 的 Subordinates
+        // 加入 parent 的 Subordinates / 88 處理
         switch (parent)
         {
-            case GroupItem g: g.AddSubordinate(subordinate); break;
-            case CbSchema  d: d.AddSubordinate(subordinate); break;
+            case GroupItem g: g.AddSubordinate(item); break;
+            case ElementaryDataItem e:
+            {
+                if (item is Condition88Item _88Item)
+                {
+                    e.AddCondition(_88Item); break;
+                }
+                    
+                throw new CompileException("Elementary data item cannot have subordinates.", Current ?? Previous);
+            }
+            case CbSchema  d: d.AddSubordinate(item); break;
         }
 
-        // 解析子項目（只有 GroupItem 才能有 subordinate）
-        if (subordinate is GroupItem group)
+        // 過濾可遞迴的子項
+        IDataItem? parentItem = item switch
         {
+            GroupItem g => g,
+            ElementaryDataItem e => e,
+            _ => null
+        };
+
+        if (parentItem != null)
+        {
+            int parentLevel = parentItem.Level;
             while (IsNextDataItemStart())
             {
                 int nextLevel = int.Parse(Current.Value);
+                if (nextLevel <= parentLevel) break;
 
-                if (nextLevel <= group.Level)
-                    break;
-
-                ParseDataItem(group);
+                ParseDataItem(parentItem);
             }
         }
 
-        return subordinate;
+        return item;
     }
 
     /// <summary>
@@ -146,8 +161,10 @@ public class Parser(List<Token> tokens)
         //     │
         //     ▼
         // [ BuildDataItem ]
-        //     ├─ PIC exists  ──► ElementaryDataItem
-        //     └─ no PIC      ──► GroupItem
+        //     ├─ Lv 1 ~ 49 ──► ElementaryDataItem / GroupItem
+        //     ├─ Lv 66 ──► [Unsupported]
+        //     ├─ Lv 77 ──► [Unsupported]
+        //     └─ Lv 88 ──► Condition88Item
         
         PicMeta? pic = null;
         string? value = null;
@@ -207,28 +224,26 @@ public class Parser(List<Token> tokens)
         return (level, name, false);
     }
 
-    private static IDataItem BuildDataItem(
+    private IDataItem BuildDataItem(
         int level, string name, PicMeta? pic,
         int? occurs, string? value, bool isFiller = false,
         string? comment = null
     )
     {
-        if (pic != null)
+        switch (level)
         {
-            return new ElementaryDataItem(level, name, pic)
+            case >= 1 and <= 49:
             {
-                Occurs = occurs,
-                Value = value,
-                IsFiller = isFiller,
-                Comment = comment,
-            };
+                return (pic != null)
+                    ? new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment)
+                    : new GroupItem(level, name, occurs, comment);
+            }
+            case 88:
+            {
+               return new Condition88Item(name, value);
+            }
+            default: throw new CompileException($"Unsupported level {level} for data item '{name}'", Current ?? Previous);
         }
-
-        return new GroupItem(level, name)
-        {
-            Occurs = occurs,
-            Comment = comment,
-        };
     }
 
     private bool IsNextDataItemStart()
@@ -398,7 +413,7 @@ public class Parser(List<Token> tokens)
         }
 
 
-        return sb.ToString();
+        return sb.ToString(); // TODO: 要根據TokenType輸出成string或decimal...
     }
 
     // ----------------------------

@@ -1,3 +1,5 @@
+using GetThePicture.Copybook.Compiler.Ir.Base;
+
 namespace GetThePicture.Copybook.Compiler.Ir;
 
 public sealed class CbSchema() : DataItem(0, "COPYBOOK-SCHEMA")
@@ -44,6 +46,4 @@ public sealed class CbSchema() : DataItem(0, "COPYBOOK-SCHEMA")
 
         foreach (var child in _children) child.Dump(w, indent + 1);
     }
-
-    private static string Indent(int i) => new(' ', i * 2);    
 }
