@@ -1,5 +1,25 @@
 # Changelog
 
+## [26.5.0] – 2026-01-30
+
+### 新增
+- 新增 COBOL Level 88（Condition Name）解析處理。
+- .NET 程式碼產出功能中，Level 88 會轉換為 布林屬性（boolean properties），盡量看齊 COBOL 語意。
+- 支援以下 Level 88 語法：
+	- `VALUE`（單一值）
+	- `VALUES`（多個值）
+	- `VALUE ... THRU ...`（範圍條件）
+- 支援 `OCCURS` 子句內的 Level 88 語法。
+
+<br><br>
+
+## [26.4.1] – 2026-01-29
+
+### 變更
+- `README.md` 增加開發開發需求說明。
+
+<br><br>
+
 ## [26.4.0] – 2026-01-29
 
 ### 新增
