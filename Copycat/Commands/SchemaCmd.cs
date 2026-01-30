@@ -8,14 +8,25 @@ using GetThePicture.PictureClause.Base.ClauseItems;
 
 namespace Copycat.Commands;
 
+public sealed class CodeGenOptions
+{
+    /// <summary>
+    /// 是否產生 COBOL level-88 condition properties
+    /// </summary>
+    public bool EmitCondition88 { get; init; } = false;
+    public bool SkipRoot { get; init; } = true;
+}
+
 /// <summary>
 /// 提供 Copybook Schema 相關的 CLI 功能。 <br />
 /// 將已解析的 CbSchema 轉換成對應的 C# 資料模型 (.cs)。 <br />
 /// 生成 Copybook 對應的 record struct 或 class。 <br />
 /// </summary>
-public static class SchemaCmd
+public class SchemaCmd(CodeGenOptions? options = null)
 {
     private static readonly Encoding CP950 = Core.EncodingResolver.CP950;
+
+    private readonly CodeGenOptions _options = options ?? new CodeGenOptions(); // 預設選項
 
     public static CbSchema ReadSchema(FileInfo fSchema, bool verbose = true)
     {
@@ -32,7 +43,7 @@ public static class SchemaCmd
         return schema;
     }
 
-    public static void CodeGen(CbSchema schema, string fileName = "Out.cs", bool skipRoot = true)
+    public void CodeGen(CbSchema schema, string fileName = "Out.cs")
     {
         using var writer = new StreamWriter(fileName, false, Encoding.UTF8);
 
@@ -44,7 +55,7 @@ public static class SchemaCmd
         writer.WriteLine($"/// Record Size : {schema.StorageOccupied} <br />");
         writer.WriteLine($"/// </summary>");
 
-        if (!skipRoot) // 生成 Schema root class
+        if (!_options.SkipRoot) // 生成 Schema root class
         {
             string schemaName = Core.NamingHelper.ToPascalCase(schema.Name);
             GenerateClass(writer, schemaName, schema, 0);
@@ -64,7 +75,7 @@ public static class SchemaCmd
     /// recursively emitting nested classes for group items and properties
     /// for elementary items.
     /// </summary>
-    private static void GenerateClass(StreamWriter writer, string className, IDataItem item, int indentLevel = 0)
+    private void GenerateClass(StreamWriter writer, string className, IDataItem item, int indentLevel = 0)
     {
         string indent = new(' ', indentLevel * 4);
 
@@ -95,7 +106,7 @@ public static class SchemaCmd
         writer.WriteLine($"{indent}}}");
     }
 
-    private static void GenerateNestedClass(StreamWriter writer, string className, IDataItem item, int indentLevel = 0)
+    private void GenerateNestedClass(StreamWriter writer, string className, IDataItem item, int indentLevel = 0)
     {
         string indent = new(' ', indentLevel * 4);
 
@@ -133,7 +144,7 @@ public static class SchemaCmd
         }
     }
 
-    private static void GenerateProps(StreamWriter writer, string propName, ElementaryDataItem item, int indentLevel = 0)
+    private void GenerateProps(StreamWriter writer, string propName, ElementaryDataItem item, int indentLevel = 0)
     {
         string indent = new(' ', indentLevel * 4);
 
@@ -158,6 +169,69 @@ public static class SchemaCmd
             string initializer = isReferenceType ? " = null!;" : "";
             writer.WriteLine($"{indent}public {csType} {propName} {{ get; set; }}{initializer}");
         }
+
+        if (_options.EmitCondition88)
+            GenerateCondition88Props(writer, propName, item, indentLevel);
+    }
+
+    private static void GenerateCondition88Props(StreamWriter writer, string basePropName, ElementaryDataItem item, int indentLevel = 0)
+    {
+        if (item.Conditions.Count == 0) return;
+
+        string indent = new(' ', indentLevel * 4);
+
+        string csType = TypeToCSharp(item.Pic);
+
+        bool isArray = (item.Occurs ?? 1) > 1;
+        
+        foreach (var cond in item.Conditions)
+        {
+            string condName = Core.NamingHelper.ToPascalCase(cond.Name);
+
+            if (isArray)
+            {
+                // 提供 IsXXXAt（0-based）
+                writer.WriteLine($"{indent}public bool Is{condName}At(int index)");
+                writer.WriteLine($"{indent}{{");
+                writer.WriteLine($"{indent}    if (index >= {basePropName}.Length)");
+                writer.WriteLine($"{indent}        throw new IndexOutOfRangeException();");
+                writer.WriteLine($"{indent}    return {Generate88Expression($"{basePropName}[index]", cond, csType)};");
+                writer.WriteLine($"{indent}}}");
+                }
+            else
+            {
+                // 單值 → IsXXX
+                string expr = Generate88Expression(basePropName, cond, csType);
+                writer.WriteLine($"{indent}public bool Is{condName} => {expr};");
+            }
+        }
+    }
+
+    private static string Generate88Expression(string propName, Condition88Item cond, string csType)
+    {
+        // VALUE A B C
+        if (cond.ThroughValue == null)
+        {
+            var comparisons = cond.Values
+                .Select(v => $"{propName} == {FormatValue(v, csType)}");
+
+            return string.Join(" || ", comparisons);
+        }
+
+        // VALUE A THROUGH Z
+        var start = FormatValue(cond.Values[0], csType);
+        var end   = FormatValue(cond.ThroughValue, csType);
+
+        return $"{propName} >= {start} && {propName} <= {end}";
+    }
+
+    private static string FormatValue(object value, string csType)
+    {
+        return csType switch
+        {
+            "string" => $"\"{value}\"",
+            _ => value.ToString()!
+        };
     }
 
     private static void GenerateComment(StreamWriter writer, IDataItem item, int indentLevel = 0)

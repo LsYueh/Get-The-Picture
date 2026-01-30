@@ -17,6 +17,9 @@ class Program
         [Option('f', "file", Required = false, HelpText = "Input COBOL data file.")]
         public FileInfo? Data { get; set; }
 
+        [Option("with-condition-88", HelpText = "Generate properties for COBOL 88-level conditions.")]
+        public bool EmitCondition88 { get; set; }
+
         [Option('v', "verbose", HelpText = "Enable verbose output.")]
         public bool Verbose { get; set; }
     }
@@ -40,10 +43,17 @@ class Program
             return 1;
         }
 
+        CodeGenOptions options = new()
+        {
+            EmitCondition88 = opts.EmitCondition88
+        };
+
+        SchemaCmd schemaCmd = new(options);
+
         var schema = SchemaCmd.ReadSchema(opts.Schema, opts.Verbose);
 
         string fileName = opts.Output ?? "Out.cs";
-        SchemaCmd.CodeGen(schema, fileName);
+        schemaCmd.CodeGen(schema, fileName);
 
         Console.WriteLine($"New sealed class generated: \"{Path.GetFullPath(fileName)}\"");
 

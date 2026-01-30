@@ -4,7 +4,7 @@
 
 <br>
 
-## 使用方式
+# 使用方式
 
 使用 `--schema` 指定要轉換的 Copybook  
 ```bash
@@ -14,26 +14,6 @@ copycat --schema nested-occurs-record.cpy
 輸出結果:  
 ```bash
 New sealed class generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\Out.cs"
-```
-
-<br>
-
-有參數 `--verbose` 時，會額外顯示 Copybook 解析後的資料綱要內容：  
-```bash
-==== SCHEMA ====
-COPYBOOK-SCHEMA
-  1 ORDER-RECORD
-    5 ORDER-ID >> PIC: [X(10)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
-    5 CUSTOMER-NAME >> PIC: [X(20)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=20, Dec=0, Len=20, Usage='Display'
-    5 ORDER-LINES OCCURS 3
-      10 PRODUCT-CODE >> PIC: [X(8)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
-      10 QUANTITY >> PIC: [9(3)] Class='Numeric' (Semantic='None'), Signed=False, Int=3, Dec=0, Len=3, Usage='Display'
-      10 LINE-AMOUNTS OCCURS 2
-        15 AMOUNT >> PIC: [9(5)V99] Class='Numeric' (Semantic='None'), Signed=False, Int=5, Dec=2, Len=7, Usage='Display'
-    5 TOTAL-AMOUNT >> PIC: [9(7)V99] Class='Numeric' (Semantic='None'), Signed=False, Int=7, Dec=2, Len=9, Usage='Display'
-================
-
-New file generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\Out.cs"
 ```
 
 <br>
@@ -105,3 +85,190 @@ public sealed class OrderRecord
 }
 
 ```
+
+<br>
+
+# 參數說明
+
+## `-v`, `--verbose`
+額外顯示 Copybook 解析後的資料綱要內容
+
+```bash
+copycat --schema nested-occurs-record.cpy --verbose
+```
+
+<br>
+
+輸出結果:
+```bash
+==== SCHEMA ====
+COPYBOOK-SCHEMA
+  1 ORDER-RECORD
+    5 ORDER-ID >> PIC: [X(10)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
+    5 CUSTOMER-NAME >> PIC: [X(20)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=20, Dec=0, Len=20, Usage='Display'
+    5 ORDER-LINES OCCURS 3
+      10 PRODUCT-CODE >> PIC: [X(8)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
+      10 QUANTITY >> PIC: [9(3)] Class='Numeric' (Semantic='None'), Signed=False, Int=3, Dec=0, Len=3, Usage='Display'
+      10 LINE-AMOUNTS OCCURS 2
+        15 AMOUNT >> PIC: [9(5)V99] Class='Numeric' (Semantic='None'), Signed=False, Int=5, Dec=2, Len=7, Usage='Display'
+    5 TOTAL-AMOUNT >> PIC: [9(7)V99] Class='Numeric' (Semantic='None'), Signed=False, Int=7, Dec=2, Len=9, Usage='Display'
+================
+
+New file generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\Out.cs"
+```
+
+<br><br>
+
+## `--with-condition-88`
+資料模型會根據 `88層級` 的內容產出對應的判斷式
+
+```bash
+copycat --schema nested-occurs-record.cpy --with-condition-88
+```
+
+`occurs-with-levle-88.cpy`
+```cobol
+ 01 ORDER-TABLE.
+    05 ORDER-STATUS PIC X OCCURS 5 TIMES.
+        88 ORDER-SHIPPED   VALUE 'S'.
+        88 ORDER-PENDING   VALUE 'P'.
+        88 ORDER-CANCELLED VALUE 'C'.
+```
+
+<br>
+
+一般情況下根據產`occurs-with-levle-88.cpy`出的資料模型
+```csharp
+/// <summary>
+/// Record Size : 5 <br />
+/// </summary>
+public sealed class OrderTable
+{
+    /// <summary>
+    /// X [1] Occurs: 5
+    /// </summary>
+    public string[] OrderStatus { get; } = new string[5];
+
+}
+```
+
+<br>
+
+加入參數 `--with-condition-88` 後的輸出結果:
+```csharp
+/// <summary>
+/// Record Size : 5 <br />
+/// </summary>
+public sealed class OrderTable
+{
+    /// <summary>
+    /// X [1] Occurs: 5
+    /// </summary>
+    public string[] OrderStatus { get; } = new string[5];
+    public bool IsOrderShippedAt(int index)
+    {
+        if (index >= OrderStatus.Length)
+            throw new IndexOutOfRangeException();
+        return OrderStatus[index] == "S";
+    }
+    public bool IsOrderPendingAt(int index)
+    {
+        if (index >= OrderStatus.Length)
+            throw new IndexOutOfRangeException();
+        return OrderStatus[index] == "P";
+    }
+    public bool IsOrderCancelledAt(int index)
+    {
+        if (index >= OrderStatus.Length)
+            throw new IndexOutOfRangeException();
+        return OrderStatus[index] == "C";
+    }
+
+}
+```
+
+<br>
+
+## 範例 1：單值 Level-88
+COBOL
+```cobol
+05 STATUS        PIC X.
+   88 OK         VALUE 'Y'.
+```
+
+<br>
+
+C#（轉換後）
+```csharp
+public string Status { get; set; } = null!;
+
+public bool IsOk => Status == "Y";
+```
+
+<br>
+
+## 範例 2：OCCURS 陣列 + Level-88
+COBOL
+```cobol
+05 STATUS        OCCURS 5 TIMES PIC X.
+   88 OK         VALUE 'Y'.
+```
+
+<br>
+
+C#（轉換後）
+```csharp
+public string[] Status { get; } = new string[5];
+
+public bool IsOkAt(int index)
+{
+    if (index >= Status.Length)
+        throw new IndexOutOfRangeException();
+    return Status[index] == "Y";
+}
+```
+
+<br>
+
+## 範例 3：VALUE 多值 / THRU
+COBOL
+```cobol
+05 GRADE         PIC 9.
+   88 PASS       VALUE 6 THRU 9.
+   88 FAIL       VALUE 0 THRU 5.
+```
+
+<br>
+
+C#（轉換後）
+```csharp
+public byte Grade { get; set; }
+
+public bool IsPass => Grade >= 6 && Grade <= 9;
+public bool IsFail => Grade >= 0 && Grade <= 5;
+```
+
+<br>
+
+## 範例 4：OCCURS + THRU + Level-88
+COBOL
+```cobol
+05 SCORES        PIC 9 OCCURS 3 TIMES.
+   88 HIGH       VALUE 7 THRU 9.
+```
+
+<br>
+
+C#（轉換後）
+```csharp
+public byte[] Scores { get; } = new byte[3];
+
+public bool IsHighAt(uint index)
+{
+    if (index >= (uint)Scores.Length)
+        throw new IndexOutOfRangeException();
+    return Scores[index] >= 7 && Scores[index] <= 9;
+}
+```
+
+<br><br>
