@@ -46,6 +46,9 @@ public class CbCompilerTest
         using var sr = new StreamReader(filePath, cp950);
 
         CbSchema schema = CbCompiler.FromStreamReader(sr);
+
+        // schema.Dump(Console.Out);
+        
         Assert.IsNotNull(schema);
         Assert.AreEqual(0, schema.Level);
         Assert.IsNotNull(schema.Children);
@@ -67,11 +70,9 @@ public class CbCompilerTest
             foreach (Condition88Item cond in ITEM_05.Children.Cast<Condition88Item>())
             {
                 Assert.AreEqual(88, cond.Level);
-                Assert.IsNotNull(cond.Value);
+                Assert.IsTrue(cond.Values.Count > 0);
             }
         }
-
-        schema.Dump(Console.Out);
     }
 
     [TestMethod]
