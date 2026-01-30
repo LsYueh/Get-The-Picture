@@ -1,19 +1,15 @@
+using GetThePicture.Copybook.Compiler.Ir.Base;
+
 namespace GetThePicture.Copybook.Compiler.Ir;
 
 public sealed class GroupItem(
     int level, string name, int? occurs = null,
-    string? comment = null) : IDataItem
+    string? comment = null) : DataItem(level, name, occurs, comment)
 {
-    public int Level { get; init; } = level;
-    public string Name { get; init; } = name;
-    public int? Occurs { get; init; } = occurs;
-    public string? Comment { get; init; } = comment;
-
     private readonly List<IDataItem> _children = [];
+    public override IReadOnlyList<IDataItem> Children => _children;
 
-    public IReadOnlyList<IDataItem> Children => _children;
     public int StorageOccupied { get; private set; }
-
 
     public void AddSubordinate(IDataItem subordinate)
     {
@@ -46,7 +42,7 @@ public sealed class GroupItem(
     // Dump
     // ----------------------------
 
-    public void Dump(TextWriter w, int indent = 0)
+    public override void Dump(TextWriter w, int indent = 0)
     {
         w.WriteLine($"{Indent(indent)}{Level} {Name}{FormatOccurs()}{FormatComment()}");
 
@@ -56,6 +52,4 @@ public sealed class GroupItem(
     private string FormatOccurs() => Occurs is > 1 ? $" OCCURS {Occurs}" : "";
 
     private string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
-
-    private static string Indent(int i) => new(' ', i * 2);    
 }

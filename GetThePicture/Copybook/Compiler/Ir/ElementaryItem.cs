@@ -1,3 +1,4 @@
+using GetThePicture.Copybook.Compiler.Ir.Base;
 using GetThePicture.PictureClause.Base;
 
 namespace GetThePicture.Copybook.Compiler.Ir;
@@ -5,24 +6,29 @@ namespace GetThePicture.Copybook.Compiler.Ir;
 public sealed class ElementaryDataItem(
     int level, string name, PicMeta pic,
     int? occurs = null, string? value = null,
-    bool? isFiller = false, string? comment = null) : IDataItem
+    bool? isFiller = false, string? comment = null) : DataItem(level, name, occurs, comment)
 {
-    public int Level { get; init; } = level;
-    public string Name { get; init; } = name;
-    public int? Occurs { get; init; } = occurs;
     public string? Value { get; init; } = value;
+
     public bool? IsFiller { get; init; } = isFiller;
-    public string? Comment { get; init; } = comment;
 
     public PicMeta Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
 
-    public IReadOnlyList<IDataItem> Children => [];
+    private readonly List<Condition88Item> _conditions = [];
+    public IReadOnlyList<Condition88Item> Conditions => _conditions;
+
+    public override IReadOnlyList<IDataItem> Children => _conditions;
+
+    internal void AddCondition(Condition88Item condition)
+    {
+        _conditions.Add(condition);
+    }
 
     // ----------------------------
     // Dump
     // ----------------------------
 
-    public void Dump(TextWriter w, int indent = 0)
+    public override void Dump(TextWriter w, int indent = 0)
     {        
         w.Write($"{Indent(indent)}{Level} {Name}{FormatComment()} >>");
 
@@ -36,10 +42,10 @@ public sealed class ElementaryDataItem(
             w.Write($" VALUE: \"{Value}\"");
 
         w.WriteLine();
+
+        foreach (var c in _conditions) c.Dump(w, indent + 1);
     }
 
     private string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
-
-    private static string Indent(int i) => new(' ', i * 2);
 }
 

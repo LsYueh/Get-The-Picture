@@ -1,6 +1,7 @@
 using System.Text;
 
 using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler.Ir.Base;
 using GetThePicture.PictureClause.Base;
 using GetThePicture.PictureClause.Base.ClauseItems;
 
@@ -66,8 +67,7 @@ public class Parser(List<Token> tokens)
         // │     ├─ Parse Header (Level + Name/FILLER)
         // │     ├─ Parse Clauses (PIC / VALUE / OCCURS)
         // │     └─ Build Item
-        // │           ├─ PIC exists → ElementaryDataItem
-        // │           └─ No PIC     → GroupItem
+        // │           └─ ElementaryDataItem / GroupItem / etc...
         // │
         // └─ 2. Parse Subordinate Items (Group only)
         //       └─ if item is GroupItem
@@ -100,30 +100,45 @@ public class Parser(List<Token> tokens)
         if (Current == null) return null;
 
         // 解析
-        IDataItem subordinate = ParseSingleDataItem();
+        IDataItem item = ParseSingleDataItem();
 
-        // 加入 parent 的 Subordinates
+        // 加入 parent 的 Subordinates / 88 處理
         switch (parent)
         {
-            case GroupItem g: g.AddSubordinate(subordinate); break;
-            case CbSchema  d: d.AddSubordinate(subordinate); break;
+            case GroupItem g: g.AddSubordinate(item); break;
+            case ElementaryDataItem e:
+            {
+                if (item is Condition88Item _88Item)
+                {
+                    e.AddCondition(_88Item); break;
+                }
+                    
+                throw new CompileException("Elementary data item cannot have subordinates.", Current ?? Previous);
+            }
+            case CbSchema  d: d.AddSubordinate(item); break;
         }
 
-        // 解析子項目（只有 GroupItem 才能有 subordinate）
-        if (subordinate is GroupItem group)
+        // 過濾可遞迴的子項
+        IDataItem? parentItem = item switch
         {
+            GroupItem g => g,
+            ElementaryDataItem e => e,
+            _ => null
+        };
+
+        if (parentItem != null)
+        {
+            int parentLevel = parentItem.Level;
             while (IsNextDataItemStart())
             {
                 int nextLevel = int.Parse(Current.Value);
+                if (nextLevel <= parentLevel) break;
 
-                if (nextLevel <= group.Level)
-                    break;
-
-                ParseDataItem(group);
+                ParseDataItem(parentItem);
             }
         }
 
-        return subordinate;
+        return item;
     }
 
     /// <summary>
@@ -145,14 +160,19 @@ public class Parser(List<Token> tokens)
         //  (PIC / VALUE / OCCURS)
         //     │
         //     ▼
-        // [ BuildDataItem ]
-        //     ├─ PIC exists  ──► ElementaryDataItem
-        //     └─ no PIC      ──► GroupItem
+        // [ (Build DataItem) ]
+        //     ├─ Lv 1 ~ 49 ──► ElementaryDataItem / GroupItem
+        //     ├─ Lv 66 ──► [Unsupported]
+        //     ├─ Lv 77 ──► [Unsupported]
+        //     └─ Lv 88 ──► Condition88Item
         
         PicMeta? pic = null;
         string? value = null;
         int? occurs = null;
         var comments = new List<string>();
+
+        IEnumerable<object>? values = null;
+        object? through = null;
 
         CollectComments(comments); // 行首 comment（很少，但合法）
 
@@ -171,8 +191,23 @@ public class Parser(List<Token> tokens)
                     break;
 
                 case TokenType.Value:
-                    value = ParseValueClause();
+                    if (level == 88) {
+                        (values, through) = ParseLv88ValuesClause();
+                    }
+                    else
+                    {
+                        value = ParseValueClause();
+                    }
                     break;
+
+                case TokenType.Values:
+                {
+                    if (level != 88)
+                        throw new CompileException($"'VALUES' clause is only valid for level 88 items.", Current ?? Previous);
+                
+                    (values, through) = ParseLv88ValuesClause();
+                    break;
+                }
 
                 default:
                     throw new CompileException($"Invalid or unsupported clause after data item '{name}'.", Current ?? Previous);
@@ -182,13 +217,21 @@ public class Parser(List<Token> tokens)
         Expect(TokenType.Dot);
 
         CollectComments(comments);
-        
-        IDataItem item = BuildDataItem(
-            level, name, pic,
-            occurs, value,
-            isFiller,
-            (comments.Count == 0) ? null : string.Join(", ", comments)
-        );
+
+        string? comment = (comments.Count == 0) ? null : string.Join(", ", comments);
+
+        // Build DataItem
+
+        IDataItem item = level switch
+        {
+            >= 1 and <= 49 => (pic != null)
+                ? new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment)
+                : new GroupItem(level, name, occurs, comment),
+
+            88 => new Condition88Item(name, values, through),
+
+            _ => throw new CompileException($"Unsupported level {level} for data item '{name}'", Current ?? Previous),
+        };
 
         return item;
     }
@@ -205,30 +248,6 @@ public class Parser(List<Token> tokens)
 
         string name = Expect(TokenType.AlphanumericLiteral).Value;
         return (level, name, false);
-    }
-
-    private static IDataItem BuildDataItem(
-        int level, string name, PicMeta? pic,
-        int? occurs, string? value, bool isFiller = false,
-        string? comment = null
-    )
-    {
-        if (pic != null)
-        {
-            return new ElementaryDataItem(level, name, pic)
-            {
-                Occurs = occurs,
-                Value = value,
-                IsFiller = isFiller,
-                Comment = comment,
-            };
-        }
-
-        return new GroupItem(level, name)
-        {
-            Occurs = occurs,
-            Comment = comment,
-        };
     }
 
     private bool IsNextDataItemStart()
@@ -398,7 +417,70 @@ public class Parser(List<Token> tokens)
         }
 
 
-        return sb.ToString();
+        return sb.ToString(); // TODO: 要根據TokenType輸出成string或decimal...
+    }
+
+    private (IEnumerable<object>? Values, object? Through) ParseLv88ValuesClause()
+    {
+        // VALUE 或 VALUES
+        switch (Current?.Type)
+        {
+            case TokenType.Value:
+                Consume(); // VALUE
+                break;
+            case TokenType.Values:
+                Consume(); // VALUES
+                break;
+            default:
+                throw new CompileException($"'VALUE(S)' clause is required for level 88 items.", Current ?? Previous);
+        }
+
+        var values = new List<object>();
+        object? through = null;
+
+        // 解析第一個值
+        values.Add(ParseLv88SingleValue());
+
+        // 後續可能是：
+        // VALUE A B C
+        // VALUE 1 THROUGH 9
+        // VALUE 'A' THROUGH 'Z'
+
+        while (Current != null && Current.Type != TokenType.Dot)
+        {
+            if (Current.Type == TokenType.Through)
+            {
+                Consume(); // THROUGH
+                through = ParseLv88SingleValue();
+                break; // THROUGH 結束語意範圍，不再接續值
+            }
+
+            // 多值情況
+            values.Add(ParseLv88SingleValue());
+        }
+            
+        return (values.Count == 0 ? null : values, through);
+    }
+
+    private object ParseLv88SingleValue()
+    {
+        if (Current == null)
+            throw new CompileException("Unexpected end of input in level 88 VALUE clause.", Previous);
+
+        switch (Current.Type)
+        {
+            case TokenType.AlphanumericLiteral:
+                var raw = Consume().Value;
+                var unquoted = UnquoteValuel(raw);
+                return unquoted;
+
+            case TokenType.NumericLiteral:
+                var n = Consume().Value;
+                return int.TryParse(n, out var i) ? i : decimal.Parse(n);
+
+            default:
+                throw new CompileException($"Invalid VALUE token for level 88: {Current.Type}", Current);
+        }
     }
 
     // ----------------------------
@@ -415,7 +497,7 @@ public class Parser(List<Token> tokens)
         }
     }
 
-    private static string UnquoteValuel(string tokenValue)
+    private static string UnquoteValuel(string tokenValue)  
     {
         if (string.IsNullOrEmpty(tokenValue))
             return tokenValue;
