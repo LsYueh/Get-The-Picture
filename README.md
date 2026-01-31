@@ -103,14 +103,14 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
     string? line;
     while ((line = reader.ReadLine()) != null)
     {
-      var byte = cp950.GetBytes(line);
+        var byte = cp950.GetBytes(line);
 
-      // 根據Copybook的schema來反序列化資料
-      CbRecord record = serDes.Deserialize(expected);
+        // 根據Copybook的schema來反序列化資料
+        CbRecord record = serDes.Deserialize(expected);
 
-      Console.WriteLine("==== Record ====");
-      record.Print();
-      Console.WriteLine("================\n");
+        Console.WriteLine("==== Record ====");
+        record.Print();
+        Console.WriteLine("================\n");
     }
     ```
 
@@ -159,6 +159,17 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 <br>
 
 - 更多關於 [Copybook Compiler](docs/get-the-picture/copybook/compiler.md) ...
+
+<br>
+
+## Level 66 (`RENAMES … THRU`) in Copybook
+目前僅解析並保留位於 record 末端的 Level 66 `RENAMES … THRU` 定義。此類 Level 66 不影響實體儲存結構，僅表達既有欄位的語意聚合，適合作為語意資訊保存。常用於描述**類似 RECORD KEY 的邏輯識別範圍（logical key）**。  
+
+此限制確保被 `RENAMES` 涵蓋的欄位範圍為線性、連續且可預期，並降低解析複雜度。同時為未來進行語意型態轉換或資料庫 DDL 投影預留擴充空間。
+
+<br>
+
+- 更多關於 [`RECORD KEY` Clause](docs/get-the-picture/copybook/record-key-clause.md) ... 
 
 <br><br>
 
@@ -281,6 +292,7 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
 Rocket Software ACUCOBOL-GT extend (V10.5.0) : [USAGE Clause](https://docs.rocketsoftware.com/bundle/acucobolgt_dg_1050_html/page/BKRFRFDATAS043.html)  
 IBM Enterprise COBOL for z/OS (6.5.0) : [USAGE clause](https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=entry-usage-clause)  
+IBM Enterprise COBOL for z/OS (6.5.0) : [RECORD KEY clause](https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=section-record-key-clause)  
 IBM COBOL for Linux on x86 (1.2.0) : [Classes and categories of data](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=relationships-classes-categories-data)  
 
 <br><br>
