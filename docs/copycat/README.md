@@ -23,7 +23,7 @@ New sealed class generated: "D:\Projects\get-the-picture\GetThePicture.Tests\Tes
 namespace GeneratedCopybook;
 
 /// <summary>
-/// Record Size : 114 <br />
+/// Record Size : 114
 /// </summary>
 public sealed class OrderRecord
 {
@@ -119,6 +119,45 @@ New file generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\Ou
 
 <br><br>
 
+## `--with-renames-66`
+資料模型會根據 `66層級` 的內容產對應的宣告
+
+```bash
+copycat --schema EMPREC.CPY --with-renames-66
+```
+
+`EMPREC.CPY`
+```cobol
+ 01  EMP-RECORD.
+    05 EMP-ID           PIC X(10).
+    05 EMP-NAME         PIC X(30).
+    05 EMP-DEPT         PIC X(04).
+    05 EMP-SALARY       PIC 9(07)V99.
+ 66  EMP-KEY RENAMES EMP-ID THRU EMP-DEPT.
+```
+
+<br>
+加入參數後，會額外生成一個「獨立 class」來表示 66  
+
+```csharp
+public sealed class EmpRecord
+{
+    // (省略)...
+}
+
+/// <summary>
+/// 66 'EMP-KEY' Renames property: logical grouping of fields
+/// from 'EMP-ID' through 'EMP-DEPT' in the original Copybook.
+/// Represents semantic meaning only; does not occupy storage.
+/// </summary>
+public sealed class EmpKey66
+{
+    public string[] Fields { get; init; } = [];
+}
+```
+
+<br><br>
+
 ## `--with-condition-88`
 資料模型會根據 `88層級` 的內容產出對應的判斷式
 
@@ -140,7 +179,7 @@ copycat --schema nested-occurs-record.cpy --with-condition-88
 一般情況下根據產`occurs-with-levle-88.cpy`出的資料模型
 ```csharp
 /// <summary>
-/// Record Size : 5 <br />
+/// Record Size : 5
 /// </summary>
 public sealed class OrderTable
 {
@@ -157,7 +196,7 @@ public sealed class OrderTable
 加入參數 `--with-condition-88` 後的輸出結果:
 ```csharp
 /// <summary>
-/// Record Size : 5 <br />
+/// Record Size : 5
 /// </summary>
 public sealed class OrderTable
 {

@@ -10,6 +10,7 @@ namespace Copycat.Commands;
 
 public sealed class CodeGenOptions
 {
+    public bool EmitCondition66 { get; init; } = false;
     /// <summary>
     /// 是否產生 COBOL level-88 condition properties
     /// </summary>
@@ -52,7 +53,7 @@ public class SchemaCmd(CodeGenOptions? options = null)
         writer.WriteLine();
 
         writer.WriteLine($"/// <summary>");
-        writer.WriteLine($"/// Record Size : {schema.StorageOccupied} <br />");
+        writer.WriteLine($"/// Record Size : {schema.StorageOccupied}");
         writer.WriteLine($"/// </summary>");
 
         if (!_options.SkipRoot) // 生成 Schema root class
@@ -66,7 +67,20 @@ public class SchemaCmd(CodeGenOptions? options = null)
         foreach (var child in schema.Children)
         {
             string className = Core.NamingHelper.ToPascalCase(child.Name);
-            GenerateClass(writer, className, child, 0);
+
+            switch (child)
+            {
+                case Renames66Item r:
+                    if (_options.EmitCondition66 == true)
+                        GenerateRenames66Props(writer, className, r, 0);
+                    break;
+                
+                default:
+                    GenerateClass(writer, className, child, 0);
+                    break;
+            }
+
+            writer.WriteLine("");
         }
     }
 
@@ -92,8 +106,13 @@ public class SchemaCmd(CodeGenOptions? options = null)
                     GenerateNestedClass(writer, fieldName, g, indentLevel + 1);
                     break;
                 
-                case ElementaryDataItem e :
+                case ElementaryDataItem e:
                     GenerateProps(writer, fieldName, e, indentLevel + 1);
+                    break;
+
+                case Renames66Item r:
+                    if (_options.EmitCondition66 == true)
+                        GenerateRenames66Props(writer, fieldName, r, indentLevel + 1);
                     break;
                 
                 default:
@@ -172,6 +191,21 @@ public class SchemaCmd(CodeGenOptions? options = null)
 
         if (_options.EmitCondition88)
             GenerateCondition88Props(writer, propName, item, indentLevel);
+    }
+
+    private static void GenerateRenames66Props(StreamWriter writer, string className, Renames66Item item, int indentLevel = 0)
+    {
+        string indent = new(' ', indentLevel * 4);
+
+        writer.WriteLine($"{indent}/// <summary>");
+        writer.WriteLine($"{indent}/// 66 '{item.Name}' Renames property: logical grouping of fields");
+        writer.WriteLine($"{indent}/// from '{item.From}' through '{item.Thru}' in the original Copybook.");
+        writer.WriteLine($"{indent}/// Represents semantic meaning only; does not occupy storage.");
+        writer.WriteLine($"{indent}/// </summary>");
+        writer.WriteLine($"{indent}public sealed class {className}66");
+        writer.WriteLine($"{indent}{{");
+        writer.WriteLine($"{indent}    public string[] Fields {{ get; init; }} = [];");
+        writer.WriteLine($"{indent}}}");
     }
 
     private static void GenerateCondition88Props(StreamWriter writer, string basePropName, ElementaryDataItem item, int indentLevel = 0)

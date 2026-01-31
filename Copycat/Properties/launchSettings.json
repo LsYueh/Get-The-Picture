@@ -10,7 +10,7 @@
             "environmentVariables": {
                 "DOTNET_ENVIRONMENT": "Development"
             },
-            "commandLineArgs": "--schema occurs-with-levle-88.cpy --with-condition-88 --verbose"
+            "commandLineArgs": "--schema EMPREC.CPY --with-renames-66 --verbose"
         },
     }
 }

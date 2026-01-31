@@ -105,7 +105,6 @@ public class Parser(List<Token> tokens)
         // 加入 parent 的 Subordinates / 88 處理
         switch (parent)
         {
-            case GroupItem g: g.AddSubordinate(item); break;
             case ElementaryDataItem e:
             {
                 if (item is Condition88Item _88Item)
@@ -115,6 +114,7 @@ public class Parser(List<Token> tokens)
                     
                 throw new CompileException("Elementary data item cannot have subordinates.", Current ?? Previous);
             }
+            case GroupItem g: g.AddSubordinate(item); break;
             case CbSchema  d: d.AddSubordinate(item); break;
         }
 
@@ -132,8 +132,13 @@ public class Parser(List<Token> tokens)
             while (IsNextDataItemStart())
             {
                 int nextLevel = int.Parse(Current.Value);
+                
+                // Level 層級結束
                 if (nextLevel <= parentLevel) break;
 
+                // Level 66 是 record-level 的語意節點，除了 Root 外不屬於任何 GroupItem 或 ElementaryDataItem 
+                if (nextLevel == 66) break;
+                
                 ParseDataItem(parentItem);
             }
         }
@@ -162,17 +167,28 @@ public class Parser(List<Token> tokens)
         //     ▼
         // [ (Build DataItem) ]
         //     ├─ Lv 1 ~ 49 ──► ElementaryDataItem / GroupItem
-        //     ├─ Lv 66 ──► [Unsupported]
+        //     ├─ Lv 66 ──► Renames66Item
         //     ├─ Lv 77 ──► [Unsupported]
         //     └─ Lv 88 ──► Condition88Item
         
+        // Lv 1 ~ 49
+
         PicMeta? pic = null;
         string? value = null;
         int? occurs = null;
         var comments = new List<string>();
 
-        IEnumerable<object>? values = null;
-        object? through = null;
+        // Level 66
+
+        string  lv66From    = string.Empty;
+        string? lv66Through = null;
+
+        // Level 88
+
+        IEnumerable<object>? lv88Values  = null;
+        object?              lv88Through = null;
+
+        // ----------------------------
 
         CollectComments(comments); // 行首 comment（很少，但合法）
 
@@ -190,9 +206,19 @@ public class Parser(List<Token> tokens)
                     occurs = ParseOccursClause();
                     break;
 
+                case TokenType.Renames:
+                {
+                    if (level != 66)
+                        throw new CompileException($"'RENAMES' clause is only valid for level 66 items.", Current ?? Previous);
+                    
+                    (lv66From, lv66Through) = ParseLv66RenamesClause();
+                    
+                    break;
+                }
+
                 case TokenType.Value:
                     if (level == 88) {
-                        (values, through) = ParseLv88ValuesClause();
+                        (lv88Values, lv88Through) = ParseLv88ValuesClause();
                     }
                     else
                     {
@@ -205,7 +231,7 @@ public class Parser(List<Token> tokens)
                     if (level != 88)
                         throw new CompileException($"'VALUES' clause is only valid for level 88 items.", Current ?? Previous);
                 
-                    (values, through) = ParseLv88ValuesClause();
+                    (lv88Values, lv88Through) = ParseLv88ValuesClause();
                     break;
                 }
 
@@ -228,7 +254,9 @@ public class Parser(List<Token> tokens)
                 ? new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment)
                 : new GroupItem(level, name, occurs, comment),
 
-            88 => new Condition88Item(name, values, through),
+            66 => new Renames66Item(name, lv66From, lv66Through, comment),
+
+            88 => new Condition88Item(name, lv88Values, lv88Through),
 
             _ => throw new CompileException($"Unsupported level {level} for data item '{name}'", Current ?? Previous),
         };
@@ -418,6 +446,22 @@ public class Parser(List<Token> tokens)
 
 
         return sb.ToString(); // TODO: 要根據TokenType輸出成string或decimal...
+    }
+
+    private (string From, string? Thru) ParseLv66RenamesClause()
+    {
+        Consume(); // RENAMES
+
+        string  from = Expect(TokenType.AlphanumericLiteral).Value;
+        string? thru = null;
+
+        if (Current?.Type == TokenType.Through)
+        {
+            Consume(); // THRU / THROUGH
+            thru = Expect(TokenType.AlphanumericLiteral).Value;
+        }
+
+        return (from, thru);
     }
 
     private (IEnumerable<object>? Values, object? Through) ParseLv88ValuesClause()

@@ -29,7 +29,7 @@ public sealed class Condition88Item(
             string valuePart = string.Join(" ", Values.Select(v => v?.ToString() ?? "NULL"));
 
             if (ThroughValue != null)
-                valuePart += $" THROUGH {ThroughValue}";
+                valuePart += $" through {ThroughValue}";
 
             writer.WriteLine($"{Indent(indent)}88 {Name} >> Value(s) in {valuePart}");
         }            
