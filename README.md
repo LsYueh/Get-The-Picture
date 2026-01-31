@@ -145,6 +145,8 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
     ...
     ```
 
+    > ⚠️ 目前不支援包含 `Level 66`、`Level 77`、`Level 88` 子句的反序列化處裡  
+
 <br>
 
 2. Serialization（序列化）
@@ -202,7 +204,7 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 > ⚠️ Level number 越小層級越高，01 是最外層。
 
 ## 詳細說明
-- Level [66 — RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md) (暫不支援)  
+- Level [66 — RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md) (有限度支援)  
 - Level [77 — Standalone Variable (單一變數)](docs/get-the-picture/cobol-level-numbers/lv77.md) (暫不支援)  
 - Level [88 — Condition Name](docs/get-the-picture/cobol-level-numbers/lv88.md)  
 
