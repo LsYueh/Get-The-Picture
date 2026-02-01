@@ -1,9 +1,16 @@
 # Changelog
 
+## [26.6.0] – 2026-02-01
+
+### 新增
+- 新增 **Level 66 RENAMES**  子句解析支援 (有限度支援)。
+
+<br><br>
+
 ## [26.5.0] – 2026-01-30
 
 ### 新增
-- 新增 COBOL Level 88（Condition Name）解析處理。
+- 新增 **Level 88（Condition Name）** 解析處理。
 - .NET 程式碼產出功能中，Level 88 會轉換為 布林屬性（boolean properties），盡量看齊 COBOL 語意。
 - 支援以下 Level 88 語法：
 	- `VALUE`（單一值）
