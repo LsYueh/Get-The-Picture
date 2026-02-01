@@ -169,4 +169,21 @@ public class LexerTest
         AssertToken(tokens[4], TokenType.Through            , "THRU");
         AssertToken(tokens[5], TokenType.NumericLiteral     , "99");
     }
+
+    [TestMethod]
+    public void Tokenize_Test_10()
+    {
+        string line = "66  EMP-KEY RENAMES EMP-ID THRU EMP-DEPT";
+
+        var tokens = lexer.Tokenize(line, 0).ToList();
+
+        Assert.AreEqual(6, tokens.Count);
+
+        AssertToken(tokens[0], TokenType.NumericLiteral     , "66");
+        AssertToken(tokens[1], TokenType.AlphanumericLiteral, "EMP-KEY");
+        AssertToken(tokens[2], TokenType.Renames            , "RENAMES");
+        AssertToken(tokens[3], TokenType.AlphanumericLiteral, "EMP-ID");
+        AssertToken(tokens[4], TokenType.Through            , "THRU");
+        AssertToken(tokens[5], TokenType.AlphanumericLiteral, "EMP-DEPT");
+    }
 }

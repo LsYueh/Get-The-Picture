@@ -6,17 +6,14 @@ namespace GetThePicture.Tests.Copybook.Compiler.Base;
 
 [TestClass]
 
-public class ParserForLv88Test
+public class ParserForLv66Test
 {
     private static readonly Lexer lexer = new();
 
     [TestMethod]
     [DataTestMethod]
-    [DataRow("88 A VALUE 'A'.", "COPYBOOK-SCHEMA", "  88 A >> Value(s) in A")]
-    [DataRow("88 B VALUES 'A' 'B' 'C'.", $"COPYBOOK-SCHEMA", "  88 B >> Value(s) in A B C")]
-    [DataRow("88 DIGIT VALUE 1 THROUGH 9.", $"COPYBOOK-SCHEMA", "  88 DIGIT >> Value(s) in 1 through 9")]
-    // [DataRow("88 FLAG VALUE ZERO.", "")]
-    // [DataRow("88 SPACE-FLAG VALUE SPACE.", "")]
+    [DataRow("66  EMP-KEY RENAMES EMP-ID.", "COPYBOOK-SCHEMA", "  66 EMP-KEY >> Renames EMP-ID")]
+    [DataRow("66  EMP-KEY RENAMES EMP-ID THRU EMP-DEPT.", "COPYBOOK-SCHEMA", "  66 EMP-KEY >> Renames EMP-ID through EMP-DEPT")]
     public void Test_Set(string line, string expected_01, string expected_02)
     {        
         var tokens = lexer.Tokenize(line, 1).ToList();
