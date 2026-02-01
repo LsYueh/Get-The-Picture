@@ -146,14 +146,20 @@ public sealed class EmpRecord
 }
 
 /// <summary>
-/// 66 'EMP-KEY' Renames property: logical grouping of fields
-/// from 'EMP-ID' through 'EMP-DEPT' in the original Copybook.
-/// Represents semantic meaning only; does not occupy storage.
+/// 66 'EMP-KEY' RENAMES logical grouping. <br />
+/// Original range: 'EMP-ID' through 'EMP-DEPT'. <br />
+/// This item represents semantic grouping only and does not occupy storage. <br />
+/// Affected elementary items: 3.
 /// </summary>
 public sealed class EmpKey66
 {
-    public string[] Fields { get; init; } = [];
+    public static readonly string[] Fields = [
+        "EmpId",
+        "EmpName",
+        "EmpDept",
+    ];
 }
+
 ```
 
 <br><br>

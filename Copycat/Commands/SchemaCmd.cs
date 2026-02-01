@@ -198,13 +198,33 @@ public class SchemaCmd(CodeGenOptions? options = null)
         string indent = new(' ', indentLevel * 4);
 
         writer.WriteLine($"{indent}/// <summary>");
-        writer.WriteLine($"{indent}/// 66 '{item.Name}' Renames property: logical grouping of fields");
-        writer.WriteLine($"{indent}/// from '{item.From}' through '{item.Thru}' in the original Copybook.");
-        writer.WriteLine($"{indent}/// Represents semantic meaning only; does not occupy storage.");
+        writer.WriteLine($"{indent}/// 66 '{item.Name}' RENAMES logical grouping. <br />");
+        writer.WriteLine($"{indent}/// Original range: '{item.From}'" + (string.IsNullOrEmpty(item.Thru) ? "" : $" through '{item.Thru}'") + ". <br />");
+        writer.WriteLine($"{indent}/// This item represents semantic grouping only and does not occupy storage. <br />");
+        writer.WriteLine($"{indent}/// Affected elementary items: {item.AffectedItems.Count}.");
         writer.WriteLine($"{indent}/// </summary>");
+
         writer.WriteLine($"{indent}public sealed class {className}66");
         writer.WriteLine($"{indent}{{");
-        writer.WriteLine($"{indent}    public string[] Fields {{ get; init; }} = [];");
+
+        if (item.AffectedItems.Count == 0)
+        {
+            writer.WriteLine($"{indent}    // No resolved elementary items.");
+            writer.WriteLine($"{indent}    public static readonly string[] Fields = [];");
+        }
+        else
+        {
+            writer.WriteLine($"{indent}    public static readonly string[] Fields = [");
+
+            foreach (var name in item.AffectedItems)
+            {
+                string propName = Core.NamingHelper.ToPascalCase(name);
+                writer.WriteLine($"{indent}        \"{propName}\",");
+            }
+
+            writer.WriteLine($"{indent}    ];");
+        }
+
         writer.WriteLine($"{indent}}}");
     }
 
