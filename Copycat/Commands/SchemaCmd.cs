@@ -110,6 +110,10 @@ public class SchemaCmd(CodeGenOptions? options = null)
                     GenerateProps(writer, fieldName, e, indentLevel + 1);
                     break;
 
+                case RedefinesItem r:
+                    // TODO: GenerateRedefinesItemProps
+                    break;
+
                 case Renames66Item r:
                     if (_options.EmitCondition66 == true)
                         GenerateRenames66Props(writer, fieldName, r, indentLevel + 1);

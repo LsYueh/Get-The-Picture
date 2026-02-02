@@ -28,6 +28,8 @@ public sealed class CbCompiler
 
         ResolveRenames66(schema, seqList);
 
+        // TODO: 使用 seqList 讓 RedefinesItem 有 Target
+
         return schema;
     }
 

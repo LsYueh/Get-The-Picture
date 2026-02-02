@@ -2,7 +2,7 @@ using GetThePicture.Copybook.Compiler.Ir.Base;
 
 namespace GetThePicture.Copybook.Compiler.Ir;
 
-public sealed class GroupItem(
+public class GroupItem(
     int level, string name, int? occurs = null,
     string? comment = null) : DataItem(level, name, occurs, comment)
 {
@@ -32,6 +32,11 @@ public sealed class GroupItem(
             {
                 g.CalculateStorage();
                 total += g.StorageOccupied * (g.Occurs ?? 1);
+            }
+            else if (child is RedefinesItem r)
+            {
+                // 只計算，不納入佔位空間計算
+                r.CalculateStorage();
             }
         }
 
