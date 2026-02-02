@@ -10,6 +10,7 @@ namespace Copycat.Commands;
 
 public sealed class CodeGenOptions
 {
+    public bool EmitRedefines { get; init; } = false;
     public bool EmitCondition66 { get; init; } = false;
     /// <summary>
     /// 是否產生 COBOL level-88 condition properties
@@ -111,7 +112,8 @@ public class SchemaCmd(CodeGenOptions? options = null)
                     break;
 
                 case RedefinesItem r:
-                    // TODO: GenerateRedefinesItemProps
+                    if (_options.EmitRedefines == true)
+                        GenerateRedefinesItemProps(writer, fieldName, r, indentLevel + 1);
                     break;
 
                 case Renames66Item r:
@@ -195,6 +197,30 @@ public class SchemaCmd(CodeGenOptions? options = null)
 
         if (_options.EmitCondition88)
             GenerateCondition88Props(writer, propName, item, indentLevel);
+    }
+
+    private static void GenerateRedefinesItemProps(StreamWriter writer, string className, RedefinesItem item, int indentLevel = 0)
+    {
+        string indent = new(' ', indentLevel * 4);
+
+        writer.WriteLine($"{indent}/// <summary>");
+        writer.WriteLine($"{indent}/// REDEFINES '{item.Name}' overlays target '{item.TargetName}'");
+        
+        if (item.Target != null)
+        {
+            writer.WriteLine($"{indent}/// Target type: {item.Target.GetType().Name}");
+            writer.WriteLine($"{indent}/// Target PIC: {item.Target.Pic}");
+        }
+        else
+        {
+            writer.WriteLine($"{indent}/// Target not yet resolved.");
+        }
+
+        writer.WriteLine($"{indent}/// This property overlays the target's storage.");
+        writer.WriteLine($"{indent}/// </summary>");
+
+        // 目前不產生實際屬性，只保留註解
+        writer.WriteLine($"{indent}// TODO: generate property mapping to target after resolving Target.");
     }
 
     private static void GenerateRenames66Props(StreamWriter writer, string className, Renames66Item item, int indentLevel = 0)

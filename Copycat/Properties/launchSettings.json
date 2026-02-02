@@ -10,7 +10,7 @@
             "environmentVariables": {
                 "DOTNET_ENVIRONMENT": "Development"
             },
-            "commandLineArgs": "--schema copybook-with-redefines.cpy --verbose"
+            "commandLineArgs": "--schema copybook-with-redefines.cpy --with-redefines --verbose"
         },
     }
 }

@@ -119,6 +119,33 @@ New file generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\Ou
 
 <br><br>
 
+## `--with-redefines`
+⚠️ 由於 C# 與 COBOL 的語言差異，`REDEFINES` 目前只會在程式碼中產生註解說明，不會生成實際屬性或欄位。
+
+```bash
+copycat --schema copybook-with-redefines.cpy --with-redefines
+```
+
+<br>
+註解內容會反應被重新定義的目標  
+
+```csharp
+    ...
+
+    /// <summary>
+    /// REDEFINES 'B' overlays target 'A'
+    /// Target type: ElementaryDataItem
+    /// Target PIC: [X(6)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=6, Dec=0, Len=6, Usage='Display'
+    /// This property overlays the target's storage.
+    /// </summary>
+    // TODO: generate property mapping to target after resolving Target.
+
+    ...
+
+```
+
+<br><br>
+
 ## `--with-renames-66`
 資料模型會根據 `66層級` 的內容產對應的宣告
 

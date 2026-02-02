@@ -7,7 +7,7 @@ public sealed class RedefinesItem(
     string? comment = null) : DataItem(level, name, null, comment)
 {
     public string TargetName { get; init; } = targetName;
-    public GroupItem Target { get; private set; } = null!;
+    public ElementaryDataItem Target { get; private set; } = null!;
 
     private readonly List<ElementaryDataItem> _elementaryDataItems = [];
     public IReadOnlyList<ElementaryDataItem> ElementaryDataItems => _elementaryDataItems;
@@ -15,6 +15,8 @@ public sealed class RedefinesItem(
     public override IReadOnlyList<IDataItem> Children => _elementaryDataItems;
 
     public int StorageOccupied { get; private set; }
+
+    public void SetTarget(ElementaryDataItem target) => Target = target;
 
     internal void AddSubordinate(ElementaryDataItem subordinate)
     {
