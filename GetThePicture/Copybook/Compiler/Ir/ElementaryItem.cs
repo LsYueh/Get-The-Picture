@@ -1,23 +1,46 @@
+using System.Text;
 using GetThePicture.Copybook.Compiler.Ir.Base;
 using GetThePicture.PictureClause.Base;
 
 namespace GetThePicture.Copybook.Compiler.Ir;
 
 public sealed class ElementaryDataItem(
-    int level, string name, PicMeta pic,
-    int? occurs = null, string? value = null,
-    bool? isFiller = false, string? comment = null) : DataItem(level, name, occurs, comment)
+    int level, string name, PicMeta pic, int? occurs = null,
+    string? value = null,
+    bool isFiller = false, string? comment = null) : DataItem(level, name, occurs, comment)
 {
+    public PicMeta Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
+
+    public bool IsFiller { get; init; } = isFiller;
+
+    public override IReadOnlyList<IDataItem> Children => _conditions;
+
+    /// <summary>
+    /// (Obsolete)
+    /// </summary>
     public string? Value { get; init; } = value;
 
-    public bool? IsFiller { get; init; } = isFiller;
+    // ----------------------------
+    // Union Buffer
+    // ----------------------------
 
-    public PicMeta Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
+    public int Offset { get; private set; } = 0;
+    public int StorageLength => Pic.StorageOccupied * (Occurs ?? 1);
+
+    /// <summary>
+    /// 設定 offset，用於 DFS 遍歷計算 union buffer
+    /// </summary>
+    internal void SetOffset(int offset)
+    {
+        Offset = offset;
+    }
+
+    // ----------------------------
+    // Level 88 Condition-name
+    // ----------------------------    
 
     private readonly List<Condition88Item> _conditions = [];
     public IReadOnlyList<Condition88Item> Conditions => _conditions;
-
-    public override IReadOnlyList<IDataItem> Children => _conditions;
 
     internal void AddCondition(Condition88Item condition)
     {
@@ -48,4 +71,3 @@ public sealed class ElementaryDataItem(
 
     private string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
 }
-
