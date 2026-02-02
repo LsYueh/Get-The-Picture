@@ -219,8 +219,8 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 > ⚠️ Level number 越小層級越高，01 是最外層。
 
 ## 詳細說明
-- Level [66 — RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md) (有限度支援)  
-- Level [77 — Standalone Variable (單一變數)](docs/get-the-picture/cobol-level-numbers/lv77.md) (暫不支援)  
+- Level [66 — RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md)
+- Level [77 — Standalone Variable (單一變數)](docs/get-the-picture/cobol-level-numbers/lv77.md)
 - Level [88 — Condition Name](docs/get-the-picture/cobol-level-numbers/lv88.md)  
 
 <br><br>
@@ -289,6 +289,78 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 - [日期 (`Date`)](docs/get-the-picture/cobol-picture/semantic/date-time/date.md)  
 - [時間 (`Time`)](docs/get-the-picture/cobol-picture/semantic/date-time/time.md)  
 - [時間戳記 (`Timestamp`)](docs/get-the-picture/cobol-picture/semantic/date-time/timestamp.md)  
+
+<br><br>
+
+# RENAMES 子句
+
+請參考 Level [66 — RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md)
+
+<br><br>
+
+# REDEFINES 子句
+
+## 與 `66 RENAMES` 的差異
+|            | RENAMES         | REDEFINES       |
+| ---------- | --------------- | --------------- |
+| 影響 storage | ❌               | ✅               |
+| 改變 offset  | ❌               | ✅（對齊另一個）        |
+| 本體是        | 邏輯群組            | **GroupItem**   |
+| 最終表現       | View / Property | View / Property |
+
+<br>
+
+## 支援說明
+
+在 IBM 提供的 [REDEFINES clause](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=entry-redefines-clause) 文件中，整理出幾種 `REDEFINES` 可能的使用與法規則：
+
+<br>
+
+**CASE 1**：Group REDEFINES Elementary Data Item
+```cobol
+05  A PICTURE X(6).
+05  B REDEFINES A.
+    10 B-1          PICTURE X(2).
+    10 B-2          PICTURE 9(4).
+05  C               PICTURE 99V99.
+
+```
+
+<br>
+
+**CASE 2**：01-level + GLOBAL
+```cobol
+01 A1 PICTURE X(6). 
+01 B1 REDEFINES A1 GLOBAL PICTURE X(4). 
+```
+
+<br>
+
+**CASE 3a**：多個 REDEFINES 指向同一 target
+```cobol
+05  A               PICTURE 9999.
+05  B REDEFINES A   PICTURE 9V999.
+05  C REDEFINES A   PICTURE 99V99.
+```
+
+**CASE 3b**：REDEFINES 鏈
+```cobol
+05  A               PICTURE 9999.
+05  B REDEFINES A   PICTURE 9V999.
+05  C REDEFINES B   PICTURE 99V99.
+```
+
+<br>
+
+### 支援狀態總覽
+
+| Case | 用法說明 | 支援狀態 | 說明 |
+|------|----------|----------|------|
+| CASE 1 | Group REDEFINES Elementary Data Item | ✅ 支援 | 最常見且結構單純的用法。Group 僅作為 Elementary Item 的另一種結構化視角，不引入額外 storage。 |
+| CASE 2 | 01-level REDEFINES + GLOBAL | ❌ 不支援 | 涉及 01-level overlay 與 GLOBAL 可視範圍，在高階語言中難以安全對應。 |
+| CASE 3a | 多個 REDEFINES 指向同一 target | ❌ 不支援 | 會形成多重 storage alias，容易造成資料覆寫與語意不明確。 |
+| CASE 3b | REDEFINES 鏈（REDEFINES 已 REDEFINES 的 item） | ❌ 不支援 | 需解析並正規化多層 alias 關係，實作與維護成本過高。 |
+
 
 <br><br>
 
