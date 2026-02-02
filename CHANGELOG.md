@@ -1,5 +1,12 @@
 # Changelog
 
+## [26.6.1] – 2026-02-02
+
+### 修正
+- 修正 Deserialize OCCURS 子句時在 ReadElementaryDataItem 內的錯誤。
+
+<br><br>
+
 ## [26.6.0] – 2026-02-01
 
 ### 新增

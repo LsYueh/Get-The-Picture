@@ -145,7 +145,7 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
     ...
     ```
 
-    > ⚠️ 目前不支援包含 `Level 66`、`Level 77` 子句的反序列化處裡  
+    > ⚠️ 目前不支援包含 `Level 66`、`Level 77`、`REDEFINES` 子句的反序列化處裡  
 
 <br>
 
