@@ -87,7 +87,7 @@ internal class CbDeserializer
                 // 是 FILLER，直接跳過
                 if (item.IsFiller != true)
                 {
-                    target[item.Name] = PicClauseCodec.ForMeta(item.Pic).Decode(raw);
+                    values[i] = PicClauseCodec.ForMeta(item.Pic).Decode(raw);
                 }
             }
 

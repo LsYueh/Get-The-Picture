@@ -145,7 +145,7 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
     ...
     ```
 
-    > ⚠️ 目前不支援包含 `Level 66`、`Level 77`、`Level 88` 子句的反序列化處裡  
+    > ⚠️ 目前不支援包含 `Level 66`、`Level 77` 子句的反序列化處裡  
 
 <br>
 
@@ -155,6 +155,10 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
     ```csharp
     var serialized = serDes.Serialize(record);
     ```
+
+<br>
+
+**SerDes** 的相關使用範例位於 [CbSerDesTest.cs](GetThePicture.Tests\Copybook\SerDes\CbSerDesTest.cs) 內有標記 `[TestCategory("Demo")]` 的測試項目中。
 
 <br>
 

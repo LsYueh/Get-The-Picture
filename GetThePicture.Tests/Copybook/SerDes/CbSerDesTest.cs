@@ -13,15 +13,17 @@ public class CbSerDesTest
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
     [TestMethod]
+    [TestCategory("Demo")]
     public void Deserialize_Serialize_T30_OTC_Test()
     {
         var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/twse/t30-otc.cpy", cp950));
-
-        Assert.AreEqual(100, schema.StorageOccupied);
-    
         var serDes = new CbSerDes(schema);
 
+        Assert.AreEqual(100, schema.StorageOccupied);
+
         using var reader = new StreamReader(@"TestData/twse/t30-otc-lite.dat", cp950);
+
+        // 用 StreamReader() 處理帶有換行符號的資料
 
         string? line;
         while ((line = reader.ReadLine()) != null)
@@ -59,13 +61,19 @@ public class CbSerDesTest
         var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/nested-occurs-record.cpy", cp950));
         var serDes = new CbSerDes(schema);
 
-        using var reader = new StreamReader(@"TestData/nested-occurs-record.dat", cp950);
+        using var fs = new FileStream(@"TestData/nested-occurs-record.dat", FileMode.Open, FileAccess.Read);
+        using var reader = new BinaryReader(fs, cp950);
 
-        string? line;
-        while ((line = reader.ReadLine()) != null)
+        // 用 FileStream() 搭配 BinaryReader() 處理 COBOL 匯出無換行且連續的資料
+
+        int recordLength = schema.StorageOccupied;
+        while (fs.Position < fs.Length)
         {
-            var expected = cp950.GetBytes(line);
-            var record = serDes.Deserialize(expected);
+            byte[] buffer = reader.ReadBytes(recordLength);
+            if (buffer.Length < recordLength)
+                break; // 殘筆
+                
+            var record = serDes.Deserialize(buffer);
 
             // Console.WriteLine("==== Record ====");
             // record.Print();
@@ -73,33 +81,38 @@ public class CbSerDesTest
 
             var serialized = serDes.Serialize(record);
 
-            CollectionAssert.AreEqual(expected, serialized);
+            CollectionAssert.AreEqual(buffer, serialized);
         }
     }
 
     [TestMethod]
     [TestCategory("Demo")]
-    [Ignore]
-    public void SerDes_T30_Test()
+    public void SerDes_Occurs_With_Levle_88_Test()
     {
-        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/t30-otc-adv.cpy", cp950));
+        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/occurs-with-levle-88.cpy", cp950));
         var serDes = new CbSerDes(schema);
 
-        using var reader = new StreamReader(@"TestData/t30-otc-lite.dat", cp950);
+        using var fs = new FileStream(@"TestData/occurs-with-levle-88.dat", FileMode.Open, FileAccess.Read);
+        using var reader = new BinaryReader(fs, cp950);
 
-        string? line;
-        while ((line = reader.ReadLine()) != null)
+        // 用 FileStream() 搭配 BinaryReader() 處理 COBOL 匯出無換行且連續的資料
+
+        int recordLength = schema.StorageOccupied;
+        while (fs.Position < fs.Length)
         {
-            var expected = cp950.GetBytes(line);
-            var record = serDes.Deserialize(expected);
+            byte[] buffer = reader.ReadBytes(recordLength);
+            if (buffer.Length < recordLength)
+                break; // 殘筆
 
-            Console.WriteLine("==== Record ====");
-            record.Print();
-            Console.WriteLine("================\n");
+            var record = serDes.Deserialize(buffer);
+
+            // Console.WriteLine("==== Record ====");
+            // record.Print();
+            // Console.WriteLine("================\n");
 
             var serialized = serDes.Serialize(record);
 
-            CollectionAssert.AreEqual(expected, serialized);
+            CollectionAssert.AreEqual(buffer, serialized);
         }
     }
 }
