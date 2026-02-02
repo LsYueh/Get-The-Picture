@@ -175,7 +175,7 @@ public class SchemaCmd(CodeGenOptions? options = null)
 
         GenerateComment(writer, item, indentLevel);
 
-        if (item.IsFiller!.Value) return;
+        if (item.IsFiller) return;
 
         string csType = TypeToCSharp(item.Pic);
 

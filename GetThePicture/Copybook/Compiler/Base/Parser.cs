@@ -51,7 +51,7 @@ public class Parser(List<Token> tokens)
 
         return Consume();
     }
-
+    
     // ----------------------------
     // Syntactic / Semantic Analysis
     // ----------------------------
@@ -273,8 +273,10 @@ public class Parser(List<Token> tokens)
             
             if (pic is null)
                 return new GroupItem(level, name, occurs, comment);
+
+            var item = new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment);
             
-            return new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment);
+            return item;
         }
 
         // Build Full DataItem
