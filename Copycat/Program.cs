@@ -17,7 +17,10 @@ class Program
         [Option('f', "file", Required = false, HelpText = "Input COBOL data file.")]
         public FileInfo? Data { get; set; }
 
-        [Option("with-renames-66", HelpText = "Generate properties for COBOL 66-level conditions.")]
+        [Option("with-redefines", HelpText = "Generate properties for COBOL REDEFINES.")]
+        public bool EmitRedefines { get; set; }
+
+        [Option("with-renames-66", HelpText = "Generate properties for COBOL 66-level RENAMES.")]
         public bool EmitRenames66 { get; set; }
 
         [Option("with-condition-88", HelpText = "Generate properties for COBOL 88-level conditions.")]
@@ -48,6 +51,7 @@ class Program
 
         CodeGenOptions options = new()
         {
+            EmitRedefines   = opts.EmitRedefines,
             EmitCondition66 = opts.EmitRenames66,
             EmitCondition88 = opts.EmitCondition88,
         };

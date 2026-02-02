@@ -115,13 +115,22 @@ public class Parser(List<Token> tokens)
                 throw new CompileException("Elementary data item cannot have subordinates.", Current ?? Previous);
             }
             case GroupItem g: g.AddSubordinate(item); break;
-            case CbSchema  d: d.AddSubordinate(item); break;
+            case RedefinesItem r:
+            {
+                if (item is ElementaryDataItem subordinate)
+                {
+                    r.AddSubordinate(subordinate); break;
+                }
+                
+                throw new CompileException("REDEFINES item can only have Elementary Data Item as subordinate.", Current ?? Previous);
+            }
         }
 
         // 過濾可遞迴的子項
         IDataItem? parentItem = item switch
         {
             GroupItem g => g,
+            RedefinesItem r => r,
             ElementaryDataItem e => e,
             _ => null
         };
@@ -178,6 +187,9 @@ public class Parser(List<Token> tokens)
         int? occurs = null;
         var comments = new List<string>();
 
+        // REDEFINES
+        string? targetName = null;
+
         // Level 66
 
         string  lv66From    = string.Empty;
@@ -205,6 +217,12 @@ public class Parser(List<Token> tokens)
                 case TokenType.Occurs:
                     occurs = ParseOccursClause();
                     break;
+
+                case TokenType.Redefines:
+                {
+                    targetName = ParseRedefinesClause();
+                    break;
+                }
 
                 case TokenType.Renames:
                 {
@@ -246,18 +264,25 @@ public class Parser(List<Token> tokens)
 
         string? comment = (comments.Count == 0) ? null : string.Join(", ", comments);
 
-        // Build DataItem
+        // Build Normal DataItem
+        IDataItem CreateLevel1To49()
+        {
+            // REDEFINES 優先處理
+            if (targetName is not null)
+                return new RedefinesItem(level, name, targetName, comment);
+            
+            if (pic is null)
+                return new GroupItem(level, name, occurs, comment);
+            
+            return new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment);
+        }
 
+        // Build Full DataItem
         IDataItem item = level switch
         {
-            >= 1 and <= 49 => (pic != null)
-                ? new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment)
-                : new GroupItem(level, name, occurs, comment),
-
+            >= 1 and <= 49 => CreateLevel1To49(),
             66 => new Renames66Item(name, lv66From, lv66Through, comment),
-
             88 => new Condition88Item(name, lv88Values, lv88Through),
-
             _ => throw new CompileException($"Unsupported level {level} for data item '{name}'", Current ?? Previous),
         };
 
@@ -446,6 +471,15 @@ public class Parser(List<Token> tokens)
 
 
         return sb.ToString(); // TODO: 要根據TokenType輸出成string或decimal...
+    }
+
+    private string ParseRedefinesClause()
+    {
+        Consume(); // REDEFINES
+
+        string targetName = Expect(TokenType.AlphanumericLiteral).Value;
+
+        return targetName;
     }
 
     private (string From, string? Thru) ParseLv66RenamesClause()

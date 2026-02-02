@@ -10,7 +10,7 @@
             "environmentVariables": {
                 "DOTNET_ENVIRONMENT": "Development"
             },
-            "commandLineArgs": "--schema EMPREC.CPY --with-renames-66 --verbose"
+            "commandLineArgs": "--schema copybook-with-redefines.cpy --with-redefines --verbose"
         },
     }
 }
