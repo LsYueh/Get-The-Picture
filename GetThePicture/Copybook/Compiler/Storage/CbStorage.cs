@@ -9,6 +9,7 @@ public sealed class CbStorage() : GroupNode("COPYBOOK-STORAGE-MAP")
     // Dump
     // ----------------------------
 
+    // Root node: no offset / length
     public override void Dump(TextWriter w, int indent = 0)
     {
         w.WriteLine($"{Indent(indent)}{Name}");

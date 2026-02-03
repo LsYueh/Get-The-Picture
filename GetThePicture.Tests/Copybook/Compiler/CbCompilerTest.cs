@@ -7,7 +7,6 @@ using GetThePicture.PictureClause.Utils;
 namespace GetThePicture.Tests.Copybook.Compiler;
 
 [TestClass]
-
 public class CbCompilerTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;

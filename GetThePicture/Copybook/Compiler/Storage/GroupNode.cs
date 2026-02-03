@@ -26,6 +26,11 @@ public class GroupNode(
 
     public override void Dump(TextWriter writer, int indent)
     {
-        base.DumpBase(writer, indent);
+        writer.WriteLine($"{Indent(indent)}{Name} offset={Offset} len={StorageOccupied}");
+
+        foreach (var child in Children)
+        {
+            child.Dump(writer, indent + 1);
+        }
     }
 }
