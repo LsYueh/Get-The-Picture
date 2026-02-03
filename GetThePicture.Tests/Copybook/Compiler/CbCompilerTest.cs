@@ -1,7 +1,7 @@
 using System.Text;
 
 using GetThePicture.Copybook.Compiler;
-using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.PictureClause.Utils;
 
 namespace GetThePicture.Tests.Copybook.Compiler;

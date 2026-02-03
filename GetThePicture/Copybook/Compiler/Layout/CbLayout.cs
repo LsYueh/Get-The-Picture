@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler.Ir;
+namespace GetThePicture.Copybook.Compiler.Layout;
 
 /// <summary>
 /// Root of Group Items

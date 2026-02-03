@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler.Ir.Base;
+namespace GetThePicture.Copybook.Compiler.Layout.Base;
 
 /// <summary>
 /// 核心抽象類別

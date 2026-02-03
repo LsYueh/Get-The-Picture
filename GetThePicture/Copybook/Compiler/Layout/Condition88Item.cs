@@ -1,6 +1,6 @@
-using GetThePicture.Copybook.Compiler.Ir.Base;
+using GetThePicture.Copybook.Compiler.Layout.Base;
 
-namespace GetThePicture.Copybook.Compiler.Ir;
+namespace GetThePicture.Copybook.Compiler.Layout;
 
 public sealed class Condition88Item(
     string name,

@@ -1,5 +1,5 @@
 using GetThePicture.Copybook.Compiler;
-using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.SerDes;
 using GetThePicture.Copybook.SerDes.Record;
 

@@ -17,7 +17,7 @@
 範例程式:  
 ```csharp
 using GetThePicture.Copybook.Compiler;    // CbCompiler
-using GetThePicture.Copybook.Compiler.Ir; // CbLayout
+using GetThePicture.Copybook.Compiler.Layout; // CbLayout
 
 using GetThePicture.PictureClause.Utils;  // EncodingFactory
 ```

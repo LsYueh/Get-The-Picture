@@ -1,5 +1,5 @@
 using GetThePicture.Copybook.Compiler;
-using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler.Layout;
 
 namespace GetThePicture.Copybook.SerDes.Layout;
 

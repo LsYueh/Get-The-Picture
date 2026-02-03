@@ -1,8 +1,8 @@
 using System.Text;
-using GetThePicture.Copybook.Compiler.Ir.Base;
+using GetThePicture.Copybook.Compiler.Layout.Base;
 using GetThePicture.PictureClause.Base;
 
-namespace GetThePicture.Copybook.Compiler.Ir;
+namespace GetThePicture.Copybook.Compiler.Layout;
 
 public sealed class ElementaryDataItem(
     int level, string name, PicMeta pic, int? occurs = null,
