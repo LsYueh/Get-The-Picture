@@ -32,17 +32,23 @@ public sealed class CbCompiler
     /// <param name="schema"></param>
     private static void ResolveSchema(CbSchema schema)
     {
-        // 要先幫 GroupItem 計算 StorageOccupied
+        // ========================================
+        // Offset 設定開始
+        
+        // 要先替所有的 DataItem 計算 StorageOccupied
         schema.CalculateStorage();
+
+        // 替 REDEFINES 指定共用 Offset 的目標
+        ResolveRedefinesTargets(schema.Children);
+
+        ResolveOffsets(schema);
+
+        // Offset 設定完成
+        // ========================================
 
         // Level 66
         var seqList = BuildSequentialElementaryDataItemList(schema);
         ResolveRenames66(schema, seqList);
-
-        // REDEFINES
-        ResolveRedefinesTargets(schema.Children);
-
-        ResolveOffsets(schema);
     }
 
     /// <summary>
@@ -164,7 +170,9 @@ public sealed class CbCompiler
             }
             case RedefinesItem r:
             {
-                int instanceOffset = r.Target.Offset;
+                var targetOffset = r.Target.Offset;
+                
+                int instanceOffset = targetOffset;
 
                 foreach (var child in r.Children)
                 {
@@ -172,6 +180,8 @@ public sealed class CbCompiler
                     instanceOffset += offset;
                 }
 
+                r.SetOffset(targetOffset);
+                
                 // REDEFINES：overlay，不推進 offset
                 return 0;
             }
@@ -198,6 +208,8 @@ public sealed class CbCompiler
                     throw new InvalidOperationException(
                         $"Group '{g.Name}' storage mismatch: " +
                         $"expected {g.StorageOccupied}, actual {currentOffset - baseOffset}");
+
+                g.SetOffset(currentOffset);
 
                 return g.StorageOccupied;
             }
