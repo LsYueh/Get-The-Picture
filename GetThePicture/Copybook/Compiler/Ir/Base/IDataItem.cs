@@ -10,15 +10,15 @@ public interface IDataItem
     int? Occurs { get; }
     string? Comment { get; }
 
-    public IReadOnlyList<IDataItem> Children { get; }
+    IReadOnlyList<IDataItem> Children { get; }
 
     // ----------------------------
     // Union Buffer
     // ----------------------------
 
-    public int Offset { get; }
+    int Offset { get; }
 
-    public int StorageOccupied { get; }
+    int StorageOccupied { get; }
 
     // ----------------------------
     // Dump
