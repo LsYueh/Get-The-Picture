@@ -19,6 +19,19 @@ public sealed class Renames66Item(
         AffectedItems = [.. items];
     }
 
+    // ----------------------------
+    // Union Buffer
+    // ----------------------------
+
+    public override void CalculateStorage()
+    {
+        StorageOccupied = 0;
+    }
+
+    // ----------------------------
+    // Dump
+    // ----------------------------
+
     public override void Dump(TextWriter writer, int indent = 0)
     {
         writer.Write($"{Indent(indent)}66 {Name} >> Renames {From}");

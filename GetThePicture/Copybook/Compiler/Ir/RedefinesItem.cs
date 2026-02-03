@@ -14,8 +14,6 @@ public sealed class RedefinesItem(
 
     public override IReadOnlyList<IDataItem> Children => _elementaryDataItems;
 
-    public int StorageOccupied { get; private set; }
-
     public void SetTarget(ElementaryDataItem target) => Target = target;
 
     internal void AddSubordinate(ElementaryDataItem subordinate)
@@ -23,17 +21,28 @@ public sealed class RedefinesItem(
         _elementaryDataItems.Add(subordinate);
     }
 
-    public void CalculateStorage()
+    // ----------------------------
+    // Union Buffer
+    // ----------------------------
+
+    public override void CalculateStorage()
     {
         int total = 0;
 
-        foreach (var item in ElementaryDataItems)
+        foreach (var child in Children)
         {
-
-            total += item.Pic.StorageOccupied * (item.Occurs ?? 1);
-
+            if (child is ElementaryDataItem e)
+            {
+                e.CalculateStorage();
+                total += e.StorageOccupied;
+            }
+            else if (child is GroupItem g)
+            {
+                g.CalculateStorage();
+                total += g.StorageOccupied * (g.Occurs ?? 1);
+            }
         }
-
+        
         StorageOccupied = total;
     }
 

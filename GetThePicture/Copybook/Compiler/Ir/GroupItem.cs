@@ -9,8 +9,6 @@ public class GroupItem(
     private readonly List<IDataItem> _children = [];
     public override IReadOnlyList<IDataItem> Children => _children;
 
-    public int StorageOccupied { get; private set; }
-
     public void AddSubordinate(IDataItem subordinate)
     {
         ArgumentNullException.ThrowIfNull(subordinate);
@@ -18,7 +16,11 @@ public class GroupItem(
         _children.Add(subordinate);
     }
 
-    public void CalculateStorage()
+    // ----------------------------
+    // Union Buffer
+    // ----------------------------
+
+    public override void CalculateStorage()
     {
         int total = 0;
 
@@ -26,12 +28,13 @@ public class GroupItem(
         {
             if (child is ElementaryDataItem e)
             {
-                total += e.Pic.StorageOccupied * (e.Occurs ?? 1);
+                e.CalculateStorage();
+                total += e.StorageOccupied;
             }
             else if (child is GroupItem g)
             {
                 g.CalculateStorage();
-                total += g.StorageOccupied * (g.Occurs ?? 1);
+                total += g.StorageOccupied;
             }
             else if (child is RedefinesItem r)
             {
@@ -40,7 +43,7 @@ public class GroupItem(
             }
         }
 
-        StorageOccupied = total;
+        StorageOccupied = total * (Occurs ?? 1);
     }
 
     // ----------------------------

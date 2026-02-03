@@ -18,6 +18,19 @@ public sealed class Condition88Item(
     /// </summary>
     public object? ThroughValue { get; } = through;
 
+    // ----------------------------
+    // Union Buffer
+    // ----------------------------
+
+    public override void CalculateStorage()
+    {
+        StorageOccupied = 0;
+    }
+
+    // ----------------------------
+    // Dump
+    // ----------------------------
+
     public override void Dump(TextWriter writer, int indent = 0)
     {
         if (Values.Count == 0 && ThroughValue is null)

@@ -24,15 +24,9 @@ public sealed class ElementaryDataItem(
     // Union Buffer
     // ----------------------------
 
-    public int Offset { get; private set; } = 0;
-    public int StorageLength => Pic.StorageOccupied * (Occurs ?? 1);
-
-    /// <summary>
-    /// 設定 offset，用於 DFS 遍歷計算 union buffer
-    /// </summary>
-    internal void SetOffset(int offset)
+    public override void CalculateStorage()
     {
-        Offset = offset;
+        StorageOccupied = Pic.StorageOccupied * (Occurs ?? 1);
     }
 
     // ----------------------------

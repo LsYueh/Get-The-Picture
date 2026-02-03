@@ -21,8 +21,6 @@ public sealed class CbCompiler
         if (ir is not CbSchema schema)
             throw new Exception("Copybook root must be a Document.");
 
-        schema.CalculateStorage();
-
         ResolveSchema(schema);
 
         return schema;
@@ -34,12 +32,17 @@ public sealed class CbCompiler
     /// <param name="schema"></param>
     private static void ResolveSchema(CbSchema schema)
     {
+        // 要先幫 GroupItem 計算 StorageOccupied
+        schema.CalculateStorage();
+
         // Level 66
         var seqList = BuildSequentialElementaryDataItemList(schema);
         ResolveRenames66(schema, seqList);
 
         // REDEFINES
         ResolveRedefinesTargets(schema.Children);
+
+        ResolveOffsets(schema);
     }
 
     /// <summary>
@@ -145,6 +148,61 @@ public sealed class CbCompiler
             // 如果是 group，有 children，也要遞迴
             if (item is GroupItem g && g.Children.Any())
                 ResolveRedefinesTargets(g.Children);
+        }
+    }
+
+    public static int ResolveOffsets(IDataItem currentItem, int baseOffset = 0)
+    {
+        switch(currentItem)
+        {
+            case ElementaryDataItem e:
+            {
+                // 遞迴的最末端
+
+                e.SetOffset(baseOffset);
+                return e.StorageOccupied;
+            }
+            case RedefinesItem r:
+            {
+                int instanceOffset = r.Target.Offset;
+
+                foreach (var child in r.Children)
+                {
+                    var offset = ResolveOffsets(child, instanceOffset);
+                    instanceOffset += offset;
+                }
+
+                // REDEFINES：overlay，不推進 offset
+                return 0;
+            }
+            case GroupItem g:
+            {
+                int occurs = g.Occurs ?? 1;
+                int currentOffset = baseOffset;
+                
+                for (int i = 0; i < occurs; i++)
+                {
+                    int instanceOffset = currentOffset;
+
+                    foreach (var child in g.Children)
+                    {
+                        var offset = ResolveOffsets(child, instanceOffset);
+                        instanceOffset += offset;
+                    }
+
+                    currentOffset = instanceOffset;
+                }
+
+                // 檢查目前 GroupItem 佔用的長度是否等同 Children 的總和
+                if (currentOffset - baseOffset != g.StorageOccupied)
+                    throw new InvalidOperationException(
+                        $"Group '{g.Name}' storage mismatch: " +
+                        $"expected {g.StorageOccupied}, actual {currentOffset - baseOffset}");
+
+                return g.StorageOccupied;
+            }
+            default:
+                throw new NotSupportedException($"Unsupported IDataItem type: {currentItem.GetType().Name}");
         }
     }
 }
