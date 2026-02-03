@@ -8,12 +8,12 @@ namespace GetThePicture.Copybook.SerDes;
 
 internal class CbDeserializer
 {
-    internal static CbRecord DesSchema(CbSchema schema, ref CbFieldAccessor accessor)
+    internal static CbRecord DesLayout(CbLayout layout, ref CbFieldAccessor accessor)
     {
-        if (schema.StorageOccupied != accessor.Size)
-            throw new InvalidOperationException($"Record size mismatch: schema={schema.StorageOccupied}, actual={accessor.Size}");
+        if (layout.StorageOccupied != accessor.Size)
+            throw new InvalidOperationException($"Record size mismatch: layout={layout.StorageOccupied}, actual={accessor.Size}");
         
-        var result = ReadGroupItems(schema, ref accessor);
+        var result = ReadGroupItems(layout, ref accessor);
 
         return result;
     }

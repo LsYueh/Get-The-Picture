@@ -59,7 +59,7 @@ public class Parser(List<Token> tokens)
     /// <summary>
     /// Syntactic / Semantic Analysis
     /// </summary>
-    public CbSchema Analyze()
+    public CbLayout Analyze()
     {
         // ParseDataItem (Recursive)
         // │
@@ -74,7 +74,7 @@ public class Parser(List<Token> tokens)
         //            ├─ while nextLevel > currentGroup.Level
         //            └─ ParseDataItem(item) recursively
 
-        CbSchema root = new();
+        CbLayout root = new();
 
         while (Current != null)
         {

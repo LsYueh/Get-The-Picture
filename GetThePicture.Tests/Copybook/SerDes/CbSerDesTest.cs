@@ -16,10 +16,10 @@ public class CbSerDesTest
     [TestCategory("Demo")]
     public void Deserialize_Serialize_T30_OTC_Test()
     {
-        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/twse/t30-otc.cpy", cp950));
-        var serDes = new CbSerDes(schema);
+        var layout = CbCompiler.FromStreamReader(new StreamReader(@"TestData/twse/t30-otc.cpy", cp950));
+        var serDes = new CbSerDes(layout);
 
-        Assert.AreEqual(100, schema.StorageOccupied);
+        Assert.AreEqual(100, layout.StorageOccupied);
 
         using var reader = new StreamReader(@"TestData/twse/t30-otc-lite.dat", cp950);
 
@@ -30,7 +30,7 @@ public class CbSerDesTest
         {
             var expected = cp950.GetBytes(line);
 
-            Assert.AreEqual(schema.StorageOccupied, expected.Length);
+            Assert.AreEqual(layout.StorageOccupied, expected.Length);
 
             var record = serDes.Deserialize(expected);
 
@@ -58,15 +58,15 @@ public class CbSerDesTest
     [TestCategory("Demo")]
     public void SerDes_Nested_Occurs_Record_Test()
     {
-        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/nested-occurs-record.cpy", cp950));
-        var serDes = new CbSerDes(schema);
+        var layout = CbCompiler.FromStreamReader(new StreamReader(@"TestData/nested-occurs-record.cpy", cp950));
+        var serDes = new CbSerDes(layout);
 
         using var fs = new FileStream(@"TestData/nested-occurs-record.dat", FileMode.Open, FileAccess.Read);
         using var reader = new BinaryReader(fs, cp950);
 
         // 用 FileStream() 搭配 BinaryReader() 處理 COBOL 匯出無換行且連續的資料
 
-        int recordLength = schema.StorageOccupied;
+        int recordLength = layout.StorageOccupied;
         while (fs.Position < fs.Length)
         {
             byte[] buffer = reader.ReadBytes(recordLength);
@@ -92,15 +92,15 @@ public class CbSerDesTest
     [TestCategory("Demo")]
     public void SerDes_Occurs_With_Levle_88_Test()
     {
-        var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/occurs-with-levle-88.cpy", cp950));
-        var serDes = new CbSerDes(schema);
+        var layout = CbCompiler.FromStreamReader(new StreamReader(@"TestData/occurs-with-levle-88.cpy", cp950));
+        var serDes = new CbSerDes(layout);
 
         using var fs = new FileStream(@"TestData/occurs-with-levle-88.dat", FileMode.Open, FileAccess.Read);
         using var reader = new BinaryReader(fs, cp950);
 
         // 用 FileStream() 搭配 BinaryReader() 處理 COBOL 匯出無換行且連續的資料
 
-        int recordLength = schema.StorageOccupied;
+        int recordLength = layout.StorageOccupied;
         while (fs.Position < fs.Length)
         {
             byte[] buffer = reader.ReadBytes(recordLength);

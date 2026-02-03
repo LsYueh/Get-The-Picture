@@ -7,7 +7,7 @@ namespace GetThePicture.Copybook.Compiler;
 
 public sealed class CbCompiler
 {
-    public static CbSchema FromStreamReader(StreamReader streamReader)
+    public static CbLayout FromStreamReader(StreamReader streamReader)
     {
         ArgumentNullException.ThrowIfNull(streamReader);
 
@@ -18,45 +18,45 @@ public sealed class CbCompiler
         Parser parser = new(tokens);
 
         var ir = parser.Analyze();
-        if (ir is not CbSchema schema)
+        if (ir is not CbLayout layout)
             throw new Exception("Copybook root must be a Document.");
 
-        ResolveSchema(schema);
+        ResolveLayout(layout);
 
-        return schema;
+        return layout;
     }
 
     /// <summary>
     /// 完成 Copybook IR 的語意關聯，供後續 C# 生成或序列化使用
     /// </summary>
-    /// <param name="schema"></param>
-    private static void ResolveSchema(CbSchema schema)
+    /// <param name="layout"></param>
+    private static void ResolveLayout(CbLayout layout)
     {
         // ========================================
         // Offset 設定開始
         
         // 要先替所有的 DataItem 計算 StorageOccupied
-        schema.CalculateStorage();
+        layout.CalculateStorage();
 
         // 替 REDEFINES 指定共用 Offset 的目標
-        ResolveRedefinesTargets(schema.Children);
+        ResolveRedefinesTargets(layout.Children);
 
-        ResolveOffsets(schema);
+        ResolveOffsets(layout);
 
         // Offset 設定完成
         // ========================================
 
         // Level 66
-        var seqList = BuildSequentialElementaryDataItemList(schema);
-        ResolveRenames66(schema, seqList);
+        var seqList = BuildSequentialElementaryDataItemList(layout);
+        ResolveRenames66(layout, seqList);
     }
 
     /// <summary>
     /// 展開所有 ElementaryDataItem 為線性列表（提供 66 RENAMES 解析用）
     /// </summary>
-    /// <param name="schema"></param>
+    /// <param name="layout"></param>
     /// <returns></returns>
-    private static List<ElementaryDataItem> BuildSequentialElementaryDataItemList(CbSchema schema)
+    private static List<ElementaryDataItem> BuildSequentialElementaryDataItemList(CbLayout layout)
     {
         var list = new List<ElementaryDataItem>();
 
@@ -79,7 +79,7 @@ public sealed class CbCompiler
             }
         }
 
-        Walk(schema);
+        Walk(layout);
 
         return list;
     }

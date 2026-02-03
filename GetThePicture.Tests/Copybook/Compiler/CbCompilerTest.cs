@@ -18,13 +18,13 @@ public class CbCompilerTest
         const string filePath = @"TestData/sample-cobol-copybook.cpy";
         using var sr = new StreamReader(filePath, cp950);
 
-        CbSchema schema = CbCompiler.FromStreamReader(sr);
-        Assert.IsNotNull(schema);
-        Assert.AreEqual(0, schema.Level);
-        Assert.IsNotNull(schema.Children);
-        Assert.AreEqual(3, schema.Children.Count);
+        CbLayout layout = CbCompiler.FromStreamReader(sr);
+        Assert.IsNotNull(layout);
+        Assert.AreEqual(0, layout.Level);
+        Assert.IsNotNull(layout.Children);
+        Assert.AreEqual(3, layout.Children.Count);
 
-        GroupItem? groupItem = (GroupItem?) schema.Children[2];
+        GroupItem? groupItem = (GroupItem?) layout.Children[2];
         Assert.IsNotNull(groupItem);
 
         ElementaryDataItem? elementaryDataItem_05 =  (ElementaryDataItem?) groupItem.Children[0];
@@ -36,7 +36,7 @@ public class CbCompilerTest
         const string expected = "THIS IS A VERY LONG DESCRIPTION THAT NEEDS TO BE CONTINUED ACROSS MULTIPLE LINES";
         Assert.AreEqual(expected, elementaryDataItem_05.Value);
 
-        // schema.Dump(Console.Out);
+        // layout.Dump(Console.Out);
     }
 
     [TestMethod]
@@ -45,18 +45,18 @@ public class CbCompilerTest
         const string filePath = @"TestData/employee-record-with-levle-88.cpy";
         using var sr = new StreamReader(filePath, cp950);
 
-        CbSchema schema = CbCompiler.FromStreamReader(sr);
+        CbLayout layout = CbCompiler.FromStreamReader(sr);
 
-        // schema.Dump(Console.Out);
+        // layout.Dump(Console.Out);
         
-        Assert.IsNotNull(schema);
-        Assert.AreEqual(0, schema.Level);
-        Assert.IsNotNull(schema.Children);
-        Assert.AreEqual(1, schema.Children.Count);
+        Assert.IsNotNull(layout);
+        Assert.AreEqual(0, layout.Level);
+        Assert.IsNotNull(layout.Children);
+        Assert.AreEqual(1, layout.Children.Count);
 
-        Assert.AreEqual(3, schema.StorageOccupied);
+        Assert.AreEqual(3, layout.StorageOccupied);
 
-        GroupItem? GROUP_ITEM_01 = (GroupItem?) schema.Children[0];
+        GroupItem? GROUP_ITEM_01 = (GroupItem?) layout.Children[0];
         Assert.IsNotNull(GROUP_ITEM_01);
         Assert.AreEqual(1, GROUP_ITEM_01.Level);
         Assert.IsNotNull(GROUP_ITEM_01.Children);
@@ -78,28 +78,28 @@ public class CbCompilerTest
     [TestMethod]
     [TestCategory("Demo")]
     [Ignore]
-    public void Example_Schema_Dump_T30_TSE()
+    public void Example_Layout_Dump_T30_TSE()
     {
         using var sr = new StreamReader(@"TestData/t30-tse.cpy", cp950);
 
-        CbSchema schema = CbCompiler.FromStreamReader(sr);
+        CbLayout layout = CbCompiler.FromStreamReader(sr);
 
-        Assert.IsNotNull(schema);
+        Assert.IsNotNull(layout);
 
-        schema.Dump(Console.Out);
+        layout.Dump(Console.Out);
     }
 
     [TestMethod]
     [TestCategory("Demo")]
     [Ignore]
-    public void Example_Schema_Dump_Nested_Occurs_Record()
+    public void Example_Layout_Dump_Nested_Occurs_Record()
     {
         using var sr = new StreamReader(@"TestData/nested-occurs-record.cpy", cp950);
 
-        CbSchema schema = CbCompiler.FromStreamReader(sr);
+        CbLayout layout = CbCompiler.FromStreamReader(sr);
 
-        Assert.IsNotNull(schema);
+        Assert.IsNotNull(layout);
 
-        schema.Dump(Console.Out);
+        layout.Dump(Console.Out);
     }
 }

@@ -7,15 +7,15 @@ namespace GetThePicture.Copybook.SerDes;
 
 internal class CbSerializer
 {
-    public static byte[] SerSchema(CbSchema schema, CbRecord record)
+    public static byte[] SerLayout(CbLayout layout, CbRecord record)
     {
-        ArgumentNullException.ThrowIfNull(schema);
+        ArgumentNullException.ThrowIfNull(layout);
         ArgumentNullException.ThrowIfNull(record);
 
         using var ms = new MemoryStream();
         using var writer = new BinaryWriter(ms);
 
-        WriteGroupItems(writer, schema, record);
+        WriteGroupItems(writer, layout, record);
 
         return ms.ToArray();
     }

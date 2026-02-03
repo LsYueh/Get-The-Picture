@@ -8,8 +8,8 @@ class Program
 {
     public sealed class Options
     {
-        [Option('s', "schema", Required = true, HelpText = "Input copybook schema.")]
-        public FileInfo? Schema { get; set; }
+        [Option('s', "layout", Required = true, HelpText = "Input copybook layout.")]
+        public FileInfo? Layout { get; set; }
 
         [Option('o', "output", Required = false, HelpText = "Output C# Value Objects file.")]
         public string? Output { get; set; }
@@ -43,9 +43,9 @@ class Program
 
     private static int RunOptions(Options opts)
     {
-        if (!opts.Schema!.Exists)
+        if (!opts.Layout!.Exists)
         {
-            Console.Error.WriteLine($"File not found: {opts.Schema.FullName}");
+            Console.Error.WriteLine($"File not found: {opts.Layout.FullName}");
             return 1;
         }
 
@@ -56,12 +56,12 @@ class Program
             EmitCondition88 = opts.EmitCondition88,
         };
 
-        SchemaCmd schemaCmd = new(options);
+        LayoutCmd layoutCmd = new(options);
 
-        var schema = SchemaCmd.ReadSchema(opts.Schema, opts.Verbose);
+        var layout = LayoutCmd.ReadLayout(opts.Layout, opts.Verbose);
 
         string fileName = opts.Output ?? "Out.cs";
-        schemaCmd.CodeGen(schema, fileName);
+        layoutCmd.CodeGen(layout, fileName);
 
         Console.WriteLine($"New sealed class generated: \"{Path.GetFullPath(fileName)}\"");
 

@@ -12,9 +12,9 @@ public class ParserForLv88Test
 
     [TestMethod]
     [DataTestMethod]
-    [DataRow("88 A VALUE 'A'.", "COPYBOOK-SCHEMA", "  88 A >> Value(s) in A")]
-    [DataRow("88 B VALUES 'A' 'B' 'C'.", $"COPYBOOK-SCHEMA", "  88 B >> Value(s) in A B C")]
-    [DataRow("88 DIGIT VALUE 1 THROUGH 9.", $"COPYBOOK-SCHEMA", "  88 DIGIT >> Value(s) in 1 through 9")]
+    [DataRow("88 A VALUE 'A'.", "COPYBOOK-LAYOUT", "  88 A >> Value(s) in A")]
+    [DataRow("88 B VALUES 'A' 'B' 'C'.", $"COPYBOOK-LAYOUT", "  88 B >> Value(s) in A B C")]
+    [DataRow("88 DIGIT VALUE 1 THROUGH 9.", $"COPYBOOK-LAYOUT", "  88 DIGIT >> Value(s) in 1 through 9")]
     // [DataRow("88 FLAG VALUE ZERO.", "")]
     // [DataRow("88 SPACE-FLAG VALUE SPACE.", "")]
     public void Test_Set(string line, string expected_01, string expected_02)

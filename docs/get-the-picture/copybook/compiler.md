@@ -17,7 +17,7 @@
 範例程式:  
 ```csharp
 using GetThePicture.Copybook.Compiler;    // CbCompiler
-using GetThePicture.Copybook.Compiler.Ir; // CbSchema
+using GetThePicture.Copybook.Compiler.Ir; // CbLayout
 
 using GetThePicture.PictureClause.Utils;  // EncodingFactory
 ```
@@ -26,9 +26,9 @@ using GetThePicture.PictureClause.Utils;  // EncodingFactory
 Encoding cp950 = EncodingFactory.CP950;
 using var streamReader = new StreamReader(@"TestData/demo.cpy", cp950);
 
-CbSchema schema = CbCompiler.FromStreamReader(streamReader);
+CbLayout layout = CbCompiler.FromStreamReader(streamReader);
 
-schema.Dump(Console.Out);
+layout.Dump(Console.Out);
 ```
 呼叫 `CbCompiler.FromStreamReader()` 後會產出中繼資料，可搭配 `Dump()` 在開發中進行除錯。  
 
@@ -36,7 +36,7 @@ schema.Dump(Console.Out);
 
 Dump 輸出內容:  
 ```shell
-COPYBOOK-SCHEMA
+COPYBOOK-LAYOUT
   1 CUSTOMER-RECORD
     5 CUSTOMER-ID >> PIC: Class='Numeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
     5 CUSTOMER-NAME >> PIC: Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
