@@ -26,7 +26,7 @@ public sealed class ElementaryDataItem(
 
     public override void CalculateStorage()
     {
-        StorageOccupied = Pic.StorageOccupied * (Occurs ?? 1);
+        StorageOccupied = Pic.StorageOccupied;
     }
 
     // ----------------------------

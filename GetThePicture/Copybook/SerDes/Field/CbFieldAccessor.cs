@@ -5,6 +5,8 @@ public readonly ref struct CbFieldAccessor
     // Union Buffer
     public readonly ReadOnlySpan<byte> Raw;
 
+    public readonly int Size => Raw.Length;
+
     public CbFieldAccessor(ReadOnlySpan<byte> raw)
     {
         Raw = raw;

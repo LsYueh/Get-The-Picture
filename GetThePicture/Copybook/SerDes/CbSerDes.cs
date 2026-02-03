@@ -1,4 +1,5 @@
 using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.SerDes.Field;
 using GetThePicture.Copybook.SerDes.Record;
 using GetThePicture.Copybook.SerDes.Schema;
 
@@ -19,9 +20,9 @@ public sealed class CbSerDes(CbSchema schema)
     /// <returns></returns>
     public CbRecord Deserialize(ReadOnlySpan<byte> record)
     {
-        var cursor = new RecCursor(record);
+        var access = new CbFieldAccessor(record);
 
-        return CbDeserializer.DesSchema(_schema, ref cursor);
+        return CbDeserializer.DesSchema(_schema, ref access);
     }
 
     public byte[] Serialize(CbRecord value)

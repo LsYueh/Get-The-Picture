@@ -33,12 +33,12 @@ public class GroupItem(
             if (child is ElementaryDataItem e)
             {
                 e.CalculateStorage();
-                total += e.StorageOccupied;
+                total += e.StorageOccupied * (e.Occurs ?? 1);
             }
             else if (child is GroupItem g)
             {
                 g.CalculateStorage();
-                total += g.StorageOccupied;
+                total += g.StorageOccupied * (g.Occurs ?? 1);
             }
             else if (child is RedefinesItem r)
             {
@@ -47,7 +47,7 @@ public class GroupItem(
             }
         }
 
-        StorageOccupied = total * (Occurs ?? 1);
+        StorageOccupied = total;
     }
 
     // ----------------------------

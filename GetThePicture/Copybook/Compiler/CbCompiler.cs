@@ -165,8 +165,10 @@ public sealed class CbCompiler
             {
                 // 遞迴的最末端
 
+                // TODO: 要全部展開...不然巢狀Group後面的ElementaryDataItem會跑掉
+
                 e.SetOffset(baseOffset);
-                return e.StorageOccupied;
+                return e.StorageOccupied * (e.Occurs ?? 1);
             }
             case RedefinesItem r:
             {
@@ -204,14 +206,14 @@ public sealed class CbCompiler
                 }
 
                 // 檢查目前 GroupItem 佔用的長度是否等同 Children 的總和
-                if (currentOffset - baseOffset != g.StorageOccupied)
+                if (currentOffset - baseOffset != g.StorageOccupied * (g.Occurs ?? 1))
                     throw new InvalidOperationException(
                         $"Group '{g.Name}' storage mismatch: " +
                         $"expected {g.StorageOccupied}, actual {currentOffset - baseOffset}");
 
                 g.SetOffset(currentOffset);
 
-                return g.StorageOccupied;
+                return g.StorageOccupied * (g.Occurs ?? 1);
             }
             default:
                 throw new NotSupportedException($"Unsupported IDataItem type: {currentItem.GetType().Name}");
