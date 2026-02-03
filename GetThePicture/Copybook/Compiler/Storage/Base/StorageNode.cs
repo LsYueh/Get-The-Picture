@@ -3,7 +3,7 @@ using GetThePicture.Copybook.Compiler.Layout;
 namespace GetThePicture.Copybook.Compiler.Storage.Base;
 
 public abstract class StorageNode(
-    string name, int offset, int storageOccupied
+    string name, int offset = 0, int storageOccupied = 0
 ) : IStorageNode
 {
     /// <summary>
