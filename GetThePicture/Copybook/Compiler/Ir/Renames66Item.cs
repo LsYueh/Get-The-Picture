@@ -20,15 +20,6 @@ public sealed class Renames66Item(
     }
 
     // ----------------------------
-    // Union Buffer
-    // ----------------------------
-
-    public override void CalculateStorage()
-    {
-        StorageOccupied = 0;
-    }
-
-    // ----------------------------
     // Dump
     // ----------------------------
 

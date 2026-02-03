@@ -1,5 +1,4 @@
 using GetThePicture.Copybook.Compiler.Ir;
-using GetThePicture.Copybook.SerDes.Field;
 using GetThePicture.Copybook.SerDes.Record;
 using GetThePicture.Copybook.SerDes.Layout;
 
@@ -20,9 +19,9 @@ public sealed class CbSerDes(CbLayout layout)
     /// <returns></returns>
     public CbRecord Deserialize(ReadOnlySpan<byte> record)
     {
-        var access = new CbFieldAccessor(record);
+        var cursor = new RecCursor(record);
 
-        return CbDeserializer.DesLayout(_layout, ref access);
+        return CbDeserializer.DesLayout(_layout, ref cursor);
     }
 
     public byte[] Serialize(CbRecord value)

@@ -21,6 +21,8 @@ public sealed class CbCompiler
         if (ir is not CbLayout layout)
             throw new Exception("Copybook root must be a Document.");
 
+        layout.CalculateStorage();
+
         ResolveLayout(layout);
 
         return layout;
@@ -32,19 +34,7 @@ public sealed class CbCompiler
     /// <param name="layout"></param>
     private static void ResolveLayout(CbLayout layout)
     {
-        // ========================================
-        // Offset 設定開始
-        
-        // 要先替所有的 DataItem 計算 StorageOccupied
-        layout.CalculateStorage();
-
-        // 替 REDEFINES 指定共用 Offset 的目標
         ResolveRedefinesTargets(layout.Children);
-
-        ResolveOffsets(layout);
-
-        // Offset 設定完成
-        // ========================================
 
         // Level 66
         var seqList = BuildSequentialElementaryDataItemList(layout);
@@ -145,78 +135,12 @@ public sealed class CbCompiler
                 if (target is null)
                     throw new CompileException($"Cannot resolve REDEFINES target '{r.TargetName}' for '{r.Name}' '{r.Name}'.");
 
-                if (target.StorageOccupied != r.StorageOccupied)
-                    throw new CompileException($"REDEFINES target '{r.TargetName}' storage size mismatch for '{r.Name}'.");
-
                 r.SetTarget(target);
             }
 
             // 如果是 group，有 children，也要遞迴
             if (item is GroupItem g && g.Children.Any())
                 ResolveRedefinesTargets(g.Children);
-        }
-    }
-
-    public static int ResolveOffsets(IDataItem currentItem, int baseOffset = 0)
-    {
-        switch(currentItem)
-        {
-            case ElementaryDataItem e:
-            {
-                // 遞迴的最末端
-
-                // TODO: 要全部展開...不然巢狀Group後面的ElementaryDataItem會跑掉
-
-                e.SetOffset(baseOffset);
-                return e.StorageOccupied * (e.Occurs ?? 1);
-            }
-            case RedefinesItem r:
-            {
-                var targetOffset = r.Target.Offset;
-                
-                int instanceOffset = targetOffset;
-
-                foreach (var child in r.Children)
-                {
-                    var offset = ResolveOffsets(child, instanceOffset);
-                    instanceOffset += offset;
-                }
-
-                r.SetOffset(targetOffset);
-                
-                // REDEFINES：overlay，不推進 offset
-                return 0;
-            }
-            case GroupItem g:
-            {
-                int occurs = g.Occurs ?? 1;
-                int currentOffset = baseOffset;
-                
-                for (int i = 0; i < occurs; i++)
-                {
-                    int instanceOffset = currentOffset;
-
-                    foreach (var child in g.Children)
-                    {
-                        var offset = ResolveOffsets(child, instanceOffset);
-                        instanceOffset += offset;
-                    }
-
-                    currentOffset = instanceOffset;
-                }
-
-                // 檢查目前 GroupItem 佔用的長度是否等同 Children 的總和
-                if (currentOffset - baseOffset != g.StorageOccupied * (g.Occurs ?? 1))
-                    throw new InvalidOperationException(
-                        $"Group '{g.Name}' storage mismatch: " +
-                        $"expected {g.StorageOccupied}, actual {currentOffset - baseOffset}");
-
-                g.SetOffset(currentOffset);
-
-                return g.StorageOccupied * (g.Occurs ?? 1);
-            }
-            default:
-                throw new NotSupportedException($"Unsupported IDataItem type: {currentItem.GetType().Name}");
         }
     }
 }

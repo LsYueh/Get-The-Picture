@@ -5,7 +5,7 @@ namespace GetThePicture.Copybook.Compiler.Ir;
 public class GroupItem(
     int level, string name, int? occurs = null,
     string? comment = null) : DataItem(level, name, occurs, comment)
-{
+{ 
     // ----------------------------
     // IDataItem
     // ----------------------------
@@ -21,10 +21,12 @@ public class GroupItem(
     }
 
     // ----------------------------
-    // Union Buffer
+    // (Obsolete)
     // ----------------------------
 
-    public override void CalculateStorage()
+    public int StorageOccupied { get; private set; }
+
+    public void CalculateStorage()
     {
         int total = 0;
 
@@ -32,8 +34,7 @@ public class GroupItem(
         {
             if (child is ElementaryDataItem e)
             {
-                e.CalculateStorage();
-                total += e.StorageOccupied * (e.Occurs ?? 1);
+                total += e.Pic.StorageOccupied * (e.Occurs ?? 1);
             }
             else if (child is GroupItem g)
             {

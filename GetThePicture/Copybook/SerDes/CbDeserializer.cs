@@ -1,6 +1,5 @@
 using GetThePicture.Copybook.Compiler.Ir;
 using GetThePicture.Copybook.Compiler.Ir.Base;
-using GetThePicture.Copybook.SerDes.Field;
 using GetThePicture.Copybook.SerDes.Record;
 using GetThePicture.PictureClause;
 
@@ -8,17 +7,17 @@ namespace GetThePicture.Copybook.SerDes;
 
 internal class CbDeserializer
 {
-    internal static CbRecord DesLayout(CbLayout layout, ref CbFieldAccessor accessor)
+    internal static CbRecord DesLayout(CbLayout layout, ref RecCursor cursor)
     {
-        if (layout.StorageOccupied != accessor.Size)
-            throw new InvalidOperationException($"Record size mismatch: layout={layout.StorageOccupied}, actual={accessor.Size}");
+        if (layout.StorageOccupied != cursor.Size)
+            throw new InvalidOperationException($"Record size mismatch: layout={layout.StorageOccupied}, actual={cursor.Size}");
         
-        var result = ReadGroupItems(layout, ref accessor);
+        var result = ReadGroupItems(layout, ref cursor);
 
         return result;
     }
 
-    private static CbRecord ReadGroupItems(IDataItem item, ref CbFieldAccessor accessor)
+    private static CbRecord ReadGroupItems(IDataItem item, ref RecCursor cursor)
     {
         var result = new CbRecord();
 
@@ -27,11 +26,11 @@ internal class CbDeserializer
             switch (child)
             {
                 case GroupItem g:
-                    ReadNestedGroupItem(g, ref accessor, result);
+                    ReadNestedGroupItem(g, ref cursor, result);
                     break;
 
                 case ElementaryDataItem e :
-                    ReadElementaryDataItem(e, ref accessor, result);
+                    ReadElementaryDataItem(e, ref cursor, result);
                     break;
 
                 default:
@@ -42,13 +41,13 @@ internal class CbDeserializer
         return result;
     }
 
-    private static void ReadNestedGroupItem(GroupItem item, ref CbFieldAccessor accessor, CbRecord target)
+    private static void ReadNestedGroupItem(GroupItem item, ref RecCursor cursor, CbRecord target)
     {
         int occurs = item.Occurs ?? 1;
 
         if (occurs == 1)
         {
-            target[item.Name] = ReadGroupItems(item, ref accessor);
+            target[item.Name] = ReadGroupItems(item, ref cursor);
         }
         else
         {
@@ -56,52 +55,47 @@ internal class CbDeserializer
 
             for (int i = 0; i < occurs; i++)
             {
-                values[i] = ReadGroupItems(item, ref accessor);
+                values[i] = ReadGroupItems(item, ref cursor);
             }
 
             target[item.Name] = values;
         }
     }
 
-    private static void ReadElementaryDataItem(ElementaryDataItem item, ref CbFieldAccessor accessor, CbRecord target)
+    private static void ReadElementaryDataItem(ElementaryDataItem item, ref RecCursor cursor, CbRecord target)
     {
         int occurs = item.Occurs ?? 1;
 
-        if (item.IsFiller) return;
-
-        int elementSize = item.Pic.StorageOccupied;
-
-        if (elementSize != item.StorageOccupied)
-        {
-            throw new InvalidOperationException(
-                $"ElementaryDataItem storage size calculation error. " +
-                $"Name={item.Name}, " +
-                $"Pic={item.Pic}, " +
-                $"ElementSize={elementSize}, " +
-                $"Occurs={occurs}, " +
-                $"Expected={elementSize * occurs}, " +
-                $"Actual={item.StorageOccupied}");
-        }
-
         if (occurs == 1)
         {
-            var raw = accessor.Read(item.Offset, item.StorageOccupied);
+            var raw = cursor.Read(item.Pic.StorageOccupied);
 
-            target[item.Name] = PicClauseCodec.ForMeta(item.Pic).Decode(raw);
+            // 是 FILLER，直接跳過
+            if (item.IsFiller != true)
+            {
+                target[item.Name] = PicClauseCodec.ForMeta(item.Pic).Decode(raw);
+            }
         }
         else
-        {            
+        {
             var values = new object?[occurs];
 
             for (int i = 0; i < occurs; i++)
             {
-                int shift = item.StorageOccupied * i;
-                var raw = accessor.Read(item.Offset + shift, item.StorageOccupied);
+                var raw = cursor.Read(item.Pic.StorageOccupied);
 
-                values[i] = PicClauseCodec.ForMeta(item.Pic).Decode(raw);
+                // 是 FILLER，直接跳過
+                if (item.IsFiller != true)
+                {
+                    values[i] = PicClauseCodec.ForMeta(item.Pic).Decode(raw);
+                }
             }
 
-            target[item.Name] = values;
+            // 如果不是 FILLER，才建立陣列在 target
+            if (item.IsFiller != true)
+            {
+                target[item.Name] = values;
+            }
         }
     }
 }

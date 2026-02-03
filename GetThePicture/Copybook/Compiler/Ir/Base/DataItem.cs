@@ -15,24 +15,6 @@ public abstract class DataItem(
     public virtual IReadOnlyList<IDataItem> Children => [];
 
     // ----------------------------
-    // Union Buffer
-    // ----------------------------
-
-    public int Offset { get; private set; }
-
-    /// <summary>
-    /// 設定 offset，用於 DFS 遍歷計算 union buffer
-    /// </summary>
-    internal void SetOffset(int offset)
-    {
-        Offset = offset;
-    }
-
-    public int StorageOccupied { get; internal set; }
-
-    public abstract void CalculateStorage();
-
-    // ----------------------------
     // Dump
     // ----------------------------
 

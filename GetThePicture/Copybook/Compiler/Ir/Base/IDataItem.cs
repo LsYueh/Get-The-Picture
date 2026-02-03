@@ -13,14 +13,6 @@ public interface IDataItem
     IReadOnlyList<IDataItem> Children { get; }
 
     // ----------------------------
-    // Union Buffer
-    // ----------------------------
-
-    int Offset { get; }
-
-    int StorageOccupied { get; }
-
-    // ----------------------------
     // Dump
     // ----------------------------
 

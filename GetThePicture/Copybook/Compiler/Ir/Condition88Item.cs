@@ -19,15 +19,6 @@ public sealed class Condition88Item(
     public object? ThroughValue { get; } = through;
 
     // ----------------------------
-    // Union Buffer
-    // ----------------------------
-
-    public override void CalculateStorage()
-    {
-        StorageOccupied = 0;
-    }
-
-    // ----------------------------
     // Dump
     // ----------------------------
 

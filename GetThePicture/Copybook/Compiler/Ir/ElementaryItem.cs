@@ -21,15 +21,6 @@ public sealed class ElementaryDataItem(
     public string? Value { get; init; } = value;
 
     // ----------------------------
-    // Union Buffer
-    // ----------------------------
-
-    public override void CalculateStorage()
-    {
-        StorageOccupied = Pic.StorageOccupied;
-    }
-
-    // ----------------------------
     // Level 88 Condition-name
     // ----------------------------    
 
