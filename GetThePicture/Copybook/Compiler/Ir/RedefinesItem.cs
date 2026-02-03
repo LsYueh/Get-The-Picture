@@ -6,20 +6,28 @@ public sealed class RedefinesItem(
     int level, string name, string targetName,
     string? comment = null) : DataItem(level, name, null, comment)
 {
-    public string TargetName { get; init; } = targetName;
-    public ElementaryDataItem Target { get; private set; } = null!;
+    // ----------------------------
+    // IDataItem
+    // ----------------------------
 
-    private readonly List<ElementaryDataItem> _elementaryDataItems = [];
-    public IReadOnlyList<ElementaryDataItem> ElementaryDataItems => _elementaryDataItems;
+    private readonly List<IDataItem> _children = [];
+    public override IReadOnlyList<IDataItem> Children => _children;
 
-    public override IReadOnlyList<IDataItem> Children => _elementaryDataItems;
-
-    public void SetTarget(ElementaryDataItem target) => Target = target;
-
-    internal void AddSubordinate(ElementaryDataItem subordinate)
+    internal void AddSubordinate(IDataItem subordinate)
     {
-        _elementaryDataItems.Add(subordinate);
+        ArgumentNullException.ThrowIfNull(subordinate);
+
+        _children.Add(subordinate);
     }
+    
+    // ----------------------------
+    // REDEFINES
+    // ----------------------------
+    
+    public string TargetName { get; init; } = targetName;
+    public IDataItem Target { get; private set; } = null!;
+
+    public void SetTarget(IDataItem target) => Target = target;
 
     // ----------------------------
     // Union Buffer

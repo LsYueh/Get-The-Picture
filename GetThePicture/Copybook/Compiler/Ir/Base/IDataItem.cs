@@ -12,5 +12,17 @@ public interface IDataItem
 
     public IReadOnlyList<IDataItem> Children { get; }
 
+    // ----------------------------
+    // Union Buffer
+    // ----------------------------
+
+    public int Offset { get; }
+
+    public int StorageOccupied { get; }
+
+    // ----------------------------
+    // Dump
+    // ----------------------------
+
     void Dump(TextWriter writer, int indent = 0);
 }

@@ -6,6 +6,10 @@ public class GroupItem(
     int level, string name, int? occurs = null,
     string? comment = null) : DataItem(level, name, occurs, comment)
 {
+    // ----------------------------
+    // IDataItem
+    // ----------------------------
+    
     private readonly List<IDataItem> _children = [];
     public override IReadOnlyList<IDataItem> Children => _children;
 

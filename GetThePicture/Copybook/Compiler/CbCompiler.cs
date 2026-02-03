@@ -134,12 +134,12 @@ public sealed class CbCompiler
             if (item is RedefinesItem r)
             {
                 // 找到同層的 target
-                ElementaryDataItem? target = items.OfType<ElementaryDataItem>().FirstOrDefault(e => e.Name == r.TargetName);
+                IDataItem? target = items.OfType<IDataItem>().FirstOrDefault(e => e.Name == r.TargetName);
 
                 if (target is null)
                     throw new CompileException($"Cannot resolve REDEFINES target '{r.TargetName}' for '{r.Name}' '{r.Name}'.");
 
-                if (target.Pic.StorageOccupied != r.StorageOccupied)
+                if (target.StorageOccupied != r.StorageOccupied)
                     throw new CompileException($"REDEFINES target '{r.TargetName}' storage size mismatch for '{r.Name}'.");
 
                 r.SetTarget(target);

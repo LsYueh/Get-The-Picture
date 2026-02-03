@@ -208,8 +208,14 @@ public class SchemaCmd(CodeGenOptions? options = null)
         
         if (item.Target != null)
         {
-            writer.WriteLine($"{indent}/// Target type: {item.Target.GetType().Name}");
-            writer.WriteLine($"{indent}/// Target PIC: {item.Target.Pic}");
+            if (item.Target is ElementaryDataItem e)
+            {
+                writer.WriteLine($"{indent}/// Target type: {e.GetType().Name}");
+                writer.WriteLine($"{indent}/// Target PIC: {e.Pic}");
+            }
+            {
+                writer.WriteLine($"{indent}/// Target type: {item.Target.GetType().Name}");
+            }
         }
         else
         {
