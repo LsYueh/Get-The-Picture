@@ -17,8 +17,8 @@ public sealed class CbCompiler
         var tokens = lexer.Tokenize();
         Parser parser = new(tokens);
 
-        var ir = parser.Analyze();
-        if (ir is not CbLayout layout)
+        var obj = parser.Analyze();
+        if (obj is not CbLayout layout)
             throw new Exception("Copybook root must be a Document.");
 
         layout.CalculateStorage();
@@ -29,7 +29,7 @@ public sealed class CbCompiler
     }
 
     /// <summary>
-    /// 完成 Copybook IR 的語意關聯，供後續 C# 生成或序列化使用
+    /// 完成 Copybook 的語意關聯，供後續 C# 生成或序列化使用
     /// </summary>
     /// <param name="layout"></param>
     private static void ResolveLayout(CbLayout layout)

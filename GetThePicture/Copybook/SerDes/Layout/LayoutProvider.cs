@@ -4,7 +4,7 @@ using GetThePicture.Copybook.Compiler.Layout;
 namespace GetThePicture.Copybook.SerDes.Layout;
 
 /// <summary>
-/// Provides Copybook IR as runtime layout for SerDes.
+/// Provides Copybook Layout as runtime layout for SerDes.
 /// </summary>
 public sealed class LayoutProvider(StreamReader reader) : ILayoutProvider
 {

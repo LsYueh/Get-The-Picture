@@ -13,7 +13,7 @@ public sealed class CbSerDes(CbLayout layout)
     }
 
     /// <summary>
-    /// Deserialize a single record according to Copybook IR (layout).
+    /// Deserialize a single record according to Copybook layout.
     /// </summary>
     /// <param name="record"></param>
     /// <returns></returns>
