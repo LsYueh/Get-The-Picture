@@ -1,6 +1,6 @@
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.SerDes.Record;
-using GetThePicture.Copybook.SerDes.Layout;
+using GetThePicture.Copybook.SerDes.Storage;
 
 namespace GetThePicture.Copybook.SerDes;
 
@@ -8,7 +8,7 @@ public sealed class CbSerDes(CbLayout layout)
 {
     private readonly CbLayout _layout = layout ?? throw new ArgumentNullException(nameof(layout));
 
-    public CbSerDes(ILayoutProvider provider): this(provider.GetLayout())
+    public CbSerDes(IStorageProvider provider): this(provider.GetLayout())
     {
     }
 
