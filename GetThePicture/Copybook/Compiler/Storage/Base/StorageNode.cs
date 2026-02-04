@@ -22,8 +22,6 @@ public abstract class StorageNode(
 
     public virtual IReadOnlyList<IStorageNode> Children => [];
 
-    public ElementaryDataItem? Item { get; init; } = null;
-
     // ----------------------------
     // Dump
     // ----------------------------
@@ -39,11 +37,11 @@ public abstract class StorageNode(
     /// <param name="indent"></param>
     protected void DumpBase(TextWriter writer, int indent)
     {
-        // Semantic/欄位名稱
-        var semanticName = Item?.Name ?? "(group)";
-        writer.WriteLine($"{Indent(indent)}{Name} [{semanticName}]{FormatOffset()}{FormatOccupied()}");
+        writer.WriteLine($"{Indent(indent)}{Name}{FormatIndex()}{FormatOffset()}{FormatOccupied()}");
     }
 
+    protected string FormatIndex() => Index.HasValue ? $"({Index.Value})" : "";
+    
     protected string FormatOffset(bool oneBased = true) => oneBased ? $" start={Offset + 1}" : $" offset={Offset}";
 
     protected string FormatOccupied(bool showEnd = true)

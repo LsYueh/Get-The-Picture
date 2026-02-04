@@ -14,8 +14,6 @@ public interface IStorageNode
 
     IReadOnlyList<IStorageNode> Children { get; }
 
-    ElementaryDataItem? Item { get; }
-
     // ----------------------------
     // Dump
     // ----------------------------

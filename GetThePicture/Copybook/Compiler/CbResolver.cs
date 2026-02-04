@@ -24,11 +24,12 @@ public sealed class CbResolver
     /// </summary>
     /// <param name="item"></param>
     /// <param name="node"></param>
-    /// <param name="baseOffset">storage parant 的起始位置</param>
+    /// <param name="baseOffset">起始位置（group 開始</param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     private static int ResolveGroupNodes(IDataItem item, GroupNode node, int baseOffset = 0)
     {
+        // 已佔用 storage，只有 GroupItem 和 ElementaryDataItem 推進
         int storageOffset = 0;
 
         foreach (var child in item.Children)
@@ -37,11 +38,13 @@ public sealed class CbResolver
 
             for (int i = 0; i < occurs; i++)
             {
+                int? occursIndex = occurs > 1 ? i + 1 : null;
+                
                 switch (child)
                 {
                     case RedefinesItem r:
                     {
-                        var instanceOffset = ResolveRedefinesOffset(r.TargetName, node.Children);
+                        var instanceOffset = ResolveRedefinesOffset(r.TargetName, node.Children, node.Name);
 
                         var groupNode = new GroupNode(r.Name, instanceOffset);
                         node.AddNode(groupNode);
@@ -57,7 +60,7 @@ public sealed class CbResolver
                     {
                         var instanceOffset = baseOffset + storageOffset;
                         
-                        var groupNode = new GroupNode(g.Name, instanceOffset);
+                        var groupNode = new GroupNode(g.Name, instanceOffset, occursIndex);
                         node.AddNode(groupNode);
                         
                         int groupSize = ResolveGroupNodes(g, groupNode, instanceOffset);
@@ -72,7 +75,7 @@ public sealed class CbResolver
                         int storageOccupied = e.Pic.StorageOccupied;
                         var instanceOffset = baseOffset + storageOffset;
 
-                        var leafNode = new LeafNode(e.Name, instanceOffset, storageOccupied);
+                        var leafNode = new LeafNode(e.Name, instanceOffset, storageOccupied, occursIndex);
                         node.AddNode(leafNode);
                         
                         storageOffset += storageOccupied;
@@ -93,13 +96,15 @@ public sealed class CbResolver
     /// </summary>
     /// <param name="nodes"></param>
     /// <exception cref="CompileException"></exception>
-    private static int ResolveRedefinesOffset(string name, IEnumerable<IStorageNode> nodes)
+    private static int ResolveRedefinesOffset(string name, IEnumerable<IStorageNode> nodes, string parentName)
     {
+        // Assumes node names are unique within the same level
+
         foreach (var node in nodes)
         {
             if (node.Name == name) return node.Offset;
         }
 
-        throw new CompileException($"Cannot resolve REDEFINES target '{name}'.");
+        throw new CompileException($"Cannot resolve REDEFINES target '{name}' in group '{parentName}'.");
     }
 }

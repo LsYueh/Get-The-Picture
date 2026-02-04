@@ -3,8 +3,8 @@ using GetThePicture.Copybook.Compiler.Storage.Base;
 namespace GetThePicture.Copybook.Compiler.Storage;
 
 public class LeafNode(
-    string name, int offset = 0, int storageOccupied = 0
-) : StorageNode(name, offset, storageOccupied)
+    string name, int offset = 0, int storageOccupied = 0, int? index = null
+) : StorageNode(name, offset, storageOccupied, index)
 {
     // ----------------------------
     // IStorageNode
@@ -26,6 +26,6 @@ public class LeafNode(
 
     public override void Dump(TextWriter writer, int indent)
     {
-        writer.WriteLine($"{Indent(indent)}{Name}{FormatOffset()}{FormatOccupied()}");
+        writer.WriteLine($"{Indent(indent)}{Name}{FormatIndex()}{FormatOffset()}{FormatOccupied()}");
     }
 }

@@ -30,6 +30,7 @@ public class CbResolverTest
         using var writer = new StringWriter(sb);
 
         storage.Dump(writer);
+        // storage.Dump(Console.Out);
 
         string result = sb.ToString();
 
@@ -83,7 +84,7 @@ public class CbResolverTest
         using var writer = new StringWriter(sb);
 
         storage.Dump(writer);
-        storage.Dump(Console.Out);
+        // storage.Dump(Console.Out);
 
         string result = sb.ToString();
 
@@ -96,5 +97,39 @@ public class CbResolverTest
         StringAssert.Contains(result, "B-1-2 start=6 len=1 end=7");
         StringAssert.Contains(result, "B-2 start=7 len=4 end=11");
         StringAssert.Contains(result, "C start=11");
+    }
+
+    [TestMethod]
+    public void Copybook_Resolver_Test_04()
+    {
+        const string filePath = @"TestData/nested-occurs-record.cpy";
+        using var sr = new StreamReader(filePath, cp950);
+
+        CbLayout layout = CbCompiler.FromStreamReader(sr);
+        Assert.IsNotNull(layout);
+
+        CbStorage storage = CbResolver.FromLayout(layout);
+        Assert.IsNotNull(storage);
+
+        // layout.Dump(Console.Out);
+
+        var sb = new StringBuilder();
+        using var writer = new StringWriter(sb);
+
+        storage.Dump(writer);
+        storage.Dump(Console.Out);
+
+        string result = sb.ToString();
+
+        StringAssert.Contains(result, "ORDER-ID start=1 len=10 end=11");
+        StringAssert.Contains(result, "ORDER-LINES(1) start=31");
+        StringAssert.Contains(result, "ORDER-LINES(2) start=56");
+        StringAssert.Contains(result, "LINE-AMOUNTS(1) start=67");
+        StringAssert.Contains(result, "AMOUNT start=67 len=7 end=74");
+        StringAssert.Contains(result, "LINE-AMOUNTS(2) start=74");
+        StringAssert.Contains(result, "AMOUNT start=74 len=7 end=81");
+        StringAssert.Contains(result, "ORDER-LINES(3) start=81");
+        StringAssert.Contains(result, "AMOUNT start=99 len=7 end=106");
+        StringAssert.Contains(result, "TOTAL-AMOUNT start=106 len=9 end=115");
     }
 }
