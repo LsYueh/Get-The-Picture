@@ -163,6 +163,7 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 <br>
 
 - 更多關於 [Copybook Compiler](docs/get-the-picture/copybook/compiler.md) ...
+- 更多關於 [Copybook Resolver](docs/get-the-picture/copybook/resolver.md) ...
 
 <br>
 

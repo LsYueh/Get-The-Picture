@@ -1,4 +1,30 @@
 # Copybook Compiler
+把 Copybook 原始文字直接編譯成**物件結構** (`CbLayout`)，並將每個 COBOL 元素轉換為可閱讀的資料描述。
+
+## 流程概覽
+```
+.cpy 檔案
+   │
+   ▼
+CbCompiler
+   │
+   ├─ Lexer
+   │    └─ 將原始文字拆解成 Token
+   │       (Level / Name / PIC / OCCURS / REDEFINES 等)
+   │
+   ├─ Parser
+   │    └─ 把 Token 解析成資料層級與父子關係
+   │
+   └─ 建立 CbLayout 物件結構
+        ├─ GroupItem
+        ├─ ElementaryDataItem
+        ├─ Level 66 / Level 88
+        └─ etc...
+```
+
+<br>
+
+## 使用方式
 
 `demo.cpy`
 ```cobol
@@ -14,16 +40,8 @@
 
 <br>
 
-範例程式:  
+程式:  
 ```csharp
-using GetThePicture.Copybook.Compiler;    // CbCompiler
-using GetThePicture.Copybook.Compiler.Layout; // CbLayout
-
-using GetThePicture.PictureClause.Utils;  // EncodingFactory
-```
-
-```csharp
-Encoding cp950 = EncodingFactory.CP950;
 using var streamReader = new StreamReader(@"TestData/demo.cpy", cp950);
 
 CbLayout layout = CbCompiler.FromStreamReader(streamReader);

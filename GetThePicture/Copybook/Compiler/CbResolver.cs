@@ -24,7 +24,7 @@ public sealed class CbResolver
     /// </summary>
     /// <param name="item"></param>
     /// <param name="node"></param>
-    /// <param name="baseOffset">起始位置（group 開始</param>
+    /// <param name="baseOffset">起始位置 (group 開始)</param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
     private static int ResolveGroupNodes(IDataItem item, GroupNode node, int baseOffset = 0)
