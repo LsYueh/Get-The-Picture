@@ -1,119 +1,140 @@
-using GetThePicture.Copybook.Compiler.Layout;
-using GetThePicture.Copybook.Compiler.Layout.Base;
+using GetThePicture.Copybook.Compiler.Storage;
+using GetThePicture.Copybook.Compiler.Storage.Base;
 using GetThePicture.Copybook.SerDes.Record;
 using GetThePicture.PictureClause;
 
 namespace GetThePicture.Copybook.SerDes;
 
-internal class CbSerializer
+public class CbSerializer
 {
-    public static byte[] SerLayout(CbLayout layout, CbRecord record)
-    {
-        ArgumentNullException.ThrowIfNull(layout);
-        ArgumentNullException.ThrowIfNull(record);
+    private CbStorage _storage { get; }
 
-        using var ms = new MemoryStream();
-        using var writer = new BinaryWriter(ms);
+    private readonly Dictionary<string, LeafNode> _flatMap;
 
-        WriteGroupItems(writer, layout, record);
+    private CbRecord _record { get; set; } = null!;
 
-        return ms.ToArray();
+    public CbSerializer(CbStorage storage)
+    { 
+        _storage = storage ?? throw new ArgumentNullException(nameof(storage));
+
+        _flatMap = BuildFlatLeafMap(_storage);
     }
 
-    private static void WriteGroupItems(BinaryWriter writer, IDataItem item, CbRecord current)
+    public byte[] Exec(CbRecord record)
     {
-        foreach (var child in item.Children)
-        {
-            switch (child)
-            {
-                case GroupItem g:
-                    WriteNestedGroupItem(writer, g, current);
-                    break;
+        _record = record;
 
-                case ElementaryDataItem e:
-                    WriteElementaryDataItem(writer, e, current);
+        // 1. 配置完整 buffer
+        var buffer = new byte[_storage.TotalLength];
+
+        // 2. 初始化 buffer
+        Initialize(buffer);
+
+        // 3. 寫入每個欄位
+        WriteField(buffer, _record);
+
+        return buffer;
+    }
+
+    private void WriteField(byte[] buffer, CbRecord record, string parentPath = "")
+    {
+        foreach (var field in record.Fields)
+        {
+            var path = string.IsNullOrEmpty(parentPath)
+                ? field.Key
+                : $"{parentPath}::{field.Key}";
+
+            if (field.Value is CbRecord childRecord)
+            {
+                WriteField(buffer, childRecord, path);
+            }
+            else
+            {
+                if (!_flatMap.TryGetValue(path, out var node))
+                    throw new InvalidOperationException($"Field '{path}' does not exist in storage map");
+
+                if (node.Pic == null)
+                    throw new InvalidOperationException($"PIC metadata missing for field '{path}'");
+
+                if (field.Value == null)
+                    throw new InvalidOperationException($"Value missing for field '{path}'");
+
+                var bytes = PicClauseCodec.ForMeta(node.Pic).WithStrict().Encode(field.Value);
+
+                if (node.StorageOccupied == null)
+                    throw new InvalidOperationException($"StorageOccupied metadata missing for field '{path}'");
+
+                var occupied = node.StorageOccupied.Value;
+
+                if (bytes.Length != occupied)
+                    throw new InvalidOperationException($"Field '{path}' encoded length mismatch. Expected {occupied}, got {bytes.Length}");
+
+                Buffer.BlockCopy(bytes, 0, buffer, node.Offset, occupied);
+            }
+        }
+    }
+
+    private static void Initialize(byte[] buffer, byte value = 0x20)
+    {
+        // COBOL DISPLAY 預設 = SPACE
+        // ASCII 系統通常是 0x20
+        Array.Fill(buffer, value);
+    }
+
+    private static Dictionary<string, LeafNode> BuildFlatLeafMap(IStorageNode node)
+    {
+        var dict = new Dictionary<string, LeafNode>();
+
+        void Walk(IStorageNode n, string parentPath)
+        {
+            // 如果有 Index (OCCURS)，就加上 (Index)
+            string fieldName = n.Index.HasValue ? $"{n.Name}({n.Index.Value})" : n.Name;
+
+            switch (n)
+            {
+                case CbStorage root:
+                {
+                    foreach (var child in root.Children)
+                    {
+                        if (child.IsAlias) continue;
+                    
+                        // COPYBOOK-STORAGE-MAP 要排除
+                        Walk(child, string.Empty);
+                    }
+                    break;
+                }
+
+                case GroupNode group:
+                {
+                    var groupPath = string.IsNullOrEmpty(parentPath) ? fieldName : $"{parentPath}::{fieldName}";
+                    
+                    foreach (var child in group.Children)
+                    {
+                        if (child.IsAlias) continue;
+                    
+                        Walk(child, groupPath);
+                    }
+                        
+                    break;
+                }   
+
+                case LeafNode leaf:
+                    var leafPath = string.IsNullOrEmpty(parentPath) ? fieldName : $"{parentPath}::{fieldName}";
+
+                    if (dict.ContainsKey(leafPath))
+                        throw new InvalidOperationException($"Duplicate leaf path: {leafPath}");
+
+                    dict.Add(leafPath, leaf);
+
                     break;
 
                 default:
-                    throw new NotSupportedException(
-                        $"Unsupported IDataItem type: {item.GetType().Name}");
+                    throw new InvalidOperationException($"Unsupported storage node type: {n.GetType().Name}");
             }
         }
-    }
-    
-    private static void WriteNestedGroupItem(BinaryWriter writer, GroupItem group, CbRecord current)
-    {
-        // 取得 GroupItem 的資料來源
-        object? value = (group.Name != null ? current[group.Name] : current) ?? throw new Exception($"Group '{group.Name}' requires a CbRecord(s).");
 
-        int occurs = group.Occurs ?? 1;
+        Walk(node, string.Empty);
 
-        if (occurs == 1)
-        {
-            if (value is not CbRecord record)
-                throw new Exception($"Group '{group.Name}' requires a CbRecord.");
-
-            WriteGroupItems(writer, group, record);
-        }
-        else
-        {
-            // OCCURS 對應 CbRecord[]
-            
-            if (value is not IReadOnlyList<CbRecord> records)
-                throw new Exception($"Group '{group.Name}' OCCURS {occurs} TIMES requires a list.");
-
-            if (records.Count != occurs)
-                throw new Exception($"Group '{group.Name}' OCCURS {occurs} TIMES but got {records.Count}.");
-
-            foreach (var record in records)
-            {
-                WriteGroupItems(writer, group, record);
-            }
-        }
-    }
-
-    private static void WriteElementaryDataItem(BinaryWriter writer, ElementaryDataItem item, CbRecord current)
-    {
-        var pic = item.Pic ?? throw new InvalidOperationException($"Elementary data item '{item.Name}' has no PIC clause.");
-
-        int occurs = item.Occurs ?? 1;
-        
-        // FILLER
-        if (item.IsFiller == true)
-        {
-            for (int i = 0; i < occurs; i++)
-            {
-                writer.Write(Enumerable.Repeat((byte)' ', pic.StorageOccupied).ToArray());
-            }
-
-            return;
-        }
-
-        // 取得 ElementaryDataItem 的資料來源
-        object? value = current[item.Name] ?? throw new InvalidOperationException($"Elementary data item '{item.Name}' requires a Object(s).");
-
-        if (occurs == 1)
-        {
-            byte[] bytes = PicClauseCodec.ForMeta(pic).WithStrict().Encode(value);
-
-            writer.Write(bytes);
-        }
-        else
-        {
-            // OCCURS 對應 object[]
-
-            if (value is not IReadOnlyList<object> values)
-                throw new InvalidOperationException($"Elementary data item '{item.Name}' OCCURS {occurs} TIMES requires a list.");
-        
-            if (values.Count != occurs)
-                throw new InvalidOperationException($"Elementary data item '{item.Name}' OCCURS {occurs} TIMES but got {values.Count}.");
-        
-            foreach (var v in values)
-            {
-                byte[] bytes = PicClauseCodec.ForMeta(pic).WithStrict().Encode(v);
-
-                writer.Write(bytes);
-            }
-        }
+        return dict;
     }
 }

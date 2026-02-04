@@ -23,6 +23,9 @@ public class CbDeserializer
     /// <returns></returns>
     public CbRecord Exec(ReadOnlyMemory<byte> buffer)
     {
+        if (_storage.TotalLength!= buffer.Length)
+            throw new InvalidOperationException($"Record size mismatch: storage={_storage.TotalLength}, actual={buffer.Length}");
+        
         _buffer = buffer;
 
         var result = ParseGroupNode(_storage);
@@ -49,7 +52,7 @@ public class CbDeserializer
             // 如果有 Index (OCCURS)，就加上 (Index)
             string fieldName = child.Index.HasValue ? $"{child.Name}({child.Index.Value})" : child.Name;
                 
-            var childRecordOrValue = child switch
+            object childRecordOrValue = child switch
             {
                 LeafNode  ln => ParseLeafNode(ln),
                 GroupNode gn => ParseGroupNode(gn),

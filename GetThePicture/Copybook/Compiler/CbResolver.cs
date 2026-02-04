@@ -12,7 +12,7 @@ public sealed class CbResolver
     {
         ArgumentNullException.ThrowIfNull(layout);
 
-        var storage = new CbStorage();
+        var storage = new CbStorage(layout.StorageOccupied);
 
         ResolveGroupNodes(layout, storage, baseOffset: 0);
         
