@@ -359,9 +359,16 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 |------|----------|----------|------|
 | CASE 1 | Group REDEFINES Elementary Data Item | ✅ 支援 | 最常見且結構單純的用法。Group 僅作為 Elementary Item 的另一種結構化視角，不引入額外 storage。 |
 | CASE 2 | 01-level REDEFINES + GLOBAL | ❌ 不支援 | 涉及 01-level overlay 與 GLOBAL 可視範圍，在高階語言中難以安全對應。 |
-| CASE 3a | 多個 REDEFINES 指向同一 target | ❌ 不支援 | 會形成多重 storage alias，容易造成資料覆寫與語意不明確。 |
-| CASE 3b | REDEFINES 鏈（REDEFINES 已 REDEFINES 的 item） | ❌ 不支援 | 需解析並正規化多層 alias 關係，實作與維護成本過高。 |
+| CASE 3a | 多個 REDEFINES 指向同一 target | ⚠️ 有限支援 | 會形成多重 storage alias，容易造成資料覆寫與語意不明確。 |
+| CASE 3b | REDEFINES 鏈（REDEFINES 已 REDEFINES 的 item） | ⚠️ 有限支援 | 需解析並正規化多層 alias 關係，實作與維護成本過高。 |
 
+<br>
+
+再根據這篇 [Redefined data items and OCCURS clauses](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=changes-redefined-data-items-occurs-clauses) 的說明，裡面提到：
+
+> According to Standard `COBOL 2002`, the data item being redefined cannot contain an OCCURS clause.  
+
+所以本專案亦不支援過於複雜的 REDEFINES 運作行為。
 
 <br><br>
 
