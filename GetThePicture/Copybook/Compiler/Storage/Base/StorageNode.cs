@@ -1,26 +1,35 @@
-using GetThePicture.Copybook.Compiler.Layout;
-
 namespace GetThePicture.Copybook.Compiler.Storage.Base;
 
 public abstract class StorageNode(
     string name, int offset = 0, int? storageOccupied = null, int? index = null
 ) : IStorageNode
 {
-    /// <summary>
-    /// Tree/節點名稱
-    /// </summary>
+    private readonly int _offset = offset;
+    
     public string Name { get; private init; } = name;
 
-    public int Offset { get; private init; } = offset;
+    public StorageAlias? Alias { get; internal set; } = null;
+
+    public int Offset => Alias?.Target.Offset ?? _offset;
 
     public int? StorageOccupied { get; private init; } = storageOccupied;
 
-    /// <summary>
-    /// OCCURS index
-    /// </summary>
     public int? Index { get; } = index;
 
     public virtual IReadOnlyList<IStorageNode> Children => [];
+
+    public void SetAlias(IStorageNode target)
+    {
+        if (StorageOccupied.HasValue && 
+            target.StorageOccupied.HasValue &&
+            StorageOccupied.Value > target.StorageOccupied.Value)
+        {
+            throw new InvalidOperationException($"Alias '{Name}' exceeds target storage size.");
+        }
+
+        Alias = new StorageAlias(target);
+    }
+
 
     // ----------------------------
     // Dump

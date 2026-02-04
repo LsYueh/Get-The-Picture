@@ -4,14 +4,32 @@ namespace GetThePicture.Copybook.Compiler.Storage.Base;
 
 public interface IStorageNode
 {
+    /// <summary>
+    /// Tree/節點名稱
+    /// </summary>
     string Name { get; }
+
+    /// <summary>
+    /// Storage alias indicates that this node does not define its own
+    /// starting offset, but reuses the offset of another storage node.
+    /// The occupied length is still defined by this node.
+    /// </summary>
+    StorageAlias? Alias { get; }
     
     int Offset { get; }
     
     int? StorageOccupied { get; }
 
+    bool IsAlias => Alias is not null;
+
+    /// <summary>
+    /// OCCURS index
+    /// </summary>
     int? Index { get; }
 
+    /// <summary>
+    /// Child storage nodes in resolved layout order.
+    /// </summary>
     IReadOnlyList<IStorageNode> Children { get; }
 
     // ----------------------------

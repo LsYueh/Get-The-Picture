@@ -44,12 +44,14 @@ public sealed class CbResolver
                 {
                     case RedefinesItem r:
                     {
-                        var instanceOffset = ResolveRedefinesOffset(r.TargetName, node.Children, node.Name);
+                        var alias = ResolveAlias(r.TargetName, node.Children, node.Name);
 
-                        var groupNode = new GroupNode(r.Name, instanceOffset);
+                        var groupNode = new GroupNode(r.Name, -1);
+                        groupNode.SetAlias(alias);
                         node.AddNode(groupNode);
 
-                        ResolveGroupNodes(r, groupNode, instanceOffset);
+                        // 會直接用 Alias 的 Offset 作為 baseOffset
+                        ResolveGroupNodes(r, groupNode, groupNode.Offset);
 
                         // REDEFINES does not advance storage offset
 
@@ -96,13 +98,13 @@ public sealed class CbResolver
     /// </summary>
     /// <param name="nodes"></param>
     /// <exception cref="CompileException"></exception>
-    private static int ResolveRedefinesOffset(string name, IEnumerable<IStorageNode> nodes, string parentName)
+    private static IStorageNode ResolveAlias(string name, IEnumerable<IStorageNode> nodes, string parentName)
     {
         // Assumes node names are unique within the same level
 
         foreach (var node in nodes)
         {
-            if (node.Name == name) return node.Offset;
+            if (node.Name == name) return node;
         }
 
         throw new CompileException($"Cannot resolve REDEFINES target '{name}' in group '{parentName}'.");
