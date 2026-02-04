@@ -8,7 +8,9 @@ public interface IStorageNode
     
     int Offset { get; }
     
-    int StorageOccupied { get; }
+    int? StorageOccupied { get; }
+
+    int? Index { get; }
 
     IReadOnlyList<IStorageNode> Children { get; }
 

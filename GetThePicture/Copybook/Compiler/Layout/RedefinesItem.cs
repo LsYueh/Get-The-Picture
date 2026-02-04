@@ -4,22 +4,8 @@ namespace GetThePicture.Copybook.Compiler.Layout;
 
 public sealed class RedefinesItem(
     int level, string name, string targetName,
-    string? comment = null) : DataItem(level, name, null, comment)
+    string? comment = null) : GroupItem(level, name, null, comment)
 {
-    // ----------------------------
-    // IDataItem
-    // ----------------------------
-
-    private readonly List<ElementaryDataItem> _children = [];
-    public override IReadOnlyList<IDataItem> Children => _children;
-
-    internal void AddSubordinate(ElementaryDataItem subordinate)
-    {
-        ArgumentNullException.ThrowIfNull(subordinate);
-
-        _children.Add(subordinate);
-    }
-    
     // ----------------------------
     // REDEFINES
     // ----------------------------
@@ -28,26 +14,6 @@ public sealed class RedefinesItem(
     public IDataItem Target { get; private set; } = null!;
 
     public void SetTarget(IDataItem target) => Target = target;
-
-    // ----------------------------
-    // (Obsolete)
-    // ----------------------------
-
-    public int StorageOccupied { get; private set; }
-
-    public void CalculateStorage()
-    {
-        int total = 0;
-
-        foreach (var item in _children)
-        {
-
-            total += item.Pic.StorageOccupied * (item.Occurs ?? 1);
-
-        }
-
-        StorageOccupied = total;
-    }
 
     // ----------------------------
     // Dump

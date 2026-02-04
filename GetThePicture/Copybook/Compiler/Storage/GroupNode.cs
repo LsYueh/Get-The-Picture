@@ -3,8 +3,8 @@ using GetThePicture.Copybook.Compiler.Storage.Base;
 namespace GetThePicture.Copybook.Compiler.Storage;
 
 public class GroupNode(
-    string name, int offset = 0, int storageOccupied = 0
-) : StorageNode(name, offset, storageOccupied)
+    string name, int offset = 0
+) : StorageNode(name, offset)
 {
     // ----------------------------
     // IStorageNode
@@ -25,8 +25,8 @@ public class GroupNode(
     // ----------------------------
 
     public override void Dump(TextWriter writer, int indent)
-    {
-        writer.WriteLine($"{Indent(indent)}{Name} offset={Offset} len={StorageOccupied}");
+    {        
+        writer.WriteLine($"{Indent(indent)}{Name}{FormatOffset()}{FormatOccupied()}");
 
         foreach (var child in Children)
         {

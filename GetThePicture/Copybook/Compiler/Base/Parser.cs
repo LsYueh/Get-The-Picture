@@ -114,23 +114,15 @@ public class Parser(List<Token> tokens)
                     
                 throw new CompileException("Elementary data item cannot have subordinates.", Current ?? Previous);
             }
+            case RedefinesItem r: r.AddSubordinate(item); break;
             case GroupItem g: g.AddSubordinate(item); break;
-            case RedefinesItem r:
-            {
-                if (item is ElementaryDataItem subordinate)
-                {
-                    r.AddSubordinate(subordinate); break;
-                }
-                
-                throw new CompileException("REDEFINES item can only have Elementary Data Item as subordinate.", Current ?? Previous);
-            }
         }
 
         // 過濾可遞迴的子項
         IDataItem? parentItem = item switch
         {
-            GroupItem g => g,
             RedefinesItem r => r,
+            GroupItem g => g,
             ElementaryDataItem e => e,
             _ => null
         };

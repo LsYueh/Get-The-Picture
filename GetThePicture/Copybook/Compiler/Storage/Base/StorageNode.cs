@@ -3,7 +3,7 @@ using GetThePicture.Copybook.Compiler.Layout;
 namespace GetThePicture.Copybook.Compiler.Storage.Base;
 
 public abstract class StorageNode(
-    string name, int offset = 0, int storageOccupied = 0
+    string name, int offset = 0, int? storageOccupied = null, int? index = null
 ) : IStorageNode
 {
     /// <summary>
@@ -13,7 +13,12 @@ public abstract class StorageNode(
 
     public int Offset { get; private init; } = offset;
 
-    public int StorageOccupied { get; private init; } = storageOccupied;
+    public int? StorageOccupied { get; private init; } = storageOccupied;
+
+    /// <summary>
+    /// OCCURS index
+    /// </summary>
+    public int? Index { get; } = index;
 
     public virtual IReadOnlyList<IStorageNode> Children => [];
 
@@ -36,6 +41,24 @@ public abstract class StorageNode(
     {
         // Semantic/欄位名稱
         var semanticName = Item?.Name ?? "(group)";
-        writer.WriteLine($"{Indent(indent)}{Name} [{semanticName}] offset={Offset} len={StorageOccupied}");
+        writer.WriteLine($"{Indent(indent)}{Name} [{semanticName}]{FormatOffset()}{FormatOccupied()}");
+    }
+
+    protected string FormatOffset(bool oneBased = true) => oneBased ? $" start={Offset + 1}" : $" offset={Offset}";
+
+    protected string FormatOccupied(bool showEnd = true)
+    {
+        if (StorageOccupied is null)
+            return "";
+
+        string result = $" len={StorageOccupied}";
+
+        if (showEnd)
+        {
+            int end = Offset + StorageOccupied.Value + 1;
+            result += $" end={end}";
+        }
+
+        return result;
     }
 }

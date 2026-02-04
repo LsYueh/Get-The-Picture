@@ -1,3 +1,4 @@
+using GetThePicture.Copybook.Compiler.Base;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Compiler.Layout.Base;
 using GetThePicture.Copybook.Compiler.Storage;
@@ -26,8 +27,10 @@ public sealed class CbResolver
     /// <param name="baseOffset">storage parant 的起始位置</param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    private static void ResolveGroupNodes(IDataItem item, GroupNode node, int baseOffset = 0)
+    private static int ResolveGroupNodes(IDataItem item, GroupNode node, int baseOffset = 0)
     {
+        int storageOffset = 0;
+
         foreach (var child in item.Children)
         {
             int occurs = child.Occurs ?? 1;
@@ -36,24 +39,67 @@ public sealed class CbResolver
             {
                 switch (child)
                 {
-                    case GroupItem g:
-                        var groupNode = new GroupNode(g.Name, baseOffset);
+                    case RedefinesItem r:
+                    {
+                        var instanceOffset = ResolveRedefinesOffset(r.TargetName, node.Children);
+
+                        var groupNode = new GroupNode(r.Name, instanceOffset);
                         node.AddNode(groupNode);
-                        // 遞迴
-                        ResolveGroupNodes(g, groupNode, baseOffset);
-                        // TODO: ...
+
+                        ResolveGroupNodes(r, groupNode, instanceOffset);
+
+                        // REDEFINES does not advance storage offset
+
                         break;
+                    }
+                    
+                    case GroupItem g:
+                    {
+                        var instanceOffset = baseOffset + storageOffset;
+                        
+                        var groupNode = new GroupNode(g.Name, instanceOffset);
+                        node.AddNode(groupNode);
+                        
+                        int groupSize = ResolveGroupNodes(g, groupNode, instanceOffset);
+
+                        storageOffset += groupSize;
+
+                        break;
+                    }
 
                     case ElementaryDataItem e :
-                        var leafNode = new LeafNode(e.Name, baseOffset);
+                    {
+                        int storageOccupied = e.Pic.StorageOccupied;
+                        var instanceOffset = baseOffset + storageOffset;
+
+                        var leafNode = new LeafNode(e.Name, instanceOffset, storageOccupied);
                         node.AddNode(leafNode);
-                        // TODO: ...
+                        
+                        storageOffset += storageOccupied;
                         break;
+                    }
 
                     default:
                         throw new InvalidOperationException($"Unsupported DataItem type: {child.GetType().Name}");
                 }
             }
         }
+
+        return storageOffset;
+    }
+
+    /// <summary>
+    /// 找同層的 GroupNode 或 LeafNode
+    /// </summary>
+    /// <param name="nodes"></param>
+    /// <exception cref="CompileException"></exception>
+    private static int ResolveRedefinesOffset(string name, IEnumerable<IStorageNode> nodes)
+    {
+        foreach (var node in nodes)
+        {
+            if (node.Name == name) return node.Offset;
+        }
+
+        throw new CompileException($"Cannot resolve REDEFINES target '{name}'.");
     }
 }

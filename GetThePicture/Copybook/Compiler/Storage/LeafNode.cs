@@ -26,6 +26,6 @@ public class LeafNode(
 
     public override void Dump(TextWriter writer, int indent)
     {
-        writer.WriteLine($"{Indent(indent)}{Name} offset={Offset} len={StorageOccupied}");
+        writer.WriteLine($"{Indent(indent)}{Name}{FormatOffset()}{FormatOccupied()}");
     }
 }

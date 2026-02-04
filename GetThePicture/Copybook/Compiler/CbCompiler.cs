@@ -23,7 +23,7 @@ public sealed class CbCompiler
 
         layout.CalculateStorage();
 
-        ResolveLayout(layout);
+        FinalizeLayout(layout);
 
         return layout;
     }
@@ -32,46 +32,12 @@ public sealed class CbCompiler
     /// 完成 Copybook 的語意關聯，供後續 C# 生成或序列化使用
     /// </summary>
     /// <param name="layout"></param>
-    private static void ResolveLayout(CbLayout layout)
+    private static void FinalizeLayout(CbLayout layout)
     {
-        ResolveRedefinesTargets(layout.Children);
+        SetRedefinesTargets(layout.Children);
 
         // Level 66
-        var seqList = BuildSequentialElementaryDataItemList(layout);
-        ResolveRenames66(layout, seqList);
-    }
-
-    /// <summary>
-    /// 展開所有 ElementaryDataItem 為線性列表（提供 66 RENAMES 解析用）
-    /// </summary>
-    /// <param name="layout"></param>
-    /// <returns></returns>
-    private static List<ElementaryDataItem> BuildSequentialElementaryDataItemList(CbLayout layout)
-    {
-        var list = new List<ElementaryDataItem>();
-
-        void Walk(IDataItem item)
-        {
-            switch (item)
-            {
-                case ElementaryDataItem e:
-                    if (e.IsFiller != true)
-                        list.Add(e);
-                    break;
-
-                default:
-                    if (item.Children != null)
-                    {
-                        foreach (var child in item.Children)
-                            Walk(child);
-                    }
-                    break;
-            }
-        }
-
-        Walk(layout);
-
-        return list;
+        SetRenames66(layout);
     }
 
     /// <summary>
@@ -80,8 +46,10 @@ public sealed class CbCompiler
     /// <param name="root"></param>
     /// <param name="seqList"></param>
     /// <exception cref="InvalidOperationException"></exception>
-    private static void ResolveRenames66(IDataItem root, List<ElementaryDataItem> seqList)
+    private static void SetRenames66(IDataItem root)
     {
+        var seqList = BuildSequentialElementaryDataItemList(root);
+        
         void Walk(IDataItem item)
         {
             if (item is Renames66Item r)
@@ -119,11 +87,44 @@ public sealed class CbCompiler
     }
 
     /// <summary>
+    /// 展開所有 ElementaryDataItem 為線性列表（提供 66 RENAMES 解析用）
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    private static List<ElementaryDataItem> BuildSequentialElementaryDataItemList(IDataItem root)
+    {
+        var list = new List<ElementaryDataItem>();
+
+        void Walk(IDataItem item)
+        {
+            switch (item)
+            {
+                case ElementaryDataItem e:
+                    if (e.IsFiller != true)
+                        list.Add(e);
+                    break;
+
+                default:
+                    if (item.Children != null)
+                    {
+                        foreach (var child in item.Children)
+                            Walk(child);
+                    }
+                    break;
+            }
+        }
+
+        Walk(root);
+
+        return list;
+    }
+
+    /// <summary>
     /// 解析 REDEFINES，找到 RedefinesItem 內的 Target 所對應的 ElementaryDataItem
     /// </summary>
     /// <param name="items"></param>
     /// <exception cref="CompileException"></exception>
-    public static void ResolveRedefinesTargets(IEnumerable<IDataItem> items)
+    public static void SetRedefinesTargets(IEnumerable<IDataItem> items)
     {
         foreach (var item in items)
         {
@@ -140,7 +141,7 @@ public sealed class CbCompiler
 
             // 如果是 group，有 children，也要遞迴
             if (item is GroupItem g && g.Children.Any())
-                ResolveRedefinesTargets(g.Children);
+                SetRedefinesTargets(g.Children);
         }
     }
 }

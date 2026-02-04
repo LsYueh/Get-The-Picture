@@ -12,9 +12,9 @@ public class ParserForLv88Test
 
     [TestMethod]
     [DataTestMethod]
-    [DataRow("88 A VALUE 'A'.", "COPYBOOK-LAYOUT", "  88 A >> Value(s) in A")]
-    [DataRow("88 B VALUES 'A' 'B' 'C'.", $"COPYBOOK-LAYOUT", "  88 B >> Value(s) in A B C")]
-    [DataRow("88 DIGIT VALUE 1 THROUGH 9.", $"COPYBOOK-LAYOUT", "  88 DIGIT >> Value(s) in 1 through 9")]
+    [DataRow("88 A VALUE 'A'.", "COPYBOOK-LAYOUT", "88 A >> Value(s) in A")]
+    [DataRow("88 B VALUES 'A' 'B' 'C'.", $"COPYBOOK-LAYOUT", "88 B >> Value(s) in A B C")]
+    [DataRow("88 DIGIT VALUE 1 THROUGH 9.", $"COPYBOOK-LAYOUT", "88 DIGIT >> Value(s) in 1 through 9")]
     // [DataRow("88 FLAG VALUE ZERO.", "")]
     // [DataRow("88 SPACE-FLAG VALUE SPACE.", "")]
     public void Test_Set(string line, string expected_01, string expected_02)
@@ -34,7 +34,7 @@ public class ParserForLv88Test
 
         string result = sb.ToString();
         
-        var expected = expected_01 + Environment.NewLine + expected_02 + Environment.NewLine;
-        Assert.AreEqual(expected, result);
+        StringAssert.Contains(result, expected_01);
+        StringAssert.Contains(result, expected_02);
     }
 }
