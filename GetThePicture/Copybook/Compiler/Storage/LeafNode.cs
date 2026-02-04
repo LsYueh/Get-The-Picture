@@ -1,4 +1,5 @@
 using GetThePicture.Copybook.Compiler.Storage.Base;
+using GetThePicture.PictureClause.Base;
 
 namespace GetThePicture.Copybook.Compiler.Storage;
 
@@ -19,6 +20,20 @@ public class LeafNode(
 
         _children.Add(node);
     }
+
+    public override void SetAlias(IStorageNode alias)
+    {
+        throw new NotSupportedException("Leaf nodes cannot be aliased.");
+    }
+
+    // ----------------------------
+    // PICTURE Clause
+    // ----------------------------
+
+    public PicMeta? Pic { get; private set; } = null;
+
+    public void SetPicMeta(PicMeta pic) => Pic = pic;
+
 
     // ----------------------------
     // Dump

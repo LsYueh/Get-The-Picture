@@ -21,7 +21,7 @@ public class GroupItem(
     }
 
     // ----------------------------
-    // (Obsolete)
+    // (Cache)
     // ----------------------------
 
     public int StorageOccupied { get; private set; }

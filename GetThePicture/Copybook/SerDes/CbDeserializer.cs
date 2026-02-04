@@ -1,101 +1,80 @@
-using GetThePicture.Copybook.Compiler.Layout;
-using GetThePicture.Copybook.Compiler.Layout.Base;
+using GetThePicture.Copybook.Compiler.Storage;
+using GetThePicture.Copybook.Compiler.Storage.Base;
 using GetThePicture.Copybook.SerDes.Record;
 using GetThePicture.PictureClause;
 
 namespace GetThePicture.Copybook.SerDes;
 
-internal class CbDeserializer
+public class CbDeserializer
 {
-    internal static CbRecord DesLayout(CbLayout layout, ref RecCursor cursor)
+    private CbStorage _storage { get; }
+
+    private ReadOnlyMemory<byte> _buffer { get; set; }
+    
+    public CbDeserializer(CbStorage storage)
     {
-        if (layout.StorageOccupied != cursor.Size)
-            throw new InvalidOperationException($"Record size mismatch: layout={layout.StorageOccupied}, actual={cursor.Size}");
+        _storage = storage ?? throw new ArgumentNullException(nameof(storage));
+    }
+    
+    /// <summary>
+    /// Build Record Tree
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <returns></returns>
+    public CbRecord Exec(ReadOnlyMemory<byte> buffer)
+    {
+        _buffer = buffer;
+
+        var result = ParseGroupNode(_storage);
+
+        return result;
+    }
+
+    private CbRecord ParseGroupNode(IStorageNode node)
+    {
+        var record = new CbRecord();
         
-        var result = ReadGroupItems(layout, ref cursor);
+        foreach (var child in node.Children)
+        {
+            // === COBOL FILLER：不輸出欄位 ===
+            if (IsFiller(child))
+            {
+                // 仍然會走 ParseLeafNode 以確保 layout 正確
+                if (child is LeafNode ln)
+                    _ = ParseLeafNode(ln);
 
-        return result;
+                continue;
+            }
+            
+            // 如果有 Index (OCCURS)，就加上 (Index)
+            string fieldName = child.Index.HasValue ? $"{child.Name}({child.Index.Value})" : child.Name;
+                
+            var childRecordOrValue = child switch
+            {
+                LeafNode  ln => ParseLeafNode(ln),
+                GroupNode gn => ParseGroupNode(gn),
+                _ => throw new InvalidOperationException($"Unknown StorageNode type: {child.GetType().Name}"),
+            };
+
+            record[fieldName] = childRecordOrValue;
+        }
+
+        return record;
     }
 
-    private static CbRecord ReadGroupItems(IDataItem item, ref RecCursor cursor)
+    private object ParseLeafNode(LeafNode node)
     {
-        var result = new CbRecord();
+        if (!node.StorageOccupied.HasValue)
+            throw new InvalidOperationException("StorageOccupied is null");
 
-        foreach (var child in item.Children)
-        {
-            switch (child)
-            {
-                case GroupItem g:
-                    ReadNestedGroupItem(g, ref cursor, result);
-                    break;
+        if (node.Pic is null)
+            throw new InvalidOperationException($"PicMeta is not set for leaf '{node.Name}'");
 
-                case ElementaryDataItem e :
-                    ReadElementaryDataItem(e, ref cursor, result);
-                    break;
+        var raw = _buffer.Span.Slice(node.Offset, node.StorageOccupied.Value);
+        object value = PicClauseCodec.ForMeta(node.Pic).Decode(raw);
 
-                default:
-                    throw new InvalidOperationException($"Unsupported subordinate type: {child.GetType().Name}");
-            }
-        }
-
-        return result;
+        return value;
     }
 
-    private static void ReadNestedGroupItem(GroupItem item, ref RecCursor cursor, CbRecord target)
-    {
-        int occurs = item.Occurs ?? 1;
-
-        if (occurs == 1)
-        {
-            target[item.Name] = ReadGroupItems(item, ref cursor);
-        }
-        else
-        {
-            var values = new CbRecord[occurs];
-
-            for (int i = 0; i < occurs; i++)
-            {
-                values[i] = ReadGroupItems(item, ref cursor);
-            }
-
-            target[item.Name] = values;
-        }
-    }
-
-    private static void ReadElementaryDataItem(ElementaryDataItem item, ref RecCursor cursor, CbRecord target)
-    {
-        int occurs = item.Occurs ?? 1;
-
-        if (occurs == 1)
-        {
-            var raw = cursor.Read(item.Pic.StorageOccupied);
-
-            // 是 FILLER，直接跳過
-            if (item.IsFiller != true)
-            {
-                target[item.Name] = PicClauseCodec.ForMeta(item.Pic).Decode(raw);
-            }
-        }
-        else
-        {
-            var values = new object?[occurs];
-
-            for (int i = 0; i < occurs; i++)
-            {
-                var raw = cursor.Read(item.Pic.StorageOccupied);
-
-                // 是 FILLER，直接跳過
-                if (item.IsFiller != true)
-                {
-                    values[i] = PicClauseCodec.ForMeta(item.Pic).Decode(raw);
-                }
-            }
-
-            // 如果不是 FILLER，才建立陣列在 target
-            if (item.IsFiller != true)
-            {
-                target[item.Name] = values;
-            }
-        }
-    }
+    private static bool IsFiller(IStorageNode node) => string.Equals(node.Name, "FILLER", StringComparison.OrdinalIgnoreCase);
 }

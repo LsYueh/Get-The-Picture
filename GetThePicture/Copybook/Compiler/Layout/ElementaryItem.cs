@@ -15,9 +15,7 @@ public sealed class ElementaryDataItem(
 
     public override IReadOnlyList<IDataItem> Children => _conditions;
 
-    /// <summary>
-    /// (Obsolete)
-    /// </summary>
+    [Obsolete("This property is obsolete. Use NewProperty instead.", false)]
     public string? Value { get; init; } = value;
 
     // ----------------------------

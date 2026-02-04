@@ -1,15 +1,24 @@
 using GetThePicture.Copybook.Compiler.Layout;
+using GetThePicture.Copybook.Compiler.Storage;
 using GetThePicture.Copybook.SerDes.Record;
 using GetThePicture.Copybook.SerDes.Storage;
 
 namespace GetThePicture.Copybook.SerDes;
 
-public sealed class CbSerDes(CbLayout layout)
+public sealed class CbSerDes
 {
-    private readonly CbLayout _layout = layout ?? throw new ArgumentNullException(nameof(layout));
+    private readonly CbLayout _layout;
+    
+    private readonly CbStorage _storage;
 
-    public CbSerDes(IStorageProvider provider): this(provider.GetLayout())
+    private CbDeserializer _deserializer;
+
+    public CbSerDes(IStorageProvider provider)
     {
+        _layout  = provider.GetLayout();
+        _storage = provider.GetStorage();
+
+        _deserializer = new(_storage);
     }
 
     /// <summary>
@@ -17,11 +26,12 @@ public sealed class CbSerDes(CbLayout layout)
     /// </summary>
     /// <param name="record"></param>
     /// <returns></returns>
-    public CbRecord Deserialize(ReadOnlySpan<byte> record)
+    public CbRecord Deserialize(ReadOnlyMemory<byte> buffer)
     {
-        var cursor = new RecCursor(record);
-
-        return CbDeserializer.DesLayout(_layout, ref cursor);
+        if (_layout.StorageOccupied != buffer.Length)
+            throw new InvalidOperationException($"Record size mismatch: layout={_layout.StorageOccupied}, actual={buffer.Length}");
+        
+        return _deserializer.Exec(buffer);
     }
 
     public byte[] Serialize(CbRecord value)

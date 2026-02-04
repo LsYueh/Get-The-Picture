@@ -18,7 +18,7 @@ public abstract class StorageNode(
 
     public virtual IReadOnlyList<IStorageNode> Children => [];
 
-    public void SetAlias(IStorageNode target)
+    public virtual void SetAlias(IStorageNode target)
     {
         if (StorageOccupied.HasValue && 
             target.StorageOccupied.HasValue &&
