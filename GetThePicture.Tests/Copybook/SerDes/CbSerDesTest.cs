@@ -1,7 +1,7 @@
 using System.Text;
 
 using GetThePicture.Copybook.SerDes;
-using GetThePicture.Copybook.SerDes.Layout;
+using GetThePicture.Copybook.SerDes.Storage;
 using GetThePicture.Copybook.SerDes.Record;
 
 using GetThePicture.PictureClause.Utils;
