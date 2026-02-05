@@ -3,8 +3,8 @@ using System.Text;
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Compiler.Layout.Base;
-using GetThePicture.PictureClause.Base;
-using GetThePicture.PictureClause.Base.ClauseItems;
+using GetThePicture.Picture.Clause.Base;
+using GetThePicture.Picture.Clause.Base.ClauseItems;
 
 namespace Copycat.Commands;
 

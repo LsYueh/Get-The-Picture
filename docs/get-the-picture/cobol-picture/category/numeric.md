@@ -25,8 +25,8 @@
 
 ## 使用方式:
 ```csharp
-using GetThePicture.PictureClause;      // PicClauseCodec
-using GetThePicture.PictureClause.Base; // PicMeta
+using GetThePicture.Picture.Clause;      // PicClauseCodec
+using GetThePicture.Picture.Clause.Base; // PicMeta
 ```
 
 ```csharp
@@ -57,12 +57,12 @@ PicClauseCodec.ForMeta(pic).Decode("12L"); // >> -12.3
 
 ### COMP-3
 ```csharp
-using GetThePicture.PictureClause;      // PicClauseCodec
-using GetThePicture.PictureClause.Base; // PicMeta
+using GetThePicture.Picture.Clause;      // PicClauseCodec
+using GetThePicture.Picture.Clause.Base; // PicMeta
 ```
 
 ```csharp
-using GetThePicture.PictureClause.Base.ClauseItems; // PicUsage
+using GetThePicture.Picture.Clause.Base.ClauseItems; // PicUsage
 ```
 
 <br>
@@ -122,12 +122,12 @@ using GetThePicture.PictureClause.Base.ClauseItems; // PicUsage
 
 ### COMP / COMP-5
 ```csharp
-using GetThePicture.PictureClause;      // PicClauseCodec
-using GetThePicture.PictureClause.Base; // PicMeta
+using GetThePicture.Picture.Clause;      // PicClauseCodec
+using GetThePicture.Picture.Clause.Base; // PicMeta
 ```
 
 ```csharp
-using GetThePicture.PictureClause.Base.ClauseItems; // PicUsage
+using GetThePicture.Picture.Clause.Base.ClauseItems; // PicUsage
 ```
 
 <br>

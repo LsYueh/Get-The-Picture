@@ -7,8 +7,8 @@
 
 ## 使用方式:
 ```csharp
-using GetThePicture.PictureClause;      // PicClauseCodec
-using GetThePicture.PictureClause.Base; // PicMeta
+using GetThePicture.Picture.Clause;      // PicClauseCodec
+using GetThePicture.Picture.Clause.Base; // PicMeta
 ```
 
 ```csharp

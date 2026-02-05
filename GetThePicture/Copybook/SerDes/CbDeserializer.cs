@@ -1,7 +1,7 @@
 using GetThePicture.Copybook.Compiler.Storage;
 using GetThePicture.Copybook.Compiler.Storage.Base;
 using GetThePicture.Copybook.SerDes.Record;
-using GetThePicture.PictureClause;
+using GetThePicture.Picture.Clause;
 
 namespace GetThePicture.Copybook.SerDes;
 
