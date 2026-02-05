@@ -1,5 +1,24 @@
 # Changelog
 
+## [26.8.0] – 2026-02-05
+
+### Added
+- 新增 `CbStorage` 與對應處理的 `CbResolver`。
+    - 用於處理 Copybook **記憶體位址**映射的相關功能。
+- 測試專案增加 **Byte 顯示工具**，用於 `SerDes` 除錯時顯示 buffer 內容。
+
+### Changed
+- 將 Ir 更名為 `Layout`。
+    - `中間語言（Intermediate language）`這個名詞缺足夠的的閱讀理解。
+    - 原本的 `CbSchema` 亦改成 `CbLayout`，貼近直觀上的描述。
+- ⚠️ 使用 Provider 作為 CbSerDes 的輸入，不再使用CbSchema。
+
+### Improved
+- 重構 Deserializer / Serializer 
+    - 改用類似**記憶體位址**映射的方式存取資料，簡化原本遞迴內比較複雜的處理。
+
+<br><br>
+
 ## [26.7.0] – 2026-02-02
 
 ### Added
