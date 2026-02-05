@@ -159,7 +159,7 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 
 <br>
 
-**SerDes** 的相關使用範例位於 [CbSerDesTest.cs](GetThePicture.Tests\Copybook\SerDes\CbSerDesTest.cs) 內有標記 `[TestCategory("Demo")]` 的測試項目中。
+**SerDes** 的相關使用範例位於 [CbSerDesTest.cs](GetThePicture.Tests/Copybook/SerDes/CbSerDesTest.cs) 內有標記 `[TestCategory("Demo")]` 的測試項目中。
 
 <br>
 
