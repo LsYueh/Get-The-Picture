@@ -1,6 +1,6 @@
 using GetThePicture.Copybook.Compiler.Storage;
 using GetThePicture.Copybook.SerDes.Record;
-using GetThePicture.Copybook.SerDes.Storage;
+using GetThePicture.Copybook.SerDes.Provider;
 
 namespace GetThePicture.Copybook.SerDes;
 
@@ -11,7 +11,7 @@ public sealed class CbSerDes
     private CbDeserializer _deserializer;
     private CbSerializer _serializer;
 
-    public CbSerDes(IStorageProvider provider)
+    public CbSerDes(IDataProvider provider)
     {
         _storage = provider.GetStorage();
 

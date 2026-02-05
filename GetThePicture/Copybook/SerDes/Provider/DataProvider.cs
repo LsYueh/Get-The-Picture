@@ -2,21 +2,21 @@ using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Compiler.Storage;
 
-namespace GetThePicture.Copybook.SerDes.Storage;
+namespace GetThePicture.Copybook.SerDes.Provider;
 
 /// <summary>
 /// Provides both the Copybook <see cref="CbLayout"/> and <see cref="CbStorage"/> as runtime objects for serialization and deserialization (SerDes).
 /// </summary>
-public sealed class StorageProvider : IStorageProvider
+public sealed class DataProvider : IDataProvider
 {
     private readonly Lazy<CbLayout> _layout;
     private readonly Lazy<CbStorage> _storage;
 
     /// <summary>
-    /// Initializes a new instance of <see cref="StorageProvider"/> using a <see cref="StreamReader"/> that reads a COBOL Copybook.
+    /// Initializes a new instance of <see cref="DataProvider"/> using a <see cref="StreamReader"/> that reads a COBOL Copybook.
     /// </summary>
     /// <param name="reader">The <see cref="StreamReader"/> for the Copybook file (e.g., .cpy or .cbl).</param>
-    public StorageProvider(StreamReader reader)
+    public DataProvider(StreamReader reader)
     {
         _layout  = new Lazy<CbLayout> (() => CbCompiler.FromStreamReader(reader));
         _storage = new Lazy<CbStorage>(() => CbResolver.FromLayout(_layout.Value));

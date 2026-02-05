@@ -1,7 +1,7 @@
 using System.Text;
 
 using GetThePicture.Copybook.SerDes;
-using GetThePicture.Copybook.SerDes.Storage;
+using GetThePicture.Copybook.SerDes.Provider;
 using GetThePicture.Copybook.SerDes.Record;
 
 using GetThePicture.PictureClause.Utils;
@@ -19,7 +19,7 @@ public class CbSerDesTest
     [TestCategory("Demo")]
     public void Deserialize_Serialize_T30_OTC_Test()
     {
-        var provider = new StorageProvider(new StreamReader(@"TestData/twse/t30-otc.cpy", cp950));
+        var provider = new DataProvider(new StreamReader(@"TestData/twse/t30-otc.cpy", cp950));
         var serDes = new CbSerDes(provider);
 
         Assert.AreEqual(100, provider.GetLayout().StorageOccupied);
@@ -61,7 +61,7 @@ public class CbSerDesTest
     [TestCategory("Demo")]
     public void SerDes_Nested_Occurs_Record_Test()
     {
-        var provider = new StorageProvider(new StreamReader(@"TestData/nested-occurs-record.cpy", cp950));
+        var provider = new DataProvider(new StreamReader(@"TestData/nested-occurs-record.cpy", cp950));
         var serDes = new CbSerDes(provider);
 
         using var fs = new FileStream(@"TestData/nested-occurs-record.dat", FileMode.Open, FileAccess.Read);
@@ -95,7 +95,7 @@ public class CbSerDesTest
     [TestCategory("Demo")]
     public void SerDes_Occurs_With_Levle_88_Test()
     {
-        var provider = new StorageProvider(new StreamReader(@"TestData/occurs-with-levle-88.cpy", cp950));
+        var provider = new DataProvider(new StreamReader(@"TestData/occurs-with-levle-88.cpy", cp950));
         var serDes = new CbSerDes(provider);
 
         using var fs = new FileStream(@"TestData/occurs-with-levle-88.dat", FileMode.Open, FileAccess.Read);
