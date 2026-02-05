@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler.Ir.Base;
+namespace GetThePicture.Copybook.Compiler.Layout.Base;
 
 /// <summary>
 /// IBM Enterprise COBOL for z/OS : <see href="https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=constants-using-data-items-group-items">Using data items and group items</see>
@@ -10,7 +10,11 @@ public interface IDataItem
     int? Occurs { get; }
     string? Comment { get; }
 
-    public IReadOnlyList<IDataItem> Children { get; }
+    IReadOnlyList<IDataItem> Children { get; }
+
+    // ----------------------------
+    // Dump
+    // ----------------------------
 
     void Dump(TextWriter writer, int indent = 0);
 }

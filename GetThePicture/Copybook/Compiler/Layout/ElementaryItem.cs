@@ -1,23 +1,29 @@
-using GetThePicture.Copybook.Compiler.Ir.Base;
+using System.Text;
+using GetThePicture.Copybook.Compiler.Layout.Base;
 using GetThePicture.PictureClause.Base;
 
-namespace GetThePicture.Copybook.Compiler.Ir;
+namespace GetThePicture.Copybook.Compiler.Layout;
 
 public sealed class ElementaryDataItem(
-    int level, string name, PicMeta pic,
-    int? occurs = null, string? value = null,
-    bool? isFiller = false, string? comment = null) : DataItem(level, name, occurs, comment)
+    int level, string name, PicMeta pic, int? occurs = null,
+    string? value = null,
+    bool isFiller = false, string? comment = null) : DataItem(level, name, occurs, comment)
 {
+    public PicMeta Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
+
+    public bool IsFiller { get; init; } = isFiller;
+
+    public override IReadOnlyList<IDataItem> Children => _conditions;
+
+    [Obsolete("This property is obsolete. Use NewProperty instead.", false)]
     public string? Value { get; init; } = value;
 
-    public bool? IsFiller { get; init; } = isFiller;
-
-    public PicMeta Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
+    // ----------------------------
+    // Level 88 Condition-name
+    // ----------------------------    
 
     private readonly List<Condition88Item> _conditions = [];
     public IReadOnlyList<Condition88Item> Conditions => _conditions;
-
-    public override IReadOnlyList<IDataItem> Children => _conditions;
 
     internal void AddCondition(Condition88Item condition)
     {
@@ -48,4 +54,3 @@ public sealed class ElementaryDataItem(
 
     private string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
 }
-

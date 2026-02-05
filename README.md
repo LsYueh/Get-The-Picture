@@ -65,11 +65,6 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 * 舊系統重構或漸進式汰換
 * 對 PIC 規格進行靜態分析或測試驗證
 
-<br>
-
-## 輔助工具  
-  - [Copycat](docs/copycat/README.md) - 將 `Copybook` 內容轉換成可在 `C#` 使用的強型別資料模型(Sealed Class)。
-
 <br><br>
 
 # COBOL Copybook
@@ -89,13 +84,17 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 
 <br>
 
-1. Deserialization（反序列化）
-    - 將序列化後的資料恢復成程式中的 `物件` 或 `資料結構` (目前採用Dictionary)。 
+1. Deserialization（反序列化）  
+    將序列化後的資料恢復成程式中的 `物件` 或 `資料結構` (目前採用Dictionary)。 
+
+    ![work flow](docs/get-the-picture/deserialize-work-flow.png)  
 
     ```csharp
-    // 將 Copybook 轉成 schema
-    var schema = CbCompiler.FromStreamReader(new StreamReader(@"TestData/t30-otc.cpy", cp950));
-    var serDes = new CbSerDes(schema);
+    // 提供 Copybook 的 layout 與 storage
+    var provider = new DataProvider(new StreamReader(@"TestData/t30-otc.cpy", cp950));
+
+    // 建立 Serializer/Deserializer
+    var serDes = new CbSerDes(provider);
 
     // 讀取檔案 (編碼: CP950 / ASCII)
     using var reader = new StreamReader(@"TestData/t30-otc-lite.dat", cp950);
@@ -105,7 +104,7 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
     {
         var byte = cp950.GetBytes(line);
 
-        // 根據Copybook的schema來反序列化資料
+        // 根據Copybook的資料格式來反序列化 (Deserialize) 資料
         CbRecord record = serDes.Deserialize(expected);
 
         Console.WriteLine("==== Record ====");
@@ -149,8 +148,10 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 
 <br>
 
-2. Serialization（序列化）
-    - 將程式中的物件或資料結構轉換成一種 `可存儲` 或 `傳輸` 的格式。
+2. Serialization（序列化）  
+    將程式中的物件或資料結構轉換成一種 `可存儲` 或 `傳輸` 的格式。  
+
+    ![work flow](docs/get-the-picture/serialize-work-flow.png)  
 
     ```csharp
     var serialized = serDes.Serialize(record);
@@ -163,6 +164,7 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 <br>
 
 - 更多關於 [Copybook Compiler](docs/get-the-picture/copybook/compiler.md) ...
+- 更多關於 [Copybook Resolver](docs/get-the-picture/copybook/resolver.md) ...
 
 <br>
 
@@ -358,9 +360,21 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 |------|----------|----------|------|
 | CASE 1 | Group REDEFINES Elementary Data Item | ✅ 支援 | 最常見且結構單純的用法。Group 僅作為 Elementary Item 的另一種結構化視角，不引入額外 storage。 |
 | CASE 2 | 01-level REDEFINES + GLOBAL | ❌ 不支援 | 涉及 01-level overlay 與 GLOBAL 可視範圍，在高階語言中難以安全對應。 |
-| CASE 3a | 多個 REDEFINES 指向同一 target | ❌ 不支援 | 會形成多重 storage alias，容易造成資料覆寫與語意不明確。 |
-| CASE 3b | REDEFINES 鏈（REDEFINES 已 REDEFINES 的 item） | ❌ 不支援 | 需解析並正規化多層 alias 關係，實作與維護成本過高。 |
+| CASE 3a | 多個 REDEFINES 指向同一 target | ⚠️ 有限支援 | 會形成多重 storage alias，容易造成資料覆寫與語意不明確。 |
+| CASE 3b | REDEFINES 鏈（REDEFINES 已 REDEFINES 的 item） | ⚠️ 有限支援 | 需解析並正規化多層 alias 關係，實作與維護成本過高。 |
 
+<br>
+
+再根據這篇 [Redefined data items and OCCURS clauses](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=changes-redefined-data-items-occurs-clauses) 的說明，裡面提到：
+
+> According to Standard `COBOL 2002`, the data item being redefined cannot contain an OCCURS clause.  
+
+所以本專案亦不支援過於複雜的 REDEFINES 運作行為。
+
+<br><br>
+
+# 輔助工具  
+  - [Copycat](docs/copycat/README.md) - 將 `Copybook` 內容轉換成可在 `C#` 使用的強型別資料模型(Sealed Class)。
 
 <br><br>
 

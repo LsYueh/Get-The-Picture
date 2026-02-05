@@ -6,9 +6,9 @@
 
 # 使用方式
 
-使用 `--schema` 指定要轉換的 Copybook  
+使用 `--layout` 指定要轉換的 Copybook  
 ```bash
-copycat --schema nested-occurs-record.cpy
+copycat --layout nested-occurs-record.cpy
 ```
 
 輸出結果:  
@@ -94,15 +94,15 @@ public sealed class OrderRecord
 額外顯示 Copybook 解析後的資料綱要內容
 
 ```bash
-copycat --schema nested-occurs-record.cpy --verbose
+copycat --layout nested-occurs-record.cpy --verbose
 ```
 
 <br>
 
 輸出結果:
 ```bash
-==== SCHEMA ====
-COPYBOOK-SCHEMA
+==== LAYOUT ====
+COPYBOOK-LAYOUT
   1 ORDER-RECORD
     5 ORDER-ID >> PIC: [X(10)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display'
     5 CUSTOMER-NAME >> PIC: [X(20)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=20, Dec=0, Len=20, Usage='Display'
@@ -123,7 +123,7 @@ New file generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\Ou
 ⚠️ 由於 C# 與 COBOL 的語言差異，`REDEFINES` 目前只會在程式碼中產生註解說明，不會生成實際屬性或欄位。
 
 ```bash
-copycat --schema copybook-with-redefines.cpy --with-redefines
+copycat --layout copybook-with-redefines.cpy --with-redefines
 ```
 
 <br>
@@ -150,7 +150,7 @@ copycat --schema copybook-with-redefines.cpy --with-redefines
 資料模型會根據 `66層級` 的內容產對應的宣告
 
 ```bash
-copycat --schema EMPREC.CPY --with-renames-66
+copycat --layout EMPREC.CPY --with-renames-66
 ```
 
 `EMPREC.CPY`
@@ -195,7 +195,7 @@ public sealed class EmpKey66
 資料模型會根據 `88層級` 的內容產出對應的判斷式
 
 ```bash
-copycat --schema nested-occurs-record.cpy --with-condition-88
+copycat --layout nested-occurs-record.cpy --with-condition-88
 ```
 
 `occurs-with-levle-88.cpy`

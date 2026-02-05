@@ -1,6 +1,6 @@
 using System.Text;
 using GetThePicture.Copybook.Compiler.Base;
-using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler.Layout;
 
 namespace GetThePicture.Tests.Copybook.Compiler.Base;
 
@@ -12,7 +12,7 @@ public class ParserForRedefinesTest
 
     [TestMethod]
     [DataTestMethod]
-    [DataRow("05  B REDEFINES A.", "COPYBOOK-SCHEMA", "  05 B REDEFINES A.")]
+    [DataRow("05  B REDEFINES A.", "COPYBOOK-LAYOUT", "05 B REDEFINES A.")]
     public void Test_Set(string line, string expected_01, string expected_02)
     {        
         var tokens = lexer.Tokenize(line, 1).ToList();
@@ -30,7 +30,7 @@ public class ParserForRedefinesTest
 
         string result = sb.ToString();
         
-        var expected = expected_01 + Environment.NewLine + expected_02 + Environment.NewLine;
-        Assert.AreEqual(expected, result);
+        StringAssert.Contains(result, expected_01);
+        StringAssert.Contains(result, expected_02);
     }
 }

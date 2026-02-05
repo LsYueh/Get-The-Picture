@@ -1,6 +1,6 @@
-using GetThePicture.Copybook.Compiler.Ir.Base;
+using GetThePicture.Copybook.Compiler.Layout.Base;
 
-namespace GetThePicture.Copybook.Compiler.Ir;
+namespace GetThePicture.Copybook.Compiler.Layout;
 
 public sealed class Condition88Item(
     string name,
@@ -17,6 +17,10 @@ public sealed class Condition88Item(
     /// 88 VALUE ... THROUGH 的結尾值
     /// </summary>
     public object? ThroughValue { get; } = through;
+
+    // ----------------------------
+    // Dump
+    // ----------------------------
 
     public override void Dump(TextWriter writer, int indent = 0)
     {

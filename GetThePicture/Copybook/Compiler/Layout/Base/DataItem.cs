@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler.Ir.Base;
+namespace GetThePicture.Copybook.Compiler.Layout.Base;
 
 /// <summary>
 /// 核心抽象類別
@@ -13,6 +13,10 @@ public abstract class DataItem(
     public string? Comment { get; init; } = comment;
 
     public virtual IReadOnlyList<IDataItem> Children => [];
+
+    // ----------------------------
+    // Dump
+    // ----------------------------
 
     public abstract void Dump(TextWriter writer, int indent = 0);
 

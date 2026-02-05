@@ -1,9 +1,9 @@
-namespace GetThePicture.Copybook.Compiler.Ir;
+namespace GetThePicture.Copybook.Compiler.Layout;
 
 /// <summary>
 /// Root of Group Items
 /// </summary>
-public sealed class CbSchema() : GroupItem(0, "COPYBOOK-SCHEMA")
+public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
 {
     // ----------------------------
     // Dump

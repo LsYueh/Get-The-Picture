@@ -1,8 +1,8 @@
 using System.Text;
 
 using GetThePicture.Copybook.Compiler;
-using GetThePicture.Copybook.Compiler.Ir;
-using GetThePicture.Copybook.Compiler.Ir.Base;
+using GetThePicture.Copybook.Compiler.Layout;
+using GetThePicture.Copybook.Compiler.Layout.Base;
 using GetThePicture.PictureClause.Base;
 using GetThePicture.PictureClause.Base.ClauseItems;
 
@@ -20,32 +20,32 @@ public sealed class CodeGenOptions
 }
 
 /// <summary>
-/// 提供 Copybook Schema 相關的 CLI 功能。 <br />
-/// 將已解析的 CbSchema 轉換成對應的 C# 資料模型 (.cs)。 <br />
+/// 提供 Copybook Layout 相關的 CLI 功能。 <br />
+/// 將已解析的 CbLayout 轉換成對應的 C# 資料模型 (.cs)。 <br />
 /// 生成 Copybook 對應的 record struct 或 class。 <br />
 /// </summary>
-public class SchemaCmd(CodeGenOptions? options = null)
+public class LayoutCmd(CodeGenOptions? options = null)
 {
     private static readonly Encoding CP950 = Core.EncodingResolver.CP950;
 
     private readonly CodeGenOptions _options = options ?? new CodeGenOptions(); // 預設選項
 
-    public static CbSchema ReadSchema(FileInfo fSchema, bool verbose = true)
+    public static CbLayout ReadLayout(FileInfo fileInfo, bool verbose = true)
     {
-        using var reader = new StreamReader(fSchema.FullName, CP950);
+        using var reader = new StreamReader(fileInfo.FullName, CP950);
 
-        CbSchema schema = CbCompiler.FromStreamReader(reader);
+        CbLayout layout = CbCompiler.FromStreamReader(reader);
 
         if (verbose) {
-            Console.WriteLine("==== SCHEMA ====");
-            schema.Dump(Console.Out);
+            Console.WriteLine("==== LAYOUT ====");
+            layout.Dump(Console.Out);
             Console.WriteLine("================\n");
         }
 
-        return schema;
+        return layout;
     }
 
-    public void CodeGen(CbSchema schema, string fileName = "Out.cs")
+    public void CodeGen(CbLayout layout, string fileName = "Out.cs")
     {
         using var writer = new StreamWriter(fileName, false, Encoding.UTF8);
 
@@ -54,18 +54,18 @@ public class SchemaCmd(CodeGenOptions? options = null)
         writer.WriteLine();
 
         writer.WriteLine($"/// <summary>");
-        writer.WriteLine($"/// Record Size : {schema.StorageOccupied}");
+        writer.WriteLine($"/// Record Size : {layout.StorageOccupied}");
         writer.WriteLine($"/// </summary>");
 
-        if (!_options.SkipRoot) // 生成 Schema root class
+        if (!_options.SkipRoot) // 生成 Layout root class
         {
-            string schemaName = Core.NamingHelper.ToPascalCase(schema.Name);
-            GenerateClass(writer, schemaName, schema, 0);
+            string layoutName = Core.NamingHelper.ToPascalCase(layout.Name);
+            GenerateClass(writer, layoutName, layout, 0);
             return;
         }
 
-        // 遍歷 Schema 第一層的 Children
-        foreach (var child in schema.Children)
+        // 遍歷 CbLayout 第一層的 Children
+        foreach (var child in layout.Children)
         {
             string className = Core.NamingHelper.ToPascalCase(child.Name);
 
@@ -175,7 +175,7 @@ public class SchemaCmd(CodeGenOptions? options = null)
 
         GenerateComment(writer, item, indentLevel);
 
-        if (item.IsFiller!.Value) return;
+        if (item.IsFiller) return;
 
         string csType = TypeToCSharp(item.Pic);
 
@@ -208,8 +208,14 @@ public class SchemaCmd(CodeGenOptions? options = null)
         
         if (item.Target != null)
         {
-            writer.WriteLine($"{indent}/// Target type: {item.Target.GetType().Name}");
-            writer.WriteLine($"{indent}/// Target PIC: {item.Target.Pic}");
+            if (item.Target is ElementaryDataItem e)
+            {
+                writer.WriteLine($"{indent}/// Target type: {e.GetType().Name}");
+                writer.WriteLine($"{indent}/// Target PIC: {e.Pic}");
+            }
+            {
+                writer.WriteLine($"{indent}/// Target type: {item.Target.GetType().Name}");
+            }
         }
         else
         {

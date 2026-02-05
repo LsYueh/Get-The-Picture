@@ -1,13 +1,13 @@
 using GetThePicture.Copybook.Base;
 using GetThePicture.Copybook.Compiler.Base;
-using GetThePicture.Copybook.Compiler.Ir;
-using GetThePicture.Copybook.Compiler.Ir.Base;
+using GetThePicture.Copybook.Compiler.Layout;
+using GetThePicture.Copybook.Compiler.Layout.Base;
 
 namespace GetThePicture.Copybook.Compiler;
 
 public sealed class CbCompiler
 {
-    public static CbSchema FromStreamReader(StreamReader streamReader)
+    public static CbLayout FromStreamReader(StreamReader streamReader)
     {
         ArgumentNullException.ThrowIfNull(streamReader);
 
@@ -17,62 +17,27 @@ public sealed class CbCompiler
         var tokens = lexer.Tokenize();
         Parser parser = new(tokens);
 
-        var ir = parser.Analyze();
-        if (ir is not CbSchema schema)
+        var obj = parser.Analyze();
+        if (obj is not CbLayout layout)
             throw new Exception("Copybook root must be a Document.");
 
-        schema.CalculateStorage();
+        layout.CalculateStorage();
 
-        ResolveSchema(schema);
+        FinalizeLayout(layout);
 
-        return schema;
+        return layout;
     }
 
     /// <summary>
-    /// 完成 Copybook IR 的語意關聯，供後續 C# 生成或序列化使用
+    /// 完成 Copybook 的語意關聯，供後續 C# 生成或序列化使用
     /// </summary>
-    /// <param name="schema"></param>
-    private static void ResolveSchema(CbSchema schema)
+    /// <param name="layout"></param>
+    private static void FinalizeLayout(CbLayout layout)
     {
+        SetRedefinesTargets(layout.Children);
+
         // Level 66
-        var seqList = BuildSequentialElementaryDataItemList(schema);
-        ResolveRenames66(schema, seqList);
-
-        // REDEFINES
-        ResolveRedefinesTargets(schema.Children);
-    }
-
-    /// <summary>
-    /// 展開所有 ElementaryDataItem 為線性列表（提供 66 RENAMES 解析用）
-    /// </summary>
-    /// <param name="schema"></param>
-    /// <returns></returns>
-    private static List<ElementaryDataItem> BuildSequentialElementaryDataItemList(CbSchema schema)
-    {
-        var list = new List<ElementaryDataItem>();
-
-        void Walk(IDataItem item)
-        {
-            switch (item)
-            {
-                case ElementaryDataItem e:
-                    if (e.IsFiller != true)
-                        list.Add(e);
-                    break;
-
-                default:
-                    if (item.Children != null)
-                    {
-                        foreach (var child in item.Children)
-                            Walk(child);
-                    }
-                    break;
-            }
-        }
-
-        Walk(schema);
-
-        return list;
+        SetRenames66(layout);
     }
 
     /// <summary>
@@ -81,8 +46,10 @@ public sealed class CbCompiler
     /// <param name="root"></param>
     /// <param name="seqList"></param>
     /// <exception cref="InvalidOperationException"></exception>
-    private static void ResolveRenames66(IDataItem root, List<ElementaryDataItem> seqList)
+    private static void SetRenames66(IDataItem root)
     {
+        var seqList = BuildSequentialElementaryDataItemList(root);
+        
         void Walk(IDataItem item)
         {
             if (item is Renames66Item r)
@@ -120,31 +87,61 @@ public sealed class CbCompiler
     }
 
     /// <summary>
+    /// 展開所有 ElementaryDataItem 為線性列表（提供 66 RENAMES 解析用）
+    /// </summary>
+    /// <param name="root"></param>
+    /// <returns></returns>
+    private static List<ElementaryDataItem> BuildSequentialElementaryDataItemList(IDataItem root)
+    {
+        var list = new List<ElementaryDataItem>();
+
+        void Walk(IDataItem item)
+        {
+            switch (item)
+            {
+                case ElementaryDataItem e:
+                    if (e.IsFiller != true)
+                        list.Add(e);
+                    break;
+
+                default:
+                    if (item.Children != null)
+                    {
+                        foreach (var child in item.Children)
+                            Walk(child);
+                    }
+                    break;
+            }
+        }
+
+        Walk(root);
+
+        return list;
+    }
+
+    /// <summary>
     /// 解析 REDEFINES，找到 RedefinesItem 內的 Target 所對應的 ElementaryDataItem
     /// </summary>
     /// <param name="items"></param>
     /// <exception cref="CompileException"></exception>
-    public static void ResolveRedefinesTargets(IEnumerable<IDataItem> items)
+    public static void SetRedefinesTargets(IEnumerable<IDataItem> items)
     {
         foreach (var item in items)
         {
             if (item is RedefinesItem r)
             {
                 // 找到同層的 target
-                ElementaryDataItem? target = items.OfType<ElementaryDataItem>().FirstOrDefault(e => e.Name == r.TargetName);
+                IDataItem? target = items.OfType<IDataItem>().FirstOrDefault(e => e.Name == r.TargetName);
 
                 if (target is null)
                     throw new CompileException($"Cannot resolve REDEFINES target '{r.TargetName}' for '{r.Name}' '{r.Name}'.");
-
-                if (target.Pic.StorageOccupied != r.StorageOccupied)
-                    throw new CompileException($"REDEFINES target '{r.TargetName}' storage size mismatch for '{r.Name}'.");
 
                 r.SetTarget(target);
             }
 
             // 如果是 group，有 children，也要遞迴
             if (item is GroupItem g && g.Children.Any())
-                ResolveRedefinesTargets(g.Children);
+                SetRedefinesTargets(g.Children);
         }
     }
 }

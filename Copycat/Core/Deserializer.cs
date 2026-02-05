@@ -1,5 +1,5 @@
 using GetThePicture.Copybook.Compiler;
-using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.SerDes;
 using GetThePicture.Copybook.SerDes.Record;
 
@@ -7,26 +7,26 @@ namespace Copycat.Core;
 
 public class Deserializer
 {
-    private CbSchema? _schema = null;
+    private CbLayout? _layout = null;
     private CbSerDes? _serDes = null;
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="srSchema">Copybook schema source</param>
-    public Deserializer(StreamReader srSchema) => Init(srSchema);
+    /// <param name="streamReader">Copybook layout source</param>
+    public Deserializer(StreamReader streamReader) => Init(streamReader);
 
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="srSchema">Copybook schema source</param>
+    /// <param name="streamReader">Copybook layout source</param>
     /// <returns></returns>
-    public CbSchema Init (StreamReader srSchema)
+    public CbLayout Init (StreamReader streamReader)
     {
-        _schema = CbCompiler.FromStreamReader(srSchema);
-        _serDes = new CbSerDes(_schema);
+        _layout = CbCompiler.FromStreamReader(streamReader);
+        _serDes = new CbSerDes(_layout);
 
-        return _schema;
+        return _layout;
     }
     
     public CbRecord? Exec(ReadOnlySpan<byte> buffer)

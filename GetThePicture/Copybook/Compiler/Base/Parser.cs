@@ -1,7 +1,7 @@
 using System.Text;
 
-using GetThePicture.Copybook.Compiler.Ir;
-using GetThePicture.Copybook.Compiler.Ir.Base;
+using GetThePicture.Copybook.Compiler.Layout;
+using GetThePicture.Copybook.Compiler.Layout.Base;
 using GetThePicture.PictureClause.Base;
 using GetThePicture.PictureClause.Base.ClauseItems;
 
@@ -51,7 +51,7 @@ public class Parser(List<Token> tokens)
 
         return Consume();
     }
-
+    
     // ----------------------------
     // Syntactic / Semantic Analysis
     // ----------------------------
@@ -59,7 +59,7 @@ public class Parser(List<Token> tokens)
     /// <summary>
     /// Syntactic / Semantic Analysis
     /// </summary>
-    public CbSchema Analyze()
+    public CbLayout Analyze()
     {
         // ParseDataItem (Recursive)
         // │
@@ -74,7 +74,7 @@ public class Parser(List<Token> tokens)
         //            ├─ while nextLevel > currentGroup.Level
         //            └─ ParseDataItem(item) recursively
 
-        CbSchema root = new();
+        CbLayout root = new();
 
         while (Current != null)
         {
@@ -114,23 +114,15 @@ public class Parser(List<Token> tokens)
                     
                 throw new CompileException("Elementary data item cannot have subordinates.", Current ?? Previous);
             }
+            case RedefinesItem r: r.AddSubordinate(item); break;
             case GroupItem g: g.AddSubordinate(item); break;
-            case RedefinesItem r:
-            {
-                if (item is ElementaryDataItem subordinate)
-                {
-                    r.AddSubordinate(subordinate); break;
-                }
-                
-                throw new CompileException("REDEFINES item can only have Elementary Data Item as subordinate.", Current ?? Previous);
-            }
         }
 
         // 過濾可遞迴的子項
         IDataItem? parentItem = item switch
         {
-            GroupItem g => g,
             RedefinesItem r => r,
+            GroupItem g => g,
             ElementaryDataItem e => e,
             _ => null
         };
@@ -273,8 +265,10 @@ public class Parser(List<Token> tokens)
             
             if (pic is null)
                 return new GroupItem(level, name, occurs, comment);
+
+            var item = new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment);
             
-            return new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment);
+            return item;
         }
 
         // Build Full DataItem

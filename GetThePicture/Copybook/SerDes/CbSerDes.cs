@@ -1,31 +1,38 @@
-using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler.Storage;
 using GetThePicture.Copybook.SerDes.Record;
-using GetThePicture.Copybook.SerDes.Schema;
+using GetThePicture.Copybook.SerDes.Provider;
 
 namespace GetThePicture.Copybook.SerDes;
 
-public sealed class CbSerDes(CbSchema schema)
+public sealed class CbSerDes
 {
-    private readonly CbSchema _schema = schema ?? throw new ArgumentNullException(nameof(schema));
+    private readonly CbStorage _storage;
 
-    public CbSerDes(ISchemaProvider provider): this(provider.GetSchema())
+    private CbDeserializer _deserializer;
+    private CbSerializer _serializer;
+
+    public CbSerDes(IDataProvider provider)
     {
+        _storage = provider.GetStorage();
+
+        _deserializer = new(_storage);
+        _serializer   = new(_storage);
     }
 
     /// <summary>
-    /// Deserialize a single record according to Copybook IR (schema).
+    /// Deserialize a single record according to Copybook layout.
     /// </summary>
     /// <param name="record"></param>
     /// <returns></returns>
-    public CbRecord Deserialize(ReadOnlySpan<byte> record)
+    public CbRecord Deserialize(ReadOnlyMemory<byte> buffer)
     {
-        var cursor = new RecCursor(record);
-
-        return CbDeserializer.DesSchema(_schema, ref cursor);
+        return _deserializer.Exec(buffer);
     }
 
-    public byte[] Serialize(CbRecord value)
+    public byte[] Serialize(CbRecord record)
     {
-        return CbSerializer.SerSchema(_schema, value);
+        ArgumentNullException.ThrowIfNull(record);
+
+        return _serializer.Exec(record);
     }
 }

@@ -1,6 +1,6 @@
-using GetThePicture.Copybook.Compiler.Ir.Base;
+using GetThePicture.Copybook.Compiler.Layout.Base;
 
-namespace GetThePicture.Copybook.Compiler.Ir;
+namespace GetThePicture.Copybook.Compiler.Layout;
 
 public sealed class Renames66Item(
     string name, string from, string? through, string? comment = null
@@ -18,6 +18,10 @@ public sealed class Renames66Item(
     {
         AffectedItems = [.. items];
     }
+
+    // ----------------------------
+    // Dump
+    // ----------------------------
 
     public override void Dump(TextWriter writer, int indent = 0)
     {

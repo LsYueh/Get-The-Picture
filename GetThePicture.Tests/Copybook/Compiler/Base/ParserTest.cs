@@ -1,5 +1,5 @@
 using GetThePicture.Copybook.Compiler.Base;
-using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler.Layout;
 
 namespace GetThePicture.Tests.Copybook.Compiler.Base;
 
@@ -64,12 +64,12 @@ public class ParserTest
 
         Parser parser = new(tokens);
 
-        CbSchema schema = parser.Analyze();
-        Assert.IsNotNull(schema);
-        Assert.AreEqual(0, schema.Level);
-        Assert.IsNotNull(schema.Children);
+        CbLayout layout = parser.Analyze();
+        Assert.IsNotNull(layout);
+        Assert.AreEqual(0, layout.Level);
+        Assert.IsNotNull(layout.Children);
         
-        GroupItem? groupItem_01 = (GroupItem?) schema.Children[0];
+        GroupItem? groupItem_01 = (GroupItem?) layout.Children[0];
         Assert.IsNotNull(groupItem_01);
         Assert.AreEqual(1, groupItem_01.Level);
         Assert.IsNotNull(groupItem_01.Children);
@@ -102,12 +102,12 @@ public class ParserTest
 
         Parser parser = new(tokens);
 
-        CbSchema schema = parser.Analyze();
-        Assert.IsNotNull(schema);
-        Assert.AreEqual(0, schema.Level);
-        Assert.IsNotNull(schema.Children);
+        CbLayout layout = parser.Analyze();
+        Assert.IsNotNull(layout);
+        Assert.AreEqual(0, layout.Level);
+        Assert.IsNotNull(layout.Children);
 
-        GroupItem? groupItem_01 = (GroupItem?) schema.Children[0];
+        GroupItem? groupItem_01 = (GroupItem?) layout.Children[0];
         Assert.IsNotNull(groupItem_01);
         Assert.AreEqual(1, groupItem_01.Level);
         Assert.IsNotNull(groupItem_01.Children);
@@ -151,12 +151,12 @@ public class ParserTest
 
         Parser parser = new(tokens);
 
-        CbSchema schema = parser.Analyze();
-        Assert.IsNotNull(schema);
-        Assert.AreEqual(0, schema.Level);
-        Assert.IsNotNull(schema.Children);
+        CbLayout layout = parser.Analyze();
+        Assert.IsNotNull(layout);
+        Assert.AreEqual(0, layout.Level);
+        Assert.IsNotNull(layout.Children);
 
-        GroupItem? groupItem_01 = (GroupItem?) schema.Children[0];
+        GroupItem? groupItem_01 = (GroupItem?) layout.Children[0];
         Assert.IsNotNull(groupItem_01);
         Assert.AreEqual(1, groupItem_01.Level);
         Assert.IsNotNull(groupItem_01.Children);

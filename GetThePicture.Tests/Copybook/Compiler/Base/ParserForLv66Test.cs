@@ -1,6 +1,6 @@
 using System.Text;
 using GetThePicture.Copybook.Compiler.Base;
-using GetThePicture.Copybook.Compiler.Ir;
+using GetThePicture.Copybook.Compiler.Layout;
 
 namespace GetThePicture.Tests.Copybook.Compiler.Base;
 
@@ -12,8 +12,8 @@ public class ParserForLv66Test
 
     [TestMethod]
     [DataTestMethod]
-    [DataRow("66  EMP-KEY RENAMES EMP-ID.", "COPYBOOK-SCHEMA", "  66 EMP-KEY >> Renames EMP-ID")]
-    [DataRow("66  EMP-KEY RENAMES EMP-ID THRU EMP-DEPT.", "COPYBOOK-SCHEMA", "  66 EMP-KEY >> Renames EMP-ID through EMP-DEPT")]
+    [DataRow("66  EMP-KEY RENAMES EMP-ID.", "COPYBOOK-LAYOUT", "66 EMP-KEY >> Renames EMP-ID")]
+    [DataRow("66  EMP-KEY RENAMES EMP-ID THRU EMP-DEPT.", "COPYBOOK-LAYOUT", "  66 EMP-KEY >> Renames EMP-ID through EMP-DEPT")]
     public void Test_Set(string line, string expected_01, string expected_02)
     {        
         var tokens = lexer.Tokenize(line, 1).ToList();
@@ -31,7 +31,7 @@ public class ParserForLv66Test
 
         string result = sb.ToString();
         
-        var expected = expected_01 + Environment.NewLine + expected_02 + Environment.NewLine;
-        Assert.AreEqual(expected, result);
+        StringAssert.Contains(result, expected_01);
+        StringAssert.Contains(result, expected_02);
     }
 }

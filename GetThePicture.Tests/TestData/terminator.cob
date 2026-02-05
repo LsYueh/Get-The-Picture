@@ -1,0 +1,19 @@
+       IDENTIFICATION DIVISION.
+       PROGRAM-ID. ADD.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       77 IDX PICTURE 9999.
+       77 SUM PICTURE 999999.
+       77 X   PICTURE X.
+       PROCEDURE DIVISION.
+       BEGIN.
+           ACCEPT X.
+           MOVE ZERO TO IDX.
+           MOVE ZERO TO SUM.
+           PERFORM ADD-PAR UNTIL IDX = 1001.
+           DISPLAY SUM.
+           STOP RUN.
+       ADD-PAR.
+           COMPUTE SUM = SUM + IDX.
+           ADD 1 TO IDX.

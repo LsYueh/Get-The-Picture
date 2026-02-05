@@ -1,0 +1,130 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.6 Chrome/140.0.7339.249 Electron/38.8.0 Safari/537.36" version="29.3.6" pages="2">
+  <diagram name="deserialize-work-flow" id="xhy83RkDgMczopusDe6d">
+    <mxGraphModel dx="1168" dy="725" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="QAp0gaHrlhz3KsAi-hWG-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#D5D5D5;fillColor=#F8F8F8;" value="" vertex="1">
+          <mxGeometry height="310" width="700" x="70" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-20" edge="1" parent="1" source="DbNU6bRkFo5ekANk_QCD-3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=8;curved=0;dashed=1;dashPattern=1 2;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" target="DbNU6bRkFo5ekANk_QCD-19">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-3" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/Builds.svg;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" value="&lt;b&gt;Compiler&lt;/b&gt;" vertex="1">
+          <mxGeometry height="64" width="64" x="210" y="110.5" as="geometry" />
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-11" edge="1" parent="1" source="DbNU6bRkFo5ekANk_QCD-4" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=8;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" target="DbNU6bRkFo5ekANk_QCD-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-4" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/File.svg;imageBackground=none;labelBackgroundColor=none;fontStyle=0;fontColor=#424242;strokeColor=#424242;" value="Copybook&lt;br&gt;(.CPY)" vertex="1">
+          <mxGeometry height="69" width="56.00000000000001" x="90" y="108" as="geometry" />
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-6" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/analytics/Event_Hub_Clusters.svg;fontStyle=1;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" value="Resolver" vertex="1">
+          <mxGeometry height="52" width="64" x="370" y="116.5" as="geometry" />
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-14" edge="1" parent="1" source="DbNU6bRkFo5ekANk_QCD-3" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=8;verticalAlign=bottom;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" target="DbNU6bRkFo5ekANk_QCD-6" value="Layout">
+          <mxGeometry relative="1" x="-0.3" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="340" y="281" as="sourcePoint" />
+            <mxPoint x="388" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-15" edge="1" parent="1" source="DbNU6bRkFo5ekANk_QCD-6" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=8;verticalAlign=bottom;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" target="DbNU6bRkFo5ekANk_QCD-25" value="Storage Map">
+          <mxGeometry relative="1" x="-0.24" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="400" y="310" as="sourcePoint" />
+            <mxPoint x="532" y="142.88639876352397" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-19" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/other/Express_Route_Traffic_Collector.svg;labelPosition=center;verticalLabelPosition=top;verticalAlign=middle;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" value="(For further use)" vertex="1">
+          <mxGeometry height="40" width="34.21" x="330" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-21" parent="1" style="outlineConnect=0;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;shape=mxgraph.aws3.corporate_data_center;fillColor=#7D7C7C;gradientColor=none;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" value="ISAM / VSAM" vertex="1">
+          <mxGeometry height="63" width="46.5" x="240" y="226" as="geometry" />
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-22" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/Media_File.svg;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" value=".DAT" vertex="1">
+          <mxGeometry height="64" width="52" x="404.22" y="225" as="geometry" />
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-24" edge="1" parent="1" source="DbNU6bRkFo5ekANk_QCD-21" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=8;verticalAlign=bottom;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" target="DbNU6bRkFo5ekANk_QCD-22" value="Export / Dump">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="295.5" y="257.39442567567585" as="sourcePoint" />
+            <mxPoint x="378.25" y="257.1148648648649" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-25" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/Input_Output.svg;labelBackgroundColor=none;fontStyle=1;fontColor=#424242;strokeColor=#424242;" value="Deserialization" vertex="1">
+          <mxGeometry height="55.00000000000001" width="64" x="550" y="115.5" as="geometry" />
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-27" edge="1" parent="1" source="DbNU6bRkFo5ekANk_QCD-25" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=8;verticalAlign=bottom;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" target="DbNU6bRkFo5ekANk_QCD-29" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="608.44" y="143" as="sourcePoint" />
+            <mxPoint x="620" y="220" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-28" edge="1" parent="1" source="DbNU6bRkFo5ekANk_QCD-22" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=10;verticalAlign=bottom;labelBackgroundColor=none;edgeStyle=elbowEdgeStyle;endArrow=none;endFill=0;fontColor=#424242;strokeColor=#424242;" target="DbNU6bRkFo5ekANk_QCD-25" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="200" />
+            </Array>
+            <mxPoint x="510" y="195" as="sourcePoint" />
+            <mxPoint x="510" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="DbNU6bRkFo5ekANk_QCD-29" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/management_governance/Resources_Provider.svg;labelBackgroundColor=none;fontStyle=1;fontColor=#424242;strokeColor=#424242;" value="Record Objects" vertex="1">
+          <mxGeometry height="68" width="60.440000000000005" x="680" y="109" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram name="serialize-work-flow" id="UgymnN7YUH3kwHzxgOtP">
+    <mxGraphModel dx="973" dy="604" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="G3yXOPLXLK8RleYIpzxd-0" />
+        <mxCell id="G3yXOPLXLK8RleYIpzxd-1" parent="G3yXOPLXLK8RleYIpzxd-0" />
+        <mxCell id="G3yXOPLXLK8RleYIpzxd-2" parent="G3yXOPLXLK8RleYIpzxd-1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#D5D5D5;fillColor=#F8F8F8;" value="" vertex="1">
+          <mxGeometry height="240" width="530" x="200" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="HIRqyfmr23B4yLO1xbl3-8" parent="G3yXOPLXLK8RleYIpzxd-1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/management_governance/Resources_Provider.svg;labelBackgroundColor=none;fontStyle=1;fontColor=#424242;strokeColor=#424242;" value="Record Objects" vertex="1">
+          <mxGeometry height="68" width="60.440000000000005" x="368" y="194" as="geometry" />
+        </mxCell>
+        <mxCell id="HIRqyfmr23B4yLO1xbl3-0" parent="G3yXOPLXLK8RleYIpzxd-1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/analytics/Event_Hub_Clusters.svg;fontStyle=1;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" value="Resolver" vertex="1">
+          <mxGeometry height="52" width="64" x="338" y="87.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HIRqyfmr23B4yLO1xbl3-1" edge="1" parent="G3yXOPLXLK8RleYIpzxd-1" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=8;verticalAlign=bottom;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;startArrow=oval;startFill=1;" target="HIRqyfmr23B4yLO1xbl3-0" value="Layout">
+          <mxGeometry relative="1" x="0.2" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="230" y="114" as="sourcePoint" />
+            <mxPoint x="356" y="251" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HIRqyfmr23B4yLO1xbl3-2" edge="1" parent="G3yXOPLXLK8RleYIpzxd-1" source="HIRqyfmr23B4yLO1xbl3-0" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=8;verticalAlign=bottom;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" target="HIRqyfmr23B4yLO1xbl3-4" value="Storage Map">
+          <mxGeometry relative="1" x="-0.24" as="geometry">
+            <mxPoint as="offset" />
+            <mxPoint x="368" y="281" as="sourcePoint" />
+            <mxPoint x="500" y="113.88639876352397" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HIRqyfmr23B4yLO1xbl3-4" parent="G3yXOPLXLK8RleYIpzxd-1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/Input_Output.svg;labelBackgroundColor=none;fontStyle=1;fontColor=#424242;strokeColor=#424242;" value="Serialization" vertex="1">
+          <mxGeometry height="55.00000000000001" width="64" x="518" y="86.5" as="geometry" />
+        </mxCell>
+        <mxCell id="HIRqyfmr23B4yLO1xbl3-5" edge="1" parent="G3yXOPLXLK8RleYIpzxd-1" source="HIRqyfmr23B4yLO1xbl3-4" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=8;verticalAlign=bottom;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" target="HIRqyfmr23B4yLO1xbl3-9" value="">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="576.44" y="114" as="sourcePoint" />
+            <mxPoint x="640" y="114" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HIRqyfmr23B4yLO1xbl3-6" edge="1" parent="G3yXOPLXLK8RleYIpzxd-1" source="HIRqyfmr23B4yLO1xbl3-8" style="rounded=1;orthogonalLoop=1;jettySize=auto;html=1;sourcePerimeterSpacing=8;targetPerimeterSpacing=10;verticalAlign=bottom;labelBackgroundColor=none;edgeStyle=elbowEdgeStyle;endArrow=none;endFill=0;fontColor=#424242;strokeColor=#424242;" target="HIRqyfmr23B4yLO1xbl3-4" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="478" y="171" />
+            </Array>
+            <mxPoint x="432.22" y="228" as="sourcePoint" />
+            <mxPoint x="478" y="141" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="HIRqyfmr23B4yLO1xbl3-9" parent="G3yXOPLXLK8RleYIpzxd-1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/general/Media_File.svg;labelBackgroundColor=none;fontColor=#424242;strokeColor=#424242;" value=".DAT" vertex="1">
+          <mxGeometry height="64" width="52" x="648" y="81.5" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

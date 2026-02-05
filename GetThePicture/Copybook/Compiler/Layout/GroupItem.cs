@@ -1,15 +1,17 @@
-using GetThePicture.Copybook.Compiler.Ir.Base;
+using GetThePicture.Copybook.Compiler.Layout.Base;
 
-namespace GetThePicture.Copybook.Compiler.Ir;
+namespace GetThePicture.Copybook.Compiler.Layout;
 
 public class GroupItem(
     int level, string name, int? occurs = null,
     string? comment = null) : DataItem(level, name, occurs, comment)
-{
+{ 
+    // ----------------------------
+    // IDataItem
+    // ----------------------------
+    
     private readonly List<IDataItem> _children = [];
     public override IReadOnlyList<IDataItem> Children => _children;
-
-    public int StorageOccupied { get; private set; }
 
     public void AddSubordinate(IDataItem subordinate)
     {
@@ -17,6 +19,12 @@ public class GroupItem(
 
         _children.Add(subordinate);
     }
+
+    // ----------------------------
+    // (Cache)
+    // ----------------------------
+
+    public int StorageOccupied { get; private set; }
 
     public void CalculateStorage()
     {
