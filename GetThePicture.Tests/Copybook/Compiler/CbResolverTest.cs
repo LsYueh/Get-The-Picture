@@ -117,7 +117,7 @@ public class CbResolverTest
         using var writer = new StringWriter(sb);
 
         storage.Dump(writer);
-        storage.Dump(Console.Out);
+        // storage.Dump(Console.Out);
 
         string result = sb.ToString();
 
