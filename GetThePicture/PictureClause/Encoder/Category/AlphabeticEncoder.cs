@@ -1,8 +1,8 @@
 using System.Text;
 
-using GetThePicture.Cobol.Meta;
 using GetThePicture.PictureClause.Base;
 using GetThePicture.PictureClause.Base.ClauseItems;
+using GetThePicture.PictureClause.Encoder.Meta;
 
 namespace GetThePicture.PictureClause.Encoder.Category;
 

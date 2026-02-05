@@ -1,16 +1,16 @@
 using System.Globalization;
 
-using GetThePicture.Cobol.Meta;
 using GetThePicture.PictureClause.Base;
 using GetThePicture.PictureClause.Base.ClauseItems;
 using GetThePicture.PictureClause.Base.Options;
+using GetThePicture.PictureClause.Encoder.Meta;
 
 namespace GetThePicture.PictureClause.Encoder;
 
 internal static class PicEncoder
 {
     /// <summary>
-    /// CLR value → Meta → COBOL Elementary Item (buffer)
+    /// CLR value → COB Meta → COBOL Elementary Item (buffer)
     /// </summary>
     /// <param name="value"></param>
     /// <param name="pic"></param>
@@ -23,8 +23,8 @@ internal static class PicEncoder
         ArgumentNullException.ThrowIfNull(value);
         ArgumentNullException.ThrowIfNull(pic);
 
-        // CLR value → Meta
-        CobMeta meta = ToMeta(value, pic);
+        // CLR value → COB Meta
+        CobMeta meta = ToCobMeta(value, pic);
 
         // Meta → COBOL Elementary Item (buffer)
         byte[] normalized = pic.BaseClass switch
@@ -50,7 +50,7 @@ internal static class PicEncoder
     /// <param name="pic"></param>
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
-    internal static CobMeta ToMeta(object value, PicMeta pic)
+    internal static CobMeta ToCobMeta(object value, PicMeta pic)
     {
         CobMeta meta = value switch
         {

@@ -1,5 +1,5 @@
-using GetThePicture.Cobol.Meta;
 using GetThePicture.PictureClause.Base.Options;
+using GetThePicture.PictureClause.Encoder.Meta;
 
 namespace GetThePicture.PictureClause.Base.Computational;
 

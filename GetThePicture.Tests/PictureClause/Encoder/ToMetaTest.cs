@@ -1,9 +1,9 @@
 using System.Globalization;
 
-using GetThePicture.Cobol.Meta;
 using GetThePicture.PictureClause.Base;
 using GetThePicture.PictureClause.Base.ClauseItems;
 using GetThePicture.PictureClause.Encoder;
+using GetThePicture.PictureClause.Encoder.Meta;
 
 namespace GetThePicture.Tests.PictureClause.Encoder;
 
@@ -19,7 +19,7 @@ public class ToMetaTest
     {
         var pic = PicMeta.Parse(picString);
 
-        CobMeta v = PicEncoder.ToMeta(value, pic);
+        CobMeta v = PicEncoder.ToCobMeta(value, pic);
 
         Assert.AreEqual(expected, v.Text?.Value);
     }
@@ -29,7 +29,7 @@ public class ToMetaTest
     {
         var pic = PicMeta.Parse("9(5)");
 
-        CobMeta v = PicEncoder.ToMeta(-123, pic);
+        CobMeta v = PicEncoder.ToCobMeta(-123, pic);
 
         Assert.IsTrue(v.Number?.IsNegative);
         Assert.AreEqual("123", v.Number?.Digits);
@@ -45,7 +45,7 @@ public class ToMetaTest
 
         var pic = PicMeta.Parse(picString);
 
-        CobMeta v = PicEncoder.ToMeta(_value, pic);
+        CobMeta v = PicEncoder.ToCobMeta(_value, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual(expected, v.Number?.Digits);
@@ -62,7 +62,7 @@ public class ToMetaTest
 
         var pic = PicMeta.Parse(picString);
 
-        CobMeta v = PicEncoder.ToMeta(_value, pic);
+        CobMeta v = PicEncoder.ToCobMeta(_value, pic);
 
         Assert.IsTrue(v.Number?.IsNegative);
         Assert.AreEqual(expected, v.Number?.Digits);
@@ -77,7 +77,7 @@ public class ToMetaTest
         
         var date = new DateOnly(2026, 1, 5);
 
-        CobMeta v = PicEncoder.ToMeta(date, pic);
+        CobMeta v = PicEncoder.ToCobMeta(date, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("20260105", v.Number?.Digits);
@@ -92,7 +92,7 @@ public class ToMetaTest
         
         var date = new DateOnly(2026, 1, 5);
 
-        CobMeta v = PicEncoder.ToMeta(date, pic);
+        CobMeta v = PicEncoder.ToCobMeta(date, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("1150105", v.Number?.Digits);
@@ -107,7 +107,7 @@ public class ToMetaTest
 
         var t = new TimeOnly(1, 2, 3);
 
-        CobMeta v = PicEncoder.ToMeta(t, pic);
+        CobMeta v = PicEncoder.ToCobMeta(t, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("010203", v.Number?.Digits);
@@ -122,7 +122,7 @@ public class ToMetaTest
 
         var t = new TimeOnly(23, 59, 59, 7);
 
-        CobMeta v = PicEncoder.ToMeta(t, pic);
+        CobMeta v = PicEncoder.ToCobMeta(t, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("235959007", v.Number?.Digits);
@@ -137,7 +137,7 @@ public class ToMetaTest
 
         var dt = new DateTime(2025, 1, 6, 13, 45, 59);
 
-        CobMeta v = PicEncoder.ToMeta(dt, pic);
+        CobMeta v = PicEncoder.ToCobMeta(dt, pic);
 
         Assert.IsFalse(v.Number?.IsNegative);
         Assert.AreEqual("20250106134559", v.Number?.Digits);
@@ -154,7 +154,7 @@ public class ToMetaTest
         var pic = PicMeta.Parse("9(6)");
         pic.Semantic = PicSemantic.Time6;
 
-        Assert.ThrowsException<NotSupportedException>(() => PicEncoder.ToMeta(new DateTime(), pic));
+        Assert.ThrowsException<NotSupportedException>(() => PicEncoder.ToCobMeta(new DateTime(), pic));
     }
 
     [TestMethod]
@@ -163,7 +163,7 @@ public class ToMetaTest
         var pic = PicMeta.Parse("9(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<NotSupportedException>(() => PicEncoder.ToMeta(new DateTime(), pic));
+        Assert.ThrowsException<NotSupportedException>(() => PicEncoder.ToCobMeta(new DateTime(), pic));
     }
 
     [TestMethod]
@@ -172,7 +172,7 @@ public class ToMetaTest
         var pic = PicMeta.Parse("9(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<InvalidOperationException>(() => PicEncoder.ToMeta(12345.6m, pic));
+        Assert.ThrowsException<InvalidOperationException>(() => PicEncoder.ToCobMeta(12345.6m, pic));
     }
 
     // Unsupported type
@@ -180,6 +180,6 @@ public class ToMetaTest
     public void UnsupportedType_Throws()
     {
         Assert.ThrowsException<NotSupportedException>(() =>
-            PicEncoder.ToMeta(new object(), PicMeta.Parse("X(5)")));
+            PicEncoder.ToCobMeta(new object(), PicMeta.Parse("X(5)")));
     }
 }

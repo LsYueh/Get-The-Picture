@@ -1,7 +1,7 @@
-using GetThePicture.Cobol.Meta;
 using GetThePicture.PictureClause.Base;
 using GetThePicture.PictureClause.Base.Computational;
 using GetThePicture.PictureClause.Base.Options;
+using GetThePicture.PictureClause.Encoder.Meta;
 
 namespace GetThePicture.Tests.PictureClause.Base.Computational;
 

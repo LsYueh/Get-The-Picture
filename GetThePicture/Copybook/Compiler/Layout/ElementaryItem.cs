@@ -1,4 +1,3 @@
-using System.Text;
 using GetThePicture.Copybook.Compiler.Layout.Base;
 using GetThePicture.PictureClause.Base;
 

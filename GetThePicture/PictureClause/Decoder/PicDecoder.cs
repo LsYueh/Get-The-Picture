@@ -7,7 +7,7 @@ namespace GetThePicture.PictureClause.Decoder;
 internal static class PicDecoder
 {
     /// <summary>
-    /// COBOL Elementary Item (buffer) → CLR
+    /// COBOL Elementary Item (buffer) → CLR value
     /// </summary>
     /// <param name="buffer">COBOL Elementary Item</param>
     /// <param name="pic"></param>

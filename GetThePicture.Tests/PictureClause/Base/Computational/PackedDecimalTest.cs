@@ -1,9 +1,9 @@
 using System.Globalization;
 
-using GetThePicture.Cobol.Meta;
 using GetThePicture.PictureClause.Base;
 using GetThePicture.PictureClause.Base.ClauseItems;
 using GetThePicture.PictureClause.Base.Computational;
+using GetThePicture.PictureClause.Encoder.Meta;
 
 namespace GetThePicture.Tests.PictureClause.Base.Computational;
 

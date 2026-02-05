@@ -1,4 +1,4 @@
-namespace GetThePicture.Cobol.Meta;
+namespace GetThePicture.PictureClause.Encoder.Meta;
 
 /// <summary>
 /// Elementary Kind
