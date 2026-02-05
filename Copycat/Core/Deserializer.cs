@@ -1,13 +1,13 @@
-using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.SerDes;
+using GetThePicture.Copybook.SerDes.Provider;
 using GetThePicture.Copybook.SerDes.Record;
 
 namespace Copycat.Core;
 
 public class Deserializer
 {
-    private CbLayout? _layout = null;
+    private DataProvider? _provider = null;
     private CbSerDes? _serDes = null;
 
     /// <summary>
@@ -23,13 +23,13 @@ public class Deserializer
     /// <returns></returns>
     public CbLayout Init (StreamReader streamReader)
     {
-        _layout = CbCompiler.FromStreamReader(streamReader);
-        _serDes = new CbSerDes(_layout);
+        _provider = new DataProvider(streamReader);
+        _serDes = new CbSerDes(_provider);
 
-        return _layout;
+        return _provider.GetLayout();
     }
     
-    public CbRecord? Exec(ReadOnlySpan<byte> buffer)
+    public CbRecord? Exec(ReadOnlyMemory<byte> buffer)
     {
         return _serDes?.Deserialize(buffer);
     }

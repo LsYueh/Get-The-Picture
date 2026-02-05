@@ -103,17 +103,17 @@ public class LayoutCmd(CodeGenOptions? options = null)
 
             switch (child)
             {
+                case RedefinesItem r:
+                    if (_options.EmitRedefines == true)
+                        GenerateRedefinesItemProps(writer, fieldName, r, indentLevel + 1);
+                    break;
+                
                 case GroupItem g:
                     GenerateNestedClass(writer, fieldName, g, indentLevel + 1);
                     break;
                 
                 case ElementaryDataItem e:
                     GenerateProps(writer, fieldName, e, indentLevel + 1);
-                    break;
-
-                case RedefinesItem r:
-                    if (_options.EmitRedefines == true)
-                        GenerateRedefinesItemProps(writer, fieldName, r, indentLevel + 1);
                     break;
 
                 case Renames66Item r:
