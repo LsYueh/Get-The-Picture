@@ -1,0 +1,33 @@
+namespace GetThePicture.Picture.Symbols.Base;
+
+/// <summary>
+/// PICTURE clause 專用 Token 類型
+/// </summary>
+public enum TokenType
+{
+    Unknown,
+
+    // PICTURE clause symbols
+    Alpha,            // 'A' or 'X'
+    Numeral,          // '9'
+    Sign,             // 'S'
+    ImpliedDecimal,   // 'V' or '.'
+    Scaling,          // 'P'
+
+    // Repeat syntax
+    LParen,           // '('
+    RParen,           // ')'
+    Occurs,           // 0-9 (inside parentheses)
+}
+
+public class Token(TokenType type, string value, int pos)
+{
+    public TokenType Type { get; } = type;
+    public string Value { get; } = value;
+    /// <summary>
+    /// (1-Based)
+    /// </summary>
+    public int Position { get; } = pos;
+
+    public override string ToString() => $"{Type}: '{Value}' (Position {Position})";
+}
