@@ -65,48 +65,17 @@ public class Lexer()
 
         switch (ch)
         {
-            case 'A':
-            case 'X':
-                _t = new Token(TokenType.Alpha,
-                    ch == 'A' ? Lexemes.A : Lexemes.X,
-                    tokenPos
-                );
-                Advance();
-                break;
+            case 'A': _t = new Token(TokenType.Alphabetic  , Lexemes.A   , tokenPos); Advance(); break;
+            case 'X': _t = new Token(TokenType.Alphanumeric, Lexemes.X   , tokenPos); Advance(); break;
+            case '9': _t = new Token(TokenType.Numeric     , Lexemes.Nine, tokenPos); Advance(); break;
 
-            case '9':
-                _t = new Token(TokenType.Numeral, Lexemes.Nine, tokenPos);
-                Advance();
-                break;
+            case 'S': _t = new Token(TokenType.Sign          , Lexemes.S  , tokenPos); Advance(); break;
+            case 'V': _t = new Token(TokenType.ImpliedDecimal, Lexemes.V  , tokenPos); Advance(); break;
+            case '.': _t = new Token(TokenType.ImpliedDecimal, Lexemes.Dot, tokenPos); Advance(); break;
+            case 'P': _t = new Token(TokenType.Scaling       , Lexemes.P  , tokenPos); Advance(); break;
 
-            case 'S':
-                _t = new Token(TokenType.Sign, Lexemes.S, tokenPos);
-                Advance();
-                break;
-
-            case 'V':
-            case '.':
-                _t = new Token(TokenType.ImpliedDecimal,
-                    ch == 'V' ? Lexemes.V : Lexemes.Dot,
-                    tokenPos
-                );
-                Advance();
-                break;
-
-            case 'P':
-                _t = new Token(TokenType.Scaling, Lexemes.P, tokenPos);
-                Advance();
-                break;
-
-            case '(':
-                _t = new Token(TokenType.LParen, Lexemes.LParen, tokenPos);
-                Advance();
-                break;
-
-            case ')':
-                _t = new Token(TokenType.RParen, Lexemes.RParen, tokenPos);
-                Advance();
-                break;
+            case '(': _t = new Token(TokenType.LParen, Lexemes.LParen, tokenPos); Advance(); break;
+            case ')': _t = new Token(TokenType.RParen, Lexemes.RParen, tokenPos); Advance(); break;
 
             default:
                 // Number (repeat count) — only meaningful after '('

@@ -22,8 +22,8 @@ public class LexerTest
 
         Assert.AreEqual(2, tokens.Count);
 
-        AssertToken(tokens[0], TokenType.Alpha , "X");
-        AssertToken(tokens[1], TokenType.Alpha , "X");
+        AssertToken(tokens[0], TokenType.Alphanumeric, "X");
+        AssertToken(tokens[1], TokenType.Alphanumeric, "X");
     }
 
     [TestMethod]
@@ -35,7 +35,7 @@ public class LexerTest
 
         Assert.AreEqual(4, tokens.Count);
 
-        AssertToken(tokens[0], TokenType.Alpha , "X");
+        AssertToken(tokens[0], TokenType.Alphanumeric, "X");
         AssertToken(tokens[1], TokenType.LParen, "(");
         AssertToken(tokens[2], TokenType.Occurs, "10");
         AssertToken(tokens[3], TokenType.RParen, ")");
@@ -50,8 +50,8 @@ public class LexerTest
 
         Assert.AreEqual(2, tokens.Count);
 
-        AssertToken(tokens[0], TokenType.Numeral, "9");
-        AssertToken(tokens[1], TokenType.Numeral, "9");
+        AssertToken(tokens[0], TokenType.Numeric, "9");
+        AssertToken(tokens[1], TokenType.Numeric, "9");
     }
 
     [TestMethod]
@@ -63,7 +63,7 @@ public class LexerTest
 
         Assert.AreEqual(4, tokens.Count);
 
-        AssertToken(tokens[0], TokenType.Numeral, "9");
+        AssertToken(tokens[0], TokenType.Numeric, "9");
         AssertToken(tokens[1], TokenType.LParen , "(");
         AssertToken(tokens[2], TokenType.Occurs , "10");
         AssertToken(tokens[3], TokenType.RParen , ")");

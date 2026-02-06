@@ -8,13 +8,17 @@ public enum TokenType
     Unknown,
 
     // PICTURE clause symbols
-    Alpha,            // 'A' or 'X'
-    Numeral,          // '9'
+
+    Alphabetic,       // 'A"
+    Alphanumeric,     // 'X'
+    Numeric,          // '9'
+
     Sign,             // 'S'
     ImpliedDecimal,   // 'V' or '.'
     Scaling,          // 'P'
 
     // Repeat syntax
+    
     LParen,           // '('
     RParen,           // ')'
     Occurs,           // 0-9 (inside parentheses)

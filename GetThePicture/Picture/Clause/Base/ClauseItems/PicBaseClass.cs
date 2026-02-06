@@ -5,6 +5,8 @@ namespace GetThePicture.Picture.Clause.Base.ClauseItems;
 /// </summary>
 public enum PicBaseClass
 {
+    Unknown,
+    
     /// <summary>
     /// Consists of only digits (0-9), and possibly an operational sign and a decimal point. Defined with PIC 9 or S9. <br/>
     /// Numeric items can also have different internal USAGE such as PACKED-DECIMAL (COMP-3), BINARY (COMP), COMP-1, COMP-2, etc..
