@@ -14,7 +14,9 @@ public sealed class ElementaryDataItem(
 
     public override IReadOnlyList<IDataItem> Children => _conditions;
 
-    [Obsolete("This property is obsolete. Use NewProperty instead.", false)]
+    /// <summary>
+    /// Elementary Data Item 的預設值
+    /// </summary>
     public string? Value { get; init; } = value;
 
     // ----------------------------

@@ -8,18 +8,8 @@ public class LeafNode(
 ) : StorageNode(name, offset, storageOccupied, index)
 {
     // ----------------------------
-    // IStorageNode
+    // StorageNode
     // ----------------------------
-
-    private readonly List<IStorageNode> _children = [];
-    public override IReadOnlyList<IStorageNode> Children => _children;
-
-    public void AddNode(IStorageNode node)
-    {
-        ArgumentNullException.ThrowIfNull(node);
-
-        _children.Add(node);
-    }
 
     public override void SetAlias(IStorageNode alias)
     {
