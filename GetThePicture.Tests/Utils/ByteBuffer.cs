@@ -1,4 +1,4 @@
-namespace GetThePicture.Test.Utils;
+namespace GetThePicture.Tests.Utils;
 
 internal static class ByteBuffer
 {

@@ -10,7 +10,6 @@ public class ParserForLv66Test
 {
     private static readonly Lexer lexer = new();
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("66  EMP-KEY RENAMES EMP-ID.", "COPYBOOK-LAYOUT", "66 EMP-KEY >> Renames EMP-ID")]
     [DataRow("66  EMP-KEY RENAMES EMP-ID THRU EMP-DEPT.", "COPYBOOK-LAYOUT", "  66 EMP-KEY >> Renames EMP-ID through EMP-DEPT")]

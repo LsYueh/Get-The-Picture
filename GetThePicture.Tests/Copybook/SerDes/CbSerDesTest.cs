@@ -4,7 +4,7 @@ using GetThePicture.Copybook.SerDes;
 using GetThePicture.Copybook.SerDes.Provider;
 using GetThePicture.Copybook.SerDes.Record;
 
-using GetThePicture.PictureClause.Utils;
+using GetThePicture.Picture.Clause.Utils;
 
 // using GetThePicture.Test.Utils;
 

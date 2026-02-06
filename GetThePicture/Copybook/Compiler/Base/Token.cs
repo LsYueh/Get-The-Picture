@@ -5,6 +5,8 @@ namespace GetThePicture.Copybook.Compiler.Base;
 /// </summary>
 public enum TokenType
 {
+    Unknown,
+    
     Character,
     AlphanumericLiteral,
     NumericLiteral,
@@ -22,7 +24,6 @@ public enum TokenType
     Through,
     LParen, RParen,
     Dot, Hyphen,
-    Unknown,
 }
 
 public class Token(TokenType type, string value, int lineNumber)

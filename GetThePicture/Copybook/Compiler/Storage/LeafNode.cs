@@ -1,5 +1,5 @@
 using GetThePicture.Copybook.Compiler.Storage.Base;
-using GetThePicture.PictureClause.Base;
+using GetThePicture.Picture.Clause.Base;
 
 namespace GetThePicture.Copybook.Compiler.Storage;
 

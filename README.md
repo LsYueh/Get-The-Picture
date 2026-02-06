@@ -292,6 +292,10 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 - [時間 (`Time`)](docs/get-the-picture/cobol-picture/semantic/date-time/time.md)  
 - [時間戳記 (`Timestamp`)](docs/get-the-picture/cobol-picture/semantic/date-time/timestamp.md)  
 
+<br>
+
+- 更多關於 [PICTURE Clause Codec](docs/get-the-picture/cobol-picture/codec.md) ...
+
 <br><br>
 
 # RENAMES 子句

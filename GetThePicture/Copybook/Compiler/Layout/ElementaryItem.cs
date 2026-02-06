@@ -1,6 +1,5 @@
-using System.Text;
 using GetThePicture.Copybook.Compiler.Layout.Base;
-using GetThePicture.PictureClause.Base;
+using GetThePicture.Picture.Clause.Base;
 
 namespace GetThePicture.Copybook.Compiler.Layout;
 
