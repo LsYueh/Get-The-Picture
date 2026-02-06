@@ -24,7 +24,6 @@ public class NumericDecoderForIntegerTest
         };
     }
     
-    [TestMethod]
     [DataTestMethod]
     [DataRow( "9",  "9(1)", typeof (byte),  (byte)  9)]
     [DataRow( "I", "S9(1)", typeof (byte),  (byte)  9)]
@@ -44,7 +43,6 @@ public class NumericDecoderForIntegerTest
         Assert.IsTrue(IsIntegerValue(value));
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow( "998",  "9(3)", typeof(ushort), (ushort)  998)]
     [DataRow( "99H", "S9(3)", typeof(ushort), (ushort)  998)]
@@ -64,7 +62,6 @@ public class NumericDecoderForIntegerTest
         Assert.IsTrue(IsIntegerValue(value));
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow(    "99997",  "9(5)", typeof(uint), (uint)     99997)]
     [DataRow(    "9999G", "S9(5)", typeof(uint), (uint)     99997)]
@@ -84,7 +81,6 @@ public class NumericDecoderForIntegerTest
         Assert.IsTrue(IsIntegerValue(value));
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow(        "9999999996",  "9(10)", typeof(ulong), (ulong)         9999999996)]
     [DataRow(        "999999999F", "S9(10)", typeof(ulong), (ulong)         9999999996)]
@@ -104,7 +100,6 @@ public class NumericDecoderForIntegerTest
         Assert.IsTrue(IsIntegerValue(value));
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow(         "9999999999999999995",  "9(19)", typeof(decimal),           "9999999999999999995")]
     [DataRow(         "999999999999999999E", "S9(19)", typeof(decimal),           "9999999999999999995")]
@@ -145,7 +140,6 @@ public class NumericDecoderForIntegerTest
     // Invalid format
     // -------------------------
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("99999999999999999999999999994",  "9(29)", typeof(decimal),  "99999999999999999999999999994")]
     [DataRow("9999999999999999999999999999D", "S9(29)", typeof(decimal),  "99999999999999999999999999994")]

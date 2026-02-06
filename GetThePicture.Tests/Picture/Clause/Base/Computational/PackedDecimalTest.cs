@@ -25,7 +25,6 @@ public class PackedDecimalTest
         return buffer;
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("S9(5)", "12345C",  12345L)]
     [DataRow("S9(5)", "12345D", -12345L)]
@@ -45,7 +44,6 @@ public class PackedDecimalTest
         Assert.AreEqual(expected, (long)value);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("9(05)",       "12345F", 12345UL)]
     [DataRow("9(10)", "00000000001F",     1UL)]
@@ -63,7 +61,6 @@ public class PackedDecimalTest
         Assert.AreEqual(expected, (ulong)value);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("S9(5)V9(2)", "1234567C", "12345.67")]
     [DataRow("S9(3)V9(2)", "12345D"  ,  "-123.45")]

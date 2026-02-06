@@ -1,108 +1,66 @@
 ﻿using System.Text.RegularExpressions;
 
 using GetThePicture.Picture.Clause.Base.ClauseItems;
+using GetThePicture.Picture.Symbols;
+using GetThePicture.Picture.Symbols.Base;
 
 namespace GetThePicture.Picture.Clause.Base;
 
 internal static partial class PicMetaBuilder
 {
-    [GeneratedRegex(@"^(S)?((9(\(\d+\))?)|9+)(V((9(\(\d+\))?)|9+))?$", RegexOptions.IgnoreCase)]
-    private static partial Regex NumericRegex();
-
-    [GeneratedRegex(@"^X(\((\d+)\))?$", RegexOptions.IgnoreCase)]
-    private static partial Regex XRegex();
-
-    [GeneratedRegex(@"^A(\((\d+)\))?$", RegexOptions.IgnoreCase)]
-    private static partial Regex ARegex();
-            
-    public static PicMeta Parse(string input, PicSemantic semantic = PicSemantic.None, PicUsage Usage = PicUsage.Display)
+    public static PicMeta Parse(string symbols, PicSemantic semantic = PicSemantic.None, PicUsage Usage = PicUsage.Display)
     {
-        if (string.IsNullOrWhiteSpace(input))
+        if (string.IsNullOrWhiteSpace(symbols))
             throw new ArgumentException("PIC clause is empty.");
         
-        input = input.ToUpperInvariant().Replace(" ", string.Empty);
+        symbols = symbols.ToUpperInvariant().Replace(" ", string.Empty);
+        
+        SymbolMeta meta = SymbolParser.Read(symbols);
 
-        // ─────────────────────────
-        // Numeric
-        // ─────────────────────────
-        var numMatch = NumericRegex().Match(input);
-        if (numMatch.Success)
+        var picMeta = meta.BaseClass switch
         {
-            bool signed = numMatch.Groups[1].Success;
+            // ─────────────────────────
+            // Numeric
+            // ─────────────────────────
+            PicBaseClass.Numeric => new PicMeta {
+                Raw           = symbols,
+                BaseClass     = meta.BaseClass,
+                Semantic      = semantic,
+                Usage         = Usage,
+                Signed        = meta.Signed,
+                IntegerDigits = meta.IntegerDigits,
+                DecimalDigits = meta.DecimalDigits
+            },
 
-            int intDigits = CountDigits(numMatch.Groups[2].Value);
-            int decDigits = numMatch.Groups[6].Success ? CountDigits(numMatch.Groups[6].Value) : 0;
-
-            return new PicMeta
-            {
-                Raw = input,
-                BaseClass = PicBaseClass.Numeric,
-                Semantic = semantic,
-                Usage = Usage,
-                Signed = signed,
-                IntegerDigits = intDigits,
-                DecimalDigits = decDigits
-            };
-        }
-
-        // ─────────────────────────
-        // Alphanumeric
-        // ─────────────────────────
-        var xMatch = XRegex().Match(input);
-        if (xMatch.Success)
-        {
-            int len = xMatch.Groups[2].Success ? int.Parse(xMatch.Groups[2].Value) : 1;
-
-            return new PicMeta
-            {
-                Raw = input,
-                BaseClass = PicBaseClass.Alphanumeric,
-                Semantic = semantic,
-                Usage = PicUsage.Display,
-                Signed = false,
-                IntegerDigits = len,
+            // ─────────────────────────
+            // Alphanumeric
+            // ─────────────────────────
+            PicBaseClass.Alphanumeric => new PicMeta {
+                Raw           = symbols,
+                BaseClass     = meta.BaseClass,
+                Semantic      = semantic,
+                Usage         = PicUsage.Display,
+                Signed        = false,
+                IntegerDigits = meta.IntegerDigits,
                 DecimalDigits = 0
-            };
-        }
+            },
 
-        // ─────────────────────────
-        // Alphabetic
-        // ─────────────────────────
-        var aMatch = ARegex().Match(input);
-        if (aMatch.Success)
-        {
-            int len = aMatch.Groups[2].Success ? int.Parse(aMatch.Groups[2].Value) : 1;
-
-            return new PicMeta
-            {
-                Raw = input,
-                BaseClass = PicBaseClass.Alphabetic,
-                Semantic = semantic,
-                Usage = PicUsage.Display,
-                Signed = false,
-                IntegerDigits = len,
+            // ─────────────────────────
+            // Alphabetic
+            // ─────────────────────────
+            PicBaseClass.Alphabetic => new PicMeta {
+                Raw           = symbols,
+                BaseClass     = meta.BaseClass,
+                Semantic      = semantic,
+                Usage         = PicUsage.Display,
+                Signed        = false,
+                IntegerDigits = meta.IntegerDigits,
                 DecimalDigits = 0
-            };
-        }
+            },
 
-        throw new NotSupportedException($"Unsupported PIC clause: {input}");
-    }
+            _ => throw new NotSupportedException($"Unsupported PIC clause: {symbols}"),
+        };
 
-    [GeneratedRegex(@"9\((\d+)\)")]
-    private static partial Regex _9();
-
-    private static int CountDigits(string token)
-    {
-        // 9(5)
-        var m = _9().Match(token);
-        if (m.Success)
-            return int.Parse(m.Groups[1].Value);
-
-        // 9999
-        int count = 0;
-        foreach (char c in token)
-            if (c == '9') count++;
-
-        return count;
+        return picMeta;
     }
 }

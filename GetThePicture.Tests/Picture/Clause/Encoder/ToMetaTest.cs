@@ -10,8 +10,6 @@ namespace GetThePicture.Tests.Picture.Clause.Encoder;
 [TestClass]
 public class ToMetaTest
 {
-
-    [TestMethod]
     [DataTestMethod]
     [DataRow("X(5)", "Hello",  "Hello")]
     [DataRow("X(1)", "A",  "A")]
@@ -36,7 +34,6 @@ public class ToMetaTest
         Assert.AreEqual(0, v.Number?.DecimalDigits);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("9(5)V9(2)", "12.3", "1230", 2)]
     public void Decimal(string picString, string value, string expected, int expectedScale)
@@ -52,7 +49,6 @@ public class ToMetaTest
         Assert.AreEqual(expectedScale, v.Number?.DecimalDigits);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("9(5)V9(2)", "-12.3",  "1230", 2)]
     [DataRow("9(1)V9(3)", "-12.3", "12300", 3)]

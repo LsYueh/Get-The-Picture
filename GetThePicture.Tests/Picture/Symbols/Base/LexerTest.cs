@@ -3,7 +3,7 @@ using GetThePicture.Picture.Symbols.Base;
 namespace GetThePicture.Tests.Picture.Symbols.Base;
 
 [TestClass]
-public class LexerTest
+public class LexerParserTest
 {
     private static void AssertToken(Token token, TokenType type, string text)
     {
@@ -36,9 +36,9 @@ public class LexerTest
         Assert.AreEqual(4, tokens.Count);
 
         AssertToken(tokens[0], TokenType.Alphanumeric, "X");
-        AssertToken(tokens[1], TokenType.LParen, "(");
-        AssertToken(tokens[2], TokenType.Occurs, "10");
-        AssertToken(tokens[3], TokenType.RParen, ")");
+        AssertToken(tokens[1], TokenType.LParen , "(");
+        AssertToken(tokens[2], TokenType.Numeric, "10");
+        AssertToken(tokens[3], TokenType.RParen , ")");
     }
 
     [TestMethod]
@@ -65,7 +65,7 @@ public class LexerTest
 
         AssertToken(tokens[0], TokenType.Numeric, "9");
         AssertToken(tokens[1], TokenType.LParen , "(");
-        AssertToken(tokens[2], TokenType.Occurs , "10");
+        AssertToken(tokens[2], TokenType.Numeric, "10");
         AssertToken(tokens[3], TokenType.RParen , ")");
     }
 }

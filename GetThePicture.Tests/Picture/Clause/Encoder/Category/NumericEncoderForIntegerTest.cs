@@ -11,7 +11,6 @@ public class NumericEncoderForIntegerTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
-    [TestMethod]
     [DataTestMethod]
     [DataRow((byte)                  99, "9(02)",                 "99")]
     [DataRow((ushort)              9999, "9(04)",               "9999")]

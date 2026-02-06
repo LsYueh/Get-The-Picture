@@ -12,7 +12,6 @@ public class DateEncoderTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
-    [TestMethod]
     [DataTestMethod]
     [DataRow("X(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("9(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
@@ -31,7 +30,6 @@ public class DateEncoderTest
         Assert.AreEqual(expected, result);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("X(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("9(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]

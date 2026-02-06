@@ -10,7 +10,6 @@ public class ParserForRedefinesTest
 {
     private static readonly Lexer lexer = new();
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("05  B REDEFINES A.", "COPYBOOK-LAYOUT", "05 B REDEFINES A.")]
     public void Test_Set(string line, string expected_01, string expected_02)

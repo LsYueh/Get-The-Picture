@@ -10,98 +10,40 @@ public class PicMetaAXTest
     // Alphabetic (A)
     // ─────────────────────────
 
-    [TestMethod]
-    public void Parse_PIC_A_DefaultLength()
+    [DataTestMethod]
+    [DataRow(    "A", PicBaseClass.Alphabetic,  1, 0,  1, false)]
+    [DataRow( "A(1)", PicBaseClass.Alphabetic,  1, 0,  1, false)]
+    [DataRow("A(20)", PicBaseClass.Alphabetic, 20, 0, 20, false)]
+    public void Parse_PIC_A(string symbols, PicBaseClass baseClass, int integerDigits, int decimalDigits, int digitCount, bool signed)
     {
-        var pic = PicMeta.Parse("A");
+        var pic = PicMeta.Parse(symbols);
 
-        Assert.AreEqual("A", pic.Raw);
-        Assert.AreEqual(PicBaseClass.Alphabetic, pic.BaseClass);
-        Assert.AreEqual(1, pic.IntegerDigits);
-        Assert.AreEqual(0, pic.DecimalDigits);
-        Assert.AreEqual(1, pic.DigitCount);
-        Assert.IsFalse(pic.Signed);
-    }
-
-    [TestMethod]
-    public void Parse_PIC_A_ExplicitLength()
-    {
-        var pic = PicMeta.Parse("A(20)");
-
-        Assert.AreEqual("A(20)", pic.Raw);
-        Assert.AreEqual(PicBaseClass.Alphabetic, pic.BaseClass);
-        Assert.AreEqual(20, pic.IntegerDigits);
-        Assert.AreEqual(0, pic.DecimalDigits);
-        Assert.AreEqual(20, pic.DigitCount);
-        Assert.IsFalse(pic.Signed);
-    }
-
-     [TestMethod]
-    public void Parse_PIC_A_ExplicitLength_OnlyOnce()
-    {
-        var pic = PicMeta.Parse("A(1)");
-
-        Assert.AreEqual("A(1)", pic.Raw);
-        Assert.AreEqual(PicBaseClass.Alphabetic, pic.BaseClass);
-        Assert.AreEqual(1, pic.IntegerDigits);
-        Assert.AreEqual(0, pic.DecimalDigits);
-        Assert.AreEqual(1, pic.DigitCount);
-        Assert.IsFalse(pic.Signed);
+        Assert.AreEqual(symbols      , pic.Raw);
+        Assert.AreEqual(baseClass    , pic.BaseClass);
+        Assert.AreEqual(integerDigits, pic.IntegerDigits);
+        Assert.AreEqual(decimalDigits, pic.DecimalDigits);
+        Assert.AreEqual(digitCount   , pic.DigitCount);
+        Assert.AreEqual(signed       , pic.Signed);
     }
     
     // ─────────────────────────
     // Alphanumeric (X)
     // ─────────────────────────
 
-    [TestMethod]
-    public void Parse_PIC_X_DefaultLength()
+    [DataTestMethod]
+    [DataRow(    "X", PicBaseClass.Alphanumeric,  1, 0,  1, false)]
+    [DataRow(   "XX", PicBaseClass.Alphanumeric,  2, 0,  2, false)]
+    [DataRow( "X(1)", PicBaseClass.Alphanumeric,  1, 0,  1, false)]
+    [DataRow("X(20)", PicBaseClass.Alphanumeric, 20, 0, 20, false)]
+    public void Parse_PIC_X(string symbols, PicBaseClass baseClass, int integerDigits, int decimalDigits, int digitCount, bool signed)
     {
-        var pic = PicMeta.Parse("X");
+        var pic = PicMeta.Parse(symbols);
 
-        Assert.AreEqual("X", pic.Raw);
-        Assert.AreEqual(PicBaseClass.Alphanumeric, pic.BaseClass);
-        Assert.AreEqual(1, pic.IntegerDigits);
-        Assert.AreEqual(0, pic.DecimalDigits);
-        Assert.AreEqual(1, pic.DigitCount);
-        Assert.IsFalse(pic.Signed);
-    }
-
-    [TestMethod]
-    public void Parse_PIC_XX_DefaultLength()
-    {
-        var pic = PicMeta.Parse("XX");
-
-        Assert.AreEqual("X", pic.Raw);
-        Assert.AreEqual(PicBaseClass.Alphanumeric, pic.BaseClass);
-        Assert.AreEqual(1, pic.IntegerDigits);
-        Assert.AreEqual(0, pic.DecimalDigits);
-        Assert.AreEqual(1, pic.DigitCount);
-        Assert.IsFalse(pic.Signed);
-    }
-
-    [TestMethod]
-    public void Parse_PIC_X_ExplicitLength()
-    {
-        var pic = PicMeta.Parse("X(20)");
-
-        Assert.AreEqual("X(20)", pic.Raw);
-        Assert.AreEqual(PicBaseClass.Alphanumeric, pic.BaseClass);
-        Assert.AreEqual(20, pic.IntegerDigits);
-        Assert.AreEqual(0, pic.DecimalDigits);
-        Assert.AreEqual(20, pic.DigitCount);
-        Assert.IsFalse(pic.Signed);
-    }
-
-     [TestMethod]
-    public void Parse_PIC_X_ExplicitLength_OnlyOnce()
-    {
-        var pic = PicMeta.Parse("X(1)");
-
-        Assert.AreEqual("X(1)", pic.Raw);
-        Assert.AreEqual(PicBaseClass.Alphanumeric, pic.BaseClass);
-        Assert.AreEqual(1, pic.IntegerDigits);
-        Assert.AreEqual(0, pic.DecimalDigits);
-        Assert.AreEqual(1, pic.DigitCount);
-        Assert.IsFalse(pic.Signed);
+        Assert.AreEqual(symbols      , pic.Raw);
+        Assert.AreEqual(baseClass    , pic.BaseClass);
+        Assert.AreEqual(integerDigits, pic.IntegerDigits);
+        Assert.AreEqual(decimalDigits, pic.DecimalDigits);
+        Assert.AreEqual(digitCount   , pic.DigitCount);
+        Assert.AreEqual(signed       , pic.Signed);
     }
 }

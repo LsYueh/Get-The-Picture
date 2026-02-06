@@ -11,7 +11,6 @@ public class Comp3Test
     // Encode
     // ------------------------- 
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow( "9(5)",  52194, new byte[] { 0x52, 0x19, 0x4F })]
     [DataRow("S9(5)",  52194, new byte[] { 0x52, 0x19, 0x4C })]
@@ -43,7 +42,6 @@ public class Comp3Test
     // Decode
     // ------------------------- 
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow( "9(5)",  52194UL, new byte[] { 0x52, 0x19, 0x4F })]
     [DataRow( "9(5)",  52194UL, new byte[] { 0x52, 0x19, 0x4C })] // TODO: Sign Nibble 與 PIC 定義不合，看看要不要擋

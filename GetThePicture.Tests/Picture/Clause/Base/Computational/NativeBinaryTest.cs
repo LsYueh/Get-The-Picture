@@ -27,7 +27,6 @@ public class NativeBinaryTest
         };
     }
     
-    [TestMethod]
     [DataTestMethod]
     [DataRow("9(4)", false, "0", (ushort) 0)]
     [DataRow("9(4)", false, "65535", ushort.MaxValue)]
@@ -55,7 +54,6 @@ public class NativeBinaryTest
         Assert.AreEqual(expected, Convert.ToUInt16(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("S9(4)", false, "32767", short.MaxValue)]
     [DataRow("S9(4)",  true, "32768", short.MinValue)]
@@ -83,7 +81,6 @@ public class NativeBinaryTest
         Assert.AreEqual(expected, Convert.ToInt16(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("9(9)", false, "0", (uint) 0)]
     [DataRow("9(9)", false, "4294967295", uint.MaxValue)]
@@ -111,7 +108,6 @@ public class NativeBinaryTest
         Assert.AreEqual(expected, Convert.ToUInt32(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("S9(9)", false, "2147483647", int.MaxValue)]
     [DataRow("S9(9)",  true, "2147483648", int.MinValue)]
@@ -139,7 +135,6 @@ public class NativeBinaryTest
         Assert.AreEqual(expected, Convert.ToInt32(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("9(18)", false, "0", (ulong) 0)]
     [DataRow("9(18)", false, "18446744073709551615", ulong.MaxValue)]
@@ -167,7 +162,6 @@ public class NativeBinaryTest
         Assert.AreEqual(expected, Convert.ToUInt64(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("S9(18)", false, "9223372036854775807", long.MaxValue)]
     [DataRow("S9(18)",  true, "9223372036854775808", long.MinValue)]
@@ -199,7 +193,6 @@ public class NativeBinaryTest
     // Exceptions
     // -------------------------
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow(  "9(4)", false, "65536")]
     [DataRow( "S9(4)", false, "32768")]
@@ -214,7 +207,6 @@ public class NativeBinaryTest
         Assert.ThrowsException<OverflowException>(() => COMP5.Encode(meta, pic));
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow( "9(2)V99", false, "1")]
     [DataRow("S9(2)V99", false, "1")]

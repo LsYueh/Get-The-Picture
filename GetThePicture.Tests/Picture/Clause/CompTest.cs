@@ -11,7 +11,6 @@ public class CompTest
     // Encode
     // ------------------------- 
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow( "9(04)", (ushort)  9999, new byte[] { 0x0F, 0x27 })] // 9999 >> 0x270F >> (Little Endian) >> 0F 27
     [DataRow("S9(04)",  (short)  9999, new byte[] { 0x0F, 0x27 })]
@@ -32,7 +31,6 @@ public class CompTest
         CollectionAssert.AreEqual(expected, buffer);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("S9(04)", (short) 9999, new byte[] { 0x27, 0x0F })]
     [DataRow("S9(18)", -999999999999999999L, new byte[] { 0xF2, 0x1F, 0x49, 0x4C, 0x58, 0x9C, 0x00, 0x01 })]
@@ -50,7 +48,6 @@ public class CompTest
     // Decode
     // ------------------------- 
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow( "9(04)", (ushort)  9999, new byte[] { 0x0F, 0x27 })] // 9999 >> 0x270F >> (Little Endian) >> 0F 27
     [DataRow("S9(04)",  (short)  9999, new byte[] { 0x0F, 0x27 })]
@@ -71,7 +68,6 @@ public class CompTest
         Assert.AreEqual(expected, value);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("S9(04)", (short) 9999, new byte[] { 0x27, 0x0F })]
     [DataRow("S9(18)", -999999999999999999L, new byte[] { 0xF2, 0x1F, 0x49, 0x4C, 0x58, 0x9C, 0x00, 0x01 })]

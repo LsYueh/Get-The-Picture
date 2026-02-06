@@ -12,7 +12,6 @@ public class NumericEncoderTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
-    [TestMethod]
     [DataTestMethod]
     [DataRow(123.45, "9(3)V9(2)", "12345")]
     [DataRow(123.45, "9(3)V9(5)", "12345000")]
@@ -28,7 +27,6 @@ public class NumericEncoderTest
         Assert.AreEqual(expected, result);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow(123.45, "S9(3)V9(2)", "1234E")]
     [DataRow(123.45, "S9(3)V9(5)", "1234500{")]
@@ -44,7 +42,6 @@ public class NumericEncoderTest
         Assert.AreEqual(expected, result);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow(-123.45, "S9(3)V9(2)", "1234N")]
     [DataRow(-123.4 , "S9(3)V9"   , "123M")]
@@ -62,7 +59,6 @@ public class NumericEncoderTest
         Assert.AreEqual(expected, result);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow( 12.3 , "S9(3)V9"   , "0123")]
     [DataRow(-12.3 , "S9(3)V9"   , "012L")]

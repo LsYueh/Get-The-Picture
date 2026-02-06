@@ -11,7 +11,7 @@ public enum TokenType
 
     Alphabetic,       // 'A"
     Alphanumeric,     // 'X'
-    Numeric,          // '9'
+    Numeric,          // '9' or 0-9 (inside parentheses)
 
     Sign,             // 'S'
     ImpliedDecimal,   // 'V' or '.'
@@ -21,7 +21,6 @@ public enum TokenType
     
     LParen,           // '('
     RParen,           // ')'
-    Occurs,           // 0-9 (inside parentheses)
 }
 
 public class Token(TokenType type, string value, int pos)

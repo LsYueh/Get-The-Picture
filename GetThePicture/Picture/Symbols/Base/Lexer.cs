@@ -82,7 +82,7 @@ public class Lexer()
                 if (char.IsDigit(ch))
                 {
                     string number = ReadNumber();
-                    _t = new Token(TokenType.Occurs, number, tokenPos);
+                    _t = new Token(TokenType.Numeric, number, tokenPos);
                 }
                 else
                 {

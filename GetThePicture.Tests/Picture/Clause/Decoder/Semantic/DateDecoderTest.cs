@@ -9,7 +9,6 @@ namespace GetThePicture.Tests.Picture.Clause.Decoder.Semantic;
 [TestClass]
 public class DateDecoderTest
 {
-    [TestMethod]
     [DataTestMethod]
     [DataRow("X(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("9(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
@@ -28,7 +27,6 @@ public class DateDecoderTest
         Assert.AreEqual(expected, value);
     }
 
-    [TestMethod]
     [DataTestMethod]
     [DataRow("X(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("9(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
