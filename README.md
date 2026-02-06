@@ -19,6 +19,9 @@ Modern .NET library for working with COBOL Copybook–based data
 
 <br>
 
+<details>
+    <summary>TL;DR</summary>
+
 COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**型態、長度、符號位、顯示格式與儲存語意**。
 這套設計方式歷經數十年的實務驗證，支撐了銀行、保險、政府與大型企業的核心系統，至今仍在持續運作。
 
@@ -46,15 +49,18 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 * 將「字串 → 型別」與「型別 → 字串」視為對等的一階公民
 * 讓轉換過程可被單元測試、驗證與重構
 
+</details>
+
 ### 降低 COBOL 與現代系統整合的心智與實作成本
 
 * 避免重複撰寫易出錯的解析邏輯
 * 提供一致、可預期的行為邊界（精度、符號）
 * 作為資料轉換、系統汰換、或雙軌運行的一部分
 
+
 ### 保留歷史系統的「語意」，而不只是資料
 
-本專案不試圖「現代化」COBOL語言，而是**尊重並保存其資料設計哲學**，使其能被現代語言理解、驗證與安全地使用。
+⚠️ 本專案不試圖「現代化」COBOL語言，而是**尊重並保存其資料設計哲學**，使其能被現代語言理解、驗證與安全地使用。
 
 <br>
 
@@ -113,36 +119,41 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
     }
     ```
 
-    輸出: 
-    ```shell
-    ...
-    ==== Record ====
-    STOCK-NO: 19094
-    BULL-PRICE: 105.80000
-    LDC-PRICE: 96.20000
-    BEAR-PRICE: 86.60000
-    LAST-MTH-DATE: 20251111
-    SETTYPE: 0
-    MARK-W: 0
-    MARK-P: 0
-    MARK-L: 0
-    IND-CODE: 00
-    IND-SUB-CODE: 
-    MARK-M: 0
-    STOCK-NAME: 榮成四
-    MARK-W-DETAILS:
-      MATCH-INTERVAL: 0
-      ORDER-LIMIT: 0
-      ORDERS-LIMIT: 0
-      PREPAY-RATE: 0
-    MARK-S: 0
-    STK-MARK: 0
-    MARK-F: 0
-    MARK-DAY-TRADE: 
-    STK-CTGCD: 0
-    ================
-    ...
-    ```
+    <details>
+        <summary>輸出結果：</summary>
+
+        ```shell
+        ...
+        ==== Record ====
+        STOCK-NO: 19094
+        BULL-PRICE: 105.80000
+        LDC-PRICE: 96.20000
+        BEAR-PRICE: 86.60000
+        LAST-MTH-DATE: 20251111
+        SETTYPE: 0
+        MARK-W: 0
+        MARK-P: 0
+        MARK-L: 0
+        IND-CODE: 00
+        IND-SUB-CODE: 
+        MARK-M: 0
+        STOCK-NAME: 榮成四
+        MARK-W-DETAILS:
+        MATCH-INTERVAL: 0
+        ORDER-LIMIT: 0
+        ORDERS-LIMIT: 0
+        PREPAY-RATE: 0
+        MARK-S: 0
+        STK-MARK: 0
+        MARK-F: 0
+        MARK-DAY-TRADE: 
+        STK-CTGCD: 0
+        ================
+        ...
+        ```
+    </details>
+
+    <br>
 
     > ⚠️ 目前不支援包含 `Level 66`、`Level 77`、`REDEFINES` 子句的反序列化處裡  
 
@@ -163,8 +174,8 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 
 <br>
 
-- 更多關於 [Copybook Compiler](docs/get-the-picture/copybook/compiler.md) ...
-- 更多關於 [Copybook Resolver](docs/get-the-picture/copybook/resolver.md) ...
+📖 更多關於 [Copybook Compiler](docs/get-the-picture/copybook/compiler.md) ...  
+📖 更多關於 [Copybook Resolver](docs/get-the-picture/copybook/resolver.md) ...  
 
 <br>
 
@@ -175,7 +186,7 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 
 <br>
 
-- 更多關於 [`RECORD KEY` Clause](docs/get-the-picture/copybook/record-key-clause.md) ... 
+📖 更多關於 [RECORD KEY Clause](docs/get-the-picture/copybook/record-key-clause.md) ...  
 
 <br><br>
 
@@ -204,30 +215,10 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 > 現代 COBOL `(Free Format) ` 已經不限制欄位，但固定格式仍常用於舊系統。  
 
-<br><br>
+<br>
 
-# COBOL Level Numbers 基本概念
-
-COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
-
-| Level         | 用途             | 說明                  |
-| ------------- | -------------- | ------------------- |
-| **01**        | 主結構            | 定義檔案或記錄的頂層結構        |
-| **05/10/15…** | 子結構            | 01 之下的子群組或欄位，形成巢狀結構 |
-| **66**        | RENAMES        | 將已有欄位重新命名或形成別名區段    |
-| **77**        | 單一變數           | 不屬於群組，獨立使用          |
-| **88**        | Condition Name | 定義邏輯條件（True/False）  |
-
-> ⚠️ Level number 越小層級越高，01 是最外層。
-
-## 詳細說明
-- Level [66 — RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md)
-- Level [77 — Standalone Variable (單一變數)](docs/get-the-picture/cobol-level-numbers/lv77.md)
-- Level [88 — Condition Name](docs/get-the-picture/cobol-level-numbers/lv88.md)  
-
-<br><br>
-
-# `Elementary Data Item` and `Group Item` 
+<details>
+    <summary>ℹ️ "Elementary Data Item" and "Group Item"</summary>
 
 | 面向                    | Elementary Data Item    | Group Item             |
 | --------------------- | ----------------------- | ---------------------- |
@@ -245,62 +236,62 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
 <br>
 
-• [Elementary Data Item](docs/get-the-picture/cobol/ElementaryDataItem.md)  
+📖 更多關於 [Elementary Data Item](docs/get-the-picture/cobol/ElementaryDataItem.md) ...  
+
+</details>
 
 <br><br>
 
-# Usage 子句
+# COBOL DATA DIVISION (Data description entry)
 
-`USAGE` 定義欄位在記憶體中的儲存方式，影響資料的物理編碼與運算行為。  
-- DISPLAY（預設）：以可讀字元存放，每個數字或字母對應一個 byte，便於輸入輸出與檢視。DISPLAY numeric 可能包含 Overpunch 符號。  
-- COMP / COMP-5（Binary）：以二進位形式存放，運算效率高，但不可直接讀取文字。  
-- COMP-3（Packed Decimal）：將兩個數字壓縮在一個 nibble，最後一個 nibble 用於符號，節省空間且方便算術運算。  
-  - [`COMPUTATIONAL` 轉換規則](docs/get-the-picture/other-topics/cobol-computational.md)  
+用於描述程式中所有資料的結構、型態與儲存方式。
+
+目前支援的修飾子句處理：
+
+**Format 1**  
+```
+<level-number> <data-name-1>
+    [REDEFINES <data-name-2>]
+    [PICTURE <character-string>]
+    [USAGE <usage-type>]
+    [OCCURS <n> TIMES]
+    [VALUE <literal-1>].
+```
 
 <br>
 
-| Class | Category/Semantic | Usage |
-| :---: | :---------------: | ----- |
-| Alphabetic | Alphabetic | DISPLAY |
-| Alphanumeric | Alphanumeric | DISPLAY |
-| Date-Time <br> (Alphanumeric) | Date <br> Time <Timestamp> | DISPLAY |
-| Numeric | Numeric | DISPLAY <br> COMP (Binary) <br> COMP-3 (Packed Decimal) <br> COMP-5 (Native Binary) |
+**Format 2**  
+```
+66 <data-name-1> RENAMES <data-name-2> THRU <data-name-3>.
+```
+
+<br>
+
+**Format 3**  
+```
+88 <condition-name-1> VALUE[S] <literal-1> [THRU <literal-2>].
+```
 
 <br><br>
 
-# PICTURE (PIC) 子句
+# Level Numbers
 
-支援PIC語法  
+COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
-| Alphabetic | Alphanumeric | Numeric | Numeric (With Sign) |
-| :--------: | :----------: | :-----: | :-----------------: |
-| PIC A.. <br> PIC A(n) | PIC X.. <br> PIC X(n) | PIC 9... <br> PIC 9(n) <br> PIC 9...V9... <br> PIC 9(n)V9(m) <br> PIC 9(n)V9... | PIC S9... <br> PIC S9(n) <br> PIC S9...V9... <br> PIC S9(n)V9(m) <br> PIC S9(n)V9... |
+| Level         | 用途             | 說明                  |
+| ------------- | -------------- | ------------------- |
+| **01**        | 主結構            | 定義檔案或記錄的頂層結構        |
+| **05/10/15…** | 子結構            | 01 之下的子群組或欄位，形成巢狀結構 |
+| **66**        | RENAMES        | 將已有欄位重新命名或形成別名區段    |
+| **77**        | 單一變數           | 不屬於群組，獨立使用          |
+| **88**        | Condition Name | 定義邏輯條件（True/False）  |
 
-<br>
+> ⚠️ Level number 越小層級越高，01 是最外層。
 
-## 類別(`Category`)資料
-
-- [文字 (`Alphabetic`/`Alphanumeric`)](docs/get-the-picture/cobol-picture/category/alphabetic-alphanumeric.md)  
-- [數字 (`Numeric`)](docs/get-the-picture/cobol-picture/category/numeric.md)  
-  - [`S9`數字轉換規則](docs/get-the-picture/other-topics/pic-s9-overpunch.md)  
-
-<br>
-
-## 語意(`Semantic`)資料
-
-- [日期 (`Date`)](docs/get-the-picture/cobol-picture/semantic/date-time/date.md)  
-- [時間 (`Time`)](docs/get-the-picture/cobol-picture/semantic/date-time/time.md)  
-- [時間戳記 (`Timestamp`)](docs/get-the-picture/cobol-picture/semantic/date-time/timestamp.md)  
-
-<br>
-
-- 更多關於 [PICTURE Clause Codec](docs/get-the-picture/cobol-picture/codec.md) ...
-
-<br><br>
-
-# RENAMES 子句
-
-請參考 Level [66 — RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md)
+### 詳細說明
+- Level [66 — RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md)
+- Level [77 — Standalone Variable (單一變數)](docs/get-the-picture/cobol-level-numbers/lv77.md)
+- Level [88 — Condition Name](docs/get-the-picture/cobol-level-numbers/lv88.md)  
 
 <br><br>
 
@@ -320,43 +311,47 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
 在 IBM 提供的 [REDEFINES clause](https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=entry-redefines-clause) 文件中，整理出幾種 `REDEFINES` 可能的使用與法規則：
 
-<br>
+<details>
+    <summary>CASE 1：Group REDEFINES Elementary Data Item</summary>
 
-**CASE 1**：Group REDEFINES Elementary Data Item
-```cobol
-05  A PICTURE X(6).
-05  B REDEFINES A.
-    10 B-1          PICTURE X(2).
-    10 B-2          PICTURE 9(4).
-05  C               PICTURE 99V99.
+    ```cobol
+    05  A PICTURE X(6).
+    05  B REDEFINES A.
+        10 B-1          PICTURE X(2).
+        10 B-2          PICTURE 9(4).
+    05  C               PICTURE 99V99.
 
-```
+    ```
+</details>
 
-<br>
+<details>
+    <summary>CASE 2：01-level + GLOBAL</summary>
 
-**CASE 2**：01-level + GLOBAL
-```cobol
-01 A1 PICTURE X(6). 
-01 B1 REDEFINES A1 GLOBAL PICTURE X(4). 
-```
+    ```cobol
+    01 A1 PICTURE X(6). 
+    01 B1 REDEFINES A1 GLOBAL PICTURE X(4). 
+    ```
+</details>
 
-<br>
+<details>
+    <summary>CASE 3：多個 REDEFINES 指向同一 target</summary>
 
-**CASE 3a**：多個 REDEFINES 指向同一 target
-```cobol
-05  A               PICTURE 9999.
-05  B REDEFINES A   PICTURE 9V999.
-05  C REDEFINES A   PICTURE 99V99.
-```
+    ```cobol
+    05  A               PICTURE 9999.
+    05  B REDEFINES A   PICTURE 9V999.
+    05  C REDEFINES A   PICTURE 99V99.
+    ```
+</details>
 
-**CASE 3b**：REDEFINES 鏈
-```cobol
-05  A               PICTURE 9999.
-05  B REDEFINES A   PICTURE 9V999.
-05  C REDEFINES B   PICTURE 99V99.
-```
+<details>
+    <summary>CASE 4：REDEFINES 鏈</summary>
 
-<br>
+    ```cobol
+    05  A               PICTURE 9999.
+    05  B REDEFINES A   PICTURE 9V999.
+    05  C REDEFINES B   PICTURE 99V99.
+    ```
+</details>
 
 ### 支援狀態總覽
 
@@ -364,8 +359,8 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 |------|----------|----------|------|
 | CASE 1 | Group REDEFINES Elementary Data Item | ✅ 支援 | 最常見且結構單純的用法。Group 僅作為 Elementary Item 的另一種結構化視角，不引入額外 storage。 |
 | CASE 2 | 01-level REDEFINES + GLOBAL | ❌ 不支援 | 涉及 01-level overlay 與 GLOBAL 可視範圍，在高階語言中難以安全對應。 |
-| CASE 3a | 多個 REDEFINES 指向同一 target | ⚠️ 有限支援 | 會形成多重 storage alias，容易造成資料覆寫與語意不明確。 |
-| CASE 3b | REDEFINES 鏈（REDEFINES 已 REDEFINES 的 item） | ⚠️ 有限支援 | 需解析並正規化多層 alias 關係，實作與維護成本過高。 |
+| CASE 3 | 多個 REDEFINES 指向同一 target | ⚠️ 有限支援 | 會形成多重 storage alias，容易造成資料覆寫與語意不明確。 |
+| CASE 4 | REDEFINES 鏈（REDEFINES 已 REDEFINES 的 item） | ⚠️ 有限支援 | 需解析並正規化多層 alias 關係，實作與維護成本過高。 |
 
 <br>
 
@@ -374,6 +369,59 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 > According to Standard `COBOL 2002`, the data item being redefined cannot contain an OCCURS clause.  
 
 所以本專案亦不支援過於複雜的 REDEFINES 運作行為。
+
+<br><br>
+
+# PICTURE 子句
+
+![PICTURE clause](docs/get-the-picture/cobol-picture/picture-clause.png)  
+
+支援的 ***character-string*** (`Symbols`) 語法  
+
+| Alphabetic | Alphanumeric | Numeric | Numeric (With Sign) |
+| :--------: | :----------: | :-----: | :-----------------: |
+| A.. <br> A(n) | X.. <br> X(n) | 9... <br> 9(n) <br> 9...V9... <br> 9(n)V9(m) <br> 9(n)V9... | S9... <br> S9(n) <br> S9...V9... <br> S9(n)V9(m) <br> S9(n)V9... |
+
+<br>
+
+## 類別(`Category`)資料
+
+- [文字 (`Alphabetic`/`Alphanumeric`)](docs/get-the-picture/cobol-picture/category/alphabetic-alphanumeric.md)  
+- [數字 (`Numeric`)](docs/get-the-picture/cobol-picture/category/numeric.md)  
+  - [`S9`數字轉換規則](docs/get-the-picture/other-topics/pic-s9-overpunch.md)  
+
+<br>
+
+## 語意(`Semantic`)資料
+
+- [日期 (`Date`)](docs/get-the-picture/cobol-picture/semantic/date-time/date.md)  
+- [時間 (`Time`)](docs/get-the-picture/cobol-picture/semantic/date-time/time.md)  
+- [時間戳記 (`Timestamp`)](docs/get-the-picture/cobol-picture/semantic/date-time/timestamp.md)  
+
+<br>
+
+📖 更多關於 [PICTURE Clause Codec](docs/get-the-picture/cobol-picture/codec.md) ...  
+
+<br><br>
+
+# USAGE 子句
+
+![USAGE clause](docs/get-the-picture/usage-clause.png)  
+
+`USAGE` 定義欄位在記憶體中的儲存方式，影響資料的物理編碼與運算行為。  
+- DISPLAY（預設）：以可讀字元存放，每個數字或字母對應一個 byte，便於輸入輸出與檢視。DISPLAY numeric 可能包含 Overpunch 符號。  
+- COMP / COMP-5（Binary）：以二進位形式存放，運算效率高，但不可直接讀取文字。  
+- COMP-3（Packed Decimal）：將兩個數字壓縮在一個 nibble，最後一個 nibble 用於符號，節省空間且方便算術運算。  
+  - [`COMPUTATIONAL` 轉換規則](docs/get-the-picture/other-topics/cobol-computational.md)  
+
+<br>
+
+| Class | Category/Semantic | Usage |
+| :---: | :---------------: | ----- |
+| Alphabetic | Alphabetic | DISPLAY |
+| Alphanumeric | Alphanumeric | DISPLAY |
+| Date-Time <br> (Alphanumeric) | Date <br> Time <Timestamp> | DISPLAY |
+| Numeric | Numeric | DISPLAY <br> COMP (Binary) <br> COMP-3 (Packed Decimal) <br> COMP-5 (Native Binary) |
 
 <br><br>
 
