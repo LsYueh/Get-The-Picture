@@ -1,10 +1,18 @@
 # Changelog
 
+## [26.10.1] – 2026-02-06
+
+### Added
+- 新增版本號資訊。 
+    - Version.Informational
+
+<br><br>
+
 ## [26.10.0] – 2026-02-06
 
 ### Changed
 - ⚠️ 移除Console專案: `Copycat`。
-    - `Copycat` 會成為獨立專案，讓這邊可以維持單純的 Library 開發。 
+    - `Copycat` 會成為獨立專案，讓這邊可以維持單純的 Library 開發。
 
 <br><br>
 
