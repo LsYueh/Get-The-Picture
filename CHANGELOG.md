@@ -1,5 +1,15 @@
 # Changelog
 
+## [26.9.0] – 2026-02-06
+
+### Improved
+- **PICTURE Clause** 改用專屬的 Lexer + Parser 來處理 Symbols 的語法。
+    - 可以處理類似 `XXX(10)X` = X(**13**) 這種混和型的長度定義。
+    - 目前先支援常用的 `A` / `X` / `S` / `9`。
+    - Symbols 字串最大長度 `50` 為限。
+
+<br><br>
+
 ## [26.8.0] – 2026-02-05
 
 ### Added

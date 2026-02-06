@@ -31,10 +31,11 @@ public class PicMetaAXTest
     // ─────────────────────────
 
     [DataTestMethod]
-    [DataRow(    "X", PicBaseClass.Alphanumeric,  1, 0,  1, false)]
-    [DataRow(   "XX", PicBaseClass.Alphanumeric,  2, 0,  2, false)]
-    [DataRow( "X(1)", PicBaseClass.Alphanumeric,  1, 0,  1, false)]
-    [DataRow("X(20)", PicBaseClass.Alphanumeric, 20, 0, 20, false)]
+    [DataRow(       "X", PicBaseClass.Alphanumeric,  1, 0,  1, false)]
+    [DataRow(      "XX", PicBaseClass.Alphanumeric,  2, 0,  2, false)]
+    [DataRow(    "X(1)", PicBaseClass.Alphanumeric,  1, 0,  1, false)]
+    [DataRow(   "X(20)", PicBaseClass.Alphanumeric, 20, 0, 20, false)]
+    [DataRow("XXX(10)X", PicBaseClass.Alphanumeric, 13, 0, 13, false)]
     public void Parse_PIC_X(string symbols, PicBaseClass baseClass, int integerDigits, int decimalDigits, int digitCount, bool signed)
     {
         var pic = PicMeta.Parse(symbols);
