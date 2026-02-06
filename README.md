@@ -377,11 +377,6 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
 <br><br>
 
-# 輔助工具  
-  - [Copycat](docs/copycat/README.md) - 將 `Copybook` 內容轉換成可在 `C#` 使用的強型別資料模型(Sealed Class)。
-
-<br><br>
-
 # 參考
 
 Rocket Software ACUCOBOL-GT extend (V10.5.0) : [USAGE Clause](https://docs.rocketsoftware.com/bundle/acucobolgt_dg_1050_html/page/BKRFRFDATAS043.html)  
