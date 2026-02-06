@@ -10,22 +10,34 @@ public interface IStorageNode
     string Name { get; }
 
     /// <summary>
+    /// OCCURS index
+    /// </summary>
+    int? Index { get; }
+
+    // ----------------------------
+    // Alias and Offset (For implementing REDEFINES)
+    // ----------------------------
+
+    /// <summary>
     /// Storage alias indicates that this node does not define its own
     /// starting offset, but reuses the offset of another storage node.
     /// The occupied length is still defined by this node.
     /// </summary>
     StorageAlias? Alias { get; }
+
+    bool IsAlias => Alias is not null;
     
     int Offset { get; }
+
+    // ----------------------------
+    // Storage Occupied
+    // ----------------------------
     
     int? StorageOccupied { get; }
 
-    bool IsAlias => Alias is not null;
-
-    /// <summary>
-    /// OCCURS index
-    /// </summary>
-    int? Index { get; }
+    // ----------------------------
+    // Node Operations 
+    // ----------------------------
 
     /// <summary>
     /// Child storage nodes in resolved layout order.

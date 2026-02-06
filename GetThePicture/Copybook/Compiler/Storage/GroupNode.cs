@@ -7,20 +7,6 @@ public class GroupNode(
 ) : StorageNode(name, offset, null, index)
 {
     // ----------------------------
-    // IStorageNode
-    // ----------------------------
-
-    private readonly List<IStorageNode> _children = [];
-    public override IReadOnlyList<IStorageNode> Children => _children;
-
-    public void AddNode(IStorageNode node)
-    {
-        ArgumentNullException.ThrowIfNull(node);
-
-        _children.Add(node);
-    }
-
-    // ----------------------------
     // Dump
     // ----------------------------
 

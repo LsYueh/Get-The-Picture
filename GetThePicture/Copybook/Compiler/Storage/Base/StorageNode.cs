@@ -4,22 +4,19 @@ public abstract class StorageNode(
     string name, int offset = 0, int? storageOccupied = null, int? index = null
 ) : IStorageNode
 {
-    private readonly int _offset = offset;
-    
     public string Name { get; private init; } = name;
-
-    public StorageAlias? Alias { get; internal set; } = null;
-
-    public int Offset => Alias?.Target.Offset ?? _offset;
-
-    public int? StorageOccupied { get; private init; } = storageOccupied;
 
     public int? Index { get; } = index;
 
-    public virtual IReadOnlyList<IStorageNode> Children => [];
+    // ----------------------------
+    // Alias and Offset (For implementing REDEFINES)
+    // ----------------------------
+
+    public StorageAlias? Alias { get; internal set; } = null;
 
     public virtual void SetAlias(IStorageNode target)
     {
+        // Note: 不知道 COBOL Runtime 本身會不會檢查
         if (StorageOccupied.HasValue && 
             target.StorageOccupied.HasValue &&
             StorageOccupied.Value > target.StorageOccupied.Value)
@@ -30,6 +27,30 @@ public abstract class StorageNode(
         Alias = new StorageAlias(target);
     }
 
+    private readonly int _offset = offset;
+
+    public int Offset => Alias?.Target.Offset ?? _offset;
+
+    // ----------------------------
+    // Storage Occupied
+    // ----------------------------
+
+    public int? StorageOccupied { get; } = storageOccupied;
+
+    // ----------------------------
+    // Node Operations 
+    // ----------------------------
+
+    private readonly List<IStorageNode> _children = [];
+
+    public virtual IReadOnlyList<IStorageNode> Children => _children;
+
+    public void AddNode(IStorageNode node)
+    {
+        ArgumentNullException.ThrowIfNull(node);
+
+        _children.Add(node);
+    }
 
     // ----------------------------
     // Dump
@@ -37,17 +58,12 @@ public abstract class StorageNode(
 
     public abstract void Dump(TextWriter writer, int indent = 0);
 
-    private protected static string Indent(int i) => new(' ', i * 2);
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="writer"></param>   
-    /// <param name="indent"></param>
     protected void DumpBase(TextWriter writer, int indent)
     {
         writer.WriteLine($"{Indent(indent)}{Name}{FormatIndex()}{FormatOffset()}{FormatOccupied()}");
     }
+
+    protected static string Indent(int i) => new(' ', i * 2);
 
     protected string FormatIndex() => Index.HasValue ? $"({Index.Value})" : "";
     
