@@ -1,5 +1,12 @@
 # Changelog
 
+## [26.10.3] – 2026-02-07
+
+### Added
+- Benchmarks
+
+<br><br>
+
 ## [26.10.2] – 2026-02-06
 
 ### Changed
