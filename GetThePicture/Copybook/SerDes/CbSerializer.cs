@@ -69,7 +69,11 @@ public class CbSerializer
                 if (bytes.Length != occupied)
                     throw new InvalidOperationException($"Field '{path}' encoded length mismatch. Expected {occupied}, got {bytes.Length}");
 
-                Buffer.BlockCopy(bytes, 0, buffer, node.Offset, occupied);
+                Buffer.BlockCopy(
+                    bytes, 0,               // src
+                    buffer, node.Offset,    // dst
+                    occupied                // count
+                );
             }
         }
     }
@@ -96,6 +100,7 @@ public class CbSerializer
                 {
                     foreach (var child in root.Children)
                     {
+                        // Note: 目前不處理 REDEFINES，這邊不適合做靈活變動
                         if (child.IsAlias) continue;
                     
                         // COPYBOOK-STORAGE-MAP 要排除
@@ -110,6 +115,7 @@ public class CbSerializer
                     
                     foreach (var child in group.Children)
                     {
+                        // Note: 目前不處理 REDEFINES，這邊不適合做靈活變動
                         if (child.IsAlias) continue;
                     
                         Walk(child, groupPath);
