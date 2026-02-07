@@ -45,6 +45,11 @@ TestResults/
 coverage/
 
 # =========================
+# BenchmarkDotNet
+# =========================
+BenchmarkDotNet.Artifacts
+
+# =========================
 # drawio
 # =========================
 *.bkp
