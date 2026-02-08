@@ -93,7 +93,7 @@ public abstract class CbWarpper : IWarpper
     {
         var buffer = _raw.AsSpan(addr.Start, addr.Length);
 
-        object? value = PicClauseCodec.ForMeta(addr.Meta).Decode(buffer);
+        object? value = PicClauseCodec.ForMeta(addr.Meta).WithStrict().Decode(buffer);
         return value;
     }
 
