@@ -24,6 +24,8 @@ public class CbSerDesTest
 
         Assert.AreEqual(100, provider.GetLayout().StorageOccupied);
 
+        // provider.GetStorage().Dump(Console.Out);
+
         using var reader = new StreamReader(@"TestData/twse/t30-otc-lite.dat", cp950);
 
         // 用 StreamReader() 處理帶有換行符號的資料
