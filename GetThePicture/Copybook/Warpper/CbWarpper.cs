@@ -49,21 +49,17 @@ public abstract class CbWarpper : IWarpper
     }
 
     // ----------------------------
-    // WarpperBase
+    // Warpper
     // ----------------------------
 
-    /// <summary>用既有 buffer 建構</summary>
-    public CbWarpper(byte[] raw)
+    public CbWarpper(byte[]? raw = null)
     {
-        _raw = (byte[])raw.Clone();
+        _raw = raw is null ? new byte[RequiredBufferLength] : (byte[])raw.Clone();
+
+        ValidateLayout();
     }
 
-    /// <summary>建構新 buffer</summary>
-    public CbWarpper(int length)
-    {
-        _raw = new byte[length];
-    }
-
+    // (真身)
     private readonly byte[] _raw;
 
     /// <summary>
@@ -71,8 +67,29 @@ public abstract class CbWarpper : IWarpper
     /// </summary>
     protected abstract Dictionary<string, CbAddress> AddressMap { get; }
 
+    /// <summary>
+    /// 計算 Copybook 佈局所需的最小 Raw buffer 長度。 <br/>
+    /// 以最大欄位的 (Start + Length) 為基準，
+    /// Start 為 1-based，因此需扣除 1。
+    /// </summary>
+    protected int RequiredBufferLength => AddressMap.Values.Max(a => a.Start + a.Length) - 1; // 1-based
+
+    /// <summary>
+    /// 驗證目前 Raw buffer 是否足以容納整個 Copybook 佈局 (AddressMap)。 <br/>
+    /// 若長度不足，代表資料不完整或 Copybook 定義錯誤。
+    /// </summary>
+    protected void ValidateLayout()
+    {
+        int required = RequiredBufferLength;
+
+        if (_raw.Length < required)
+        {
+            throw new InvalidOperationException($"Raw length {_raw.Length} is smaller than required {required}.");
+        }
+    }
+
     /// <summary>讀取欄位值 (零複製)</summary>
-    object? Read(CbAddress addr)
+    protected object? Read(CbAddress addr)
     {
         var buffer = _raw.AsSpan(addr.Start, addr.Length);
 
@@ -81,7 +98,7 @@ public abstract class CbWarpper : IWarpper
     }
 
     /// <summary>寫入欄位值 (零複製)</summary>
-    int Write(object value, CbAddress addr)
+    protected int Write(object value, CbAddress addr)
     {
         Span<byte> bytes = PicClauseCodec.ForMeta(addr.Meta).WithStrict().Encode(value);
 

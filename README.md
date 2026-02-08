@@ -85,7 +85,125 @@ Copybook 通常包含：
 
 <br>
 
-## Copybook SerDes
+## Copybook Warpper
+
+Copybook Warpper 是一個 Raw Buffer 層級的存取工具。提供**欄位級別抽象存取**，不需要傳統的 DTO 或序列化/反序列化過程。
+
+![work flow](docs/get-the-picture/warpper-work-flow.png)  
+
+Warpper vs SerDes  
+| 功能         | SerDes       | Warpper                      |
+| ---------- | --------------- | ------------------------------- |
+| Raw ↔ 物件   | Yes, 一次性 DTO    | 不需要 DTO，直接欄位級存取                 |
+| 欄位抽象化      | No / 需要 mapping | Yes，靠 `CbAddress` + indexer/屬性 |
+| Memory 複製  | 全部複製            | 幾乎零複製，Span 直接操作 Raw             |
+| 動態欄位讀寫     | 一般不方便           | 內建 indexer 或強型別屬性               |
+| 物件圖 / 狀態管理 | Yes             | No，Raw 是唯一來源                    |
+
+<br>
+
+### 使用方式
+資料物件需**繼承**核心物件 `CbWarpper`，根據 Copybook 定義，透過 `CbAddress` 設定每個欄位的起始位置、長度及格式。  
+- 可透過 indexer 或 **強型別屬性**存取欄位
+- 支援即時驗證 Raw Buffer 長度是否符合欄位配置
+
+<br>
+
+- 程式碼範例：櫃買中心 T30 漲跌幅度資料
+    ```csharp
+    const string s = "11011 00106600000096950000087300020251219000000  0台泥一永        000000000000000000000 0           ";
+
+    byte[] raw = cp950.GetBytes(s);
+            
+    var T30 = new T30_t(raw);
+
+    Console.WriteLine(T30.StockNo);   // "11011"
+    Console.WriteLine(T30.BullPrice); // 106.6m
+    Console.WriteLine(T30.StockName); // "台泥一永"
+    ```
+
+    <br>
+
+    <details>
+        <summary>T30_t</summary>
+
+    ```csharp
+    public class T30_t(byte[] raw) : CbWarpper(raw)
+    {
+        // ----------------------------
+        // Copybook Address Map
+        // ----------------------------
+
+        protected override Dictionary<string, CbAddress> AddressMap { get; } = new Dictionary<string, CbAddress>
+        {
+            ["STOCK-NO"]      = new CbAddress( 1, 6, "X(6)"),
+            ["BULL-PRICE"]    = new CbAddress( 7, 9, "9(5)V9(4)"),
+            ["LDC-PRICE"]     = new CbAddress(16, 9, "9(5)V9(4)"),
+            ["BEAR-PRICE"]    = new CbAddress(25, 9, "9(5)V9(4)"),
+            ["LAST-MTH-DATE"] = new CbAddress(34, 8, "9(8)"),
+            ["SETTYPE"]       = new CbAddress(42, 1, "X(01)"),
+            ["MARK-W"]        = new CbAddress(43, 1, "X(01)"),
+            ["MARK-P"]        = new CbAddress(44, 1, "X(01)"),
+            ["MARK-L"]        = new CbAddress(45, 1, "X(01)"),
+            ["IND-CODE"]      = new CbAddress(46, 2, "X(02)"),
+            ["IND-SUB-CODE"]  = new CbAddress(48, 2, "X(02)"),
+            ["MARK-M"]        = new CbAddress(50, 1, "X(01)"),
+            ["STOCK-NAME"]    = new CbAddress(51,16, "X(16)"),
+            // MARK-W
+                ["MATCH-INTERVAL"] = new CbAddress(67, 3, "9(03)"),
+                ["ORDER-LIMIT"]    = new CbAddress(70, 6, "9(06)"),
+                ["ORDERS-LIMIT"]   = new CbAddress(76, 6, "9(06)"),
+                ["PREPAY-RATE"]    = new CbAddress(82, 3, "9(03)"),
+            ["MARK-S"]        = new CbAddress(85, 1, "X(01)"),
+            ["STK-MARK"]      = new CbAddress(86, 1, "X(01)"),
+            ["MARK-F"]        = new CbAddress(87, 1, "X(01)"),
+            ["MARK-DAY-TRADE"]= new CbAddress(88, 1, "X(01)"),
+            ["STK-CTGCD"]     = new CbAddress(89, 1, "X(01)"),
+            ["FILLER"]        = new CbAddress(90,11, "X(11)"),
+        };
+
+        // ----------------------------
+        // 強型別屬性
+        // ----------------------------
+
+        public string StockNo
+        {
+            get => (string)this["STOCK-NO"]!;
+            set => this["STOCK-NO"] = value;
+        }
+
+        public decimal BullPrice
+        {
+            get => (decimal)this["BULL-PRICE"]!;
+            set => this["BULL-PRICE"] = value;
+        }
+
+        public decimal LdcPrice
+        {
+            get => (decimal)this["LDC-PRICE"]!;
+            set => this["LDC-PRICE"] = value;
+        }
+
+        public decimal BearPrice
+        {
+            get => (decimal)this["BEAR-PRICE"]!;
+            set => this["BEAR-PRICE"] = value;
+        }
+
+        // (略...)
+    }
+    ```
+
+    </details>
+
+<br>
+
+📖 更多關於 [Copybook Compiler](docs/get-the-picture/copybook/compiler.md) ...  
+📖 更多關於 [Copybook Resolver](docs/get-the-picture/copybook/resolver.md) ...  
+
+<br><br>
+
+## Copybook SerDes (⚠️Obsolete)
 SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）的合稱，用於資料在不同系統或存儲之間的轉換。  
 
 <br>
@@ -122,35 +240,36 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
     <details>
         <summary>輸出結果：</summary>
 
-        ```shell
-        ...
-        ==== Record ====
-        STOCK-NO: 19094
-        BULL-PRICE: 105.80000
-        LDC-PRICE: 96.20000
-        BEAR-PRICE: 86.60000
-        LAST-MTH-DATE: 20251111
-        SETTYPE: 0
-        MARK-W: 0
-        MARK-P: 0
-        MARK-L: 0
-        IND-CODE: 00
-        IND-SUB-CODE: 
-        MARK-M: 0
-        STOCK-NAME: 榮成四
-        MARK-W-DETAILS:
-        MATCH-INTERVAL: 0
-        ORDER-LIMIT: 0
-        ORDERS-LIMIT: 0
-        PREPAY-RATE: 0
-        MARK-S: 0
-        STK-MARK: 0
-        MARK-F: 0
-        MARK-DAY-TRADE: 
-        STK-CTGCD: 0
-        ================
-        ...
-        ```
+    ```shell
+    ...
+    ==== Record ====
+    STOCK-NO: 19094
+    BULL-PRICE: 105.80000
+    LDC-PRICE: 96.20000
+    BEAR-PRICE: 86.60000
+    LAST-MTH-DATE: 20251111
+    SETTYPE: 0
+    MARK-W: 0
+    MARK-P: 0
+    MARK-L: 0
+    IND-CODE: 00
+    IND-SUB-CODE: 
+    MARK-M: 0
+    STOCK-NAME: 榮成四
+    MARK-W-DETAILS:
+    MATCH-INTERVAL: 0
+    ORDER-LIMIT: 0
+    ORDERS-LIMIT: 0
+    PREPAY-RATE: 0
+    MARK-S: 0
+    STK-MARK: 0
+    MARK-F: 0
+    MARK-DAY-TRADE: 
+    STK-CTGCD: 0
+    ================
+    ...
+    ```
+        
     </details>
 
     <br>
@@ -171,11 +290,6 @@ SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）
 <br>
 
 **SerDes** 的相關使用範例位於 [CbSerDesTest.cs](GetThePicture.Tests/Copybook/SerDes/CbSerDesTest.cs) 內有標記 `[TestCategory("Demo")]` 的測試項目中。
-
-<br>
-
-📖 更多關於 [Copybook Compiler](docs/get-the-picture/copybook/compiler.md) ...  
-📖 更多關於 [Copybook Resolver](docs/get-the-picture/copybook/resolver.md) ...  
 
 <br>
 
@@ -446,15 +560,19 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
   DefaultJob : .NET 8.0.23 (8.0.23, 8.0.2325.60607), X64 RyuJIT x86-64-v3
 ```
 
-| Method                | Mean     | Error   | StdDev  |
-|---------------------- |---------:|--------:|--------:|
-| Deserialize           | 174.9 μs | 1.05 μs | 0.98 μs |
-| Serialize             | 202.0 μs | 3.73 μs | 3.49 μs |
-| Deserialize_Serialize | 382.7 μs | 6.18 μs | 5.48 μs |
+| Method                | Mean       | Error     | StdDev    |
+|---------------------- |-----------:|----------:|----------:|
+| Deserialize           | 173.918 μs | 0.7304 μs | 0.6832 μs |
+| Serialize             | 193.912 μs | 0.9445 μs | 0.8835 μs |
+| Deserialize_Serialize | 384.769 μs | 3.8755 μs | 3.4355 μs |
+| Warpper_Read          |   4.676 μs | 0.0622 μs | 0.0582 μs |
+| Warpper_Write         |   4.752 μs | 0.0336 μs | 0.0298 μs |
+
 
 <br>
 
-> ⚠️ T30 的資料內沒有進行 `COMP`，目前的跑分算是 Best Case。
+> ⚠️ T30 的資料內沒有進行 `COMP`，目前的跑分算是 Best Case。  
+> ⚠️ Warpper 只做**單筆欄位**讀取，不過 SerDes 除上 24 個取平均，保守推算大約還是有 `2 μs` 的差距。  
 
 <br><br>
 

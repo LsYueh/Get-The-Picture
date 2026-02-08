@@ -4,6 +4,10 @@ using GetThePicture.Copybook.SerDes.Provider;
 
 namespace GetThePicture.Copybook.SerDes;
 
+/// <summary>
+/// 已棄用：SerDes 功能已被 Warpper 取代，請改使用 CbWarpper。
+/// </summary>
+[Obsolete("已棄用，請使用 CbWarpper 讀寫 Raw Buffer", false)]
 public sealed class CbSerDes
 {
     private readonly CbStorage _storage;

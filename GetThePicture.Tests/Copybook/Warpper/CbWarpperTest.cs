@@ -5,15 +5,11 @@ using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Tests.Copybook.Warpper;
 
-public class T30_t : CbWarpper
+public class T30_t(byte[] raw) : CbWarpper(raw)
 {
-    public T30_t(byte[] raw) : base(raw)
-    {
-    }
-
-    public T30_t(int length) : base(length)
-    {
-    }
+    // ----------------------------
+    // Copybook Address Map
+    // ----------------------------
 
     protected override Dictionary<string, CbAddress> AddressMap { get; } = new Dictionary<string, CbAddress>
     {
@@ -42,6 +38,36 @@ public class T30_t : CbWarpper
         ["STK-CTGCD"]     = new CbAddress(89, 1, "X(01)"),
         ["FILLER"]        = new CbAddress(90,11, "X(11)"),
     };
+
+    // ----------------------------
+    // 強型別屬性
+    // ----------------------------
+
+    public string StockNo
+    {
+        get => (string)this["STOCK-NO"]!;
+        set => this["STOCK-NO"] = value;
+    }
+
+    public decimal BullPrice
+    {
+        get => (decimal)this["BULL-PRICE"]!;
+        set => this["BULL-PRICE"] = value;
+    }
+
+    public decimal LdcPrice
+    {
+        get => (decimal)this["LDC-PRICE"]!;
+        set => this["LDC-PRICE"] = value;
+    }
+
+    public decimal BearPrice
+    {
+        get => (decimal)this["BEAR-PRICE"]!;
+        set => this["BEAR-PRICE"] = value;
+    }
+
+    // ...
 }
 
 [TestClass]
@@ -54,15 +80,16 @@ public class CbWarpperTest
     public void Warpper_T30_Test()
     {
         const string before = "11011 00106600000096950000087300020251219000000  0台泥一永        000000000000000000000 0           ";
-        const string after  = "11011 00106600000096950000087300020251219000000  0台泥一永        000000000000000000000X0           ";
+        const string after  = "2330  00106600000096950000087300020251219000000  0台泥一永        000000000000000000000X0           ";
         
         byte[] raw = cp950.GetBytes(before);
         
         var T30 = new T30_t(raw);
 
-        Assert.AreEqual("11011", T30["STOCK-NO"]);
-        Assert.AreEqual(106.6m, T30["BULL-PRICE"]);
-        Assert.AreEqual(96.95m, T30["LDC-PRICE"]);
+        Assert.AreEqual("11011", T30.StockNo);
+        Assert.AreEqual(106.6m, T30.BullPrice);
+        Assert.AreEqual(96.95m, T30.LdcPrice);
+        Assert.AreEqual(87.3m, T30.BearPrice);
         Assert.AreEqual((UInt32) 20251219, T30["LAST-MTH-DATE"]);
         Assert.AreEqual("0", T30["SETTYPE"]);
         Assert.AreEqual("0", T30["MARK-W"]);
@@ -83,6 +110,7 @@ public class CbWarpperTest
         Assert.AreEqual("0", T30["STK-CTGCD"]);
         Assert.AreEqual("", T30["FILLER"]);
 
+        T30.StockNo = "2330";
         T30["MARK-DAY-TRADE"] = "X";
 
         Assert.AreEqual("X", T30["MARK-DAY-TRADE"]);
