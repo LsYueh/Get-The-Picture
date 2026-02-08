@@ -8,7 +8,7 @@ namespace GetThePicture.Picture.Clause.Base;
 
 internal static partial class PicMetaBuilder
 {
-    public static PicMeta Parse(string symbols, PicSemantic semantic = PicSemantic.None, PicUsage Usage = PicUsage.Display)
+    public static PicMeta Parse(string symbols, PicSemantic semantic = PicSemantic.None, PicUsage usage = PicUsage.Display)
     {
         if (string.IsNullOrWhiteSpace(symbols))
             throw new ArgumentException("PIC clause is empty.");
@@ -26,7 +26,7 @@ internal static partial class PicMetaBuilder
                 Raw           = symbols,
                 BaseClass     = meta.BaseClass,
                 Semantic      = semantic,
-                Usage         = Usage,
+                Usage         = usage,
                 Signed        = meta.Signed,
                 IntegerDigits = meta.IntegerDigits,
                 DecimalDigits = meta.DecimalDigits

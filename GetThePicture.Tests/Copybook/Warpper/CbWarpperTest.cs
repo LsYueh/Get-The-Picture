@@ -1,6 +1,7 @@
 using System.Text;
 using GetThePicture.Copybook.Warpper;
 using GetThePicture.Copybook.Warpper.Base;
+using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Tests.Copybook.Warpper;
@@ -17,7 +18,7 @@ public class T30_t(byte[] raw) : CbWarpper(raw)
         ["BULL-PRICE"]    = new CbAddress( 7, 9, "9(5)V9(4)"),
         ["LDC-PRICE"]     = new CbAddress(16, 9, "9(5)V9(4)"),
         ["BEAR-PRICE"]    = new CbAddress(25, 9, "9(5)V9(4)"),
-        ["LAST-MTH-DATE"] = new CbAddress(34, 8, "9(8)"),
+        ["LAST-MTH-DATE"] = new CbAddress(34, 8, "9(8)", PicSemantic.GregorianDate),
         ["SETTYPE"]       = new CbAddress(42, 1, "X(01)"),
         ["MARK-W"]        = new CbAddress(43, 1, "X(01)"),
         ["MARK-P"]        = new CbAddress(44, 1, "X(01)"),
@@ -67,6 +68,20 @@ public class T30_t(byte[] raw) : CbWarpper(raw)
         set => this["BEAR-PRICE"] = value;
     }
 
+    public DateOnly LastMthDate
+    {
+        get => (DateOnly)this["LAST-MTH-DATE"]!;
+        set => this["LAST-MTH-DATE"] = value;
+    }
+
+    // ...
+
+    public string StockName
+    {
+        get => (string)this["STOCK-NAME"]!;
+        set => this["STOCK-NAME"] = value;
+    }
+
     // ...
 }
 
@@ -80,7 +95,7 @@ public class CbWarpperTest
     public void Warpper_T30_Test()
     {
         const string before = "11011 00106600000096950000087300020251219000000  0台泥一永        000000000000000000000 0           ";
-        const string after  = "2330  00106600000096950000087300020251219000000  0台泥一永        000000000000000000000X0           ";
+        const string after  = "2330  00106600000096950000087300020251114000000  0台積電          000000000000000000000X0           ";
         
         byte[] raw = cp950.GetBytes(before);
         
@@ -90,7 +105,7 @@ public class CbWarpperTest
         Assert.AreEqual(106.6m, T30.BullPrice);
         Assert.AreEqual(96.95m, T30.LdcPrice);
         Assert.AreEqual(87.3m, T30.BearPrice);
-        Assert.AreEqual((UInt32) 20251219, T30["LAST-MTH-DATE"]);
+        Assert.AreEqual(new DateOnly(2025, 12, 19), T30.LastMthDate);
         Assert.AreEqual("0", T30["SETTYPE"]);
         Assert.AreEqual("0", T30["MARK-W"]);
         Assert.AreEqual("0", T30["MARK-P"]);
@@ -98,7 +113,7 @@ public class CbWarpperTest
         Assert.AreEqual("00", T30["IND-CODE"]);
         Assert.AreEqual("", T30["IND-SUB-CODE"]);
         Assert.AreEqual("0", T30["MARK-M"]);
-        Assert.AreEqual("台泥一永", T30["STOCK-NAME"]);
+        Assert.AreEqual("台泥一永", T30.StockName);
         Assert.AreEqual((UInt16) 0, T30["MATCH-INTERVAL"]);
         Assert.AreEqual((UInt32) 0, T30["ORDER-LIMIT"]);
         Assert.AreEqual((UInt32) 0, T30["ORDERS-LIMIT"]);
@@ -111,9 +126,9 @@ public class CbWarpperTest
         Assert.AreEqual("", T30["FILLER"]);
 
         T30.StockNo = "2330";
+        T30.LastMthDate = new DateOnly(2025, 11, 14);
+        T30.StockName = "台積電";
         T30["MARK-DAY-TRADE"] = "X";
-
-        Assert.AreEqual("X", T30["MARK-DAY-TRADE"]);
 
         var str = cp950.GetString(T30.Raw);
 

@@ -118,8 +118,8 @@ Warpper vs SerDes
     var T30 = new T30_t(raw);
 
     Console.WriteLine(T30.StockNo);   // "11011"
-    Console.WriteLine(T30.BullPrice); // 106.6m
     Console.WriteLine(T30.StockName); // "台泥一永"
+    Console.WriteLine(T30.LastMthDate); // "2025-12-19"
     ```
 
     <br>
@@ -140,7 +140,7 @@ Warpper vs SerDes
             ["BULL-PRICE"]    = new CbAddress( 7, 9, "9(5)V9(4)"),
             ["LDC-PRICE"]     = new CbAddress(16, 9, "9(5)V9(4)"),
             ["BEAR-PRICE"]    = new CbAddress(25, 9, "9(5)V9(4)"),
-            ["LAST-MTH-DATE"] = new CbAddress(34, 8, "9(8)"),
+            ["LAST-MTH-DATE"] = new CbAddress(34, 8, "9(8)", PicSemantic.GregorianDate),
             ["SETTYPE"]       = new CbAddress(42, 1, "X(01)"),
             ["MARK-W"]        = new CbAddress(43, 1, "X(01)"),
             ["MARK-P"]        = new CbAddress(44, 1, "X(01)"),
@@ -188,6 +188,12 @@ Warpper vs SerDes
         {
             get => (decimal)this["BEAR-PRICE"]!;
             set => this["BEAR-PRICE"] = value;
+        }
+
+        public DateOnly LastMthDate
+        {
+            get => (DateOnly)this["LAST-MTH-DATE"]!;
+            set => this["LAST-MTH-DATE"] = value;
         }
 
         // (略...)
