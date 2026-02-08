@@ -87,11 +87,13 @@ Copybook 通常包含：
 
 ## Copybook Warpper
 
-Copybook Warpper 是一個 Raw Buffer 層級的存取工具。提供**欄位級別抽象存取**，不需要傳統的 DTO 或序列化/反序列化過程。
+Copybook Warpper 是一個 Raw Buffer 層級的存取工具。提供**欄位級別抽象存取**，不需要傳統的 DTO（`Data Transfer Object`，資料傳輸物件）或序列化/反序列化過程。
 
 ![work flow](docs/get-the-picture/warpper-work-flow.png)  
 
-Warpper vs SerDes  
+<details>
+    <summary>Warpper vs SerDes</summary>
+
 | 功能         | SerDes       | Warpper                      |
 | ---------- | --------------- | ------------------------------- |
 | Raw ↔ 物件   | Yes, 一次性 DTO    | 不需要 DTO，直接欄位級存取                 |
@@ -99,6 +101,8 @@ Warpper vs SerDes
 | Memory 複製  | 全部複製            | 幾乎零複製，Span 直接操作 Raw             |
 | 動態欄位讀寫     | 一般不方便           | 內建 indexer 或強型別屬性               |
 | 物件圖 / 狀態管理 | Yes             | No，Raw 是唯一來源                    |
+
+</details>
 
 <br>
 
@@ -109,98 +113,99 @@ Warpper vs SerDes
 
 <br>
 
-- 程式碼範例：櫃買中心 T30 漲跌幅度資料
-    ```csharp
-    const string s = "11011 00106600000096950000087300020251219000000  0台泥一永        000000000000000000000 0           ";
+程式碼範例：櫃買中心 T30 漲跌幅度資料  
 
-    byte[] raw = cp950.GetBytes(s);
-            
-    var T30 = new T30_t(raw);
+```csharp
+const string s = "11011 00106600000096950000087300020251219000000  0台泥一永        000000000000000000000 0           ";
 
-    Console.WriteLine(T30.StockNo);   // "11011"
-    Console.WriteLine(T30.StockName); // "台泥一永"
-    Console.WriteLine(T30.LastMthDate); // "2025-12-19"
-    ```
+byte[] raw = cp950.GetBytes(s);
+        
+var T30 = new T30_t(raw);
 
-    <br>
+Console.WriteLine(T30.StockNo);   // "11011"
+Console.WriteLine(T30.StockName); // "台泥一永"
+Console.WriteLine(T30.LastMthDate); // "2025-12-19"
+```
 
-    <details>
-        <summary>T30_t</summary>
+<br>
 
-    ```csharp
-    public class T30_t(byte[] raw) : CbWarpper(raw)
+<details>
+    <summary>T30_t</summary>
+
+```csharp
+public class T30_t(byte[] raw) : CbWarpper(raw)
+{
+    // ----------------------------
+    // Copybook Address Map
+    // ----------------------------
+
+    protected override Dictionary<string, CbAddress> AddressMap { get; } = new Dictionary<string, CbAddress>
     {
-        // ----------------------------
-        // Copybook Address Map
-        // ----------------------------
+        ["STOCK-NO"]      = new CbAddress( 1, 6, "X(6)"),
+        ["BULL-PRICE"]    = new CbAddress( 7, 9, "9(5)V9(4)"),
+        ["LDC-PRICE"]     = new CbAddress(16, 9, "9(5)V9(4)"),
+        ["BEAR-PRICE"]    = new CbAddress(25, 9, "9(5)V9(4)"),
+        ["LAST-MTH-DATE"] = new CbAddress(34, 8, "9(8)", PicSemantic.GregorianDate), // 用語意方式轉換
+        ["SETTYPE"]       = new CbAddress(42, 1, "X(01)"),
+        ["MARK-W"]        = new CbAddress(43, 1, "X(01)"),
+        ["MARK-P"]        = new CbAddress(44, 1, "X(01)"),
+        ["MARK-L"]        = new CbAddress(45, 1, "X(01)"),
+        ["IND-CODE"]      = new CbAddress(46, 2, "X(02)"),
+        ["IND-SUB-CODE"]  = new CbAddress(48, 2, "X(02)"),
+        ["MARK-M"]        = new CbAddress(50, 1, "X(01)"),
+        ["STOCK-NAME"]    = new CbAddress(51,16, "X(16)"),
+        // MARK-W
+            ["MATCH-INTERVAL"] = new CbAddress(67, 3, "9(03)"),
+            ["ORDER-LIMIT"]    = new CbAddress(70, 6, "9(06)"),
+            ["ORDERS-LIMIT"]   = new CbAddress(76, 6, "9(06)"),
+            ["PREPAY-RATE"]    = new CbAddress(82, 3, "9(03)"),
+        ["MARK-S"]        = new CbAddress(85, 1, "X(01)"),
+        ["STK-MARK"]      = new CbAddress(86, 1, "X(01)"),
+        ["MARK-F"]        = new CbAddress(87, 1, "X(01)"),
+        ["MARK-DAY-TRADE"]= new CbAddress(88, 1, "X(01)"),
+        ["STK-CTGCD"]     = new CbAddress(89, 1, "X(01)"),
+        ["FILLER"]        = new CbAddress(90,11, "X(11)"),
+    };
 
-        protected override Dictionary<string, CbAddress> AddressMap { get; } = new Dictionary<string, CbAddress>
-        {
-            ["STOCK-NO"]      = new CbAddress( 1, 6, "X(6)"),
-            ["BULL-PRICE"]    = new CbAddress( 7, 9, "9(5)V9(4)"),
-            ["LDC-PRICE"]     = new CbAddress(16, 9, "9(5)V9(4)"),
-            ["BEAR-PRICE"]    = new CbAddress(25, 9, "9(5)V9(4)"),
-            ["LAST-MTH-DATE"] = new CbAddress(34, 8, "9(8)", PicSemantic.GregorianDate),
-            ["SETTYPE"]       = new CbAddress(42, 1, "X(01)"),
-            ["MARK-W"]        = new CbAddress(43, 1, "X(01)"),
-            ["MARK-P"]        = new CbAddress(44, 1, "X(01)"),
-            ["MARK-L"]        = new CbAddress(45, 1, "X(01)"),
-            ["IND-CODE"]      = new CbAddress(46, 2, "X(02)"),
-            ["IND-SUB-CODE"]  = new CbAddress(48, 2, "X(02)"),
-            ["MARK-M"]        = new CbAddress(50, 1, "X(01)"),
-            ["STOCK-NAME"]    = new CbAddress(51,16, "X(16)"),
-            // MARK-W
-                ["MATCH-INTERVAL"] = new CbAddress(67, 3, "9(03)"),
-                ["ORDER-LIMIT"]    = new CbAddress(70, 6, "9(06)"),
-                ["ORDERS-LIMIT"]   = new CbAddress(76, 6, "9(06)"),
-                ["PREPAY-RATE"]    = new CbAddress(82, 3, "9(03)"),
-            ["MARK-S"]        = new CbAddress(85, 1, "X(01)"),
-            ["STK-MARK"]      = new CbAddress(86, 1, "X(01)"),
-            ["MARK-F"]        = new CbAddress(87, 1, "X(01)"),
-            ["MARK-DAY-TRADE"]= new CbAddress(88, 1, "X(01)"),
-            ["STK-CTGCD"]     = new CbAddress(89, 1, "X(01)"),
-            ["FILLER"]        = new CbAddress(90,11, "X(11)"),
-        };
+    // ----------------------------
+    // 強型別屬性
+    // ----------------------------
 
-        // ----------------------------
-        // 強型別屬性
-        // ----------------------------
-
-        public string StockNo
-        {
-            get => (string)this["STOCK-NO"]!;
-            set => this["STOCK-NO"] = value;
-        }
-
-        public decimal BullPrice
-        {
-            get => (decimal)this["BULL-PRICE"]!;
-            set => this["BULL-PRICE"] = value;
-        }
-
-        public decimal LdcPrice
-        {
-            get => (decimal)this["LDC-PRICE"]!;
-            set => this["LDC-PRICE"] = value;
-        }
-
-        public decimal BearPrice
-        {
-            get => (decimal)this["BEAR-PRICE"]!;
-            set => this["BEAR-PRICE"] = value;
-        }
-
-        public DateOnly LastMthDate
-        {
-            get => (DateOnly)this["LAST-MTH-DATE"]!;
-            set => this["LAST-MTH-DATE"] = value;
-        }
-
-        // (略...)
+    public string StockNo
+    {
+        get => (string)this["STOCK-NO"]!;
+        set => this["STOCK-NO"] = value;
     }
-    ```
 
-    </details>
+    public decimal BullPrice
+    {
+        get => (decimal)this["BULL-PRICE"]!;
+        set => this["BULL-PRICE"] = value;
+    }
+
+    public decimal LdcPrice
+    {
+        get => (decimal)this["LDC-PRICE"]!;
+        set => this["LDC-PRICE"] = value;
+    }
+
+    public decimal BearPrice
+    {
+        get => (decimal)this["BEAR-PRICE"]!;
+        set => this["BEAR-PRICE"] = value;
+    }
+
+    public DateOnly LastMthDate
+    {
+        get => (DateOnly)this["LAST-MTH-DATE"]!;
+        set => this["LAST-MTH-DATE"] = value;
+    }
+
+    // (略...)
+}
+```
+
+</details>
 
 <br>
 
