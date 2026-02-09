@@ -9,6 +9,8 @@ namespace GetThePicture.Picture.Clause.Base.Overpunch;
 /// </summary>
 public static class OpCodec
 {
+    private static readonly Encoding cp950 = Utils.EncodingFactory.CP950;
+
     /// <summary>
     /// PIC 9/S9 → 符號(sign)與數字文(numeric)
     /// </summary>
@@ -44,7 +46,6 @@ public static class OpCodec
 
         EnsureAllAsciiDigits(buffer);
 
-        Encoding cp950 = Utils.EncodingFactory.CP950;
         string numeric = cp950.GetString(buffer); // 數字文
 
         return numeric;
@@ -60,8 +61,6 @@ public static class OpCodec
     /// <returns></returns>
     public static byte[] Encode(decimal sign, string numeric, PicMeta pic, CodecOptions options)
     {
-        Encoding cp950 = Utils.EncodingFactory.CP950;
-
         byte[] buffer = cp950.GetBytes(numeric);
 
         EnsureAllAsciiDigits(buffer);

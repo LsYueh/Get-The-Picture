@@ -9,6 +9,8 @@ namespace GetThePicture.Tests.Picture.Clause.Decoder.Category;
 [TestClass]
 public class AlphabeticDecoderTest
 {
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+    
     [TestMethod]
     public void Decode_Alphabetic_TrimsRightSpaces()
     {
@@ -61,7 +63,6 @@ public class AlphabeticDecoderTest
     {
         var pic = PicMeta.Parse("A(7)");
 
-        Encoding cp950 = EncodingFactory.CP950;
         byte[] buffer = cp950.GetBytes("中文字 ");
 
         PicClauseCodec.ForMeta(pic).Decode(buffer);

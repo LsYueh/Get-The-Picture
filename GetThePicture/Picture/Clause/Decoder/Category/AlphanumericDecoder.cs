@@ -7,6 +7,8 @@ namespace GetThePicture.Picture.Clause.Decoder.Category;
 
 internal static class AlphanumericDecoder
 {
+    private static readonly Encoding cp950 = Utils.EncodingFactory.CP950;
+    
     /// <summary>
     /// Decoder for COBOL PIC X.
     /// </summary>
@@ -17,8 +19,6 @@ internal static class AlphanumericDecoder
     {
         if (pic.Usage != PicUsage.Display)
             throw new NotSupportedException($"PIC X does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-
-        Encoding cp950 = Utils.EncodingFactory.CP950;
 
         // X(n) 通常右補空白
         ReadOnlySpan<byte> fieldBytes = Utils.BufferSlice.SlicePadEnd(buffer, pic.DigitCount);
