@@ -45,6 +45,18 @@ class Program
 
         var provider = new DataProvider(new StreamReader(opts.Copybook.FullName, CP950));
 
+        if (opts.Verbose) {
+            Console.WriteLine("==== LAYOUT ====");
+            provider.GetLayout().Dump(Console.Out);
+            Console.WriteLine("================");
+            Console.WriteLine();
+
+            Console.WriteLine("==== Storage ====");
+            provider.GetStorage().Dump(Console.Out);
+            Console.WriteLine("================");
+            Console.WriteLine();
+        }
+
         string fileName = NamingHelper.ToPascalCase(Path.GetFileNameWithoutExtension(opts.Copybook.FullName));
         
         cmd.ForgeCode(provider, fileName);
