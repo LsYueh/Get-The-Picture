@@ -204,7 +204,7 @@ public class WarpperCommand(WarpperOptions? opts = null)
 
         Type GetNumericType(PicMeta pic)
         {
-            var obj = NumericDecoder.ConvertToClr(1m, pic);
+            var obj = (pic.DecimalDigits != 0) ? 1m : NumericDecoder.ConvertToClr(1m, pic);
 
             return obj.GetType();
         }

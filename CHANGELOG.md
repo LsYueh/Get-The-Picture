@@ -1,5 +1,12 @@
 # Changelog
 
+## [26.11.1] – 2026-02-09
+
+### Bugfix
+- 修正 Forge 在 CLR 型別轉錯的問題。
+
+<br><br>
+
 ## [26.11.0] – 2026-02-09
 
 ### ⚠️ Breaking Changes

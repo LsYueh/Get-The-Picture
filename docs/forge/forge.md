@@ -34,28 +34,28 @@ public class T30Otc_t(byte[] raw) : CbWarpper(raw)
 
     protected override Dictionary<string, CbAddress> AddressMap { get; } = new Dictionary<string, CbAddress>
     {
-        ["STOCK-NO"]                       = new CbAddress(   1,   6, "X(6)"),
-        ["BULL-PRICE"]                     = new CbAddress(   7,   9, "9(5)V9(4)"),
-        ["LDC-PRICE"]                      = new CbAddress(  16,   9, "9(5)V9(4)"),
-        ["BEAR-PRICE"]                     = new CbAddress(  25,   9, "9(5)V9(4)"),
-        ["LAST-MTH-DATE"]                  = new CbAddress(  34,   8, "9(8)"),
-        ["SETTYPE"]                        = new CbAddress(  42,   1, "X(01)"),
-        ["MARK-W"]                         = new CbAddress(  43,   1, "X(01)"),
-        ["MARK-P"]                         = new CbAddress(  44,   1, "X(01)"),
-        ["MARK-L"]                         = new CbAddress(  45,   1, "X(01)"),
-        ["IND-CODE"]                       = new CbAddress(  46,   2, "X(02)"),
-        ["IND-SUB-CODE"]                   = new CbAddress(  48,   2, "X(02)"),
-        ["MARK-M"]                         = new CbAddress(  50,   1, "X(01)"),
-        ["STOCK-NAME"]                     = new CbAddress(  51,  16, "X(16)"),
-        ["MARK-W-DETAILS::MATCH-INTERVAL"] = new CbAddress(  67,   3, "9(03)"),
-        ["MARK-W-DETAILS::ORDER-LIMIT"]    = new CbAddress(  70,   6, "9(06)"),
-        ["MARK-W-DETAILS::ORDERS-LIMIT"]   = new CbAddress(  76,   6, "9(06)"),
-        ["MARK-W-DETAILS::PREPAY-RATE"]    = new CbAddress(  82,   3, "9(03)"),
-        ["MARK-S"]                         = new CbAddress(  85,   1, "X(01)"),
-        ["STK-MARK"]                       = new CbAddress(  86,   1, "X(01)"),
-        ["MARK-F"]                         = new CbAddress(  87,   1, "X(01)"),
-        ["MARK-DAY-TRADE"]                 = new CbAddress(  88,   1, "X(01)"),
-        ["STK-CTGCD"]                      = new CbAddress(  89,   1, "X(01)"),
+        ["STOCK-NO"]                       = new CbAddress(   1,   6, "X(6)"), // 股票代號
+        ["BULL-PRICE"]                     = new CbAddress(   7,   9, "9(5)V9(4)"), // 漲停價
+        ["LDC-PRICE"]                      = new CbAddress(  16,   9, "9(5)V9(4)"), // 開盤競價基準
+        ["BEAR-PRICE"]                     = new CbAddress(  25,   9, "9(5)V9(4)"), // 跌停價
+        ["LAST-MTH-DATE"]                  = new CbAddress(  34,   8, "9(8)"), // 上次成交日
+        ["SETTYPE"]                        = new CbAddress(  42,   1, "X(01)"), // 交易方式
+        ["MARK-W"]                         = new CbAddress(  43,   1, "X(01)"), // 處置股票註記
+        ["MARK-P"]                         = new CbAddress(  44,   1, "X(01)"), // 注意股票註記
+        ["MARK-L"]                         = new CbAddress(  45,   1, "X(01)"), // 委託限制註記
+        ["IND-CODE"]                       = new CbAddress(  46,   2, "X(02)"), // 產業別代碼
+        ["IND-SUB-CODE"]                   = new CbAddress(  48,   2, "X(02)"), // 證券別代碼
+        ["MARK-M"]                         = new CbAddress(  50,   1, "X(01)"), // 豁免平盤下融券賣出註記
+        ["STOCK-NAME"]                     = new CbAddress(  51,  16, "X(16)"), // 股票中文名稱
+        ["MARK-W-DETAILS::MATCH-INTERVAL"] = new CbAddress(  67,   3, "9(03)"), // 撮合循環時間（分）
+        ["MARK-W-DETAILS::ORDER-LIMIT"]    = new CbAddress(  70,   6, "9(06)"), // 單筆委託限制數量（張）
+        ["MARK-W-DETAILS::ORDERS-LIMIT"]   = new CbAddress(  76,   6, "9(06)"), // 多筆委託限制數量（張）
+        ["MARK-W-DETAILS::PREPAY-RATE"]    = new CbAddress(  82,   3, "9(03)"), // 款券預收成數（%）
+        ["MARK-S"]                         = new CbAddress(  85,   1, "X(01)"), // 豁免平盤下借券賣出註記
+        ["STK-MARK"]                       = new CbAddress(  86,   1, "X(01)"), // 類股註記
+        ["MARK-F"]                         = new CbAddress(  87,   1, "X(01)"), // 面額註記
+        ["MARK-DAY-TRADE"]                 = new CbAddress(  88,   1, "X(01)"), // 可現股當沖註記
+        ["STK-CTGCD"]                      = new CbAddress(  89,   1, "X(01)"), // 板別註記
         ["FILLER01"]                       = new CbAddress(  90,  11, "X(11)"),
     };
 
@@ -63,139 +63,204 @@ public class T30Otc_t(byte[] raw) : CbWarpper(raw)
     // Strongly Typed Properties
     // ----------------------------
 
+    /// <summary>
+    /// STOCK-NO X(6) : 股票代號
+    /// </summary>
     public string StockNo
     {
         get => (string)this["STOCK-NO"]!;
         set => this["STOCK-NO"] = value;
     }
 
-    public uint BullPrice
+    /// <summary>
+    /// BULL-PRICE 9(5)V9(4) : 漲停價
+    /// </summary>
+    public decimal BullPrice
     {
-        get => (uint)this["BULL-PRICE"]!;
+        get => (decimal)this["BULL-PRICE"]!;
         set => this["BULL-PRICE"] = value;
     }
 
-    public uint LdcPrice
+    /// <summary>
+    /// LDC-PRICE 9(5)V9(4) : 開盤競價基準
+    /// </summary>
+    public decimal LdcPrice
     {
-        get => (uint)this["LDC-PRICE"]!;
+        get => (decimal)this["LDC-PRICE"]!;
         set => this["LDC-PRICE"] = value;
     }
 
-    public uint BearPrice
+    /// <summary>
+    /// BEAR-PRICE 9(5)V9(4) : 跌停價
+    /// </summary>
+    public decimal BearPrice
     {
-        get => (uint)this["BEAR-PRICE"]!;
+        get => (decimal)this["BEAR-PRICE"]!;
         set => this["BEAR-PRICE"] = value;
     }
 
+    /// <summary>
+    /// LAST-MTH-DATE 9(8) : 上次成交日
+    /// </summary>
     public uint LastMthDate
     {
         get => (uint)this["LAST-MTH-DATE"]!;
         set => this["LAST-MTH-DATE"] = value;
     }
 
+    /// <summary>
+    /// SETTYPE X(01) : 交易方式
+    /// </summary>
     public string Settype
     {
         get => (string)this["SETTYPE"]!;
         set => this["SETTYPE"] = value;
     }
 
+    /// <summary>
+    /// MARK-W X(01) : 處置股票註記
+    /// </summary>
     public string MarkW
     {
         get => (string)this["MARK-W"]!;
         set => this["MARK-W"] = value;
     }
 
+    /// <summary>
+    /// MARK-P X(01) : 注意股票註記
+    /// </summary>
     public string MarkP
     {
         get => (string)this["MARK-P"]!;
         set => this["MARK-P"] = value;
     }
 
+    /// <summary>
+    /// MARK-L X(01) : 委託限制註記
+    /// </summary>
     public string MarkL
     {
         get => (string)this["MARK-L"]!;
         set => this["MARK-L"] = value;
     }
 
+    /// <summary>
+    /// IND-CODE X(02) : 產業別代碼
+    /// </summary>
     public string IndCode
     {
         get => (string)this["IND-CODE"]!;
         set => this["IND-CODE"] = value;
     }
 
+    /// <summary>
+    /// IND-SUB-CODE X(02) : 證券別代碼
+    /// </summary>
     public string IndSubCode
     {
         get => (string)this["IND-SUB-CODE"]!;
         set => this["IND-SUB-CODE"] = value;
     }
 
+    /// <summary>
+    /// MARK-M X(01) : 豁免平盤下融券賣出註記
+    /// </summary>
     public string MarkM
     {
         get => (string)this["MARK-M"]!;
         set => this["MARK-M"] = value;
     }
 
+    /// <summary>
+    /// STOCK-NAME X(16) : 股票中文名稱
+    /// </summary>
     public string StockName
     {
         get => (string)this["STOCK-NAME"]!;
         set => this["STOCK-NAME"] = value;
     }
 
+    /// <summary>
+    /// MATCH-INTERVAL 9(03) : 撮合循環時間（分）
+    /// </summary>
     public ushort MarkWDetails_MatchInterval
     {
         get => (ushort)this["MARK-W-DETAILS::MATCH-INTERVAL"]!;
         set => this["MARK-W-DETAILS::MATCH-INTERVAL"] = value;
     }
 
+    /// <summary>
+    /// ORDER-LIMIT 9(06) : 單筆委託限制數量（張）
+    /// </summary>
     public uint MarkWDetails_OrderLimit
     {
         get => (uint)this["MARK-W-DETAILS::ORDER-LIMIT"]!;
         set => this["MARK-W-DETAILS::ORDER-LIMIT"] = value;
     }
 
+    /// <summary>
+    /// ORDERS-LIMIT 9(06) : 多筆委託限制數量（張）
+    /// </summary>
     public uint MarkWDetails_OrdersLimit
     {
         get => (uint)this["MARK-W-DETAILS::ORDERS-LIMIT"]!;
         set => this["MARK-W-DETAILS::ORDERS-LIMIT"] = value;
     }
 
+    /// <summary>
+    /// PREPAY-RATE 9(03) : 款券預收成數（%）
+    /// </summary>
     public ushort MarkWDetails_PrepayRate
     {
         get => (ushort)this["MARK-W-DETAILS::PREPAY-RATE"]!;
         set => this["MARK-W-DETAILS::PREPAY-RATE"] = value;
     }
 
+    /// <summary>
+    /// MARK-S X(01) : 豁免平盤下借券賣出註記
+    /// </summary>
     public string MarkS
     {
         get => (string)this["MARK-S"]!;
         set => this["MARK-S"] = value;
     }
 
+    /// <summary>
+    /// STK-MARK X(01) : 類股註記
+    /// </summary>
     public string StkMark
     {
         get => (string)this["STK-MARK"]!;
         set => this["STK-MARK"] = value;
     }
 
+    /// <summary>
+    /// MARK-F X(01) : 面額註記
+    /// </summary>
     public string MarkF
     {
         get => (string)this["MARK-F"]!;
         set => this["MARK-F"] = value;
     }
 
+    /// <summary>
+    /// MARK-DAY-TRADE X(01) : 可現股當沖註記
+    /// </summary>
     public string MarkDayTrade
     {
         get => (string)this["MARK-DAY-TRADE"]!;
         set => this["MARK-DAY-TRADE"] = value;
     }
 
+    /// <summary>
+    /// STK-CTGCD X(01) : 板別註記
+    /// </summary>
     public string StkCtgcd
     {
         get => (string)this["STK-CTGCD"]!;
         set => this["STK-CTGCD"] = value;
     }
 }
-
 ```
 
 </details>

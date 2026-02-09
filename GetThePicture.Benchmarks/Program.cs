@@ -1,6 +1,7 @@
 ﻿using System.Text;
 
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Engines;
 using BenchmarkDotNet.Running;
 
 using GetThePicture.Copybook.Warpper;
@@ -48,31 +49,32 @@ public class T30_t(byte[] raw) : CbWarpper(raw)
     // 強型別屬性
     // ----------------------------
 
+    /// <summary>
+    /// STOCK-NO X(6) : 股票代號
+    /// </summary>
     public string StockNo
     {
         get => (string)this["STOCK-NO"]!;
         set => this["STOCK-NO"] = value;
     }
 
+    /// <summary>
+    /// BULL-PRICE 9(5)V9(4) : 漲停價
+    /// </summary>
     public decimal BullPrice
     {
         get => (decimal)this["BULL-PRICE"]!;
         set => this["BULL-PRICE"] = value;
     }
 
-    public decimal LdcPrice
+    /// <summary>
+    /// LAST-MTH-DATE 9(8) : 上次成交日
+    /// </summary>
+    public uint LastMthDate
     {
-        get => (decimal)this["LDC-PRICE"]!;
-        set => this["LDC-PRICE"] = value;
+        get => (uint)this["LAST-MTH-DATE"]!;
+        set => this["LAST-MTH-DATE"] = value;
     }
-
-    public decimal BearPrice
-    {
-        get => (decimal)this["BEAR-PRICE"]!;
-        set => this["BEAR-PRICE"] = value;
-    }
-
-    // ...
 }
 
 public class SerDesBenchmark
@@ -82,6 +84,8 @@ public class SerDesBenchmark
     private byte[][] _records = default!;
 
     private T30_t[] _t30s = default!;
+
+    private readonly Consumer consumer = new();
 
     [GlobalSetup]
     public void Setup()
@@ -95,28 +99,81 @@ public class SerDesBenchmark
 
     
     [Benchmark]
-    public void Warpper_Read()
+    public T30_t[] Warpper_Read_String()
     {
-        long hash = 0;
-
         foreach (var t30 in _t30s)
         {
-            var val = t30.StockNo;
-            hash ^= val?.GetHashCode() ?? 0;
+            consumer.Consume(t30.StockNo);
         }
 
-        GC.KeepAlive(hash); // 避免優化
+        var result = _t30s;
+        GC.KeepAlive(result);
+        return result;
     }
 
     [Benchmark]
-    public void Warpper_Write()
+    public T30_t[] Warpper_Write_String()
     {
         foreach (var t30 in _t30s)
         {
             t30.StockNo = "2330";
         }
 
-        GC.KeepAlive(_t30s);
+        var result = _t30s;
+        GC.KeepAlive(result);
+        return result;
+    }
+
+    [Benchmark]
+    public T30_t[] Warpper_Read_Integer()
+    {
+        foreach (var t30 in _t30s)
+        {
+            consumer.Consume(t30.LastMthDate);
+        }
+
+        var result = _t30s;
+        GC.KeepAlive(result);
+        return result;
+    }
+
+    [Benchmark]
+    public T30_t[] Warpper_Write_Integer()
+    {
+        foreach (var t30 in _t30s)
+        {
+            t30.LastMthDate = 99999999U;
+        }
+
+        var result = _t30s;
+        GC.KeepAlive(result);
+        return result;
+    }
+
+    [Benchmark]
+    public T30_t[] Warpper_Read_Decimal()
+    {
+        foreach (var t30 in _t30s)
+        {
+            consumer.Consume(t30.BullPrice);
+        }
+
+        var result = _t30s;
+        GC.KeepAlive(result);
+        return result;
+    }
+
+    [Benchmark]
+    public T30_t[] Warpper_Write_Decimal()
+    {
+        foreach (var t30 in _t30s)
+        {
+            t30.BullPrice = 99999.9999m;
+        }
+
+        var result = _t30s;
+        GC.KeepAlive(result);
+        return result;
     }
 }
 
