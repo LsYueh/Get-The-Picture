@@ -1,5 +1,22 @@
 # Changelog
 
+## [26.11.0] – 2026-02-09
+
+### ⚠️ Breaking Changes
+- ❌ `CbSerDes` 不再是主要使用功能
+    - **CbSerDes** 已標記為 `Obsolete`，不再作為建議的 `Copybook` 操作與序列化介面。
+    - **namespace** 從 `GetThePicture.Copybook.SerDes` 改為 `GetThePicture.Obsolete.SerDes`。
+
+- ✅ 新增 Warpper 相關功能，並成為核心使用介面
+    - 更明確的資料記憶體映射
+    - 與 Copybook 欄位一一對應的強型別屬性
+    - 可預期的欄位存取行為
+
+- ✅ 新增 CLI 應用程式子專案：**Forge**
+    - 用於協助快速轉換 `Copybook` 成為 `CbWarpper` 的子類別。
+
+<br><br>
+
 ## [26.10.3] – 2026-02-07
 
 ### Added
