@@ -1,9 +1,18 @@
-﻿using CommandLine;
+﻿using System.Text;
+using CommandLine;
+
+using GetThePicture.Copybook.SerDes.Provider;
+using GetThePicture.Picture.Clause.Utils;
+
+using GetThePicture.Forge.Commands.Warpper;
+using GetThePicture.Forge.Core;
 
 namespace GetThePicture.Forge;
 
 class Program
 {
+    private static readonly Encoding CP950 = EncodingFactory.CP950;
+    
     public sealed class Options
     {
         [Option('c', "copybook", Required = true, HelpText = "Path to the copybook file.")]
@@ -32,7 +41,15 @@ class Program
             return 1;
         }
 
-        // TODO: ...
+        WarpperCommand cmd = new ();
+
+        var provider = new DataProvider(new StreamReader(opts.Copybook.FullName, CP950));
+
+        string fileName = NamingHelper.ToPascalCase(Path.GetFileNameWithoutExtension(opts.Copybook.FullName));
+        
+        cmd.ForgeCode(provider, fileName);
+
+        Console.WriteLine($"New warpper class generated: \"{Path.GetFullPath($"{fileName}.cs")}\"");
 
         return 0;
     }

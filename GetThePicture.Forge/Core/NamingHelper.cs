@@ -1,4 +1,4 @@
-namespace Copycat.Core;
+namespace GetThePicture.Forge.Core;
 
 public static class NamingHelper
 {
@@ -34,5 +34,31 @@ public static class NamingHelper
             pascal += "_";
 
         return pascal;
+    }
+
+    public static string ToQualifiedPascalName(string cobolName, string separator = ".")
+    {
+        if (string.IsNullOrWhiteSpace(cobolName))
+            return cobolName;
+
+        // 沒有結構語意，直接回傳
+        if (!cobolName.Contains("::", StringComparison.Ordinal))
+            return cobolName;
+
+        separator = string.IsNullOrEmpty(separator) ? "." : separator;
+
+        var parts = cobolName
+            .Split("::", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(p => EnsureLeadingUpper(p));
+
+        return string.Join(separator, parts);
+    }
+
+    private static string EnsureLeadingUpper(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return name;
+
+        return char.ToUpperInvariant(name[0]) + name[1..];
     }
 }
