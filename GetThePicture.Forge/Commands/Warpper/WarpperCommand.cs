@@ -55,39 +55,59 @@ public class WarpperCommand(WarpperOptions? opts = null)
     {
         var indent = Indent(indentLevel);
 
+        w.WriteLine($"{indent}// ----------------------------");
+        w.WriteLine($"{indent}// Copybook Address Map");
+        w.WriteLine($"{indent}// ----------------------------");
+        w.WriteLine();
+
         w.WriteLine($"{indent}protected override Dictionary<string, CbAddress> AddressMap {{ get; }} = new Dictionary<string, CbAddress>");
         w.WriteLine($"{indent}{{");
+
+        int maxKeyLength = _map.Keys.Max(k => k.Length);
 
         foreach (var kv in _map)
         {
             var keyName = kv.Key;
             var node = kv.Value;
-            ForgeAddress(w, keyName, node, indentLevel + 1);
+            ForgeAddress(w, keyName, node, maxKeyLength, indentLevel + 1);
         }
 
         w.WriteLine($"{indent}}};");
     }
 
-    private static void ForgeAddress(StreamWriter w, string keyName, LeafNode node, int indentLevel = 0)
+    private static void ForgeAddress(StreamWriter w, string keyName, LeafNode node, int maxKeyLength = 0, int indentLevel = 0)
     {
         var indent = Indent(indentLevel);
 
         if (node.Pic is null)
             throw new InvalidOperationException($"Leaf node {keyName} does not have PICTURE clause.");
 
-        w.WriteLine($"{indent}[\"{keyName}\"] = new CbAddress({node.Offset + 1}, {node.StorageOccupied}, \"{node.Pic.Raw}\"),");
+        // keyName 右補空格，對齊 "="
+        string paddedKey = $"[\"{keyName}\"]".PadRight(maxKeyLength + 4); // 4 是額外空格補償
+
+        w.WriteLine($"{indent}{paddedKey} = new CbAddress({node.Offset + 1}, {node.StorageOccupied}, \"{node.Pic.Raw}\"),");
     }
 
     private void ForgeProperties(StreamWriter w, int indentLevel = 0)
     {
+        var indent = Indent(indentLevel);
+
+        w.WriteLine($"{indent}// ----------------------------");
+        w.WriteLine($"{indent}// Strongly Typed Properties");
+        w.WriteLine($"{indent}// ----------------------------");
+        w.WriteLine();
+
         bool first = true;
 
         foreach (var kv in _map)
         {
-            if (!first) w.WriteLine();
-
             var keyName = kv.Key;
             var node = kv.Value;
+
+            if (node.Ignored) continue; // 跳過 FILLER
+
+            if (!first) w.WriteLine();
+            
             ForgeProperty(w, keyName, node, indentLevel);
 
             first = false;
@@ -186,6 +206,8 @@ public class WarpperCommand(WarpperOptions? opts = null)
     {
         var dict = new Dictionary<string, LeafNode>();
 
+        int fillerCount = 0;
+
         void Walk(IStorageNode n, string parentPath)
         {
             // 如果有 Index (OCCURS)，就加上 (Index)
@@ -216,7 +238,16 @@ public class WarpperCommand(WarpperOptions? opts = null)
                 }   
 
                 case LeafNode leaf:
-                    var leafPath = string.IsNullOrEmpty(parentPath) ? fieldName : $"{parentPath}::{fieldName}";
+                    string leafPath;
+
+                    if (leaf.Ignored) // FILLER 
+                    {
+                        leafPath = $"FILLER{++fillerCount:D2}"; // FILLER01, FILLER02 ...
+                    }
+                    else
+                    {
+                        leafPath = string.IsNullOrEmpty(parentPath) ? fieldName : $"{parentPath}::{fieldName}";
+                    }
 
                     if (dict.ContainsKey(leafPath))
                         throw new InvalidOperationException($"Duplicate leaf path: {leafPath}");

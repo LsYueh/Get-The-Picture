@@ -40,7 +40,7 @@ public class CbDeserializer
         foreach (var child in node.Children)
         {
             // === COBOL FILLER：不輸出欄位 ===
-            if (IsFiller(child))
+            if (child.Ignored)
             {
                 // 仍然會走 ParseLeafNode 以確保 layout 正確
                 if (child is LeafNode ln)
@@ -78,6 +78,4 @@ public class CbDeserializer
 
         return value;
     }
-
-    private static bool IsFiller(IStorageNode node) => string.Equals(node.Name, "FILLER", StringComparison.OrdinalIgnoreCase);
 }

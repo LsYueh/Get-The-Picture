@@ -8,6 +8,8 @@ public abstract class StorageNode(
 
     public int? Index { get; } = index;
 
+    public bool Ignored { get; internal set; } = false;
+
     // ----------------------------
     // Alias and Offset (For implementing REDEFINES)
     // ----------------------------

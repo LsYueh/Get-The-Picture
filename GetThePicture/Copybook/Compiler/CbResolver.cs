@@ -79,6 +79,7 @@ public sealed class CbResolver
 
                         var leafNode = new LeafNode(e.Name, instanceOffset, storageOccupied, occursIndex);
                         leafNode.SetPicMeta(e.Pic);
+                        if (e.IsFiller) leafNode.CanIgnore();
                         node.AddNode(leafNode);
                         
                         storageOffset += storageOccupied;

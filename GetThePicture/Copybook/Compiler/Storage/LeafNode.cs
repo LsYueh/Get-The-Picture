@@ -16,6 +16,14 @@ public class LeafNode(
         throw new NotSupportedException("Leaf nodes cannot be aliased.");
     }
 
+    /// <summary>
+    /// 標記為 FILLER，可忽略
+    /// </summary>
+    public void CanIgnore()
+    {
+        Ignored = true;
+    }
+
     // ----------------------------
     // PICTURE Clause
     // ----------------------------
