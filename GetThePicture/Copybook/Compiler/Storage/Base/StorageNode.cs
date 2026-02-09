@@ -8,6 +8,8 @@ public abstract class StorageNode(
 
     public int? Index { get; } = index;
 
+    public string? Info { get; internal set; } = null;
+
     public bool Ignored { get; internal set; } = false;
 
     // ----------------------------

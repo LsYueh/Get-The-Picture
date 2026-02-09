@@ -82,10 +82,12 @@ public class WarpperCommand(WarpperOptions? opts = null)
         if (node.Pic is null)
             throw new InvalidOperationException($"Leaf node {keyName} does not have PICTURE clause.");
 
+        var info = !string.IsNullOrEmpty(node.Info) ? $" // {node.Info}" : $"";
+
         // keyName 右補空格，對齊 "="
         string paddedKey = $"[\"{keyName}\"]".PadRight(maxKeyLength + 4); // 4 是額外空格補償
 
-        w.WriteLine($"{indent}{paddedKey} = new CbAddress({node.Offset + 1, 4:D}, {node.StorageOccupied, 3:D}, \"{node.Pic.Raw}\"),");
+        w.WriteLine($"{indent}{paddedKey} = new CbAddress({node.Offset + 1, 4:D}, {node.StorageOccupied, 3:D}, \"{node.Pic.Raw}\"),{info}");
     }
 
     private void ForgeProperties(StreamWriter w, int indentLevel = 0)
@@ -125,12 +127,37 @@ public class WarpperCommand(WarpperOptions? opts = null)
 
         string clrType = GetClrType(node.Pic);
 
+        ForgePropertySummary(w, node, indentLevel);
+
         w.WriteLine($"{indent}public {clrType} {propName}");
         w.WriteLine($"{indent}{{");
 
         ForgePropertyGetSet(w, keyName, clrType, indentLevel + 1);
 
         w.WriteLine($"{indent}}}");
+    }
+
+    private static void ForgePropertySummary(StreamWriter w, LeafNode node, int indentLevel = 0)
+    {
+        var indent = Indent(indentLevel);
+
+        if (node.Pic is null)
+            throw new InvalidOperationException($"Leaf node {node.Name} does not have PICTURE clause.");
+
+        string occursIndex = (node.Index is > 1) ? $" ({node.Index})" : "";
+        
+        var namePart = $"{node.Name}{occursIndex}";
+        var picPart  = $"{node.Pic.Raw}";
+        var prefix   = $"{namePart} {picPart}";
+
+        w.WriteLine($"{indent}/// <summary>");
+
+        if (!string.IsNullOrEmpty(node.Info))
+            w.WriteLine($"{indent}/// {prefix} : {node.Info}");
+        else
+            w.WriteLine($"{indent}/// {prefix}");
+
+        w.WriteLine($"{indent}/// </summary>");
     }
 
     private static void ForgePropertyGetSet(StreamWriter w, string keyName, string clrType, int indentLevel = 0)
