@@ -2,7 +2,7 @@ using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Compiler.Storage;
 
-namespace GetThePicture.Copybook.SerDes.Provider;
+namespace GetThePicture.Copybook.Provider;
 
 /// <summary>
 /// Provides both the Copybook <see cref="CbLayout"/> and <see cref="CbStorage"/> as runtime objects for serialization and deserialization (SerDes).

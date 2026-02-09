@@ -2,7 +2,7 @@ using System.Text;
 
 using GetThePicture.Copybook.Compiler.Storage;
 using GetThePicture.Copybook.Compiler.Storage.Base;
-using GetThePicture.Copybook.SerDes.Provider;
+using GetThePicture.Copybook.Provider;
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Decoder.Category;

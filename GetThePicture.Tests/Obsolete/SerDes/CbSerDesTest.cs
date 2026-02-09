@@ -1,14 +1,13 @@
 using System.Text;
 
-using GetThePicture.Copybook.SerDes;
-using GetThePicture.Copybook.SerDes.Provider;
-using GetThePicture.Copybook.SerDes.Record;
-
+using GetThePicture.Copybook.Provider;
+using GetThePicture.Obsolete.SerDes;
+using GetThePicture.Obsolete.SerDes.Record;
 using GetThePicture.Picture.Clause.Utils;
 
 // using GetThePicture.Test.Utils;
 
-namespace GetThePicture.Tests.Copybook.SerDes;
+namespace GetThePicture.Tests.Obsolete.SerDes;
 
 [TestClass]
 public class CbSerDesTest

@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.SerDes.Record;
+namespace GetThePicture.Obsolete.SerDes.Record;
 
 internal static class CbRecordPrinter
 {
