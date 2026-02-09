@@ -7,7 +7,7 @@ using GetThePicture.Picture.Clause.Base.Options;
 
 namespace GetThePicture.Picture.Clause.Decoder.Category;
 
-internal static class NumericDecoder
+public static class NumericDecoder
 {
     /// <summary>
     /// CP950 → Overpunch Decode  → CLR value
@@ -79,7 +79,7 @@ internal static class NumericDecoder
     /// <param name="value"></param>
     /// <param name="pic"></param>
     /// <returns></returns>
-    private static object ConvertToClr(decimal value, PicMeta pic)
+    public static object ConvertToClr(decimal value, PicMeta pic)
     {
         int totalDigits = pic.IntegerDigits;
         bool signed = pic.Signed;

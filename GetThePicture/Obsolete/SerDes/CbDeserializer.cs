@@ -1,9 +1,9 @@
 using GetThePicture.Copybook.Compiler.Storage;
 using GetThePicture.Copybook.Compiler.Storage.Base;
-using GetThePicture.Copybook.SerDes.Record;
+using GetThePicture.Obsolete.SerDes.Record;
 using GetThePicture.Picture.Clause;
 
-namespace GetThePicture.Copybook.SerDes;
+namespace GetThePicture.Obsolete.SerDes;
 
 public class CbDeserializer
 {
@@ -40,7 +40,7 @@ public class CbDeserializer
         foreach (var child in node.Children)
         {
             // === COBOL FILLER：不輸出欄位 ===
-            if (IsFiller(child))
+            if (child.Ignored)
             {
                 // 仍然會走 ParseLeafNode 以確保 layout 正確
                 if (child is LeafNode ln)
@@ -78,6 +78,4 @@ public class CbDeserializer
 
         return value;
     }
-
-    private static bool IsFiller(IStorageNode node) => string.Equals(node.Name, "FILLER", StringComparison.OrdinalIgnoreCase);
 }

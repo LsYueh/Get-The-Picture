@@ -1,9 +1,14 @@
 using GetThePicture.Copybook.Compiler.Storage;
-using GetThePicture.Copybook.SerDes.Record;
-using GetThePicture.Copybook.SerDes.Provider;
+using GetThePicture.Copybook.Provider;
+using GetThePicture.Obsolete.SerDes.Record;
 
-namespace GetThePicture.Copybook.SerDes;
 
+namespace GetThePicture.Obsolete.SerDes;
+
+/// <summary>
+/// 已棄用：SerDes 功能已被 Warpper 取代，請改使用 CbWarpper。
+/// </summary>
+[Obsolete("已棄用，請使用 CbWarpper 讀寫 Raw Buffer", false)]
 public sealed class CbSerDes
 {
     private readonly CbStorage _storage;

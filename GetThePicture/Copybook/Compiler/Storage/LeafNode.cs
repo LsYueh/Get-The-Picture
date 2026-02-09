@@ -8,6 +8,18 @@ public class LeafNode(
 ) : StorageNode(name, offset, storageOccupied, index)
 {
     // ----------------------------
+    // IStorageNode
+    // ----------------------------
+
+    public void SetInfo(string info) => Info = info;
+
+    /// <summary>
+    /// 標記為 FILLER，可忽略
+    /// </summary>
+    public void CanIgnore() => Ignored = true;
+
+    
+    // ----------------------------
     // StorageNode
     // ----------------------------
 

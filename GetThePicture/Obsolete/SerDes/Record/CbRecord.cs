@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.SerDes.Record;
+namespace GetThePicture.Obsolete.SerDes.Record;
 
 /// <summary>
 /// Represents a COBOL record or group at runtime. <br />

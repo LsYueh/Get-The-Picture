@@ -74,11 +74,10 @@ public sealed class CbResolver
 
                     case ElementaryDataItem e :
                     {
-                        int storageOccupied = e.Pic.StorageOccupied;
                         var instanceOffset = baseOffset + storageOffset;
+                        int storageOccupied = e.Pic.StorageOccupied;
 
-                        var leafNode = new LeafNode(e.Name, instanceOffset, storageOccupied, occursIndex);
-                        leafNode.SetPicMeta(e.Pic);
+                        var leafNode = BuildLeafNode(e, instanceOffset, storageOccupied, occursIndex);
                         node.AddNode(leafNode);
                         
                         storageOffset += storageOccupied;
@@ -92,6 +91,21 @@ public sealed class CbResolver
         }
 
         return storageOffset;
+    }
+
+    private static LeafNode BuildLeafNode(ElementaryDataItem e, int instanceOffset, int storageOccupied, int? occursIndex)
+    {
+        var leafNode = new LeafNode(e.Name, instanceOffset, storageOccupied, occursIndex);
+
+        leafNode.SetPicMeta(e.Pic);
+        
+        if (e.Comment is not null)
+            leafNode.SetInfo(e.Comment);
+
+        if (e.IsFiller)
+            leafNode.CanIgnore();
+
+        return leafNode;
     }
 
     /// <summary>

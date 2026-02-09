@@ -85,108 +85,138 @@ Copybook 通常包含：
 
 <br>
 
-## Copybook SerDes
-SerDes 是 `Serialization`（序列化）與 `Deserialization`（反序列化）的合稱，用於資料在不同系統或存儲之間的轉換。  
+## Copybook Warpper
+
+Copybook Warpper 是一個 Raw Buffer 層級的存取工具。提供**欄位級別抽象存取**，不需要傳統的 DTO（`Data Transfer Object`，資料傳輸物件）或序列化/反序列化過程。
+
+![work flow](docs/get-the-picture/warpper-work-flow.png)  
+
+<details>
+    <summary>Warpper vs SerDes</summary>
+
+| 功能         | SerDes       | Warpper                      |
+| ---------- | --------------- | ------------------------------- |
+| Raw ↔ 物件   | Yes, 一次性 DTO    | 不需要 DTO，直接欄位級存取                 |
+| 欄位抽象化      | No / 需要 mapping | Yes，靠 `CbAddress` + indexer/屬性 |
+| Memory 複製  | 全部複製            | 幾乎零複製，Span 直接操作 Raw             |
+| 動態欄位讀寫     | 一般不方便           | 內建 indexer 或強型別屬性               |
+| 物件圖 / 狀態管理 | Yes             | No，Raw 是唯一來源                    |
+
+</details>
 
 <br>
 
-1. Deserialization（反序列化）  
-    將序列化後的資料恢復成程式中的 `物件` 或 `資料結構` (目前採用Dictionary)。 
+### 使用方式
+資料物件需**繼承**核心物件 `CbWarpper`，根據 Copybook 定義，透過 `CbAddress` 設定每個欄位的起始位置、長度及格式。  
+- 可透過 indexer 或 **強型別屬性**存取欄位
+- 支援即時驗證 Raw Buffer 長度是否符合欄位配置
 
-    ![work flow](docs/get-the-picture/deserialize-work-flow.png)  
+<br>
 
-    ```csharp
-    // 提供 Copybook 的 layout 與 storage
-    var provider = new DataProvider(new StreamReader(@"TestData/t30-otc.cpy", cp950));
+程式碼範例：櫃買中心 T30 漲跌幅度資料  
 
-    // 建立 Serializer/Deserializer
-    var serDes = new CbSerDes(provider);
+```csharp
+const string s = "11011 00106600000096950000087300020251219000000  0台泥一永        000000000000000000000 0           ";
 
-    // 讀取檔案 (編碼: CP950 / ASCII)
-    using var reader = new StreamReader(@"TestData/t30-otc-lite.dat", cp950);
+byte[] raw = cp950.GetBytes(s);
+        
+var T30 = new T30_t(raw);
 
-    string? line;
-    while ((line = reader.ReadLine()) != null)
+Console.WriteLine(T30.StockNo);   // "11011"
+Console.WriteLine(T30.StockName); // "台泥一永"
+Console.WriteLine(T30.LastMthDate); // "2025-12-19"
+```
+
+<br>
+
+<details>
+    <summary>T30_t</summary>
+
+```csharp
+public class T30_t(byte[] raw) : CbWarpper(raw)
+{
+    // ----------------------------
+    // Copybook Address Map
+    // ----------------------------
+
+    protected override Dictionary<string, CbAddress> AddressMap { get; } = new Dictionary<string, CbAddress>
     {
-        var byte = cp950.GetBytes(line);
+        ["STOCK-NO"]      = new CbAddress( 1, 6, "X(6)"),
+        ["BULL-PRICE"]    = new CbAddress( 7, 9, "9(5)V9(4)"),
+        ["LDC-PRICE"]     = new CbAddress(16, 9, "9(5)V9(4)"),
+        ["BEAR-PRICE"]    = new CbAddress(25, 9, "9(5)V9(4)"),
+        ["LAST-MTH-DATE"] = new CbAddress(34, 8, "9(8)", PicSemantic.GregorianDate), // 用語意方式轉換
+        ["SETTYPE"]       = new CbAddress(42, 1, "X(01)"),
+        ["MARK-W"]        = new CbAddress(43, 1, "X(01)"),
+        ["MARK-P"]        = new CbAddress(44, 1, "X(01)"),
+        ["MARK-L"]        = new CbAddress(45, 1, "X(01)"),
+        ["IND-CODE"]      = new CbAddress(46, 2, "X(02)"),
+        ["IND-SUB-CODE"]  = new CbAddress(48, 2, "X(02)"),
+        ["MARK-M"]        = new CbAddress(50, 1, "X(01)"),
+        ["STOCK-NAME"]    = new CbAddress(51,16, "X(16)"),
+        // MARK-W
+            ["MATCH-INTERVAL"] = new CbAddress(67, 3, "9(03)"),
+            ["ORDER-LIMIT"]    = new CbAddress(70, 6, "9(06)"),
+            ["ORDERS-LIMIT"]   = new CbAddress(76, 6, "9(06)"),
+            ["PREPAY-RATE"]    = new CbAddress(82, 3, "9(03)"),
+        ["MARK-S"]        = new CbAddress(85, 1, "X(01)"),
+        ["STK-MARK"]      = new CbAddress(86, 1, "X(01)"),
+        ["MARK-F"]        = new CbAddress(87, 1, "X(01)"),
+        ["MARK-DAY-TRADE"]= new CbAddress(88, 1, "X(01)"),
+        ["STK-CTGCD"]     = new CbAddress(89, 1, "X(01)"),
+        ["FILLER"]        = new CbAddress(90,11, "X(11)"),
+    };
 
-        // 根據Copybook的資料格式來反序列化 (Deserialize) 資料
-        CbRecord record = serDes.Deserialize(expected);
+    // ----------------------------
+    // 強型別屬性
+    // ----------------------------
 
-        Console.WriteLine("==== Record ====");
-        record.Print();
-        Console.WriteLine("================\n");
+    public string StockNo
+    {
+        get => (string)this["STOCK-NO"]!;
+        set => this["STOCK-NO"] = value;
     }
-    ```
 
-    <details>
-        <summary>輸出結果：</summary>
+    public decimal BullPrice
+    {
+        get => (decimal)this["BULL-PRICE"]!;
+        set => this["BULL-PRICE"] = value;
+    }
 
-        ```shell
-        ...
-        ==== Record ====
-        STOCK-NO: 19094
-        BULL-PRICE: 105.80000
-        LDC-PRICE: 96.20000
-        BEAR-PRICE: 86.60000
-        LAST-MTH-DATE: 20251111
-        SETTYPE: 0
-        MARK-W: 0
-        MARK-P: 0
-        MARK-L: 0
-        IND-CODE: 00
-        IND-SUB-CODE: 
-        MARK-M: 0
-        STOCK-NAME: 榮成四
-        MARK-W-DETAILS:
-        MATCH-INTERVAL: 0
-        ORDER-LIMIT: 0
-        ORDERS-LIMIT: 0
-        PREPAY-RATE: 0
-        MARK-S: 0
-        STK-MARK: 0
-        MARK-F: 0
-        MARK-DAY-TRADE: 
-        STK-CTGCD: 0
-        ================
-        ...
-        ```
-    </details>
+    public decimal LdcPrice
+    {
+        get => (decimal)this["LDC-PRICE"]!;
+        set => this["LDC-PRICE"] = value;
+    }
 
-    <br>
+    public decimal BearPrice
+    {
+        get => (decimal)this["BEAR-PRICE"]!;
+        set => this["BEAR-PRICE"] = value;
+    }
 
-    > ⚠️ 目前不支援包含 `Level 66`、`Level 77`、`REDEFINES` 子句的反序列化處裡  
+    public DateOnly LastMthDate
+    {
+        get => (DateOnly)this["LAST-MTH-DATE"]!;
+        set => this["LAST-MTH-DATE"] = value;
+    }
 
-<br>
+    // (略...)
+}
+```
 
-2. Serialization（序列化）  
-    將程式中的物件或資料結構轉換成一種 `可存儲` 或 `傳輸` 的格式。  
-
-    ![work flow](docs/get-the-picture/serialize-work-flow.png)  
-
-    ```csharp
-    var serialized = serDes.Serialize(record);
-    ```
-
-<br>
-
-**SerDes** 的相關使用範例位於 [CbSerDesTest.cs](GetThePicture.Tests/Copybook/SerDes/CbSerDesTest.cs) 內有標記 `[TestCategory("Demo")]` 的測試項目中。
+</details>
 
 <br>
 
 📖 更多關於 [Copybook Compiler](docs/get-the-picture/copybook/compiler.md) ...  
 📖 更多關於 [Copybook Resolver](docs/get-the-picture/copybook/resolver.md) ...  
+📖 更多關於 Sub-Class Generator : [Forge](docs/forge/forge.md) ...  
 
 <br>
 
-## Level 66 (`RENAMES … THRU`) in Copybook
-目前僅解析並保留位於 record 末端的 Level 66 `RENAMES … THRU` 定義。此類 Level 66 不影響實體儲存結構，僅表達既有欄位的語意聚合，適合作為語意資訊保存。常用於描述**類似 RECORD KEY 的邏輯識別範圍（logical key）**。  
-
-此限制確保被 `RENAMES` 涵蓋的欄位範圍為線性、連續且可預期，並降低解析複雜度。同時為未來進行語意型態轉換或資料庫 DDL 投影預留擴充空間。
-
-<br>
-
-📖 更多關於 [RECORD KEY Clause](docs/get-the-picture/copybook/record-key-clause.md) ...  
+## ⚠️ Copybook SerDes ⚠️
+📖 更多關於 [Copybook SerDes](docs/get-the-picture/copybook/serdes.md) ... (Obsolete)  
 
 <br><br>
 
@@ -246,8 +276,6 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 用於描述程式中所有資料的結構、型態與儲存方式。
 
-目前支援的修飾子句處理：
-
 **Format 1**  
 ```
 <level-number> <data-name-1>
@@ -269,8 +297,19 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 **Format 3**  
 ```
-88 <condition-name-1> VALUE[S] <literal-1> [THRU <literal-2>].
+88 <condition-name-1> VALUE <literal-1> [THRU <literal-2>].
 ```
+
+<br>
+
+## 📋 Format 支援狀態
+
+| Format   | 語法用途                            | 支援狀態  | 說明                                            |
+| -------- | ------------------------------- | ----- | --------------------------------------------- |
+| Format 1 | 一般資料項目（Group / Elementary Item） | ✅ 支援  | 用於描述資料結構、型別、PIC、USAGE、OCCURS 等，是目前解析與生成的核心格式。 |
+| Format 2 | `66 RENAMES`                    | ❌ 未支援 | 屬於語意別名（Alias）的定義，不影響實際的資料儲存結構；相關別名可由 Warpper 於應用層自行進行二次定義，因此目前未納入解析與生成範圍。 |
+| Format 3 | `88 LEVEL` 條件名稱                 | ❌ 未支援 | 為條件常數定義（Condition Name），本身不佔用任何實體儲存空間。 <br/> 當與 OCCURS 子句混合使用時，條件判斷的呼叫與對應關係在實作上較為複雜，易影響可讀性與使用一致性，建議直接呼叫 Warpper 內的屬性來處理。 |
+
 
 <br><br>
 
@@ -353,7 +392,7 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
     ```
 </details>
 
-### 支援狀態總覽
+### 📋 支援狀態總覽
 
 | Case | 用法說明 | 支援狀態 | 說明 |
 |------|----------|----------|------|
@@ -425,7 +464,7 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
 <br><br>
 
-# SerDes Performance Benchmark Results
+# Performance
 
 ## 數據內容
 - 根據**櫃買中心** (OTC) 規格改寫的 `T30.CPY` (包含註解)：DataItem 24 個   
@@ -446,15 +485,15 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
   DefaultJob : .NET 8.0.23 (8.0.23, 8.0.2325.60607), X64 RyuJIT x86-64-v3
 ```
 
-| Method                | Mean     | Error   | StdDev  |
-|---------------------- |---------:|--------:|--------:|
-| Deserialize           | 174.9 μs | 1.05 μs | 0.98 μs |
-| Serialize             | 202.0 μs | 3.73 μs | 3.49 μs |
-| Deserialize_Serialize | 382.7 μs | 6.18 μs | 5.48 μs |
+| Method        | Mean     | Error     | StdDev    |
+|-------------- |---------:|----------:|----------:|
+| Warpper_Read  | 4.746 μs | 0.0440 μs | 0.0390 μs |
+| Warpper_Write | 5.237 μs | 0.0224 μs | 0.0187 μs |
 
 <br>
 
-> ⚠️ T30 的資料內沒有進行 `COMP`，目前的跑分算是 Best Case。
+> ⚠️ T30 的資料內沒有進行 `COMP`，目前的跑分算是 Best Case。  
+> ⚠️ Warpper 只做**單筆欄位**讀取。  
 
 <br><br>
 

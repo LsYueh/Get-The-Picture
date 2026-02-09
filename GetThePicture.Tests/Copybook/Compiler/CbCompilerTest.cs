@@ -77,9 +77,9 @@ public class CbCompilerTest
     [TestMethod]
     [TestCategory("Demo")]
     [Ignore]
-    public void Example_Layout_Dump_T30_TSE()
+    public void Example_Layout_Dump_T30_OTC()
     {
-        using var sr = new StreamReader(@"TestData/t30-tse.cpy", cp950);
+        using var sr = new StreamReader(@"TestData/twse/t30-otc.cpy", cp950);
 
         CbLayout layout = CbCompiler.FromStreamReader(sr);
 

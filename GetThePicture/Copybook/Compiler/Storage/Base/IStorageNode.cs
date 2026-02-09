@@ -14,6 +14,16 @@ public interface IStorageNode
     /// </summary>
     int? Index { get; }
 
+    /// <summary>
+    /// Floating Comments in Copybook
+    /// </summary>
+    string? Info { get; }
+
+    /// <summary>
+    /// Indicates whether this node represents a filler field (FILLER).
+    /// </summary>
+    bool Ignored { get; }
+
     // ----------------------------
     // Alias and Offset (For implementing REDEFINES)
     // ----------------------------

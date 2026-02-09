@@ -1,14 +1,13 @@
 using System.Text;
 
-using GetThePicture.Copybook.SerDes;
-using GetThePicture.Copybook.SerDes.Provider;
-using GetThePicture.Copybook.SerDes.Record;
-
+using GetThePicture.Copybook.Provider;
+using GetThePicture.Obsolete.SerDes;
+using GetThePicture.Obsolete.SerDes.Record;
 using GetThePicture.Picture.Clause.Utils;
 
 // using GetThePicture.Test.Utils;
 
-namespace GetThePicture.Tests.Copybook.SerDes;
+namespace GetThePicture.Tests.Obsolete.SerDes;
 
 [TestClass]
 public class CbSerDesTest
@@ -23,6 +22,8 @@ public class CbSerDesTest
         var serDes = new CbSerDes(provider);
 
         Assert.AreEqual(100, provider.GetLayout().StorageOccupied);
+
+        // provider.GetStorage().Dump(Console.Out);
 
         using var reader = new StreamReader(@"TestData/twse/t30-otc-lite.dat", cp950);
 
