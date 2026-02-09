@@ -3,6 +3,9 @@ using System.Text;
 using GetThePicture.Copybook.Compiler.Storage;
 using GetThePicture.Copybook.Compiler.Storage.Base;
 using GetThePicture.Copybook.SerDes.Provider;
+using GetThePicture.Picture.Clause.Base;
+using GetThePicture.Picture.Clause.Base.ClauseItems;
+using GetThePicture.Picture.Clause.Decoder.Category;
 
 using GetThePicture.Forge.Core;
 
@@ -97,7 +100,10 @@ public class WarpperCommand(WarpperOptions? opts = null)
 
         string propName = NamingHelper.ToQualifiedPascalName(NamingHelper.ToPascalCase(keyName),"_");
 
-        string clrType = "object";
+        if (node.Pic is null)
+            throw new InvalidOperationException($"Leaf node {keyName} does not have PICTURE clause.");
+
+        string clrType = GetClrType(node.Pic);
 
         w.WriteLine($"{indent}public {clrType} {propName}");
         w.WriteLine($"{indent}{{");
@@ -115,6 +121,67 @@ public class WarpperCommand(WarpperOptions? opts = null)
         w.WriteLine($"{indent}set => this[\"{keyName}\"] = value;");
     }
 
+    /// <summary>
+    /// CLR type derived from GetThePicture\Picture\Clause\Decoder\PicDecoder.cs
+    /// 用於決定生成強型別屬性對應的 CLR 型別
+    /// </summary>
+    /// <param name="pic"></param>
+    /// <returns></returns>
+    /// <exception cref="NotSupportedException"></exception>
+    private static string GetClrType(PicMeta pic)
+    {
+        Type type = pic.Semantic switch
+        {
+            PicSemantic.GregorianDate or PicSemantic.MinguoDate => typeof(DateOnly),
+            PicSemantic.Time6 or PicSemantic.Time9              => typeof(TimeOnly),
+            PicSemantic.Timestamp14                             => typeof(DateTime),
+            _ => GetBaseType(pic),
+        };
+
+        return SimplifyClrName(type);
+
+        // ----------------------------
+        // Lambda Helpers
+        // ----------------------------
+
+        Type GetBaseType(PicMeta pic)
+        {
+            return pic.BaseClass switch
+            {
+                PicBaseClass.Numeric      => GetNumericType(pic),
+                PicBaseClass.Alphanumeric => typeof(string),
+                PicBaseClass.Alphabetic   => typeof(string),
+                _ => throw new NotSupportedException($"Unsupported PIC Data Type : {pic.BaseClass}"),
+            };
+        }
+
+        Type GetNumericType(PicMeta pic)
+        {
+            var obj = NumericDecoder.ConvertToClr(1m, pic);
+
+            return obj.GetType();
+        }
+
+        string SimplifyClrName(Type type) => type switch
+        {
+            _ when type == typeof(byte)   => "byte",
+            _ when type == typeof(sbyte)  => "sbyte",
+            _ when type == typeof(short)  => "short",
+            _ when type == typeof(ushort) => "ushort",
+            _ when type == typeof(int)    => "int",
+            _ when type == typeof(uint)   => "uint",
+            _ when type == typeof(long)   => "long",
+            _ when type == typeof(ulong)  => "ulong",
+            _ when type == typeof(float)  => "float",
+            _ when type == typeof(double) => "double",
+            _ when type == typeof(decimal)=> "decimal",
+            _ when type == typeof(bool)   => "bool",
+            _ when type == typeof(string) => "string",
+            _ when type == typeof(char)   => "char",
+            _ => type.Name // 其他保留原名
+        };
+    }
+
     private static Dictionary<string, LeafNode> BuildFlatLeafMap(IStorageNode node)
     {
         var dict = new Dictionary<string, LeafNode>();
@@ -130,9 +197,6 @@ public class WarpperCommand(WarpperOptions? opts = null)
                 {
                     foreach (var child in root.Children)
                     {
-                        // Note: 目前不處理 REDEFINES，這邊不適合做靈活變動
-                        if (child.IsAlias) continue;
-                    
                         // COPYBOOK-STORAGE-MAP 要排除
                         Walk(child, string.Empty);
                     }
@@ -145,9 +209,6 @@ public class WarpperCommand(WarpperOptions? opts = null)
                     
                     foreach (var child in group.Children)
                     {
-                        // Note: 目前不處理 REDEFINES，這邊不適合做靈活變動
-                        if (child.IsAlias) continue;
-                    
                         Walk(child, groupPath);
                     }
                         

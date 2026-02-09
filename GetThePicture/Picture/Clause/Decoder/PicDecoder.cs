@@ -4,7 +4,7 @@ using GetThePicture.Picture.Clause.Base.Options;
 
 namespace GetThePicture.Picture.Clause.Decoder;
 
-internal static class PicDecoder
+public static class PicDecoder
 {
     /// <summary>
     /// COBOL Elementary Item (buffer) → CLR value
