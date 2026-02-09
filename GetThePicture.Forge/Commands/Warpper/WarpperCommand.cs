@@ -85,7 +85,7 @@ public class WarpperCommand(WarpperOptions? opts = null)
         // keyName 右補空格，對齊 "="
         string paddedKey = $"[\"{keyName}\"]".PadRight(maxKeyLength + 4); // 4 是額外空格補償
 
-        w.WriteLine($"{indent}{paddedKey} = new CbAddress({node.Offset + 1}, {node.StorageOccupied}, \"{node.Pic.Raw}\"),");
+        w.WriteLine($"{indent}{paddedKey} = new CbAddress({node.Offset + 1, 4:D}, {node.StorageOccupied, 3:D}, \"{node.Pic.Raw}\"),");
     }
 
     private void ForgeProperties(StreamWriter w, int indentLevel = 0)
