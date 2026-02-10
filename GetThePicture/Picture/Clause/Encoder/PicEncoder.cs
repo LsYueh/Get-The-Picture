@@ -1,5 +1,3 @@
-using System.Globalization;
-
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Options;
@@ -26,11 +24,11 @@ internal static class PicEncoder
         // object → COBOL Elementary Item (buffer)
         byte[] normalized = pic.Semantic switch
         {
-            // PicSemantic.GregorianDate => // return Semantic.DateEncoder.Encode(buffer, pic);
-            // PicSemantic.MinguoDate    => // return Semantic.DateEncoder.Encode(buffer, pic);
-            // PicSemantic.Time6         => // return Semantic.TimeEncoder.Encode(buffer, pic);
-            // PicSemantic.Time9         => // return Semantic.TimeEncoder.Encode(buffer, pic);
-            // PicSemantic.Timestamp14   => // return Semantic.TimestampEncoder.Encode(buffer, pic);
+            PicSemantic.GregorianDate or 
+            PicSemantic.MinguoDate    => Semantic.DateEncoder.Encode(value, pic),
+            PicSemantic.Time6 or 
+            PicSemantic.Time9         => Semantic.TimeEncoder.Encode(value, pic),
+            PicSemantic.Timestamp14   => Semantic.TimestampEncoder.Encode(value, pic),
             _ => EncodeBaseType(value, pic, options),
         };
 
@@ -50,6 +48,9 @@ internal static class PicEncoder
         {
             case PicBaseClass.Numeric:
             {
+                if (value is string text)
+                    throw new NotSupportedException($"PIC {pic.Raw} expects Numeric value (number), but got string. Value: \"{text}\"");
+                
                 var nValue = EncodeNumeric(value, pic);
                 normalized = Category.NumericEncoder.Encode(nValue, pic, options);
                 break;
@@ -58,7 +59,7 @@ internal static class PicEncoder
             case PicBaseClass.Alphanumeric:
             {
                 if (value is not string text)
-                    throw new InvalidCastException( $"PIC {pic.Raw} expects Alphanumeric value (string), but got {value?.GetType().Name ?? "null"}.");
+                    throw new NotSupportedException( $"PIC {pic.Raw} expects Alphanumeric value (string), but got {value?.GetType().Name ?? "null"}.");
                 
                 normalized = Category.AlphanumericEncoder.Encode(text, pic);
                 break;
@@ -67,7 +68,7 @@ internal static class PicEncoder
             case PicBaseClass.Alphabetic:
             {
                 if (value is not string text)
-                    throw new InvalidCastException($"PIC {pic.Raw} expects Alphabetic value (string), but got {value?.GetType().Name ?? "null"}.");
+                    throw new NotSupportedException($"PIC {pic.Raw} expects Alphabetic value (string), but got {value?.GetType().Name ?? "null"}.");
 
                 normalized = Category.AlphabeticEncoder.Encode(text, pic);
                 break;
@@ -192,57 +193,4 @@ internal static class PicEncoder
             i--;
         }
     }
-
-    // private static CobMeta EleDate(DateOnly date, PicMeta pic)
-    // {
-    //     if (pic.Usage != PicUsage.Display)
-    //         throw new NotSupportedException($"'Date' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-            
-    //     return pic.Semantic switch
-    //     {
-    //         PicSemantic.GregorianDate => CobMeta.FromNumber(date.ToString("yyyyMMdd")),
-    //         PicSemantic.MinguoDate => CobMeta.FromNumber(ToMinguoDateString(date)),
-    //         _ => throw new NotSupportedException($"Unsupported DateOnly format: {pic.Semantic}")
-    //     };
-    // }
-
-    // private static string ToMinguoDateString(DateOnly date)
-    // {
-    //     int rocYear = date.Year - 1911;
-        
-    //     if (rocYear <= 0)
-    //     {
-    //         throw new ArgumentOutOfRangeException(nameof(date), "Date is before ROC calendar starts (1912-01-01).");
-    //     }
-
-    //     return $"{rocYear:000}{date:MMdd}";
-    // }
-
-    // private static CobMeta EleTime(TimeOnly dt, PicMeta pic)
-    // {
-    //     if (pic.Usage != PicUsage.Display)
-    //         throw new NotSupportedException($"'Time' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-
-    //     return pic.Semantic switch
-    //     {
-    //         PicSemantic.Time6 => CobMeta.FromNumber(dt.ToString("HHmmss"   , CultureInfo.InvariantCulture)),
-    //         PicSemantic.Time9 => CobMeta.FromNumber(dt.ToString("HHmmssfff", CultureInfo.InvariantCulture)),
-    //         _ => throw new NotSupportedException($"Unsupported TIME format: {pic.Semantic}")
-    //     };
-    // }
-
-    // private static CobMeta EleTimeStamp(DateTime dt, PicMeta pic)
-    // {
-    //     if (pic.Usage != PicUsage.Display)
-    //         throw new NotSupportedException($"'Timestamp' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-            
-    //     if (pic.Semantic != PicSemantic.Timestamp14)
-    //     {
-    //         throw new NotSupportedException($"DateTime can only be encoded as Timestamp14, but was {pic.Semantic}");
-    //     }
-
-    //     string text = dt.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-
-    //     return CobMeta.FromNumber(text);
-    // }
 }
