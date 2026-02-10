@@ -1,6 +1,4 @@
 
-using System.Globalization;
-
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Options;
@@ -28,7 +26,7 @@ public static class NumericDecoder
 
         return pic.Usage switch
         {
-            PicUsage.Display       => Display_Decode(fieldBytes, pic, options),
+            PicUsage.Display       =>                    Display_Decode(fieldBytes, pic, options),
             PicUsage.Binary        =>    Base.Computational.COMP.Decode(fieldBytes, pic, options.Binary),
             PicUsage.PackedDecimal =>   Base.Computational.COMP3.Decode(fieldBytes, pic),
             PicUsage.NativeBinary  =>   Base.Computational.COMP5.Decode(fieldBytes, pic, options.Binary),
