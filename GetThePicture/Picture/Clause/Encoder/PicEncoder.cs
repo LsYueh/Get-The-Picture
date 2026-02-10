@@ -153,14 +153,14 @@ internal static class PicEncoder
         int i = buffer.Length - 1;
 
         // 從尾到頭寫入數字
-        while (i >= 0)
+        while (i >= 0 && value > 0)
         {
             buffer[i] = (byte)('0' + (value % 10));
             value /= 10;
             i--;
         }
 
-        // 如果 value 已經用完，左側填 0
+        // 左側填 0
         while (i >= 0)
         {
             buffer[i] = (byte)'0';
@@ -178,7 +178,7 @@ internal static class PicEncoder
         int i = buffer.Length - 1;
 
         // 從尾到頭寫入數字
-        while (i >= 0)
+        while (i >= 0 && value > 0)
         {
             decimal rem = value % 10;
             buffer[i] = (byte)('0' + (int)rem);
