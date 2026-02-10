@@ -2,6 +2,7 @@ using System.Text;
 
 using GetThePicture.Picture.Clause;
 using GetThePicture.Picture.Clause.Base;
+using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Tests.Picture.Clause.Decoder.Category;
@@ -55,5 +56,16 @@ public class AlphanumericDecoderTest
         object result = PicClauseCodec.ForMeta(pic).Decode(buffer);
 
         Assert.AreEqual("中文?", result);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(NotSupportedException))]
+    public void Decode_Wrong_Usage_ThrowsNotSupportedException()
+    {
+        var pic = PicMeta.Parse("X(7)");
+
+        byte[] buffer = cp950.GetBytes("中文字 ");
+
+        PicClauseCodec.ForMeta(pic).Usage(PicUsage.Binary).Decode(buffer);
     }
 }
