@@ -8,7 +8,7 @@ namespace GetThePicture.Picture.Clause.Encoder;
 internal static class PicEncoder
 {
     /// <summary>
-    /// CLR value → COB Meta → COBOL Elementary Item (buffer)
+    /// CLR value → [NumericValue] → COBOL Elementary Item (buffer)
     /// </summary>
     /// <param name="value"></param>
     /// <param name="pic"></param>
@@ -21,7 +21,6 @@ internal static class PicEncoder
         ArgumentNullException.ThrowIfNull(value);
         ArgumentNullException.ThrowIfNull(pic);
 
-        // object → COBOL Elementary Item (buffer)
         byte[] normalized = pic.Semantic switch
         {
             PicSemantic.GregorianDate or 
@@ -50,6 +49,8 @@ internal static class PicEncoder
             {
                 if (value is string text)
                     throw new NotSupportedException($"PIC {pic.Raw} expects Numeric value (number), but got string. Value: \"{text}\"");
+                
+                // CLR value → NumericValue → COBOL Elementary Item (buffer)
                 
                 var nValue = EncodeNumeric(value, pic);
                 normalized = Category.NumericEncoder.Encode(nValue, pic, options);

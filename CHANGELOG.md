@@ -1,5 +1,20 @@
 # Changelog
 
+## [26.11.2] – 2026-02-10
+
+### Improved
+- 對 PICTURE 子句內的 Decimal 編碼過程效能改善。
+    | Version | Method                | Mean      | Error     | StdDev    |
+    |---------|---------------------- |----------:|----------:|----------:|
+    | 26.11.1 | Warpper_Write_Decimal | 23.445 μs | 0.0766 μs | 0.0717 μs |
+    | 26.11.2 | Warpper_Write_Decimal | 18.889 μs | 0.1028 μs | 0.0961 μs |
+
+- 重構後的 **PicEncoder** 移除 `CobMeta` 過渡物件。
+    - 與 **PicDecoder** 的架構看齊：先處理**語意資料**，再處理基本的 COBOL 資料格式。
+    - 使用 **NumericEncoder** 還是需要中繼資料 `NumericValue`，但是資料改用 `ReadOnlyMemory<byte>` 保存，減少轉換開銷。
+
+<br><br>
+
 ## [26.11.1] – 2026-02-09
 
 ### Bugfix
