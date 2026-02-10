@@ -1,5 +1,5 @@
 using GetThePicture.Picture.Clause.Base.Options;
-using GetThePicture.Picture.Clause.Encoder.Meta;
+using static GetThePicture.Picture.Clause.Encoder.Category.NumericEncoder;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
@@ -30,19 +30,16 @@ internal static class COMP5
         };
     }
 
-    public static byte[] Encode(CobMeta meta, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static byte[] Encode(NumericValue nValue, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
     {
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException($"COMP does not support decimal digits. PIC has {pic.DecimalDigits} decimal digits.");
-        
-        if (meta.Number is null)
-            throw new ArgumentNullException(nameof(meta));
 
-        var number = meta.Number.Value;
+        decimal value = nValue.Value;
 
         // 檢查是否有小數位
-        if (number.Value != decimal.Truncate(number.Value))
-            throw new InvalidOperationException($"COMP Encode can only handle integers. Value {number.Value} has fractional part.");
+        if (value != decimal.Truncate(value))
+            throw new InvalidOperationException($"COMP Encode can only handle integers. Value {value} has fractional part.");
 
         int length = GetByteLength(pic);
 
@@ -50,24 +47,24 @@ internal static class COMP5
         switch (length)
         {
             case 2:
-                if (pic.Signed && (number.Value < short.MinValue || number.Value > short.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 2-byte signed range.");
-                if (!pic.Signed && (number.Value < 0 || number.Value > ushort.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 2-byte unsigned range.");
+                if (pic.Signed && (value < short.MinValue || value > short.MaxValue))
+                    throw new OverflowException($"Value {value} exceeds 2-byte signed range.");
+                if (!pic.Signed && (value < 0 || value > ushort.MaxValue))
+                    throw new OverflowException($"Value {value} exceeds 2-byte unsigned range.");
                 break;
 
             case 4:
-                if (pic.Signed && (number.Value < int.MinValue || number.Value > int.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 4-byte signed range.");
-                if (!pic.Signed && (number.Value < 0 || number.Value > uint.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 4-byte unsigned range.");
+                if (pic.Signed && (value < int.MinValue || value > int.MaxValue))
+                    throw new OverflowException($"Value {value} exceeds 4-byte signed range.");
+                if (!pic.Signed && (value < 0 || value > uint.MaxValue))
+                    throw new OverflowException($"Value {value} exceeds 4-byte unsigned range.");
                 break;
 
             case 8:
-                if (pic.Signed && (number.Value < long.MinValue || number.Value > long.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 8-byte signed range.");
-                if (!pic.Signed && (number.Value < 0 || number.Value > ulong.MaxValue))
-                    throw new OverflowException($"Value {number.Value} exceeds 8-byte unsigned range.");
+                if (pic.Signed && (value < long.MinValue || value > long.MaxValue))
+                    throw new OverflowException($"Value {value} exceeds 8-byte signed range.");
+                if (!pic.Signed && (value < 0 || value > ulong.MaxValue))
+                    throw new OverflowException($"Value {value} exceeds 8-byte unsigned range.");
                 break;
 
             default:
@@ -76,9 +73,9 @@ internal static class COMP5
 
         Span<byte> bytes = length switch
         {
-            2 => pic.Signed ? BitConverter.GetBytes((short)number.Value) : BitConverter.GetBytes((ushort)number.Value),
-            4 => pic.Signed ? BitConverter.GetBytes((int)  number.Value) : BitConverter.GetBytes((uint)  number.Value),
-            8 => pic.Signed ? BitConverter.GetBytes((long) number.Value) : BitConverter.GetBytes((ulong) number.Value),
+            2 => pic.Signed ? BitConverter.GetBytes((short)value) : BitConverter.GetBytes((ushort)value),
+            4 => pic.Signed ? BitConverter.GetBytes((int)  value) : BitConverter.GetBytes((uint)  value),
+            8 => pic.Signed ? BitConverter.GetBytes((long) value) : BitConverter.GetBytes((ulong) value),
             _ => throw new NotSupportedException()
         };
 

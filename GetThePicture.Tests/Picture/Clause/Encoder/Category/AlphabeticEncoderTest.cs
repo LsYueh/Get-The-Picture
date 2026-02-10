@@ -2,6 +2,7 @@ using System.Text;
 
 using GetThePicture.Picture.Clause;
 using GetThePicture.Picture.Clause.Base;
+using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Tests.Picture.Clause.Encoder.Category;
@@ -62,5 +63,14 @@ public class AlphabeticEncoderTest
         var pic = PicMeta.Parse("A(7)");
 
         PicClauseCodec.ForMeta(pic).Encode("中文字 ");
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(NotSupportedException))]
+    public void Encode_Wrong_Usage_ThrowsNotSupportedException()
+    {
+        var pic = PicMeta.Parse("A(7)");
+
+        PicClauseCodec.ForMeta(pic).Usage(PicUsage.PackedDecimal).Encode("中文字 ");
     }
 }

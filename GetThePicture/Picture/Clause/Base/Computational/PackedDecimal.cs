@@ -1,5 +1,5 @@
 using GetThePicture.Picture.Clause.Base.Options;
-using GetThePicture.Picture.Clause.Encoder.Meta;
+using static GetThePicture.Picture.Clause.Encoder.Category.NumericEncoder;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
@@ -68,34 +68,29 @@ internal static class COMP3
         return DecodeInt64(pn);
     }
 
-    public static byte[] Encode(CobMeta meta, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
-    {
-        if (meta.Number is null)
-            throw new ArgumentNullException(nameof(meta));
-
-        var number = meta.Number.Value;
-
-        if (!pic.Signed && number.IsNegative)
+    public static byte[] Encode(NumericValue nValue, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
+    {        
+        if (!pic.Signed && nValue.IsNegative)
             throw new InvalidOperationException("Unsigned PIC cannot encode negative value");
-
-        string digits = number.Digits;
 
         int byteLen = (pic.DigitCount + 1) / 2;
         byte[] buffer = new byte[byteLen];
+
+        ReadOnlySpan<byte> digits = nValue.Magnitude.Span;
 
         int digitIndex = digits.Length - 1;
         int byteIndex  = buffer.Length - 1;
 
         // LSB : digit + sign
-        int low  = (!pic.Signed) ? UNSIGNED : (number.IsNegative ? NEGATIVE_SIGN : POSITIVE_SIGN);
-        int high = digitIndex >= 0 ? digits[digitIndex--] - '0' : 0;
+        int low  = (!pic.Signed) ? UNSIGNED : (nValue.IsNegative ? NEGATIVE_SIGN : POSITIVE_SIGN);
+        int high = digitIndex >= 0 ? digits[digitIndex--] - (byte)'0' : 0;
 
         buffer[byteIndex--] = (byte)((high << 4) | low);
 
         while (byteIndex >= 0)
         {
-            low  = digitIndex >= 0 ? digits[digitIndex--] - '0' : 0;
-            high = digitIndex >= 0 ? digits[digitIndex--] - '0' : 0;
+            low  = digitIndex >= 0 ? digits[digitIndex--] - (byte)'0' : 0;
+            high = digitIndex >= 0 ? digits[digitIndex--] - (byte)'0' : 0;
             buffer[byteIndex--] = (byte)((high << 4) | low);
         }
 

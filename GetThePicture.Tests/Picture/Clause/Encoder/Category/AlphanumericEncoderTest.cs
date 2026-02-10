@@ -2,6 +2,7 @@ using System.Text;
 
 using GetThePicture.Picture.Clause;
 using GetThePicture.Picture.Clause.Base;
+using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Tests.Picture.Clause.Encoder.Category;
@@ -53,5 +54,14 @@ public class AlphanumericEncoderTest
         string result = cp950.GetString(buffer);
 
         Assert.AreEqual("中文?", result);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(NotSupportedException))]
+    public void Encode_Wrong_Usage_ThrowsNotSupportedException()
+    {
+        var pic = PicMeta.Parse("X(7)");
+
+        PicClauseCodec.ForMeta(pic).Usage(PicUsage.PackedDecimal).Encode("中文字 ");
     }
 }

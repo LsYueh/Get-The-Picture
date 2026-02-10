@@ -1,6 +1,4 @@
 
-using System.Globalization;
-
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Options;
@@ -28,7 +26,7 @@ public static class NumericDecoder
 
         return pic.Usage switch
         {
-            PicUsage.Display       => Display_Decode(fieldBytes, pic, options),
+            PicUsage.Display       =>                    Display_Decode(fieldBytes, pic, options),
             PicUsage.Binary        =>    Base.Computational.COMP.Decode(fieldBytes, pic, options.Binary),
             PicUsage.PackedDecimal =>   Base.Computational.COMP3.Decode(fieldBytes, pic),
             PicUsage.NativeBinary  =>   Base.Computational.COMP5.Decode(fieldBytes, pic, options.Binary),
@@ -52,25 +50,108 @@ public static class NumericDecoder
     private static object ParseToValue(string numeric, decimal sign, PicMeta pic)
     {
         if (pic.DigitCount > 28)
-            throw new OverflowException( $"PIC {pic} has {pic.IntegerDigits} + {pic.DecimalDigits} = {pic.DigitCount} digit(s), which exceeds the supported maximum (28 digits).");
-        
+            throw new OverflowException($"PIC {pic} has {pic.IntegerDigits} + {pic.DecimalDigits} = {pic.DigitCount} digit(s), which exceeds the supported maximum (28 digits).");
+
         if (numeric.Length != pic.DigitCount)
             throw new FormatException($"Numeric length mismatch for PIC. Expected {pic.DigitCount}, actual {numeric.Length}.");
-
-        // 插入小數點
-        string withDot = (pic.DecimalDigits > 0) ? numeric.Insert(pic.IntegerDigits, ".") : numeric;
-
-        // 統一轉成decimal後再處理型別
-        if (!decimal.TryParse(withDot, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal numbers))
+        
+        if (pic.DigitCount > 18)
         {
-            throw new FormatException($"Invalid numeric value: '{withDot} ({numeric})'");
+            return ParseBigDecimal(numeric, pic.IntegerDigits, pic.DecimalDigits, sign);
+        }
+        else
+        {
+            return ParseSmallDecimal(numeric, pic, sign);
+        }
+    }
+
+    /// <summary>
+    /// 解析超過 18 位的數字為 decimal，支援小數點與正負號。
+    /// </summary>
+    /// <param name="numeric">原始數字字串</param>
+    /// <param name="integerDigits">整數位數</param>
+    /// <param name="decimalDigits">小數位數</param>
+    /// <param name="sign">正負號 (+1 或 -1)</param>
+    /// <returns>解析後 decimal</returns>
+    private static decimal ParseBigDecimal(ReadOnlySpan<char> numeric, int integerDigits, int decimalDigits, decimal sign)
+    {
+        decimal intPart = 0;
+        decimal fracPart = 0;
+
+        int scale = 1; // 用來計算小數位的除法
+
+        // 先解析整數部分
+        for (int i = 0; i < integerDigits; i++)
+        {
+            int digit = numeric[i] - '0';
+            if (digit < 0 || digit > 9)
+                throw new FormatException($"Invalid digit '{numeric[i]}' in numeric value.");
+            intPart = intPart * 10 + digit;
+        }
+
+        // 再解析小數部分
+        for (int i = integerDigits; i < numeric.Length; i++)
+        {
+            int digit = numeric[i] - '0';
+            if (digit < 0 || digit > 9)
+                throw new FormatException($"Invalid digit '{numeric[i]}' in numeric value.");
+            fracPart = fracPart * 10 + digit;
+            scale *= 10;
+        }
+            
+        // 插入小數點
+        decimal value = intPart + (decimalDigits > 0 ? fracPart / scale : 0m);
+
+        // 帶入正負號
+        return sign < 0 ? -value : value;
+    }
+
+    /// <summary>
+    /// 解析 <=18 位數字為 long / decimal，支援小數與正負號。
+    /// </summary>
+    /// <param name="numeric">數字字串</param>
+    /// <param name="pic">PIC 描述</param>
+    /// <param name="sign">正負號 (+1 或 -1)</param>
+    /// <returns>decimal 或對應 CLR 型別</returns>
+    private static object ParseSmallDecimal(ReadOnlySpan<char> numeric, PicMeta pic, decimal sign)
+    {
+        long intPart = 0;
+        long fracPart = 0;
+        
+        int integerDigits = pic.IntegerDigits;
+        int decimalDigits = pic.DecimalDigits;
+
+        // 手動 parse
+        for (int i = 0; i < numeric.Length; i++)
+        {
+            int digit = numeric[i] - '0';
+            if (digit < 0 || digit > 9)
+                throw new FormatException($"Invalid digit '{numeric[i]}' in numeric value.");
+
+            if (i < integerDigits)
+                intPart = intPart * 10 + digit;
+            else
+                fracPart = fracPart * 10 + digit;
         }
 
         // 帶入正負號
-        decimal value = sign * numbers;
+        if (sign < 0)
+        {
+            intPart = -intPart;
+            fracPart = -fracPart;
+        }
 
-        // 輸出
-        return (pic.DecimalDigits != 0) ? value : ConvertToClr(value, pic);
+        // 判斷是否有小數
+        if (decimalDigits > 0)
+        {
+            decimal scale = (decimal)Math.Pow(10, decimalDigits);
+            return intPart + fracPart / scale;
+        }
+        else
+        {
+            // 沒有小數點，直接返回最小 CLR 型別
+            return ConvertToClr(intPart, pic);
+        }
     }
 
     /// <summary>
