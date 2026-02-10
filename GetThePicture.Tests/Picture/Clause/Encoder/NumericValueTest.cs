@@ -1,15 +1,18 @@
 using System.Globalization;
+using System.Text;
 
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Encoder;
-using GetThePicture.Picture.Clause.Encoder.Meta;
+using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Tests.Picture.Clause.Encoder;
 
 [TestClass]
-public class ToMetaTest
+public class NumericValueTest
 {
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+    
     [DataTestMethod]
     [DataRow("X(5)", "Hello",  "Hello")]
     [DataRow("X(1)", "A",  "A")]
@@ -17,52 +20,60 @@ public class ToMetaTest
     {
         var pic = PicMeta.Parse(picString);
 
-        CobMeta v = PicEncoder.ToCobMeta(value, pic);
+        var v = PicEncoder.EncodeNumeric(value, pic);
 
-        Assert.AreEqual(expected, v.Text?.Value);
+        string actual = cp950.GetString(v.Magnitude.Span);
+
+        Assert.AreEqual(expected, actual);
     }
-
+    
     [TestMethod]
     public void Integer_PreservesSign()
     {
         var pic = PicMeta.Parse("9(5)");
 
-        CobMeta v = PicEncoder.ToCobMeta(-123, pic);
+        var v = PicEncoder.EncodeNumeric(-123, pic);
 
-        Assert.IsTrue(v.Number?.IsNegative);
-        Assert.AreEqual("123", v.Number?.Digits);
-        Assert.AreEqual(0, v.Number?.DecimalDigits);
+        string actual = cp950.GetString(v.Magnitude.Span);
+
+        Assert.IsTrue(v.IsNegative);
+        Assert.AreEqual("00123", actual);
+        Assert.AreEqual(0, v.DecimalDigits);
     }
 
     [DataTestMethod]
-    [DataRow("9(5)V9(2)", "12.3", "1230", 2)]
+    [DataRow("9(5)V9(2)", "12.3", "0001230", 2)]
     public void Decimal(string picString, string value, string expected, int expectedScale)
     {
         decimal _value = decimal.Parse(value, CultureInfo.InvariantCulture);
 
         var pic = PicMeta.Parse(picString);
 
-        CobMeta v = PicEncoder.ToCobMeta(_value, pic);
+        var v = PicEncoder.EncodeNumeric(_value, pic);
 
-        Assert.IsFalse(v.Number?.IsNegative);
-        Assert.AreEqual(expected, v.Number?.Digits);
-        Assert.AreEqual(expectedScale, v.Number?.DecimalDigits);
+        string actual = cp950.GetString(v.Magnitude.Span);
+
+        Assert.IsFalse(v.IsNegative);
+        Assert.AreEqual(expected, actual);
+        Assert.AreEqual(expectedScale, v.DecimalDigits);
     }
 
     [DataTestMethod]
-    [DataRow("9(5)V9(2)", "-12.3",  "1230", 2)]
-    [DataRow("9(1)V9(3)", "-12.3", "12300", 3)]
+    [DataRow("9(5)V9(2)", "-12.3", "0001230", 2)]
+    [DataRow("9(2)V9(3)", "-12.3",   "12300", 3)]
     public void Decimal_Is_Negative(string picString, string value, string expected, int expectedScale)
     {
         decimal _value = decimal.Parse(value, CultureInfo.InvariantCulture);
 
         var pic = PicMeta.Parse(picString);
 
-        CobMeta v = PicEncoder.ToCobMeta(_value, pic);
+        var v = PicEncoder.EncodeNumeric(_value, pic);
 
-        Assert.IsTrue(v.Number?.IsNegative);
-        Assert.AreEqual(expected, v.Number?.Digits);
-        Assert.AreEqual(expectedScale, v.Number?.DecimalDigits);
+        string actual = cp950.GetString(v.Magnitude.Span);
+
+        Assert.IsTrue(v.IsNegative);
+        Assert.AreEqual(expected, actual);
+        Assert.AreEqual(expectedScale, v.DecimalDigits);
     }
 
     [TestMethod]
@@ -73,11 +84,13 @@ public class ToMetaTest
         
         var date = new DateOnly(2026, 1, 5);
 
-        CobMeta v = PicEncoder.ToCobMeta(date, pic);
+        var v = PicEncoder.EncodeNumeric(date, pic);
 
-        Assert.IsFalse(v.Number?.IsNegative);
-        Assert.AreEqual("20260105", v.Number?.Digits);
-        Assert.AreEqual(0, v.Number?.DecimalDigits);
+        string actual = cp950.GetString(v.Magnitude.Span);
+
+        Assert.IsFalse(v.IsNegative);
+        Assert.AreEqual("20260105", actual);
+        Assert.AreEqual(0, v.DecimalDigits);
     }
 
     [TestMethod]
@@ -88,11 +101,13 @@ public class ToMetaTest
         
         var date = new DateOnly(2026, 1, 5);
 
-        CobMeta v = PicEncoder.ToCobMeta(date, pic);
+        var v = PicEncoder.EncodeNumeric(date, pic);
 
-        Assert.IsFalse(v.Number?.IsNegative);
-        Assert.AreEqual("1150105", v.Number?.Digits);
-        Assert.AreEqual(0, v.Number?.DecimalDigits);
+        string actual = cp950.GetString(v.Magnitude.Span);
+
+        Assert.IsFalse(v.IsNegative);
+        Assert.AreEqual("1150105", actual);
+        Assert.AreEqual(0, v.DecimalDigits);
     }
 
     [TestMethod]
@@ -103,11 +118,13 @@ public class ToMetaTest
 
         var t = new TimeOnly(1, 2, 3);
 
-        CobMeta v = PicEncoder.ToCobMeta(t, pic);
+        var v = PicEncoder.EncodeNumeric(t, pic);
 
-        Assert.IsFalse(v.Number?.IsNegative);
-        Assert.AreEqual("010203", v.Number?.Digits);
-        Assert.AreEqual(0, v.Number?.DecimalDigits);
+        string actual = cp950.GetString(v.Magnitude.Span);
+
+        Assert.IsFalse(v.IsNegative);
+        Assert.AreEqual("010203", actual);
+        Assert.AreEqual(0, v.DecimalDigits);
     }
 
     [TestMethod]
@@ -118,11 +135,13 @@ public class ToMetaTest
 
         var t = new TimeOnly(23, 59, 59, 7);
 
-        CobMeta v = PicEncoder.ToCobMeta(t, pic);
+        var v = PicEncoder.EncodeNumeric(t, pic);
 
-        Assert.IsFalse(v.Number?.IsNegative);
-        Assert.AreEqual("235959007", v.Number?.Digits);
-        Assert.AreEqual(0, v.Number?.DecimalDigits);
+        string actual = cp950.GetString(v.Magnitude.Span);
+
+        Assert.IsFalse(v.IsNegative);
+        Assert.AreEqual("235959007", actual);
+        Assert.AreEqual(0, v.DecimalDigits);
     }
 
     [TestMethod]
@@ -133,11 +152,13 @@ public class ToMetaTest
 
         var dt = new DateTime(2025, 1, 6, 13, 45, 59);
 
-        CobMeta v = PicEncoder.ToCobMeta(dt, pic);
+        var v = PicEncoder.EncodeNumeric(dt, pic);
 
-        Assert.IsFalse(v.Number?.IsNegative);
-        Assert.AreEqual("20250106134559", v.Number?.Digits);
-        Assert.AreEqual(0, v.Number?.DecimalDigits);
+        string actual = cp950.GetString(v.Magnitude.Span);
+
+        Assert.IsFalse(v.IsNegative);
+        Assert.AreEqual("20250106134559", actual);
+        Assert.AreEqual(0, v.DecimalDigits);
     }
 
     // -------------------------
@@ -150,7 +171,7 @@ public class ToMetaTest
         var pic = PicMeta.Parse("9(6)");
         pic.Semantic = PicSemantic.Time6;
 
-        Assert.ThrowsException<NotSupportedException>(() => PicEncoder.ToCobMeta(new DateTime(), pic));
+        Assert.ThrowsException<NotSupportedException>(() => PicEncoder.EncodeNumeric(new DateTime(), pic));
     }
 
     [TestMethod]
@@ -159,7 +180,7 @@ public class ToMetaTest
         var pic = PicMeta.Parse("9(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<NotSupportedException>(() => PicEncoder.ToCobMeta(new DateTime(), pic));
+        Assert.ThrowsException<NotSupportedException>(() => PicEncoder.EncodeNumeric(new DateTime(), pic));
     }
 
     [TestMethod]
@@ -168,7 +189,7 @@ public class ToMetaTest
         var pic = PicMeta.Parse("9(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<InvalidOperationException>(() => PicEncoder.ToCobMeta(12345.6m, pic));
+        Assert.ThrowsException<InvalidOperationException>(() => PicEncoder.EncodeNumeric(12345.6m, pic));
     }
 
     // Unsupported type
@@ -176,6 +197,6 @@ public class ToMetaTest
     public void UnsupportedType_Throws()
     {
         Assert.ThrowsException<NotSupportedException>(() =>
-            PicEncoder.ToCobMeta(new object(), PicMeta.Parse("X(5)")));
+            PicEncoder.EncodeNumeric(new object(), PicMeta.Parse("X(5)")));
     }
 }

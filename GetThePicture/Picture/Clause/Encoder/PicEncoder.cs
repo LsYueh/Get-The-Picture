@@ -3,7 +3,7 @@ using System.Globalization;
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Options;
-using GetThePicture.Picture.Clause.Encoder.Meta;
+using static GetThePicture.Picture.Clause.Encoder.Category.NumericEncoder;
 
 namespace GetThePicture.Picture.Clause.Encoder;
 
@@ -18,21 +18,20 @@ internal static class PicEncoder
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
     /// <exception cref="FormatException"></exception>
-    public static byte[] Encode(object value, PicMeta pic, CodecOptions options)
+    internal static byte[] Encode(object value, PicMeta pic, CodecOptions options)
     {
         ArgumentNullException.ThrowIfNull(value);
         ArgumentNullException.ThrowIfNull(pic);
 
-        // CLR value → COB Meta
-        CobMeta meta = ToCobMeta(value, pic);
-
-        // Meta → COBOL Elementary Item (buffer)
-        byte[] normalized = pic.BaseClass switch
+        // object → COBOL Elementary Item (buffer)
+        byte[] normalized = pic.Semantic switch
         {
-            PicBaseClass.Numeric      =>      Category.NumericEncoder.Encode(meta, pic, options),
-            PicBaseClass.Alphanumeric => Category.AlphanumericEncoder.Encode(meta, pic),
-            PicBaseClass.Alphabetic   =>   Category.AlphabeticEncoder.Encode(meta, pic),
-            _ => throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseClass}"),
+            // PicSemantic.GregorianDate => // return Semantic.DateEncoder.Encode(buffer, pic);
+            // PicSemantic.MinguoDate    => // return Semantic.DateEncoder.Encode(buffer, pic);
+            // PicSemantic.Time6         => // return Semantic.TimeEncoder.Encode(buffer, pic);
+            // PicSemantic.Time9         => // return Semantic.TimeEncoder.Encode(buffer, pic);
+            // PicSemantic.Timestamp14   => // return Semantic.TimestampEncoder.Encode(buffer, pic);
+            _ => EncodeBaseType(value, pic, options),
         };
 
         if (options.Strict && (normalized.Length != pic.StorageOccupied))
@@ -43,167 +42,207 @@ internal static class PicEncoder
         return normalized;
     }
 
+    private static byte[] EncodeBaseType(object value, PicMeta pic, CodecOptions options)
+    {
+        byte[] normalized;
+
+        switch (pic.BaseClass)
+        {
+            case PicBaseClass.Numeric:
+            {
+                var nValue = EncodeNumeric(value, pic);
+                normalized = Category.NumericEncoder.Encode(nValue, pic, options);
+                break;
+            }
+
+            case PicBaseClass.Alphanumeric:
+            {
+                if (value is not string text)
+                    throw new InvalidCastException( $"PIC {pic.Raw} expects Alphanumeric value (string), but got {value?.GetType().Name ?? "null"}.");
+                
+                normalized = Category.AlphanumericEncoder.Encode(text, pic);
+                break;
+            }
+
+            case PicBaseClass.Alphabetic:
+            {
+                if (value is not string text)
+                    throw new InvalidCastException($"PIC {pic.Raw} expects Alphabetic value (string), but got {value?.GetType().Name ?? "null"}.");
+
+                normalized = Category.AlphabeticEncoder.Encode(text, pic);
+                break;
+            }
+
+            default:
+                throw new NotSupportedException($"Unsupported PIC Data Type [Encode] : {pic.BaseClass}");
+        };
+
+        return normalized;
+    }
+
     /// <summary>
-    /// CLR value → Meta (要跑Test)
+    /// CLR value → NumericValue (要跑Test)
     /// </summary>
     /// <param name="value"></param>
     /// <param name="pic"></param>
     /// <returns></returns>
     /// <exception cref="NotSupportedException"></exception>
-    internal static CobMeta ToCobMeta(object value, PicMeta pic)
+    internal static NumericValue EncodeNumeric(object value, PicMeta pic)
     {
-        CobMeta meta = value switch
-        {
-            string    s => EleString(s),
-            char      c => EleString(c.ToString()),
-            sbyte or byte or short or ushort or int or uint or long or ulong => EleInteger(value),
-            float or double or decimal => EleDecimal(value, pic),
-            DateOnly  d => EleDate(d, pic),
-            TimeOnly  t => EleTime(t, pic),
-            DateTime dt => EleTimeStamp(dt, pic),
-            _ => throw new NotSupportedException($"Unsupported value type '{value.GetType()}'"),
-        };
-
-        return meta;
-    }
-
-    private static CobMeta EleString(string text)
-    {
-        return CobMeta.FromText(text);
-    }
-
-    private static CobMeta EleInteger(object value)
-    {
-        bool isNegative;
-        string digits;
-
-        switch (value)
-        {
-            case sbyte v:
-                isNegative = v < 0;
-                digits = Math.Abs(v).ToString(CultureInfo.InvariantCulture);
-                break;
-            case short v:
-                isNegative = v < 0;
-                digits = Math.Abs(v).ToString(CultureInfo.InvariantCulture);
-                break;
-            case int v:
-                isNegative = v < 0;
-                digits = Math.Abs(v).ToString(CultureInfo.InvariantCulture);
-                break;
-            case long v:
-                isNegative = v < 0;
-                digits = Math.Abs(v).ToString(CultureInfo.InvariantCulture);
-                break;
-            case byte v:
-                isNegative = false;
-                digits = v.ToString(CultureInfo.InvariantCulture);
-                break;
-            case ushort v:
-                isNegative = false;
-                digits = v.ToString(CultureInfo.InvariantCulture);
-                break;
-            case uint v:
-                isNegative = false;
-                digits = v.ToString(CultureInfo.InvariantCulture);
-                break;
-            case ulong v:
-                isNegative = false;
-                digits = v.ToString(CultureInfo.InvariantCulture);
-                break;
-            default:
-                throw new NotSupportedException($"Unsupported integer type '{value.GetType()}'");
-        }
-
-        return CobMeta.FromNumber(isNegative, digits, decimalDigits: 0);
-    }
-
-    private static CobMeta EleDecimal(object value, PicMeta pic)
-    {
-        ArgumentNullException.ThrowIfNull(value);
+        byte[] digits = new byte[pic.DigitCount];
         
-        decimal d = value switch
-        {
-            float   f   => (decimal)f,
-            double  db  => (decimal)db,
-            decimal dec => dec,
-
-            _ => throw new ArgumentException("Value must be a floating point type", nameof(value)),
-        };
-
+        // 先轉 decimal
+        decimal d = ToDecimal(value);
+        
         bool isNegative = d < 0;
+        if (isNegative)
+            d = decimal.Negate(d); // 確保後面都是 magnitude
 
-        d = Math.Abs(d); // 去掉sign
+        // 無論小數點與位數，全部整數化後寫入 buffer
+        decimal magnitude;
 
-        int scale = pic.DecimalDigits;
-        decimal scaled = d * Pow10(scale);
-        
-        if (scaled != decimal.Truncate(scaled))
-            throw new InvalidOperationException("Value exceeds allowed precision");
-
-        string digits = decimal.Truncate(scaled).ToString("0", CultureInfo.InvariantCulture);
-
-        return CobMeta.FromNumber(isNegative, digits, scale);
-    }
-
-    private static decimal Pow10(int n)
-    {
-        decimal result = 1m;
-        for (int i = 0; i < n; i++)
-            result *= 10m;
-        return result;
-    }
-
-    private static CobMeta EleDate(DateOnly date, PicMeta pic)
-    {
-        if (pic.Usage != PicUsage.Display)
-            throw new NotSupportedException($"'Date' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-            
-        return pic.Semantic switch
+        // 有小數點或超過 18 位數 → 用 decimal
+        if (pic.DecimalDigits > 0 || pic.DigitCount <= 18)
         {
-            PicSemantic.GregorianDate => CobMeta.FromNumber(date.ToString("yyyyMMdd")),
-            PicSemantic.MinguoDate => CobMeta.FromNumber(ToMinguoDateString(date)),
-            _ => throw new NotSupportedException($"Unsupported DateOnly format: {pic.Semantic}")
-        };
-    }
-
-    private static string ToMinguoDateString(DateOnly date)
-    {
-        int rocYear = date.Year - 1911;
-        
-        if (rocYear <= 0)
+            // 將小數點移動，變成整數
+            decimal scale = (decimal)Math.Pow(10, pic.DecimalDigits);
+            magnitude = d * scale;
+        }
+        else
         {
-            throw new ArgumentOutOfRangeException(nameof(date), "Date is before ROC calendar starts (1912-01-01).");
+            magnitude = d;
         }
 
-        return $"{rocYear:000}{date:MMdd}";
-    }
-
-    private static CobMeta EleTime(TimeOnly dt, PicMeta pic)
-    {
-        if (pic.Usage != PicUsage.Display)
-            throw new NotSupportedException($"'Time' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-
-        return pic.Semantic switch
+        // 根據位數使用 long 或 decimal 拆位寫入 buffer
+        if (magnitude <= long.MaxValue)
         {
-            PicSemantic.Time6 => CobMeta.FromNumber(dt.ToString("HHmmss"   , CultureInfo.InvariantCulture)),
-            PicSemantic.Time9 => CobMeta.FromNumber(dt.ToString("HHmmssfff", CultureInfo.InvariantCulture)),
-            _ => throw new NotSupportedException($"Unsupported TIME format: {pic.Semantic}")
-        };
-    }
-
-    private static CobMeta EleTimeStamp(DateTime dt, PicMeta pic)
-    {
-        if (pic.Usage != PicUsage.Display)
-            throw new NotSupportedException($"'Timestamp' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-            
-        if (pic.Semantic != PicSemantic.Timestamp14)
+            WriteDigits((long)magnitude, digits);
+        }
+        else
         {
-            throw new NotSupportedException($"DateTime can only be encoded as Timestamp14, but was {pic.Semantic}");
+            WriteDigits(magnitude, digits);
         }
 
-        string text = dt.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-
-        return CobMeta.FromNumber(text);
+        return new NumericValue(isNegative, digits, pic.DecimalDigits);
     }
+
+    private static decimal ToDecimal(object value) => value switch
+    {
+        byte b    => b,
+        sbyte sb  => sb,
+        short s   => s,
+        ushort us => us,
+        int i     => i,
+        uint ui   => ui,
+        long l    => l,
+        ulong ul  => ul,
+        float f   => (decimal)f,   // float → decimal
+        double db => (decimal)db,  // double → decimal
+        decimal d => d,
+        _ => throw new NotSupportedException($"Unsupported numeric type: {value.GetType()}")
+    };
+
+    /// <summary>
+    /// (long)
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="buffer"></param>
+    private static void WriteDigits(long value, Span<byte> buffer)
+    {
+        int i = buffer.Length - 1;
+
+        // 從尾到頭寫入數字
+        while (i >= 0)
+        {
+            buffer[i] = (byte)('0' + (value % 10));
+            value /= 10;
+            i--;
+        }
+
+        // 如果 value 已經用完，左側填 0
+        while (i >= 0)
+        {
+            buffer[i] = (byte)'0';
+            i--;
+        }
+    }
+
+    /// <summary>
+    /// (decimal)
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="buffer"></param>
+    private static void WriteDigits(decimal value, Span<byte> buffer)
+    {
+        int i = buffer.Length - 1;
+
+        // 從尾到頭寫入數字
+        while (i >= 0)
+        {
+            decimal rem = value % 10;
+            buffer[i] = (byte)('0' + (int)rem);
+            value = decimal.Truncate(value / 10);
+            i--;
+        }
+
+        // 左側填 0
+        while (i >= 0)
+        {
+            buffer[i] = (byte)'0';
+            i--;
+        }
+    }
+
+    // private static CobMeta EleDate(DateOnly date, PicMeta pic)
+    // {
+    //     if (pic.Usage != PicUsage.Display)
+    //         throw new NotSupportedException($"'Date' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
+            
+    //     return pic.Semantic switch
+    //     {
+    //         PicSemantic.GregorianDate => CobMeta.FromNumber(date.ToString("yyyyMMdd")),
+    //         PicSemantic.MinguoDate => CobMeta.FromNumber(ToMinguoDateString(date)),
+    //         _ => throw new NotSupportedException($"Unsupported DateOnly format: {pic.Semantic}")
+    //     };
+    // }
+
+    // private static string ToMinguoDateString(DateOnly date)
+    // {
+    //     int rocYear = date.Year - 1911;
+        
+    //     if (rocYear <= 0)
+    //     {
+    //         throw new ArgumentOutOfRangeException(nameof(date), "Date is before ROC calendar starts (1912-01-01).");
+    //     }
+
+    //     return $"{rocYear:000}{date:MMdd}";
+    // }
+
+    // private static CobMeta EleTime(TimeOnly dt, PicMeta pic)
+    // {
+    //     if (pic.Usage != PicUsage.Display)
+    //         throw new NotSupportedException($"'Time' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
+
+    //     return pic.Semantic switch
+    //     {
+    //         PicSemantic.Time6 => CobMeta.FromNumber(dt.ToString("HHmmss"   , CultureInfo.InvariantCulture)),
+    //         PicSemantic.Time9 => CobMeta.FromNumber(dt.ToString("HHmmssfff", CultureInfo.InvariantCulture)),
+    //         _ => throw new NotSupportedException($"Unsupported TIME format: {pic.Semantic}")
+    //     };
+    // }
+
+    // private static CobMeta EleTimeStamp(DateTime dt, PicMeta pic)
+    // {
+    //     if (pic.Usage != PicUsage.Display)
+    //         throw new NotSupportedException($"'Timestamp' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
+            
+    //     if (pic.Semantic != PicSemantic.Timestamp14)
+    //     {
+    //         throw new NotSupportedException($"DateTime can only be encoded as Timestamp14, but was {pic.Semantic}");
+    //     }
+
+    //     string text = dt.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+
+    //     return CobMeta.FromNumber(text);
+    // }
 }

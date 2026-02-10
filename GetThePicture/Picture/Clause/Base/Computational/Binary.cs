@@ -1,5 +1,5 @@
 using GetThePicture.Picture.Clause.Base.Options;
-using GetThePicture.Picture.Clause.Encoder.Meta;
+using static GetThePicture.Picture.Clause.Encoder.Category.NumericEncoder;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
@@ -46,10 +46,10 @@ internal static class COMP
         return COMP5.Decode(buffer, pic, endian);
     }
 
-    public static byte[] Encode(CobMeta meta, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static byte[] Encode(NumericValue nValue, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
     {
        // TODO: 只實作 TRUNC STD
        
-       return COMP5.Encode(meta, pic, endian);
+       return COMP5.Encode(nValue, pic, endian);
     }
 }

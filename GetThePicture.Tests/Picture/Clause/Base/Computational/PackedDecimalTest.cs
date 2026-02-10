@@ -1,15 +1,19 @@
 using System.Globalization;
+using System.Text;
 
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Computational;
-using GetThePicture.Picture.Clause.Encoder.Meta;
+using GetThePicture.Picture.Clause.Utils;
+using static GetThePicture.Picture.Clause.Encoder.Category.NumericEncoder;
 
 namespace GetThePicture.Tests.Picture.Clause.Base.Computational;
 
 [TestClass]
 public class PackedDecimalTest
 {
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+    
     private static byte[] HexToBytes(string hex)
     {
         if (hex.Length % 2 != 0)
@@ -93,9 +97,9 @@ public class PackedDecimalTest
     public void Encode_Unsigned_Should_Use_F_Sign()
     {
         var pic = PicMeta.Parse("9(5)");
-        CobMeta meta = CobMeta.FromNumber("12345");
+        var nValue = new NumericValue(false, cp950.GetBytes("12345"), 0);
 
-        byte[] buffer = COMP3.Encode(meta, pic);
+        byte[] buffer = COMP3.Encode(nValue, pic);
 
         // 12 34 5F
         CollectionAssert.AreEqual(HexToBytes("12345F"), buffer);

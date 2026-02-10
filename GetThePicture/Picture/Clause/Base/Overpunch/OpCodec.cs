@@ -59,11 +59,9 @@ public static class OpCodec
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static byte[] Encode(decimal sign, string numeric, PicMeta pic, CodecOptions options)
+    public static byte[] Encode(decimal sign, byte[] numeric, PicMeta pic, CodecOptions options)
     {
-        byte[] buffer = cp950.GetBytes(numeric);
-
-        EnsureAllAsciiDigits(buffer);
+        EnsureAllAsciiDigits(numeric);
 
         if (pic.Signed)
         {
@@ -74,14 +72,14 @@ public static class OpCodec
                 _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
             };
 
-            char digit = (char)(buffer[index] & 0x7F); // ASCII overpunch
+            char digit = (char)(numeric[index] & 0x7F); // ASCII overpunch
 
             char value = GetOpKey(new OpVal(sign, digit), options.DataStorage);
 
-            buffer[index] = (byte) value;
+            numeric[index] = (byte) value;
         }
 
-        return buffer;
+        return numeric;
     }
 
     /// <summary>
