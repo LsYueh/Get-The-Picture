@@ -24,4 +24,9 @@ public enum PicUsage
     /// COMP-5 (native binary)
     /// </summary>
     NativeBinary,
+
+    /// <summary>
+    /// COMP-6 (Unsigned Packed Decimal)
+    /// </summary>
+    UPackedDecimal,
 }

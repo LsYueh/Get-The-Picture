@@ -129,6 +129,28 @@ PIC S9(5)V9(2) COMP-3
 
 <br><br>
 
+# `COMP-6` (Unsigned Packed Decimal)
+`COMP-6` 並非 ANSI/ISO 標準 COBOL 定義，而是多數商用 COBOL（如 IBM Enterprise COBOL、Micro Focus）提供的擴充型態。  
+
+| 特性 | COMP-3 | COMP-6 |
+|------|--------|--------|
+| 類型 | Packed Decimal | Unsigned Packed Decimal |
+| 有 sign nibble | ✅ 有 | ❌ 無 |
+| 可負數 | ✅ | ❌ |
+| 標準支援 | ANSI/ISO | Vendor Extension |
+
+<br>
+
+```cobol
+01  WS-COMP3-FIELD       PIC 9(5) COMP-3.
+01  WS-COMP6-FIELD       PIC 9(6) COMP-6.
+ 
+*> COMP-3: 5 digits F sign in 3 bytes (12345F)
+*> COMP-6: 6 digits in 3 bytes (123456)
+```
+
+<br><br>
+
 # 參考
 
 Rocket Software ACUCOBOL-GT extend (V10.5.0) : [USAGE Clause](https://docs.rocketsoftware.com/zh-TW/bundle/acucobolgt_dg_1050_html/page/BKRFRFDATAS043.html)  

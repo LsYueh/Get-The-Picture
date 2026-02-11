@@ -383,6 +383,8 @@ public class Parser(List<Token> tokens)
                     Consume(); // Usage
                     break;
 
+                // COBOL COMPUTATIONAL
+
                 case TokenType.Binary:
                 case TokenType.Comp:
                     Consume();
@@ -396,6 +398,10 @@ public class Parser(List<Token> tokens)
                 case TokenType.Comp3:
                     Consume();
                     usage = PicUsage.PackedDecimal;
+                    break;
+                case TokenType.Comp6:
+                    Consume();
+                    usage = PicUsage.UPackedDecimal;
                     break;
                 case TokenType.Comp1:
                 case TokenType.Comp2:
@@ -449,9 +455,16 @@ public class Parser(List<Token> tokens)
                     sb.Append(unquoted);
                     break;
 
+                case TokenType.Space:
+                    Consume(); break;
+
                 case TokenType.NumericLiteral:
                     sb.Append(Consume().Value);
                     break;
+
+                case TokenType.Zero:
+                    sb.Append('0');
+                    Consume(); break;
 
                 case TokenType.Hyphen:
                     Consume(); // continuation indicator, skip
@@ -462,7 +475,6 @@ public class Parser(List<Token> tokens)
                     return sb.ToString();
             }
         }
-
 
         return sb.ToString(); // TODO: 要根據TokenType輸出成string或decimal...
     }
