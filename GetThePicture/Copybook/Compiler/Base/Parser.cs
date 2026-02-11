@@ -385,8 +385,13 @@ public class Parser(List<Token> tokens)
 
                 // COBOL COMPUTATIONAL
 
+                case TokenType.Comp3:
+                    Consume();
+                    usage = PicUsage.PackedDecimal;
+                    break;
                 case TokenType.Binary:
                 case TokenType.Comp:
+                case TokenType.Comp4:
                     Consume();
                     usage = PicUsage.Binary;
                     break;
@@ -395,18 +400,13 @@ public class Parser(List<Token> tokens)
                     usage = PicUsage.NativeBinary;
                     break;
                 case TokenType.PackedDecimal:
-                case TokenType.Comp3:
-                    Consume();
-                    usage = PicUsage.PackedDecimal;
-                    break;
                 case TokenType.Comp6:
                     Consume();
                     usage = PicUsage.UPackedDecimal;
                     break;
                 case TokenType.Comp1:
                 case TokenType.Comp2:
-                case TokenType.Comp4:
-                    throw new Exception("COMP-1/2/4 not supported yet.");
+                    throw new Exception("COMP-1/2 not supported yet.");
 
                 default:
                     throw new CompileException(
