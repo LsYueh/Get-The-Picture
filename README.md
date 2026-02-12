@@ -1,9 +1,9 @@
 # Get The Picture
 
 [![CI](https://github.com/LsYueh/Get-The-Picture/actions/workflows/dotnet.yml/badge.svg?branch=main)](https://github.com/LsYueh/Get-The-Picture/actions/workflows/dotnet.yml)
-![License](https://img.shields.io/github/license/LsYueh/Get-The-Picture)
-![.NET SDK 8.0](https://img.shields.io/badge/.NET-8.0-blue)
-![GitHub release](https://img.shields.io/github/v/release/LsYueh/Get-The-Picture)
+[![License](https://img.shields.io/github/license/LsYueh/Get-The-Picture)](/LICENSE)
+[![.NET SDK 8.0](https://img.shields.io/badge/.NET-8.0-blue)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+[![GitHub release](https://img.shields.io/github/v/release/LsYueh/Get-The-Picture)](https://github.com/LsYueh/Get-The-Picture/releases)
 
 Modern .NET library for working with COBOL Copybook–based data  
 用於處理以 COBOL Copybook 為基礎資料的現代 .NET 類別庫  
