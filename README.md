@@ -442,6 +442,7 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 - [日期 (`Date`)](docs/get-the-picture/cobol-picture/semantic/date-time/date.md)  
 - [時間 (`Time`)](docs/get-the-picture/cobol-picture/semantic/date-time/time.md)  
 - [時間戳記 (`Timestamp`)](docs/get-the-picture/cobol-picture/semantic/date-time/timestamp.md)  
+- [布林值 (`Boolean`)](/docs/get-the-picture/cobol-picture/semantic/boolean.md)
 
 <br>
 
