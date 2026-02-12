@@ -1,5 +1,24 @@
 # Changelog
 
+## [26.11.3] – 2026-02-12
+
+### Added
+- 新增 `COMP-6` 的支援。
+    - 支援的 COBOL 資料型態為 `Unsigned Packed Decimal`，對應到 C# 的 `ulong`。
+
+- 新增對 `Boolen` 的**語意**解析。
+    - 對應到 C# 的 `bool`。
+    - 當 `PICTURE` 子句採用**語意** ***`PicSemantic.Boolean`*** 解析時：
+        - 符號宣告為 `A(1)` / `X(1)` 且 `VALUE` 為 `"Y"` / `"N"` 時，會將其為**布林值**。
+        - 符號宣告為 `9(1)` 且 `VALUE` 為 `1` / `0` 時，會將其轉換為**布林值**。
+
+### Changed
+- 修正 `COMP-4` 的功能定位
+    - 目前等同於 `COMP` (`Binary`) 的處理方式。
+
+<br><br>
+
+
 ## [26.11.2] – 2026-02-10
 
 ### Improved
