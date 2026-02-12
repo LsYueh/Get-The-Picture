@@ -61,10 +61,11 @@ public static class NumericEncoder
 
         byte[] buffer = pic.Usage switch
         {
-            PicUsage.Display       =>                  Display_Encode(nValue, pic, options),
-            PicUsage.Binary        =>  Base.Computational.COMP.Encode(nValue, pic, options.Binary),
-            PicUsage.PackedDecimal => Base.Computational.COMP3.Encode(nValue, pic),
-            PicUsage.NativeBinary  => Base.Computational.COMP5.Encode(nValue, pic, options.Binary),
+            PicUsage.Display        =>                  Display_Encode(nValue, pic, options),
+            PicUsage.Binary         =>  Base.Computational.COMP.Encode(nValue, pic, options.Binary),
+            PicUsage.PackedDecimal  => Base.Computational.COMP3.Encode(nValue, pic),
+            PicUsage.NativeBinary   => Base.Computational.COMP5.Encode(nValue, pic, options.Binary),
+            PicUsage.UPackedDecimal => Base.Computational.COMP6.Encode(nValue, pic),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
 

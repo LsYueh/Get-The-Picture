@@ -172,22 +172,35 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
         // Reserved Word or Alphanumeric Literal
         return word switch
         {
-            "PIC" or "PICTURE" => new Token(TokenType.Picture, word, lineNumber),
+            "PICTURE" or
+            "PIC"       => new Token(TokenType.Picture  , word, lineNumber),
             "USAGE"     => new Token(TokenType.Usage    , word, lineNumber),
             "DISPLAY"   => new Token(TokenType.Display  , word, lineNumber),
+            "COMPUTATIONAL"   or
             "COMP"      => new Token(TokenType.Comp     , word, lineNumber),
+            "COMPUTATIONAL-1" or
             "COMP-1"    => new Token(TokenType.Comp1    , word, lineNumber),
+            "COMPUTATIONAL-2" or
             "COMP-2"    => new Token(TokenType.Comp2    , word, lineNumber),
+            "COMPUTATIONAL-3" or
             "COMP-3"    => new Token(TokenType.Comp3    , word, lineNumber),
+            "COMPUTATIONAL-4" or
             "COMP-4"    => new Token(TokenType.Comp4    , word, lineNumber),
+            "COMPUTATIONAL-5" or
             "COMP-5"    => new Token(TokenType.Comp5    , word, lineNumber),
+            "COMPUTATIONAL-6" or
+            "COMP-6"    => new Token(TokenType.Comp6    , word, lineNumber),
             "BINARY"    => new Token(TokenType.Binary   , word, lineNumber),
             "PACKED-DECIMAL" => new Token(TokenType.PackedDecimal, word, lineNumber),
             "VALUE"     => new Token(TokenType.Value    , word, lineNumber),
             "VALUES"    => new Token(TokenType.Values   , word, lineNumber),
-            "THRU"  or "THROUGH"=> new Token(TokenType.Through, word, lineNumber),
-            "SPACE" or "SPACES" => new Token(TokenType.Space  , word, lineNumber),
-            "ZERO"  or "ZEROS"  => new Token(TokenType.Zero   , word, lineNumber),
+            "THROUGH" or
+            "THRU"      => new Token(TokenType.Through  , word, lineNumber),
+            "SPACE" or
+            "SPACES"    => new Token(TokenType.Space    , word, lineNumber),
+            "ZERO" or
+            "ZEROS" or
+            "ZEROES"    => new Token(TokenType.Zero     , word, lineNumber),
             "REDEFINES" => new Token(TokenType.Redefines, word, lineNumber),
             "RENAMES"   => new Token(TokenType.Renames  , word, lineNumber),
             "OCCURS"    => new Token(TokenType.Occurs   , word, lineNumber),

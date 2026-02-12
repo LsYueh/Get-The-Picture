@@ -39,6 +39,7 @@ public class PicMeta
         {
             PicUsage.Display       => DigitCount,
             PicUsage.Binary        => Computational.COMP5.GetByteLength(this),
+            PicUsage.UPackedDecimal or
             PicUsage.PackedDecimal => (DigitCount + 1) / 2,
             PicUsage.NativeBinary  => Computational.COMP5.GetByteLength(this),
             _ => throw new NotSupportedException()

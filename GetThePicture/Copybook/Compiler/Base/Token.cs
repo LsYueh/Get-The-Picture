@@ -13,7 +13,7 @@ public enum TokenType
     Comment,
     Picture, Usage,
     Display, Display1,
-    Binary, PackedDecimal, Comp, Comp1, Comp2, Comp3, Comp4, Comp5,
+    Binary, PackedDecimal, Comp, Comp1, Comp2, Comp3, Comp4, Comp5, Comp6,
     Date, Time,
     National,
     Filler,

@@ -1,3 +1,4 @@
+using System.Text;
 using GetThePicture.Copybook.Compiler.Base;
 using GetThePicture.Copybook.Compiler.Layout;
 
@@ -177,5 +178,28 @@ public class ParserTest
         Assert.AreEqual(15, subordinate_15.Level);
         Assert.IsNotNull(subordinate_15.Pic);
         Assert.IsFalse(subordinate_15.IsFiller);
+    }
+
+    [TestMethod]
+    public void Semantic_Analysis_Test_07()
+    {        
+        string line = "05 FILLER                PIC 9(10) VALUE ZEROS.";
+
+        var tokens = lexer.Tokenize(line, 1).ToList();
+
+        Parser parser = new(tokens);
+
+        var model = parser.Analyze();
+        
+        Assert.IsNotNull(model);
+
+        var sb = new StringBuilder();
+        using var writer = new StringWriter(sb);
+
+        model.Dump(writer);
+
+        string result = sb.ToString();
+
+        StringAssert.Contains(result, "5 FILLER >> PIC: [9(10)] Class='Numeric' (Semantic='None'), Signed=False, Int=10, Dec=0, Len=10, Usage='Display' VALUE: \"0\"");
     }
 }
