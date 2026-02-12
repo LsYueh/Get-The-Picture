@@ -28,6 +28,7 @@ internal static class PicEncoder
             PicSemantic.Time6 or 
             PicSemantic.Time9         => Semantic.TimeEncoder.Encode(value, pic),
             PicSemantic.Timestamp14   => Semantic.TimestampEncoder.Encode(value, pic),
+            PicSemantic.Boolean       => Semantic.BooleanEncoder.Encode(value, pic),
             _ => EncodeBaseType(value, pic, options),
         };
 
