@@ -31,6 +31,7 @@ public static class PicDecoder
             case PicSemantic.Time6         : 
             case PicSemantic.Time9         : return Semantic.TimeDecoder.Decode(buffer, pic);
             case PicSemantic.Timestamp14   : return Semantic.TimestampDecoder.Decode(buffer, pic);
+            case PicSemantic.Boolean       : return Semantic.BooleanDecoder.Decode(buffer, pic);
             default:
                 return DecodeBaseType(buffer, pic, options);
         }

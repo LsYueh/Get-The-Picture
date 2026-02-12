@@ -59,7 +59,7 @@ public class DateDecoderTest
     }
 
     [TestMethod]
-    public void Decode_InvalidGregorianDate_ThrowsFormatException()
+    public void Decode_Invalid_GregorianDate_ThrowsFormatException()
     {
         var pic = PicMeta.Parse("X(8)");
         pic.Semantic = PicSemantic.GregorianDate;
@@ -67,5 +67,23 @@ public class DateDecoderTest
         byte[] buffer = Encoding.ASCII.GetBytes("20241301");
 
         Assert.ThrowsException<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
+    }
+
+    [DataTestMethod]
+    [DataRow("X(7)", "11301CC")]
+    [DataRow("9(7)", "11301CC")]
+    [DataRow("X(7)", "113BBCC")]
+    [DataRow("9(7)", "113BBCC")]
+    [DataRow("X(7)", "AAABBCC")]
+    [DataRow("9(7)", "AAABBCC")]
+    [ExpectedException(typeof(FormatException))]
+    public void Decode_Invalid_MinguoDate_ThrowsFormatException(string picString, string text)
+    {
+        var pic = PicMeta.Parse(picString);
+        pic.Semantic = PicSemantic.MinguoDate;
+
+        byte[] buffer = Encoding.ASCII.GetBytes(text);
+
+        PicClauseCodec.ForMeta(pic).Decode(buffer);
     }
 }

@@ -34,4 +34,9 @@ public enum PicSemantic
     /// Timestamp (YYYYMMDDHHmmss)
     /// </summary>
     Timestamp14,
+
+    /// <summary>
+    /// PIC X(1) : Y/N or PIC 9(1) : 0/1
+    /// </summary>
+    Boolean,
 }
