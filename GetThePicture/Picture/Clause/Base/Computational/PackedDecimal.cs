@@ -52,7 +52,7 @@ internal static class COMP3
 
     public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
-        char[] chars = DecodePacked(buffer, pic.DigitCount, out bool isNegative); // 根據 PIC 長度解碼 BCD
+        byte[] chars = DecodePacked(buffer, pic.DigitCount, out bool isNegative); // 根據 PIC 長度解碼 BCD
 
         if (pic.DecimalDigits > 0)
             return CbDecimal.Decode(chars, pic.DecimalDigits, isNegative);
@@ -97,9 +97,9 @@ internal static class COMP3
         return buffer;
     }
 
-    private static char[] DecodePacked(ReadOnlySpan<byte> buffer, int digits, out bool negative)
+    private static byte[] DecodePacked(ReadOnlySpan<byte> buffer, int digits, out bool negative)
     {
-        char[] chars = new char[digits];
+        byte[] bytes = new byte[digits];
 
         int idx = digits - 1;
         negative = false;
@@ -122,38 +122,38 @@ internal static class COMP3
                 };
 
                 if (idx >= 0)
-                    chars[idx--] = (char)('0' + high);
+                    bytes[idx--] = (byte)('0' + high);
             }
             else
             {
                 if (idx >= 0)
-                    chars[idx--] = (char)('0' + low);
+                    bytes[idx--] = (byte)('0' + low);
 
                 if (idx >= 0)
-                    chars[idx--] = (char)('0' + high);
+                    bytes[idx--] = (byte)('0' + high);
             }
         }
 
-        return chars;
+        return bytes;
     }
 
-    private static long DecodeInt64(ReadOnlySpan<char> chars, bool isNegative)
+    private static long DecodeInt64(ReadOnlySpan<byte> chars, bool isNegative)
     {
         if (chars.Length > 18)
             throw new OverflowException("Packed number too large for Int64");
 
         long value = 0;
-        foreach (char c in chars)
+        foreach (byte c in chars)
             value = value * 10 + (c - '0');
 
         return isNegative ? -value : value;
     }
 
-    private static ulong DecodeUInt64(ReadOnlySpan<char> chars)
+    private static ulong DecodeUInt64(ReadOnlySpan<byte> chars)
     {
         ulong value = 0;
 
-        foreach (char c in chars)
+        foreach (byte c in chars)
         {
             ulong digit = (ulong)(c - '0');
 

@@ -5,67 +5,66 @@ public class CbDecimal
     /// <summary>
     /// Decode from byte span (e.g., COMP-3 / overpunch digits in ASCII).
     /// </summary>
-    /// <param name="chars">The integer digits (PIC 9(n)) as chars.</param>
+    /// <param name="bytes">The integer digits (PIC 9(n)) as chars.</param>
     /// <param name="decimalDigits">Number of decimal digits (V9(m)).</param>
     /// <param name="isNegative">Sign flag.</param>
     /// <returns>Decoded decimal value.</returns>
     /// <exception cref="FormatException">If any char is not 0–9.</exception>
     /// <exception cref="OverflowException">If total digits exceed .NET decimal precision.</exception>
-    public static decimal Decode(ReadOnlySpan<char> chars, int decimalDigits, bool isNegative)
+    public static decimal Decode(ReadOnlySpan<byte> chars, int decimalDigits, bool isNegative)
     {
         int totalDigits = chars.Length;
-
-        if (chars.Length > 28)
-            throw new OverflowException($"Total digits ({totalDigits}) exceed .NET decimal precision (28 digits max).");
-
-        decimal value = 0m;
-
-        foreach (char c in chars)
-        {
-            int digit = c - '0';
-
-            if ((uint)digit > 9)
-                throw new FormatException($"Invalid digit '{c}' in numeric field.");
-
-            value = value * 10m + digit;
-        }
-
-        if (decimalDigits > 0)
-        {
-            value /= Pow10(decimalDigits);
-        }
-
-        return isNegative ? -value : value;
-    }
-
-    /// <summary>
-    /// Decode from bytes span (e.g., DISPLAY digits).
-    /// </summary>
-    public static decimal Decode(ReadOnlySpan<byte> bytes, int decimalDigits, bool isNegative)
-    {
-        int totalDigits = bytes.Length;
 
         if (totalDigits > 28)
             throw new OverflowException($"Total digits ({totalDigits}) exceed .NET decimal precision (28 digits max).");
 
-        decimal value = 0m;
+        decimal result;
 
-        foreach (byte b in bytes)
+        if (totalDigits <= 18)
         {
-            int digit = b - (byte)'0';
+            // long fast-path（安全 18 位）
+            long value = 0;
 
-            if ((uint)digit > 9)
-                throw new FormatException($"Invalid digit '{(char)b}' in numeric field.");
+            foreach (byte c in chars)
+            {
+                int digit = c - (byte)'0';
+                if ((uint)digit > 9)
+                    throw new FormatException($"Invalid digit '{(char)c}' in numeric field.");
 
-            value = value * 10m + digit;
+                checked
+                {
+                    value = value * 10 + digit;
+                }
+            }
+
+            result = value;
+        }
+        else
+        {
+            // decimal fallback
+            decimal value = 0m;
+
+            foreach (byte c in chars)
+            {
+                int digit = c - (byte)'0';
+                if ((uint)digit > 9)
+                    throw new FormatException($"Invalid digit '{(char)c}' in numeric field.");
+
+                value = value * 10m + digit;
+            }
+
+            result = value;
         }
 
+        // scale adjustment
         if (decimalDigits > 0)
-        {
-            value /= Pow10(decimalDigits);
-        }
+            result /= Pow10(decimalDigits);
 
-        return isNegative ? -value : value;
+            
+        if (isNegative)
+            result = -result;
+
+        return result;
     }
 
     /// <summary>
@@ -73,7 +72,7 @@ public class CbDecimal
     /// </summary>
     private static decimal Pow10(int n)
     {
-        if ((uint)n >= Pow10Table.Length)
+        if (n >= Pow10Table.Length)
             throw new OverflowException("Decimal scale too large.");
 
         return Pow10Table[n];
