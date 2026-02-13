@@ -76,7 +76,7 @@ internal static class COMP3
         int byteLen = (pic.DigitCount + 1) / 2;
         byte[] buffer = new byte[byteLen];
 
-        ReadOnlySpan<byte> digits = nValue.Magnitude.Span;
+        ReadOnlySpan<byte> digits = nValue.Chars;
 
         int digitIndex = digits.Length - 1;
         int byteIndex  = buffer.Length - 1;
