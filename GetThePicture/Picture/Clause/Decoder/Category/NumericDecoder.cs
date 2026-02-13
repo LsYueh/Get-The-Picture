@@ -56,12 +56,103 @@ public static class NumericDecoder
         if (numeric.Length != pic.DigitCount)
             throw new FormatException($"Numeric length mismatch for PIC. Expected {pic.DigitCount}, actual {numeric.Length}.");
         
-        bool isNegative = sign < 0;
+        if (pic.DigitCount > 18)
+        {
+            return ParseBigValue(numeric, pic.IntegerDigits, pic.DecimalDigits, sign);
+        }
+        else
+        {
+            return ParseSmallValue(numeric, pic, sign);
+        }
+    }
 
-        decimal d = CbDecimal.Decode(numeric, pic.DecimalDigits, isNegative);
+    /// <summary>
+    /// 解析超過 18 位的數字為 decimal，支援小數點與正負號。
+    /// </summary>
+    /// <param name="numeric">原始數字字串</param>
+    /// <param name="integerDigits">整數位數</param>
+    /// <param name="decimalDigits">小數位數</param>
+    /// <param name="sign">正負號 (+1 或 -1)</param>
+    /// <returns>解析後 decimal</returns>
+    private static decimal ParseBigValue(ReadOnlySpan<byte> numeric, int integerDigits, int decimalDigits, decimal sign)
+    {
+        decimal intPart = 0;
+        decimal fracPart = 0;
 
-        // 有小數就直接返回 decimal，沒有小數返回最小 CLR 型別
-        return (pic.DecimalDigits > 0) ? d : ConvertToClr(d, pic);
+        int scale = 1; // 用來計算小數位的除法
+
+        // 先解析整數部分
+        for (int i = 0; i < integerDigits; i++)
+        {
+            int digit = numeric[i] - '0';
+            if (digit < 0 || digit > 9)
+                throw new FormatException($"Invalid digit '{numeric[i]}' in numeric value.");
+            intPart = intPart * 10 + digit;
+        }
+
+        // 再解析小數部分
+        for (int i = integerDigits; i < numeric.Length; i++)
+        {
+            int digit = numeric[i] - '0';
+            if (digit < 0 || digit > 9)
+                throw new FormatException($"Invalid digit '{numeric[i]}' in numeric value.");
+            fracPart = fracPart * 10 + digit;
+            scale *= 10;
+        }
+            
+        // 插入小數點
+        decimal value = intPart + (decimalDigits > 0 ? fracPart / scale : 0m);
+
+        // 帶入正負號
+        return sign < 0 ? -value : value;
+    }
+
+    /// <summary>
+    /// 解析 <=18 位數字為 long / decimal，支援小數與正負號。
+    /// </summary>
+    /// <param name="numeric">數字字串</param>
+    /// <param name="pic">PIC 描述</param>
+    /// <param name="sign">正負號 (+1 或 -1)</param>
+    /// <returns>decimal 或對應 CLR 型別</returns>
+    private static object ParseSmallValue(ReadOnlySpan<byte> numeric, PicMeta pic, decimal sign)
+    {
+        long intPart = 0;
+        long fracPart = 0;
+        
+        int integerDigits = pic.IntegerDigits;
+        int decimalDigits = pic.DecimalDigits;
+
+        // 手動 parse
+        for (int i = 0; i < numeric.Length; i++)
+        {
+            int digit = numeric[i] - '0';
+            if (digit < 0 || digit > 9)
+                throw new FormatException($"Invalid digit '{numeric[i]}' in numeric value.");
+
+            if (i < integerDigits)
+                intPart = intPart * 10 + digit;
+            else
+                fracPart = fracPart * 10 + digit;
+        }
+
+        // 帶入正負號
+        if (sign < 0)
+        {
+            intPart = -intPart;
+            fracPart = -fracPart;
+        }
+
+        // 判斷是否有小數
+        if (decimalDigits > 0)
+        {
+            decimal scale = (decimal)Math.Pow(10, decimalDigits);
+            return intPart + fracPart / scale;
+        }
+        else
+        {
+            // 沒有小數點，直接返回最小 CLR 型別
+            return ConvertToClr(intPart, pic);
+        }
     }
 
     /// <summary>
