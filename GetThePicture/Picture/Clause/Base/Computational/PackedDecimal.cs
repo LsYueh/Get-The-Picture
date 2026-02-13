@@ -52,20 +52,20 @@ internal static class COMP3
 
     public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
-        PackedNumber pn = DecodePacked(buffer, pic.DigitCount); // 根據 PIC 長度解碼 BCD
+        char[] chars = DecodePacked(buffer, pic.DigitCount, out bool isNegative); // 根據 PIC 長度解碼 BCD
 
         if (pic.DecimalDigits > 0)
-            return DecodeDecimal(pn, pic);
+            return CbDecimal.Decode(chars, pic.DecimalDigits, isNegative);
         
         if (!pic.Signed)
         {
-            if (pn.IsNegative)
+            if (isNegative)
                 throw new OverflowException("Unsigned field contains negative number");
                 
-            return DecodeUInt64(pn);
+            return DecodeUInt64(chars);
         }
 
-        return DecodeInt64(pn);
+        return DecodeInt64(chars, isNegative);
     }
 
     public static byte[] Encode(NumericValue nValue, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
@@ -97,24 +97,12 @@ internal static class COMP3
         return buffer;
     }
 
-    private readonly struct PackedNumber
+    private static char[] DecodePacked(ReadOnlySpan<byte> buffer, int digits, out bool negative)
     {
-        public PackedNumber(ReadOnlySpan<char> digits, bool negative)
-        {
-            Digits = digits.ToString();
-            IsNegative = negative;
-        }
-
-        public string Digits { get; }
-        public bool IsNegative { get; }
-    }
-
-    private static PackedNumber DecodePacked(ReadOnlySpan<byte> buffer, int digits)
-    {
-        Span<char> chars = stackalloc char[digits];
+        char[] chars = new char[digits];
 
         int idx = digits - 1;
-        bool negative = false;
+        negative = false;
 
         int LSB = buffer.Length - 1;
 
@@ -140,31 +128,32 @@ internal static class COMP3
             {
                 if (idx >= 0)
                     chars[idx--] = (char)('0' + low);
+
                 if (idx >= 0)
                     chars[idx--] = (char)('0' + high);
             }
         }
 
-        return new PackedNumber(chars, negative);
+        return chars;
     }
 
-    private static long DecodeInt64(PackedNumber pn)
+    private static long DecodeInt64(ReadOnlySpan<char> chars, bool isNegative)
     {
-        if (pn.Digits.Length > 18)
+        if (chars.Length > 18)
             throw new OverflowException("Packed number too large for Int64");
 
         long value = 0;
-        foreach (char c in pn.Digits)
+        foreach (char c in chars)
             value = value * 10 + (c - '0');
 
-        return pn.IsNegative ? -value : value;
+        return isNegative ? -value : value;
     }
 
-    private static ulong DecodeUInt64(PackedNumber pn)
+    private static ulong DecodeUInt64(ReadOnlySpan<char> chars)
     {
         ulong value = 0;
 
-        foreach (char c in pn.Digits)
+        foreach (char c in chars)
         {
             ulong digit = (ulong)(c - '0');
 
@@ -176,21 +165,5 @@ internal static class COMP3
         }
 
         return value;
-    }
-
-
-    private static decimal DecodeDecimal(PackedNumber pn, PicMeta pic)
-    {
-        decimal value = 0m;
-        foreach (char c in pn.Digits)
-            value = value * 10m + (c - '0');
-
-        decimal scale = 1m;
-        for (int i = 0; i < pic.DecimalDigits; i++)
-            scale *= 10m;
-
-        value /= scale;
-
-        return pn.IsNegative ? -value : value;
     }
 }

@@ -49,7 +49,7 @@ internal static class COMP6
         if (pic.Signed)
             throw new NotSupportedException("Signed value is not valid for COMP-6");
 
-        Span<char> chars = stackalloc char[pic.DigitCount]; // 根據 PIC 長度解碼 BCD
+        char[] chars = new char[pic.DigitCount]; // 根據 PIC 長度解碼 BCD
 
         DecodeUPacked(buffer, chars); // 解析 COMP-6 → chars
 

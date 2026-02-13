@@ -6,7 +6,7 @@ namespace GetThePicture.Picture.Clause.Base.Computational;
 /// <summary>
 /// COMP (binary)
 /// </summary>
-internal static class COMP
+internal static class COMP4
 {
     // TRUNC example 1:
     //

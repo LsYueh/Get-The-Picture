@@ -1,5 +1,6 @@
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
+using GetThePicture.Picture.Clause.Base.Computational;
 using GetThePicture.Picture.Clause.Base.Options;
 
 namespace GetThePicture.Picture.Clause.Encoder.Category;
@@ -48,7 +49,7 @@ public static class NumericEncoder
     }
 
     /// <summary>
-    /// Meta → Overpunch Encode → COBOL Elementary Item (buffer)
+    /// Meta → [Overpunch Encode]/[COMP] (byte) → COBOL Elementary Item (buffer)
     /// </summary>
     /// <param name="nValuea"></param>
     /// <param name="pic"></param>
@@ -61,11 +62,11 @@ public static class NumericEncoder
 
         byte[] buffer = pic.Usage switch
         {
-            PicUsage.Display        =>                  Display_Encode(nValue, pic, options),
-            PicUsage.Binary         =>  Base.Computational.COMP.Encode(nValue, pic, options.Binary),
-            PicUsage.PackedDecimal  => Base.Computational.COMP3.Encode(nValue, pic),
-            PicUsage.NativeBinary   => Base.Computational.COMP5.Encode(nValue, pic, options.Binary),
-            PicUsage.UPackedDecimal => Base.Computational.COMP6.Encode(nValue, pic),
+            PicUsage.Display        => Display_Encode(nValue, pic, options),
+            PicUsage.PackedDecimal  =>   COMP3.Encode(nValue, pic),
+            PicUsage.Binary         =>   COMP4.Encode(nValue, pic, options.Binary),
+            PicUsage.NativeBinary   =>   COMP5.Encode(nValue, pic, options.Binary),
+            PicUsage.UPackedDecimal =>   COMP6.Encode(nValue, pic),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
 

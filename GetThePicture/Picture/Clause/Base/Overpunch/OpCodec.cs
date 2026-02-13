@@ -9,8 +9,6 @@ namespace GetThePicture.Picture.Clause.Base.Overpunch;
 /// </summary>
 public static class OpCodec
 {
-    private static readonly Encoding cp950 = Utils.EncodingFactory.CP950;
-
     /// <summary>
     /// PIC 9/S9 → 符號(sign)與數字文(numeric)
     /// </summary>
@@ -20,7 +18,7 @@ public static class OpCodec
     /// <param name="sign">符號</param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    public static string Decode(ReadOnlySpan<byte> fieldBytes, PicMeta pic, CodecOptions options, out decimal sign)
+    public static byte[] Decode(ReadOnlySpan<byte> fieldBytes, PicMeta pic, CodecOptions options, out decimal sign)
     {
         byte[] buffer = new byte[fieldBytes.Length];
         fieldBytes.CopyTo(buffer);
@@ -46,16 +44,14 @@ public static class OpCodec
 
         EnsureAllAsciiDigits(buffer);
 
-        string numeric = cp950.GetString(buffer); // 數字文
-
-        return numeric;
+        return buffer; // 數字文 (char[])
     }
 
     /// <summary>
     /// 符號(sign)與數字文(numeric) → PIC 9/S9
     /// </summary>
     /// <param name="sign">符號</param>
-    /// <param name="numeric">數字文</param>
+    /// <param name="numeric">數字文 (char[])</param>
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <returns></returns>
