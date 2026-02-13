@@ -1,5 +1,21 @@
 # Changelog
 
+## [26.11.4] – 2026-02-13
+
+### Improved
+- 加速 Numeric Decoder/Encoder 計算。
+    | Version | Method                | Mean      | Error     | StdDev    |
+    |---------|---------------------- |----------:|----------:|----------:|
+    | 26.11.1 | Warpper_Write_Decimal | 23.445 μs | 0.0766 μs | 0.0717 μs |
+    | 26.11.2 | Warpper_Write_Decimal | 18.889 μs | 0.1028 μs | 0.0961 μs |
+    | 26.11.4 | Warpper_Write_Decimal |  9.463 μs | 0.0331 μs | 0.0276 μs |
+
+### Changed
+- 將 Numeric Encoder 內暫存的資料 `NumericValue` 改為 `NumericMeta`。
+
+<br><br>
+
+
 ## [26.11.3] – 2026-02-12
 
 ### Added
