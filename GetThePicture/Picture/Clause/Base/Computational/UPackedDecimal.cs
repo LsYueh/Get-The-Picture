@@ -1,4 +1,4 @@
-using static GetThePicture.Picture.Clause.Encoder.Category.NumericEncoder;
+using GetThePicture.Picture.Clause.Encoder.Category;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
 

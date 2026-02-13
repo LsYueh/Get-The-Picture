@@ -3,8 +3,8 @@ using System.Text;
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.Computational;
 using GetThePicture.Picture.Clause.Base.Options;
+using GetThePicture.Picture.Clause.Encoder.Category;
 using GetThePicture.Picture.Clause.Utils;
-using static GetThePicture.Picture.Clause.Encoder.Category.NumericEncoder;
 
 namespace GetThePicture.Tests.Picture.Clause.Base.Computational;
 

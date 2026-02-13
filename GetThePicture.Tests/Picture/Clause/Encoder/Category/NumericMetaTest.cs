@@ -18,7 +18,7 @@ public class NumericValueTest
     {
         var pic = PicMeta.Parse("9(5)");
 
-        var v = NumericEncoder.ParseToMeta(-123, pic);
+        var v = NumericMeta.Parse(-123, pic);
 
         string actual = cp950.GetString(v.Chars);
 
@@ -35,7 +35,7 @@ public class NumericValueTest
 
         var pic = PicMeta.Parse(picString);
 
-        var v = NumericEncoder.ParseToMeta(_value, pic);
+        var v = NumericMeta.Parse(_value, pic);
 
         string actual = cp950.GetString(v.Chars);
 
@@ -53,7 +53,7 @@ public class NumericValueTest
 
         var pic = PicMeta.Parse(picString);
 
-        var v = NumericEncoder.ParseToMeta(_value, pic);
+        var v = NumericMeta.Parse(_value, pic);
 
         string actual = cp950.GetString(v.Chars);
 
@@ -72,7 +72,7 @@ public class NumericValueTest
         var pic = PicMeta.Parse("9(6)");
         pic.Semantic = PicSemantic.Time6;
 
-        Assert.ThrowsException<NotSupportedException>(() => NumericEncoder.ParseToMeta(new DateTime(), pic));
+        Assert.ThrowsException<NotSupportedException>(() => NumericMeta.Parse(new DateTime(), pic));
     }
 
     [TestMethod]
@@ -81,7 +81,7 @@ public class NumericValueTest
         var pic = PicMeta.Parse("9(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<NotSupportedException>(() => NumericEncoder.ParseToMeta(new DateTime(), pic));
+        Assert.ThrowsException<NotSupportedException>(() => NumericMeta.Parse(new DateTime(), pic));
     }
 
     // Unsupported type
@@ -89,6 +89,6 @@ public class NumericValueTest
     public void UnsupportedType_Throws()
     {
         Assert.ThrowsException<NotSupportedException>(() =>
-            NumericEncoder.ParseToMeta(new object(), PicMeta.Parse("X(5)")));
+            NumericMeta.Parse(new object(), PicMeta.Parse("X(5)")));
     }
 }
