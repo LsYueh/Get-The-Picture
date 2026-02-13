@@ -37,12 +37,12 @@ internal static class COMP5
         };
     }
 
-    public static byte[] Encode(NumericValue nValue, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static byte[] Encode(NumericMeta nMeta, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
     {
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException($"COMP-5 does not support decimal digits. PIC has {pic.DecimalDigits} decimal digits.");
 
-        decimal value = nValue.Value;
+        decimal value = nMeta.Value;
 
         // 檢查是否有小數位
         if (value != decimal.Truncate(value))

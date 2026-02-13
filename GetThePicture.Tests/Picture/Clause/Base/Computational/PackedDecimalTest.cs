@@ -97,9 +97,9 @@ public class PackedDecimalTest
     public void Encode_Unsigned_Should_Use_F_Sign()
     {
         var pic = PicMeta.Parse("9(5)");
-        var nValue = new NumericValue(cp950.GetBytes("12345"), 0, false);
+        var nMeta = new NumericMeta(cp950.GetBytes("12345"), 0, false);
 
-        byte[] buffer = COMP3.Encode(nValue, pic);
+        byte[] buffer = COMP3.Encode(nMeta, pic);
 
         // 12 34 5F
         CollectionAssert.AreEqual(HexToBytes("12345F"), buffer);

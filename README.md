@@ -492,14 +492,14 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
   DefaultJob : .NET 8.0.24 (8.0.24, 8.0.2426.7010), X64 RyuJIT x86-64-v3
 ```
 
-| Method                | Mean      | Error     | StdDev    |
-|---------------------- |----------:|----------:|----------:|
-| Warpper_Read_String   |  4.599 μs | 0.0153 μs | 0.0135 μs |
-| Warpper_Write_String  |  4.539 μs | 0.0315 μs | 0.0279 μs |
-| Warpper_Read_Integer  |  4.319 μs | 0.0179 μs | 0.0167 μs |
-| Warpper_Write_Integer | 11.580 μs | 0.0517 μs | 0.0484 μs |
-| Warpper_Read_Decimal  |  9.160 μs | 0.0516 μs | 0.0431 μs |
-| Warpper_Write_Decimal | 18.716 μs | 0.0315 μs | 0.0263 μs |
+| Method                | Mean     | Error     | StdDev    |
+|---------------------- |---------:|----------:|----------:|
+| Warpper_Read_String   | 4.537 μs | 0.0135 μs | 0.0113 μs |
+| Warpper_Write_String  | 4.594 μs | 0.0220 μs | 0.0206 μs |
+| Warpper_Read_Integer  | 4.297 μs | 0.0172 μs | 0.0135 μs |
+| Warpper_Write_Integer | 5.634 μs | 0.0588 μs | 0.0491 μs |
+| Warpper_Read_Decimal  | 6.269 μs | 0.0240 μs | 0.0224 μs |
+| Warpper_Write_Decimal | 9.599 μs | 0.0373 μs | 0.0311 μs |
 
 
 <br>

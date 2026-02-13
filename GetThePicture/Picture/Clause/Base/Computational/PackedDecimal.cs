@@ -68,21 +68,21 @@ internal static class COMP3
         return DecodeInt64(chars, isNegative);
     }
 
-    public static byte[] Encode(NumericValue nValue, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
+    public static byte[] Encode(NumericMeta nMeta, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
     {        
-        if (!pic.Signed && nValue.IsNegative)
+        if (!pic.Signed && nMeta.IsNegative)
             throw new InvalidOperationException("Unsigned PIC cannot encode negative value");
 
         int byteLen = (pic.DigitCount + 1) / 2;
         byte[] buffer = new byte[byteLen];
 
-        ReadOnlySpan<byte> digits = nValue.Chars;
+        ReadOnlySpan<byte> digits = nMeta.Chars;
 
         int digitIndex = digits.Length - 1;
         int byteIndex  = buffer.Length - 1;
 
         // LSB : digit + sign
-        int low  = (!pic.Signed) ? UNSIGNED : (nValue.IsNegative ? NEGATIVE_SIGN : POSITIVE_SIGN);
+        int low  = (!pic.Signed) ? UNSIGNED : (nMeta.IsNegative ? NEGATIVE_SIGN : POSITIVE_SIGN);
         int high = digitIndex >= 0 ? digits[digitIndex--] - (byte)'0' : 0;
 
         buffer[byteIndex--] = (byte)((high << 4) | low);

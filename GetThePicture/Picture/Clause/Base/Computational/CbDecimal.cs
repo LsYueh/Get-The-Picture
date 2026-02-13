@@ -70,7 +70,7 @@ public class CbDecimal
     /// <summary>
     /// Pow10 lookup table for 0..28 decimal digits.
     /// </summary>
-    private static decimal Pow10(int n)
+    public static decimal Pow10(int n)
     {
         if (n >= Pow10Table.Length)
             throw new OverflowException("Decimal scale too large.");
@@ -109,5 +109,36 @@ public class CbDecimal
         100000000000000000000000000m,
         1000000000000000000000000000m,
         10000000000000000000000000000m  // 10^28
+    ];
+
+    public static ulong Pow10UInt64(int digits)
+    {
+        if (digits < 0 || digits >= Pow10UInt64Table.Length)
+            throw new ArgumentOutOfRangeException(nameof(digits), "UInt64 digits must be 0~18");
+
+        return Pow10UInt64Table[digits];
+    }
+
+    private static readonly ulong[] Pow10UInt64Table =
+    [
+        1UL,                        // 10^0
+        10UL,                       // 10^1
+        100UL,
+        1_000UL,
+        10_000UL,
+        100_000UL,
+        1_000_000UL,
+        10_000_000UL,
+        100_000_000UL,
+        1_000_000_000UL,
+        10_000_000_000UL,
+        100_000_000_000UL,
+        1_000_000_000_000UL,
+        10_000_000_000_000UL,
+        100_000_000_000_000UL,
+        1_000_000_000_000_000UL,
+        10_000_000_000_000_000UL,
+        100_000_000_000_000_000UL,  // 10^17
+        1_000_000_000_000_000_000UL // 10^18
     ];
 }

@@ -56,7 +56,7 @@ internal static class COMP6
         return DecodeUInt64(chars); // chars → ulong
     }
 
-    public static byte[] Encode(NumericValue nValue, PicMeta pic)
+    public static byte[] Encode(NumericMeta nMeta, PicMeta pic)
     {                
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException("Decimal digits not supported in COMP-6");
@@ -64,13 +64,13 @@ internal static class COMP6
         if (pic.Signed)
             throw new NotSupportedException("Signed value is not valid for COMP-6");
 
-        if (nValue.IsNegative)
-            throw new ArgumentException("Negative value is not valid for COMP-6", nameof(nValue));
+        if (nMeta.IsNegative)
+            throw new ArgumentException("Negative value is not valid for COMP-6", nameof(nMeta));
 
         int byteLen = (pic.DigitCount + 1) / 2;
         byte[] buffer = new byte[byteLen];
 
-        ReadOnlySpan<byte> digits = nValue.Chars;
+        ReadOnlySpan<byte> digits = nMeta.Chars;
 
         int digitIndex = digits.Length - 1;
         int byteIndex  = buffer.Length - 1;
