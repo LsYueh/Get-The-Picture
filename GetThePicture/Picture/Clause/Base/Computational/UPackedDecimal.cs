@@ -1,4 +1,4 @@
-using static GetThePicture.Picture.Clause.Encoder.Category.NumericEncoder;
+using GetThePicture.Picture.Clause.Encoder.Category;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
@@ -49,14 +49,14 @@ internal static class COMP6
         if (pic.Signed)
             throw new NotSupportedException("Signed value is not valid for COMP-6");
 
-        Span<char> chars = stackalloc char[pic.DigitCount]; // 根據 PIC 長度解碼 BCD
+        char[] chars = new char[pic.DigitCount]; // 根據 PIC 長度解碼 BCD
 
         DecodeUPacked(buffer, chars); // 解析 COMP-6 → chars
 
         return DecodeUInt64(chars); // chars → ulong
     }
 
-    public static byte[] Encode(NumericValue nValue, PicMeta pic)
+    public static byte[] Encode(NumericMeta nMeta, PicMeta pic)
     {                
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException("Decimal digits not supported in COMP-6");
@@ -64,13 +64,13 @@ internal static class COMP6
         if (pic.Signed)
             throw new NotSupportedException("Signed value is not valid for COMP-6");
 
-        if (nValue.IsNegative)
-            throw new ArgumentException("Negative value is not valid for COMP-6", nameof(nValue));
+        if (nMeta.IsNegative)
+            throw new ArgumentException("Negative value is not valid for COMP-6", nameof(nMeta));
 
         int byteLen = (pic.DigitCount + 1) / 2;
         byte[] buffer = new byte[byteLen];
 
-        ReadOnlySpan<byte> digits = nValue.Magnitude.Span;
+        ReadOnlySpan<byte> digits = nMeta.Chars;
 
         int digitIndex = digits.Length - 1;
         int byteIndex  = buffer.Length - 1;

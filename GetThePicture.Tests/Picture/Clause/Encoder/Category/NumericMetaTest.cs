@@ -3,10 +3,10 @@ using System.Text;
 
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
-using GetThePicture.Picture.Clause.Encoder;
+using GetThePicture.Picture.Clause.Encoder.Category;
 using GetThePicture.Picture.Clause.Utils;
 
-namespace GetThePicture.Tests.Picture.Clause.Encoder;
+namespace GetThePicture.Tests.Picture.Clause.Encoder.Category;
 
 [TestClass]
 public class NumericValueTest
@@ -18,13 +18,13 @@ public class NumericValueTest
     {
         var pic = PicMeta.Parse("9(5)");
 
-        var v = PicEncoder.EncodeNumeric(-123, pic);
+        var v = NumericMeta.Parse(-123, pic);
 
-        string actual = cp950.GetString(v.Magnitude.Span);
+        string actual = cp950.GetString(v.Chars);
 
-        Assert.IsTrue(v.IsNegative);
         Assert.AreEqual("00123", actual);
         Assert.AreEqual(0, v.DecimalDigits);
+        Assert.IsTrue(v.IsNegative);
     }
 
     [DataTestMethod]
@@ -35,13 +35,13 @@ public class NumericValueTest
 
         var pic = PicMeta.Parse(picString);
 
-        var v = PicEncoder.EncodeNumeric(_value, pic);
+        var v = NumericMeta.Parse(_value, pic);
 
-        string actual = cp950.GetString(v.Magnitude.Span);
+        string actual = cp950.GetString(v.Chars);
 
-        Assert.IsFalse(v.IsNegative);
         Assert.AreEqual(expected, actual);
         Assert.AreEqual(expectedScale, v.DecimalDigits);
+        Assert.IsFalse(v.IsNegative);
     }
 
     [DataTestMethod]
@@ -53,13 +53,13 @@ public class NumericValueTest
 
         var pic = PicMeta.Parse(picString);
 
-        var v = PicEncoder.EncodeNumeric(_value, pic);
+        var v = NumericMeta.Parse(_value, pic);
 
-        string actual = cp950.GetString(v.Magnitude.Span);
+        string actual = cp950.GetString(v.Chars);
 
-        Assert.IsTrue(v.IsNegative);
         Assert.AreEqual(expected, actual);
         Assert.AreEqual(expectedScale, v.DecimalDigits);
+        Assert.IsTrue(v.IsNegative);
     }
 
     // -------------------------
@@ -72,7 +72,7 @@ public class NumericValueTest
         var pic = PicMeta.Parse("9(6)");
         pic.Semantic = PicSemantic.Time6;
 
-        Assert.ThrowsException<NotSupportedException>(() => PicEncoder.EncodeNumeric(new DateTime(), pic));
+        Assert.ThrowsException<NotSupportedException>(() => NumericMeta.Parse(new DateTime(), pic));
     }
 
     [TestMethod]
@@ -81,7 +81,7 @@ public class NumericValueTest
         var pic = PicMeta.Parse("9(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<NotSupportedException>(() => PicEncoder.EncodeNumeric(new DateTime(), pic));
+        Assert.ThrowsException<NotSupportedException>(() => NumericMeta.Parse(new DateTime(), pic));
     }
 
     // Unsupported type
@@ -89,6 +89,6 @@ public class NumericValueTest
     public void UnsupportedType_Throws()
     {
         Assert.ThrowsException<NotSupportedException>(() =>
-            PicEncoder.EncodeNumeric(new object(), PicMeta.Parse("X(5)")));
+            NumericMeta.Parse(new object(), PicMeta.Parse("X(5)")));
     }
 }

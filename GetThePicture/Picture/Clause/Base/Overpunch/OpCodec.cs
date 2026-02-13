@@ -9,22 +9,17 @@ namespace GetThePicture.Picture.Clause.Base.Overpunch;
 /// </summary>
 public static class OpCodec
 {
-    private static readonly Encoding cp950 = Utils.EncodingFactory.CP950;
-
     /// <summary>
     /// PIC 9/S9 → 符號(sign)與數字文(numeric)
     /// </summary>
-    /// <param name="fieldBytes"></param>
+    /// <param name="bytes"></param>
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <param name="sign">符號</param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    public static string Decode(ReadOnlySpan<byte> fieldBytes, PicMeta pic, CodecOptions options, out decimal sign)
+    public static Span<byte> Decode(Span<byte> bytes, PicMeta pic, CodecOptions options, out decimal sign)
     {
-        byte[] buffer = new byte[fieldBytes.Length];
-        fieldBytes.CopyTo(buffer);
-
         sign = 1.0m;
 
         if (pic.Signed)
@@ -36,26 +31,24 @@ public static class OpCodec
                 _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
             };
 
-            char key = (char)(fieldBytes[index] & 0x7F); // ASCII overpunch
+            byte key = (byte)(bytes[index] & 0x7F); // ASCII overpunch
 
             OpVal opVal = GetOpValue(key, options.DataStorage);
 
-            buffer[index] = (byte) opVal.Digit;
+            bytes[index] = opVal.Digit;
             sign = opVal.Sign;
         }
 
-        EnsureAllAsciiDigits(buffer);
+        EnsureAllAsciiDigits(bytes);
 
-        string numeric = cp950.GetString(buffer); // 數字文
-
-        return numeric;
+        return bytes; // 數字文 (char[])
     }
 
     /// <summary>
     /// 符號(sign)與數字文(numeric) → PIC 9/S9
     /// </summary>
     /// <param name="sign">符號</param>
-    /// <param name="numeric">數字文</param>
+    /// <param name="numeric">數字文 (char[])</param>
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <returns></returns>
@@ -72,11 +65,11 @@ public static class OpCodec
                 _ => throw new FormatException($"Unsupported Sign option: {options.Sign}")
             };
 
-            char digit = (char)(numeric[index] & 0x7F); // ASCII overpunch
+            byte digit = (byte)(numeric[index] & 0x7F); // ASCII overpunch
 
-            char value = GetOpKey(new OpVal(sign, digit), options.DataStorage);
+            byte value = GetOpKey(new OpVal(sign, digit), options.DataStorage);
 
-            numeric[index] = (byte) value;
+            numeric[index] = value;
         }
 
         return numeric;
@@ -89,9 +82,9 @@ public static class OpCodec
     /// <param name="ds">DataStorage Options</param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    private static OpVal GetOpValue(char key, DataStorageOptions ds)
+    private static OpVal GetOpValue(byte key, DataStorageOptions ds)
     {
-        if (!OpCodex.Map.TryGetValue(ds, out Dictionary<char, OpVal>? codex))
+        if (!OpCodex.Map.TryGetValue(ds, out Dictionary<byte, OpVal>? codex))
             throw new FormatException($"Unsupported DataStorage: {ds}");
 
         if (!codex.TryGetValue(key, out OpVal value))
@@ -107,12 +100,12 @@ public static class OpCodec
     /// <param name="ds">DataStorage Options</param>
     /// <returns></returns>
     /// <exception cref="FormatException"></exception>
-    private static char GetOpKey(OpVal value, DataStorageOptions ds)
+    private static byte GetOpKey(OpVal value, DataStorageOptions ds)
     {
-        if (!OpCodex.ReversedMap.TryGetValue(ds, out Dictionary<OpVal, char>? codex))
+        if (!OpCodex.ReversedMap.TryGetValue(ds, out Dictionary<OpVal, byte>? codex))
             throw new FormatException($"Unsupported DataStorage: {ds}");
 
-        if (!codex.TryGetValue(value, out char key))
+        if (!codex.TryGetValue(value, out byte key))
             throw new FormatException($"Invalid overpunch search value: '{value}'");
 
         return key;

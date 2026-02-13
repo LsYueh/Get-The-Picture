@@ -485,21 +485,21 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
 ## 跑分結果
 ```bash
-BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.7623/25H2/2025Update/HudsonValley2)
+BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.7840/25H2/2025Update/HudsonValley2)
 Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
-.NET SDK 8.0.417
-  [Host]     : .NET 8.0.23 (8.0.23, 8.0.2325.60607), X64 RyuJIT x86-64-v3
-  DefaultJob : .NET 8.0.23 (8.0.23, 8.0.2325.60607), X64 RyuJIT x86-64-v3
+.NET SDK 8.0.418
+  [Host]     : .NET 8.0.24 (8.0.24, 8.0.2426.7010), X64 RyuJIT x86-64-v3
+  DefaultJob : .NET 8.0.24 (8.0.24, 8.0.2426.7010), X64 RyuJIT x86-64-v3
 ```
 
-| Method                | Mean      | Error     | StdDev    |
-|---------------------- |----------:|----------:|----------:|
-| Warpper_Read_String   |  4.551 μs | 0.0165 μs | 0.0137 μs |
-| Warpper_Write_String  |  4.462 μs | 0.0200 μs | 0.0167 μs |
-| Warpper_Read_Integer  |  5.979 μs | 0.0433 μs | 0.0384 μs |
-| Warpper_Write_Integer | 11.741 μs | 0.1735 μs | 0.1623 μs |
-| Warpper_Read_Decimal  | 11.083 μs | 0.0293 μs | 0.0260 μs |
-| Warpper_Write_Decimal | 18.889 μs | 0.1028 μs | 0.0961 μs |
+| Method                | Mean     | Error     | StdDev    |
+|---------------------- |---------:|----------:|----------:|
+| Warpper_Read_String   | 4.536 μs | 0.0340 μs | 0.0318 μs |
+| Warpper_Write_String  | 4.495 μs | 0.0279 μs | 0.0248 μs |
+| Warpper_Read_Integer  | 4.301 μs | 0.0202 μs | 0.0179 μs |
+| Warpper_Write_Integer | 5.368 μs | 0.0274 μs | 0.0257 μs |
+| Warpper_Read_Decimal  | 6.185 μs | 0.0163 μs | 0.0144 μs |
+| Warpper_Write_Decimal | 9.463 μs | 0.0331 μs | 0.0276 μs |
 
 
 <br>

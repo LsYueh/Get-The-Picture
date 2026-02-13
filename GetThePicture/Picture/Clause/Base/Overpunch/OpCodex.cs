@@ -9,8 +9,8 @@ namespace GetThePicture.Picture.Clause.Base.Overpunch;
 /// </summary>
 internal static class OpCodex
 {
-    public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>> Map;
-    public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>> ReversedMap;
+    public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<byte, OpVal>> Map;
+    public static readonly ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, byte>> ReversedMap;
 
     static OpCodex()
     {
@@ -18,9 +18,9 @@ internal static class OpCodex
         ReversedMap = BuildReversedMap();
     }
 
-    private static ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>> BuildMap()
+    private static ReadOnlyDictionary<DataStorageOptions, Dictionary<byte, OpVal>> BuildMap()
     {
-        var dictionary = new Dictionary<DataStorageOptions, Dictionary<char, OpVal>>
+        var dictionary = new Dictionary<DataStorageOptions, Dictionary<byte, OpVal>>
         {
             { DataStorageOptions.CA, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_01) },
             { DataStorageOptions.CB, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_02) },
@@ -30,22 +30,22 @@ internal static class OpCodex
             { DataStorageOptions.CR, Merge(OpCodexBase.OP_POSITIVE_01, OpCodexBase.OP_NEGATIVE_04) },
         };
         
-        return new ReadOnlyDictionary<DataStorageOptions, Dictionary<char, OpVal>>(dictionary);
+        return new ReadOnlyDictionary<DataStorageOptions, Dictionary<byte, OpVal>>(dictionary);
     }
 
-    private static Dictionary<char, OpVal> Merge(
-        Dictionary<char, OpVal> a,
-        Dictionary<char, OpVal> b)
+    private static Dictionary<byte, OpVal> Merge(
+        Dictionary<byte, OpVal> a,
+        Dictionary<byte, OpVal> b)
     {
-        var dict = new Dictionary<char, OpVal>(a.Count + b.Count);
+        var dict = new Dictionary<byte, OpVal>(a.Count + b.Count);
         foreach (var kv in a) dict[kv.Key] = kv.Value;
         foreach (var kv in b) dict[kv.Key] = kv.Value;
         return dict;
     }
 
-    private static ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>> BuildReversedMap()
+    private static ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, byte>> BuildReversedMap()
     {
-        var dictionary = new Dictionary<DataStorageOptions, Dictionary<OpVal, char>>
+        var dictionary = new Dictionary<DataStorageOptions, Dictionary<OpVal, byte>>
         {
             { DataStorageOptions.CA, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_01_REVERSE) },
             { DataStorageOptions.CB, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_02_REVERSE) },
@@ -55,14 +55,14 @@ internal static class OpCodex
             { DataStorageOptions.CR, MergeRev(OpCodexBase.OP_POSITIVE_01_REVERSE, OpCodexBase.OP_NEGATIVE_04_REVERSE) },
         };
         
-        return new ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, char>>(dictionary);
+        return new ReadOnlyDictionary<DataStorageOptions, Dictionary<OpVal, byte>>(dictionary);
     }
 
-    private static Dictionary<OpVal, char> MergeRev(
-        Dictionary<OpVal, char> a,
-        Dictionary<OpVal, char> b)
+    private static Dictionary<OpVal, byte> MergeRev(
+        Dictionary<OpVal, byte> a,
+        Dictionary<OpVal, byte> b)
     {
-        var dict = new Dictionary<OpVal, char>(a.Count + b.Count);
+        var dict = new Dictionary<OpVal, byte>(a.Count + b.Count);
         foreach (var kv in a) dict[kv.Key] = kv.Value;
         foreach (var kv in b) dict[kv.Key] = kv.Value;
         return dict;
@@ -74,10 +74,10 @@ internal static class OpCodex
 /// </summary>
 /// <param name="sign"></param>
 /// <param name="digit"></param>
-internal readonly struct OpVal(decimal sign, char digit)
+internal readonly struct OpVal(decimal sign, byte digit)
 {
     public decimal Sign { get; } = sign;
-    public char Digit { get; } = digit;
+    public byte Digit { get; } = digit;
 }
 
 /// <summary>
@@ -89,114 +89,114 @@ internal static class OpCodexBase
     /// <summary>
     /// -Dca, -Dcb, -Dcm, -Dcr
     /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_POSITIVE_01 = new()
+    public static readonly Dictionary<byte, OpVal> OP_POSITIVE_01 = new()
     {
-        { '0', new OpVal(1.0m, '0') },
-        { '1', new OpVal(1.0m, '1') },
-        { '2', new OpVal(1.0m, '2') },
-        { '3', new OpVal(1.0m, '3') },
-        { '4', new OpVal(1.0m, '4') },
-        { '5', new OpVal(1.0m, '5') },
-        { '6', new OpVal(1.0m, '6') },
-        { '7', new OpVal(1.0m, '7') },
-        { '8', new OpVal(1.0m, '8') },
-        { '9', new OpVal(1.0m, '9') },
+        { (byte)'0', new OpVal(1.0m, (byte)'0') },
+        { (byte)'1', new OpVal(1.0m, (byte)'1') },
+        { (byte)'2', new OpVal(1.0m, (byte)'2') },
+        { (byte)'3', new OpVal(1.0m, (byte)'3') },
+        { (byte)'4', new OpVal(1.0m, (byte)'4') },
+        { (byte)'5', new OpVal(1.0m, (byte)'5') },
+        { (byte)'6', new OpVal(1.0m, (byte)'6') },
+        { (byte)'7', new OpVal(1.0m, (byte)'7') },
+        { (byte)'8', new OpVal(1.0m, (byte)'8') },
+        { (byte)'9', new OpVal(1.0m, (byte)'9') },
     };
 
-    public static readonly Dictionary<OpVal, char> OP_POSITIVE_01_REVERSE = OP_POSITIVE_01.ToDictionary(kv => kv.Value, kv => kv.Key);
+    public static readonly Dictionary<OpVal, byte> OP_POSITIVE_01_REVERSE = OP_POSITIVE_01.ToDictionary(kv => kv.Value, kv => kv.Key);
 
     /// <summary>
     /// -Dci, -Dcn
     /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_POSITIVE_02 = new()
+    public static readonly Dictionary<byte, OpVal> OP_POSITIVE_02 = new()
     {
-        { '{', new OpVal(1.0m, '0') },
-        { 'A', new OpVal(1.0m, '1') },
-        { 'B', new OpVal(1.0m, '2') },
-        { 'C', new OpVal(1.0m, '3') },
-        { 'D', new OpVal(1.0m, '4') },
-        { 'E', new OpVal(1.0m, '5') },
-        { 'F', new OpVal(1.0m, '6') },
-        { 'G', new OpVal(1.0m, '7') },
-        { 'H', new OpVal(1.0m, '8') },
-        { 'I', new OpVal(1.0m, '9') },
+        { (byte)'{', new OpVal(1.0m, (byte)'0') },
+        { (byte)'A', new OpVal(1.0m, (byte)'1') },
+        { (byte)'B', new OpVal(1.0m, (byte)'2') },
+        { (byte)'C', new OpVal(1.0m, (byte)'3') },
+        { (byte)'D', new OpVal(1.0m, (byte)'4') },
+        { (byte)'E', new OpVal(1.0m, (byte)'5') },
+        { (byte)'F', new OpVal(1.0m, (byte)'6') },
+        { (byte)'G', new OpVal(1.0m, (byte)'7') },
+        { (byte)'H', new OpVal(1.0m, (byte)'8') },
+        { (byte)'I', new OpVal(1.0m, (byte)'9') },
     };
 
-    public static readonly Dictionary<OpVal, char> OP_POSITIVE_02_REVERSE = OP_POSITIVE_02.ToDictionary(kv => kv.Value, kv => kv.Key);
+    public static readonly Dictionary<OpVal, byte> OP_POSITIVE_02_REVERSE = OP_POSITIVE_02.ToDictionary(kv => kv.Value, kv => kv.Key);
 
     /// <summary>
     /// -Dca, -Dci, -Dcn
     /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_01 = new()
+    public static readonly Dictionary<byte, OpVal> OP_NEGATIVE_01 = new()
     {
-        { '}', new OpVal(-1.0m, '0') },
-        { 'J', new OpVal(-1.0m, '1') },
-        { 'K', new OpVal(-1.0m, '2') },
-        { 'L', new OpVal(-1.0m, '3') },
-        { 'M', new OpVal(-1.0m, '4') },
-        { 'N', new OpVal(-1.0m, '5') },
-        { 'O', new OpVal(-1.0m, '6') },
-        { 'P', new OpVal(-1.0m, '7') },
-        { 'Q', new OpVal(-1.0m, '8') },
-        { 'R', new OpVal(-1.0m, '9') },
+        { (byte)'}', new OpVal(-1.0m, (byte)'0') },
+        { (byte)'J', new OpVal(-1.0m, (byte)'1') },
+        { (byte)'K', new OpVal(-1.0m, (byte)'2') },
+        { (byte)'L', new OpVal(-1.0m, (byte)'3') },
+        { (byte)'M', new OpVal(-1.0m, (byte)'4') },
+        { (byte)'N', new OpVal(-1.0m, (byte)'5') },
+        { (byte)'O', new OpVal(-1.0m, (byte)'6') },
+        { (byte)'P', new OpVal(-1.0m, (byte)'7') },
+        { (byte)'Q', new OpVal(-1.0m, (byte)'8') },
+        { (byte)'R', new OpVal(-1.0m, (byte)'9') },
     };
 
-    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_01_REVERSE = OP_NEGATIVE_01.ToDictionary(kv => kv.Value, kv => kv.Key);
+    public static readonly Dictionary<OpVal, byte> OP_NEGATIVE_01_REVERSE = OP_NEGATIVE_01.ToDictionary(kv => kv.Value, kv => kv.Key);
 
     /// <summary>
     /// -Dcb
     /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_02 = new()
+    public static readonly Dictionary<byte, OpVal> OP_NEGATIVE_02 = new()
     {
-        { '@', new OpVal(-1.0m, '0') },
-        { 'A', new OpVal(-1.0m, '1') },
-        { 'B', new OpVal(-1.0m, '2') },
-        { 'C', new OpVal(-1.0m, '3') },
-        { 'D', new OpVal(-1.0m, '4') },
-        { 'E', new OpVal(-1.0m, '5') },
-        { 'F', new OpVal(-1.0m, '6') },
-        { 'G', new OpVal(-1.0m, '7') },
-        { 'H', new OpVal(-1.0m, '8') },
-        { 'I', new OpVal(-1.0m, '9') },
+        { (byte)'@', new OpVal(-1.0m, (byte)'0') },
+        { (byte)'A', new OpVal(-1.0m, (byte)'1') },
+        { (byte)'B', new OpVal(-1.0m, (byte)'2') },
+        { (byte)'C', new OpVal(-1.0m, (byte)'3') },
+        { (byte)'D', new OpVal(-1.0m, (byte)'4') },
+        { (byte)'E', new OpVal(-1.0m, (byte)'5') },
+        { (byte)'F', new OpVal(-1.0m, (byte)'6') },
+        { (byte)'G', new OpVal(-1.0m, (byte)'7') },
+        { (byte)'H', new OpVal(-1.0m, (byte)'8') },
+        { (byte)'I', new OpVal(-1.0m, (byte)'9') },
     };
 
-    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_02_REVERSE = OP_NEGATIVE_02.ToDictionary(kv => kv.Value, kv => kv.Key);
+    public static readonly Dictionary<OpVal, byte> OP_NEGATIVE_02_REVERSE = OP_NEGATIVE_02.ToDictionary(kv => kv.Value, kv => kv.Key);
 
     /// <summary>
     /// -Dcm
     /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_03 = new()
+    public static readonly Dictionary<byte, OpVal> OP_NEGATIVE_03 = new()
     {
-        { 'p', new OpVal(-1.0m, '0') },
-        { 'q', new OpVal(-1.0m, '1') },
-        { 'r', new OpVal(-1.0m, '2') },
-        { 's', new OpVal(-1.0m, '3') },
-        { 't', new OpVal(-1.0m, '4') },
-        { 'u', new OpVal(-1.0m, '5') },
-        { 'v', new OpVal(-1.0m, '6') },
-        { 'w', new OpVal(-1.0m, '7') },
-        { 'x', new OpVal(-1.0m, '8') },
-        { 'y', new OpVal(-1.0m, '9') },
+        { (byte)'p', new OpVal(-1.0m, (byte)'0') },
+        { (byte)'q', new OpVal(-1.0m, (byte)'1') },
+        { (byte)'r', new OpVal(-1.0m, (byte)'2') },
+        { (byte)'s', new OpVal(-1.0m, (byte)'3') },
+        { (byte)'t', new OpVal(-1.0m, (byte)'4') },
+        { (byte)'u', new OpVal(-1.0m, (byte)'5') },
+        { (byte)'v', new OpVal(-1.0m, (byte)'6') },
+        { (byte)'w', new OpVal(-1.0m, (byte)'7') },
+        { (byte)'x', new OpVal(-1.0m, (byte)'8') },
+        { (byte)'y', new OpVal(-1.0m, (byte)'9') },
     };
 
-    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_03_REVERSE = OP_NEGATIVE_03.ToDictionary(kv => kv.Value, kv => kv.Key);
+    public static readonly Dictionary<OpVal, byte> OP_NEGATIVE_03_REVERSE = OP_NEGATIVE_03.ToDictionary(kv => kv.Value, kv => kv.Key);
 
     /// <summary>
     /// -Dcr
     /// </summary>
-    public static readonly Dictionary<char, OpVal> OP_NEGATIVE_04 = new()
+    public static readonly Dictionary<byte, OpVal> OP_NEGATIVE_04 = new()
     {
-        { ' ', new OpVal(-1.0m, '0') }, // (space)
-        { '!', new OpVal(-1.0m, '1') },
-        { '"', new OpVal(-1.0m, '2') }, // (double-quote)
-        { '#', new OpVal(-1.0m, '3') },
-        { '$', new OpVal(-1.0m, '4') },
-        { '%', new OpVal(-1.0m, '5') },
-        { '&', new OpVal(-1.0m, '6') },
-        { '\'',new OpVal(-1.0m, '7') }, // (single-quote)
-        { '(', new OpVal(-1.0m, '8') },
-        { ')', new OpVal(-1.0m, '9') },
+        { (byte)' ', new OpVal(-1.0m, (byte)'0') }, // (space)
+        { (byte)'!', new OpVal(-1.0m, (byte)'1') },
+        { (byte)'"', new OpVal(-1.0m, (byte)'2') }, // (double-quote)
+        { (byte)'#', new OpVal(-1.0m, (byte)'3') },
+        { (byte)'$', new OpVal(-1.0m, (byte)'4') },
+        { (byte)'%', new OpVal(-1.0m, (byte)'5') },
+        { (byte)'&', new OpVal(-1.0m, (byte)'6') },
+        { (byte)'\'',new OpVal(-1.0m, (byte)'7') }, // (single-quote)
+        { (byte)'(', new OpVal(-1.0m, (byte)'8') },
+        { (byte)')', new OpVal(-1.0m, (byte)'9') },
     };
 
-    public static readonly Dictionary<OpVal, char> OP_NEGATIVE_04_REVERSE = OP_NEGATIVE_04.ToDictionary(kv => kv.Value, kv => kv.Key);
+    public static readonly Dictionary<OpVal, byte> OP_NEGATIVE_04_REVERSE = OP_NEGATIVE_04.ToDictionary(kv => kv.Value, kv => kv.Key);
 }

@@ -120,7 +120,7 @@ using GetThePicture.Picture.Clause.Base.ClauseItems; // PicUsage
 
 <br>
 
-### COMP / COMP-5
+### COMP-4 / COMP-5
 ```csharp
 using GetThePicture.Picture.Clause;      // PicClauseCodec
 using GetThePicture.Picture.Clause.Base; // PicMeta
@@ -134,7 +134,7 @@ using GetThePicture.Picture.Clause.Base.ClauseItems; // PicUsage
 
 1. 指定 `Usage`  
     ```csharp
-    // PIC 9(04)  USAGE  COMP.
+    // PIC 9(04)  USAGE  COMP-4.
     var pic = PicMeta.Parse("S9(04))");
     pic.Usage = PicUsage.Binary;
 
@@ -144,32 +144,22 @@ using GetThePicture.Picture.Clause.Base.ClauseItems; // PicUsage
     // Decode: COBOL → CLR
     PicClauseCodec.ForMeta(pic).WithStrict().Decode([0x0F, 0x27]); // >> (short) 9999
     ```
-
-    ```csharp
-    // PIC 9(3)  USAGE  COMP.
-    var pic = PicMeta.Parse("S9(4)");
-    pic.Usage = PicUsage.PackedDecimal;
-
-    // Decode: COBOL → CLR
-    PicClauseCodec.ForMeta(pic).Decode([0x0F, 0x27]); // >> (ushort) 9999
-    ```
-
 <br>
 
 2. PIC 內的端序 `Endianness` 行為處理  
-    在使用 PIC 搭配二進位儲存格式（COMP/COMP-5） 時，數值在記憶體中的位元組排列順序（Endianness）會因執行平台而有所不同：  
+    在使用 PIC 搭配二進位儲存格式（COMP-4/COMP-5） 時，數值在記憶體中的位元組排列順序（Endianness）會因執行平台而有所不同：  
     - Big-Endian（BE）  
     IBM z/OS 主機（Mainframe）環境傳統上採用 Big-Endian，高位元組（Most Significant Byte）儲存在較低的記憶體位址。  
 
     - Little-Endian（LE）  
     以 Intel 架構為基礎的平台（例如 x86 的 Linux 或 Windows 個人電腦）通常採用 Little-Endian，低位元組（Least Significant Byte）儲存在較低的記憶體位址。  
 
-    故在進行跨平台資料交換或解析 COBOL `COMP`/`COMP-5` 欄位時，必須明確指定並正確處理端序，否則可能導致數值資料轉換錯誤。
+    故在進行跨平台資料交換或解析 COBOL `COMP-4`/`COMP-5` 欄位時，必須明確指定並正確處理端序，否則可能導致數值資料轉換錯誤。
 
     <br>
 
     ```csharp
-    // PIC 9(04)  USAGE  COMP.
+    // PIC 9(04)  USAGE  COMP-4.
     var pic = PicMeta.Parse("S9(04))");
     pic.Usage = PicUsage.Binary;
 
