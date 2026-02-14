@@ -12,15 +12,15 @@ public class Comp6Test
     // ------------------------- 
 
     [DataTestMethod]
-    [DataRow("9(1)",          5UL, new byte[] { 0x05 })]
-    [DataRow("9(2)",         12UL, new byte[] { 0x12 })]
-    [DataRow("9(3)",        123UL, new byte[] { 0x01, 0x23 })]
-    [DataRow("9(4)",       1234UL, new byte[] { 0x12, 0x34 })]
-    [DataRow("9(5)",      52194UL, new byte[] { 0x05, 0x21, 0x94 })]
-    [DataRow("9(6)",     987654UL, new byte[] { 0x98, 0x76, 0x54 })]
-    [DataRow("9(7)",    1234567UL, new byte[] { 0x01, 0x23, 0x45, 0x67 })]
-    [DataRow("9(8)",   87654321UL, new byte[] { 0x87, 0x65, 0x43, 0x21 })]
-    [DataRow("9(9)",  123456789UL, new byte[] { 0x01, 0x23, 0x45, 0x67, 0x89 })]
+    [DataRow("9(1)", (byte)         5, new byte[] { 0x05 })]
+    [DataRow("9(2)", (byte)        12, new byte[] { 0x12 })]
+    [DataRow("9(3)", (ushort)     123, new byte[] { 0x01, 0x23 })]
+    [DataRow("9(4)", (ushort)    1234, new byte[] { 0x12, 0x34 })]
+    [DataRow("9(5)", (uint)     52194, new byte[] { 0x05, 0x21, 0x94 })]
+    [DataRow("9(6)", (uint)    987654, new byte[] { 0x98, 0x76, 0x54 })]
+    [DataRow("9(7)", (uint)   1234567, new byte[] { 0x01, 0x23, 0x45, 0x67 })]
+    [DataRow("9(8)", (uint)  87654321, new byte[] { 0x87, 0x65, 0x43, 0x21 })]
+    [DataRow("9(9)", (uint) 123456789, new byte[] { 0x01, 0x23, 0x45, 0x67, 0x89 })]
     public void Encode_Combination_Test(string picString, object value, byte[] expected)
     {
         var pic = PicMeta.Parse(picString);
@@ -49,15 +49,15 @@ public class Comp6Test
     // ------------------------- 
 
     [DataTestMethod]
-    [DataRow("9(1)",          5UL, new byte[] { 0x05 })]
-    [DataRow("9(2)",         12UL, new byte[] { 0x12 })]
-    [DataRow("9(3)",        123UL, new byte[] { 0x01, 0x23 })]
-    [DataRow("9(4)",       1234UL, new byte[] { 0x12, 0x34 })]
-    [DataRow("9(5)",      52194UL, new byte[] { 0x05, 0x21, 0x94 })]
-    [DataRow("9(6)",     987654UL, new byte[] { 0x98, 0x76, 0x54 })]
-    [DataRow("9(7)",    1234567UL, new byte[] { 0x01, 0x23, 0x45, 0x67 })]
-    [DataRow("9(8)",   87654321UL, new byte[] { 0x87, 0x65, 0x43, 0x21 })]
-    [DataRow("9(9)",  123456789UL, new byte[] { 0x01, 0x23, 0x45, 0x67, 0x89 })]
+    [DataRow("9(1)", (byte)         5, new byte[] { 0x05 })]
+    [DataRow("9(2)", (byte)        12, new byte[] { 0x12 })]
+    [DataRow("9(3)", (ushort)     123, new byte[] { 0x01, 0x23 })]
+    [DataRow("9(4)", (ushort)    1234, new byte[] { 0x12, 0x34 })]
+    [DataRow("9(5)", (uint)     52194, new byte[] { 0x05, 0x21, 0x94 })]
+    [DataRow("9(6)", (uint)    987654, new byte[] { 0x98, 0x76, 0x54 })]
+    [DataRow("9(7)", (uint)   1234567, new byte[] { 0x01, 0x23, 0x45, 0x67 })]
+    [DataRow("9(8)", (uint)  87654321, new byte[] { 0x87, 0x65, 0x43, 0x21 })]
+    [DataRow("9(9)", (uint) 123456789, new byte[] { 0x01, 0x23, 0x45, 0x67, 0x89 })]
     public void Decode_Combination_Test(string picString, object expected, byte[] buffer)
     {
         var pic = PicMeta.Parse(picString);
@@ -78,7 +78,7 @@ public class Comp6Test
 
         var value = PicClauseCodec.ForMeta(pic).Decode([0x05, 0x21, 0x94]);
 
-        Assert.AreEqual(194UL, value);
+        Assert.AreEqual((ushort) 194, value);
     }
 
     // -------------------------

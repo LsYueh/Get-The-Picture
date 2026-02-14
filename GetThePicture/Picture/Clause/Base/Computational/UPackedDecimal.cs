@@ -1,3 +1,4 @@
+using GetThePicture.Picture.Clause.Decoder.Category.Mapper;
 using GetThePicture.Picture.Clause.Encoder.Category;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
@@ -41,7 +42,9 @@ internal static class COMP6
     // - Total bytes = (number_of_digits + 1) / 2
     //
 
-    public static ulong Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
+    private static readonly IMapper _UIntMapper = new UIntMapper();
+
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException("Decimal digits not supported in COMP-6");
@@ -49,11 +52,12 @@ internal static class COMP6
         if (pic.Signed)
             throw new NotSupportedException("Signed value is not valid for COMP-6");
 
-        char[] chars = new char[pic.DigitCount]; // 根據 PIC 長度解碼 BCD
+        // Decode BCD
+        byte[] chars = DecodeUPacked(buffer, pic.DigitCount);  // 根據 PIC 長度解碼 BCD
 
-        DecodeUPacked(buffer, chars); // 解析 COMP-6 → chars
+        ulong value = DecodeUInt64(chars);
 
-        return DecodeUInt64(chars); // chars → ulong
+        return _UIntMapper.Map(value, pic);
     }
 
     public static byte[] Encode(NumericMeta nMeta, PicMeta pic)
@@ -85,15 +89,10 @@ internal static class COMP6
         return buffer;
     }
 
-    private static void DecodeUPacked(ReadOnlySpan<byte> buffer, Span<char> output)
+    private static byte[] DecodeUPacked(ReadOnlySpan<byte> buffer, int digits)
     {
-        int digits = output.Length;
+        byte[] bytes = new byte[digits];
 
-        int expectedLength = (digits + 1) / 2;
-        if (buffer.Length != expectedLength)
-            throw new ArgumentOutOfRangeException(nameof(buffer), buffer.Length,
-                $"Buffer length {buffer.Length} does not match expected byte count {expectedLength} for {digits} digits.");
-        
         int idx = digits - 1;
 
         for (int i = buffer.Length - 1; i >= 0; i--)
@@ -106,22 +105,24 @@ internal static class COMP6
                 throw new FormatException("Invalid COMP-6 packed digit.");
 
             if (idx >= 0)
-                output[idx--] = (char)('0' + low);
+                bytes[idx--] = (byte)('0' + low);
             if (idx >= 0)
-                output[idx--] = (char)('0' + high);
+                bytes[idx--] = (byte)('0' + high);
         }
+
+        return bytes;
     }
 
-    private static ulong DecodeUInt64(ReadOnlySpan<char> chars)
+    private static ulong DecodeUInt64(ReadOnlySpan<byte> chars)
     {
         ulong value = 0;
 
-        foreach (char c in chars)
+        foreach (byte c in chars)
         {
-            ulong digit = (ulong)(c - '0');
+            if (c < '0' || c > '9')
+                throw new FormatException($"Invalid digit '{(char)c}' in numeric field");
             
-            if (value > (ulong.MaxValue - digit) / 10)
-                throw new OverflowException("Packed number too large for UInt64");
+            ulong digit = (ulong)(c - '0');
 
             value = value * 10 + digit;
         }
