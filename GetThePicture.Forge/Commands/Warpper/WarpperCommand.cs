@@ -5,9 +5,9 @@ using GetThePicture.Copybook.Compiler.Storage.Base;
 using GetThePicture.Copybook.Provider;
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
-using GetThePicture.Picture.Clause.Decoder.Category;
 
 using GetThePicture.Forge.Core;
+using GetThePicture.Picture.Clause.Decoder.Category.Mapper;
 
 namespace GetThePicture.Forge.Commands.Warpper;
 
@@ -204,7 +204,9 @@ public class WarpperCommand(WarpperOptions? opts = null)
 
         Type GetNumericType(PicMeta pic)
         {
-            var obj = (pic.DecimalDigits != 0) ? 1m : Clr.AsInteger(1m, pic);
+            IMapper mapper = pic.Signed ? new SIntMapper() : new UIntMapper();
+            
+            var obj = (pic.DecimalDigits != 0) ? 1m : mapper.Map(1m, pic);
 
             return obj.GetType();
         }

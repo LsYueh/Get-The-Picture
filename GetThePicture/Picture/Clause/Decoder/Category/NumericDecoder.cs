@@ -2,6 +2,7 @@ using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Computational;
 using GetThePicture.Picture.Clause.Base.Options;
+using GetThePicture.Picture.Clause.Decoder.Category.Mapper;
 
 namespace GetThePicture.Picture.Clause.Decoder.Category;
 
@@ -41,6 +42,9 @@ public static class NumericDecoder
         return ParseToValue(numeric, sign, pic);
     }
 
+    private static readonly IMapper _SIntMapper = new SIntMapper();
+    private static readonly IMapper _UIntMapper = new UIntMapper();
+
     /// <summary>
     /// 
     /// </summary>
@@ -58,6 +62,8 @@ public static class NumericDecoder
         
         decimal value = CbDecimal.Decode(numeric, pic.DecimalDigits, sign < 0);
 
-        return (pic.DecimalDigits == 0) ? Clr.AsInteger(value, pic) : value;
+        IMapper mapper = pic.Signed ? _SIntMapper : _UIntMapper;
+
+        return (pic.DecimalDigits == 0) ? mapper.Map(value, pic) : value;
     }
 }

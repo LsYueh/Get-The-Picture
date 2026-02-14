@@ -26,10 +26,10 @@ public class NumericDecoderForIntegerTest
     
     [DataTestMethod]
     [DataRow( "9",  "9(1)", typeof (byte),  (byte)  9)]
-    [DataRow( "I", "S9(1)", typeof (byte),  (byte)  9)]
+    [DataRow( "I", "S9(1)", typeof(sbyte), (sbyte)  9)]
     [DataRow( "R", "S9(1)", typeof(sbyte), (sbyte) -9)]
     [DataRow("99",  "9(2)", typeof (byte),  (byte) 99)]
-    [DataRow("9I", "S9(2)", typeof (byte),  (byte) 99)]
+    [DataRow("9I", "S9(2)", typeof(sbyte), (sbyte) 99)]
     [DataRow("9R", "S9(2)", typeof(sbyte), (sbyte)-99)]
     public void Decode_Default_Byte(string text, string picString, Type expectedType, object expectedValue)
     {
@@ -45,10 +45,10 @@ public class NumericDecoderForIntegerTest
 
     [DataTestMethod]
     [DataRow( "998",  "9(3)", typeof(ushort), (ushort)  998)]
-    [DataRow( "99H", "S9(3)", typeof(ushort), (ushort)  998)]
+    [DataRow( "99H", "S9(3)", typeof (short),  (short)  998)]
     [DataRow( "99Q", "S9(3)", typeof (short),  (short) -998)]
     [DataRow("9998",  "9(4)", typeof(ushort), (ushort) 9998)]
-    [DataRow("999H", "S9(4)", typeof(ushort), (ushort) 9998)]
+    [DataRow("999H", "S9(4)", typeof (short),  (short) 9998)]
     [DataRow("999Q", "S9(4)", typeof (short),  (short)-9998)]
     public void Decode_Default_Short(string text, string picString, Type expectedType, object expectedValue)
     {
@@ -64,10 +64,10 @@ public class NumericDecoderForIntegerTest
 
     [DataTestMethod]
     [DataRow(    "99997",  "9(5)", typeof(uint), (uint)     99997)]
-    [DataRow(    "9999G", "S9(5)", typeof(uint), (uint)     99997)]
+    [DataRow(    "9999G", "S9(5)", typeof (int),  (int)     99997)]
     [DataRow(    "9999P", "S9(5)", typeof (int),  (int)    -99997)]
     [DataRow("999999997",  "9(9)", typeof(uint), (uint) 999999997)]
-    [DataRow("99999999G", "S9(9)", typeof(uint), (uint) 999999997)]
+    [DataRow("99999999G", "S9(9)", typeof (int),  (int) 999999997)]
     [DataRow("99999999P", "S9(9)", typeof (int),  (int)-999999997)]
     public void Decode_Default_Int(string text, string picString, Type expectedType, object expectedValue)
     {
@@ -83,10 +83,10 @@ public class NumericDecoderForIntegerTest
 
     [DataTestMethod]
     [DataRow(        "9999999996",  "9(10)", typeof(ulong), (ulong)         9999999996)]
-    [DataRow(        "999999999F", "S9(10)", typeof(ulong), (ulong)         9999999996)]
+    [DataRow(        "999999999F", "S9(10)", typeof (long),  (long)         9999999996)]
     [DataRow(        "999999999O", "S9(10)", typeof (long),  (long)        -9999999996)]
     [DataRow("999999999999999996",  "9(18)", typeof(ulong), (ulong) 999999999999999996)]
-    [DataRow("99999999999999999F", "S9(18)", typeof(ulong), (ulong) 999999999999999996)]
+    [DataRow("99999999999999999F", "S9(18)", typeof (long),  (long) 999999999999999996)]
     [DataRow("99999999999999999O", "S9(18)", typeof (long),  (long)-999999999999999996)]
     public void Decode_Default_Long(string text, string picString, Type expectedType, object expectedValue)
     {
