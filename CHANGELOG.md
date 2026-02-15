@@ -1,6 +1,6 @@
 # Changelog
 
-## [26.11.5] – (unreleased)
+## [26.11.5] – 2026-02-15
 
 ### Changed
 - `COMP-3` / `COMP-6` 現在會根據 PICTURE 子句的宣告格式，映射對應的 CLR 資料型態。
