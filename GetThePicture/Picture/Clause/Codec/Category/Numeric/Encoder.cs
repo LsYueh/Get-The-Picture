@@ -29,7 +29,7 @@ public static class Encoder
         {
             PicUsage.Display        => Display_Encode(nMeta, pic, options),
             PicUsage.PackedDecimal  =>   COMP3.Encode(nMeta, pic),
-            PicUsage.Binary         =>   COMP4.Encode(nMeta, pic, options.Binary),
+            PicUsage.Binary         =>   COMP4.Encode(nMeta, pic),
             PicUsage.NativeBinary   =>   COMP5.Encode(nMeta, pic, options.Binary),
             PicUsage.UPackedDecimal =>   COMP6.Encode(nMeta, pic),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")

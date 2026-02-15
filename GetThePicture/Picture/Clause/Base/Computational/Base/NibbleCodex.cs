@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using GetThePicture.Picture.Clause.Base.Options;
 
-namespace GetThePicture.Picture.Clause.Base.Computational;
+namespace GetThePicture.Picture.Clause.Base.Computational.Base;
 
 /// <summary>
 /// Ref. <see href="https://docs.rocketsoftware.com/bundle/acucobolgt_dg_1050_html/page/BKUSUSCOMPUS2.2.10.html">Data Storage Options</see>

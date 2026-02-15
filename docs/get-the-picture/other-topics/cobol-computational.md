@@ -67,10 +67,10 @@ PIC S9(5)V9(2) COMP-3
 
 
 # COMP-4 / COMP-5
-在 COBOL 中，`COMP-4` 屬於二進位整數（binary integer）儲存格式。  
+在 COBOL 中，`COMP-4` 屬於二進位整數（binary integer）儲存格式。於大型主機環境（例如 IBM z/OS COBOL）中，其資料以 **Big Endian** 方式儲存。  
+因此，在以 **Little Endian** 為主的現代平台（如 x86 / x64）上進行解析或寫入時，必須進行位元組順序轉換（byte order reversal），以確保與大型主機資料格式相容。  
 
-與 `DISPLAY` 或 `COMP-3` 不同，COMPUTATIONAL 類型使用 **二補數（two’s complement）** 表示整數數值，不包含任何字元或十進位壓縮格式。
-
+與 `DISPLAY` 或 `COMP-3` 不同，COMPUTATIONAL 類型使用 **二補數（two’s complement）** 表示整數數值，不包含任何字元或十進位壓縮格式。  
 `COMP-4` 在大多數系統上代表**明確使用二進位整數格式儲存**。其存在的歷史原因是：
 - 在某些舊系統中 `COMP` 的實作並非完全一致
 - 為避免歧義，使用 `COMP-4` 來明確指定 binary integer

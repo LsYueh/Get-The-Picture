@@ -1,7 +1,7 @@
-using GetThePicture.Picture.Clause.Base.Computational;
+using GetThePicture.Picture.Clause.Base.Computational.Base;
 using GetThePicture.Picture.Clause.Base.Options;
 
-namespace GetThePicture.Tests.Picture.Clause.Base.Computational;
+namespace GetThePicture.Tests.Picture.Clause.Base.Computational.Base;
 
 [TestClass]
 public class NibbleCodexTest

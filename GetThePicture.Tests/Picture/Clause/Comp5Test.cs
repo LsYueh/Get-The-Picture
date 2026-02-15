@@ -5,7 +5,7 @@ using GetThePicture.Picture.Clause.Base.ClauseItems;
 namespace GetThePicture.Tests.Picture.Clause;
 
 [TestClass]
-public class CompTest
+public class Comp5Test
 {
     // -------------------------
     // Encode
@@ -24,7 +24,7 @@ public class CompTest
     public void Encode_Combination_Test(string picString, object value, byte[] expected)
     {
         var pic = PicMeta.Parse(picString);
-        pic.Usage = PicUsage.Binary;
+        pic.Usage = PicUsage.NativeBinary;
 
         byte[] buffer = PicClauseCodec.ForMeta(pic).WithStrict().Encode(value);
 
@@ -37,7 +37,7 @@ public class CompTest
     public void Encode_With_Change_Endian(string picString, object value, byte[] expected)
     {
         var pic = PicMeta.Parse(picString);
-        pic.Usage = PicUsage.Binary;
+        pic.Usage = PicUsage.NativeBinary;
 
         byte[] buffer = PicClauseCodec.ForMeta(pic).WithStrict().WithReversedBinary().Encode(value);
 
@@ -61,7 +61,7 @@ public class CompTest
     public void Decode_Combination_Test(string picString, object expected, byte[] buffer)
     {
         var pic = PicMeta.Parse(picString);
-        pic.Usage = PicUsage.Binary;
+        pic.Usage = PicUsage.NativeBinary;
 
         var value = PicClauseCodec.ForMeta(pic).WithStrict().Decode(buffer);
 
@@ -74,7 +74,7 @@ public class CompTest
     public void Decode_With_Change_Endian(string picString, object expected, byte[] buffer)
     {
         var pic = PicMeta.Parse(picString);
-        pic.Usage = PicUsage.Binary;
+        pic.Usage = PicUsage.NativeBinary;
 
         var value = PicClauseCodec.ForMeta(pic).WithStrict().WithReversedBinary().Decode(buffer);
 

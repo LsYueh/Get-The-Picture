@@ -35,7 +35,7 @@ public class NativeBinaryTest
     [DataTestMethod]
     [DataRow("9(4)", false,     "0",      (ushort) 0)]
     [DataRow("9(4)", false, "65535", ushort.MaxValue)]
-    public void Codec_Halfword(string picString, bool isNegative, string digits, ushort expected)
+    public void Codec_Halfword(string picString, bool isNegative, string digits, object expected)
     {
         var pic = PicMeta.Parse(picString);
         

@@ -1,4 +1,4 @@
-namespace GetThePicture.Picture.Clause.Base.Computational;
+namespace GetThePicture.Picture.Clause.Base.Computational.Base;
 
 public class CbDecimal
 {

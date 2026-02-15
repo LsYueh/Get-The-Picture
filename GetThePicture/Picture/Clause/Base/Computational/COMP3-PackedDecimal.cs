@@ -1,3 +1,4 @@
+using GetThePicture.Picture.Clause.Base.Computational.Base;
 using GetThePicture.Picture.Clause.Base.Options;
 using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
