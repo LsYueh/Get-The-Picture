@@ -14,7 +14,7 @@
 - 重構 PICTURE 子句中 **Numeric** 解碼的 `Mapper`。
     - 讓 `DISPLAY` `COMP-3` `COMP-6` 共用同一個 CLR 轉換規則。
 
-- PICTURE 子句原本的 `Decoder` / `Encoder` 資料夾 整併為 `Codec`。
+- PICTURE 子句原本的 `Decoder` / `Encoder` 資料夾整併為 `Codec`。
     - 既有分層模式將導致目錄層級過深與模組分散，影響程式碼導覽效率。
     - 調整統一後，集中管理編解碼邏輯，使結構更扁平化並利於未來擴充。
 
