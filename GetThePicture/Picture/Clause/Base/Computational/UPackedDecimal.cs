@@ -1,4 +1,4 @@
-using GetThePicture.Picture.Clause.Decoder.Category.Mapper;
+using GetThePicture.Picture.Clause.Decoder.Category.NumericMapper;
 using GetThePicture.Picture.Clause.Encoder.Category;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
@@ -42,7 +42,7 @@ internal static class COMP6
     // - Total bytes = (number_of_digits + 1) / 2
     //
 
-    private static readonly IMapper _UIntMapper = new UIntMapper();
+    private static readonly UIntMapper _UIntMapper = new();
 
     public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
@@ -53,9 +53,9 @@ internal static class COMP6
             throw new NotSupportedException("Signed value is not valid for COMP-6");
 
         // Decode BCD
-        byte[] chars = DecodeUPacked(buffer, pic.DigitCount);  // 根據 PIC 長度解碼 BCD
+        byte[] chars = DecodeUPacked(buffer, pic.DigitCount); // 根據 PIC 長度解碼 BCD
 
-        ulong value = DecodeUInt64(chars);
+        decimal value = CbDecimal.Decode(chars, pic.DecimalDigits, isNegative: false);
 
         return _UIntMapper.Map(value, pic);
     }
@@ -91,6 +91,9 @@ internal static class COMP6
 
     private static byte[] DecodeUPacked(ReadOnlySpan<byte> buffer, int digits)
     {
+        if (digits < 1)
+            throw new ArgumentOutOfRangeException(nameof(digits), "Digits must be greater than 0.");
+        
         byte[] bytes = new byte[digits];
 
         int idx = digits - 1;
@@ -111,22 +114,5 @@ internal static class COMP6
         }
 
         return bytes;
-    }
-
-    private static ulong DecodeUInt64(ReadOnlySpan<byte> chars)
-    {
-        ulong value = 0;
-
-        foreach (byte c in chars)
-        {
-            if (c < '0' || c > '9')
-                throw new FormatException($"Invalid digit '{(char)c}' in numeric field");
-            
-            ulong digit = (ulong)(c - '0');
-
-            value = value * 10 + digit;
-        }
-
-        return value;
     }
 }

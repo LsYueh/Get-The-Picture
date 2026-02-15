@@ -1,5 +1,5 @@
 using GetThePicture.Picture.Clause.Base.Options;
-using GetThePicture.Picture.Clause.Decoder.Category.Mapper;
+using GetThePicture.Picture.Clause.Decoder.Category.NumericMapper;
 using GetThePicture.Picture.Clause.Encoder.Category;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
@@ -51,22 +51,21 @@ internal static class COMP3
     // - Total bytes = (number_of_digits + 1) / 2
     //
 
-    private static readonly IMapper _SIntMapper = new SIntMapper();
-    private static readonly IMapper _UIntMapper = new UIntMapper();
+    private static readonly SIntMapper _SIntMapper = new();
+    private static readonly UIntMapper _UIntMapper = new();
 
     public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
     {
         // Decode BCD
         byte[] chars = DecodePacked(buffer, pic.DigitCount, out bool isNegative); // 根據 PIC 長度解碼 BCD
 
-        if (pic.DecimalDigits > 0)
-            return CbDecimal.Decode(chars, pic.DecimalDigits, isNegative);
-
         if (!pic.Signed && isNegative)
             throw new OverflowException("Unsigned field contains negative number");
 
-        // Decode to long first (signed or unsigned)
-        long value = DecodeInt64(chars, isNegative);
+        decimal value = CbDecimal.Decode(chars, pic.DecimalDigits, isNegative);
+
+        if (pic.DecimalDigits > 0)
+            return value;
 
         IMapper mapper = pic.Signed ? _SIntMapper : _UIntMapper;
 
@@ -104,6 +103,9 @@ internal static class COMP3
 
     private static byte[] DecodePacked(ReadOnlySpan<byte> buffer, int digits, out bool negative)
     {
+        if (digits < 1)
+            throw new ArgumentOutOfRangeException(nameof(digits), "Digits must be greater than 0.");
+        
         byte[] bytes = new byte[digits];
 
         int idx = digits - 1;
@@ -140,23 +142,5 @@ internal static class COMP3
         }
 
         return bytes;
-    }
-
-    private static long DecodeInt64(ReadOnlySpan<byte> chars, bool isNegative)
-    {
-        if (chars.Length > 18)
-            throw new OverflowException("Packed number too large for Int64");
-
-        long value = 0;
-
-        foreach (byte c in chars)
-        {
-            if (c < '0' || c > '9')
-                throw new FormatException($"Invalid digit '{(char)c}' in numeric field");
-
-            value = value * 10 + (c - (byte)'0');
-        }
-
-        return isNegative ? -value : value;
     }
 }

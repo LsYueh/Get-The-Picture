@@ -13,14 +13,9 @@ public class CbDecimal
     /// <exception cref="OverflowException">If total digits exceed .NET decimal precision.</exception>
     public static decimal Decode(ReadOnlySpan<byte> chars, int decimalDigits, bool isNegative)
     {
-        int totalDigits = chars.Length;
-
-        if (totalDigits > 28)
-            throw new OverflowException($"Total digits ({totalDigits}) exceed .NET decimal precision (28 digits max).");
-
         decimal result;
 
-        if (totalDigits <= 18)
+        if (chars.Length <= 18)
         {
             // long fast-path（安全 18 位）
             long value = 0;
@@ -109,36 +104,5 @@ public class CbDecimal
         100000000000000000000000000m,
         1000000000000000000000000000m,
         10000000000000000000000000000m  // 10^28
-    ];
-
-    public static ulong Pow10UInt64(int digits)
-    {
-        if (digits < 0 || digits >= Pow10UInt64Table.Length)
-            throw new ArgumentOutOfRangeException(nameof(digits), "UInt64 digits must be 0~18");
-
-        return Pow10UInt64Table[digits];
-    }
-
-    private static readonly ulong[] Pow10UInt64Table =
-    [
-        1UL,                        // 10^0
-        10UL,                       // 10^1
-        100UL,
-        1_000UL,
-        10_000UL,
-        100_000UL,
-        1_000_000UL,
-        10_000_000UL,
-        100_000_000UL,
-        1_000_000_000UL,
-        10_000_000_000UL,
-        100_000_000_000UL,
-        1_000_000_000_000UL,
-        10_000_000_000_000UL,
-        100_000_000_000_000UL,
-        1_000_000_000_000_000UL,
-        10_000_000_000_000_000UL,
-        100_000_000_000_000_000UL,  // 10^17
-        1_000_000_000_000_000_000UL // 10^18
     ];
 }

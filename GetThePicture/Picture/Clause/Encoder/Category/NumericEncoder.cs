@@ -8,15 +8,19 @@ namespace GetThePicture.Picture.Clause.Encoder.Category;
 public static class NumericEncoder
 {
     /// <summary>
-    /// Meta → [Overpunch Encode]/[COMP] (byte) → COBOL Elementary Item (buffer)
+    /// CLR → Meta → [Overpunch Encode]/[COMP] (byte) → COBOL Elementary Item (buffer)
     /// </summary>
     /// <param name="nValuea"></param>
     /// <param name="pic"></param>
     /// <param name="options"></param>
     /// <returns></returns>
+    /// <exception cref="OverflowException"></exception>
     /// <exception cref="NotSupportedException"></exception>
     public static byte[] Encode(object value, PicMeta pic, CodecOptions? options = null)
     {
+        if (pic.DigitCount > 28)
+            throw new OverflowException($"PIC {pic} has {pic.IntegerDigits} + {pic.DecimalDigits} = {pic.DigitCount} digit(s), which exceeds the supported maximum (28 digits).");
+        
         options ??= new CodecOptions();
 
         var nMeta = NumericMeta.Parse(value, pic);

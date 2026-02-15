@@ -77,10 +77,22 @@ public class NumericEncoderTest
     // -------------------------
 
     [TestMethod]
+    [ExpectedException(typeof(NotSupportedException))]
     public void Encode_With_String_Value_Cause_Exception()
     {
         var pic = PicMeta.Parse("S9(5)V9");
 
-        Assert.ThrowsException<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Encode("中文字"));
+        PicClauseCodec.ForMeta(pic).Encode("中文字");
+    }
+
+    [DataTestMethod] // 總共 29 位數，超過 decimal 精度
+    [DataRow("S9(29)")]
+    [DataRow("9(29)")]
+    [ExpectedException(typeof(OverflowException))]
+    public void Encode_With_Digits_Exceeding_28_Should_Throw(string picString)
+    {
+        var pic = PicMeta.Parse(picString);
+
+        PicClauseCodec.ForMeta(pic).Encode(1);
     }
 }

@@ -2,24 +2,28 @@ using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Computational;
 using GetThePicture.Picture.Clause.Base.Options;
-using GetThePicture.Picture.Clause.Decoder.Category.Mapper;
+using GetThePicture.Picture.Clause.Decoder.Category.NumericMapper;
 
 namespace GetThePicture.Picture.Clause.Decoder.Category;
 
 public static class NumericDecoder
 {
     /// <summary>
-    /// CP950 → [Overpunch Decode]/[COMP] (object) → CLR value
+    /// CP950 → [Overpunch Decode]/[COMP] (object) → Mapper → CLR
     /// </summary>
     /// <param name="buffer">ASCII/CP950</param>
     /// <param name="pic"></param>
     /// <param name="dataStorageOptions"></param>
     /// <returns></returns>
-    /// <exception cref="FormatException"></exception>
+    /// <exception cref="OverflowException"></exception>
+    /// <exception cref="NotSupportedException"></exception>
     public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, CodecOptions? options = null)
     {
-        options ??= new CodecOptions();
+        if (pic.DigitCount > 28)
+            throw new OverflowException($"PIC {pic} has {pic.IntegerDigits} + {pic.DecimalDigits} = {pic.DigitCount} digit(s), which exceeds the supported maximum (28 digits).");
 
+        options ??= new CodecOptions();
+        
         // Note: COBOL資料記憶體先被S9(n)截位再轉處裡，一般COBOL應該也是這樣的狀況
 
         // 截位或補字處理
@@ -36,31 +40,19 @@ public static class NumericDecoder
         };
     }
 
+    private static readonly SIntMapper _SIntMapper = new();
+    private static readonly UIntMapper _UIntMapper = new();
+
     private static object Display_Decode(Span<byte> bytes, PicMeta pic, CodecOptions options)
     {
-        var numeric = Base.Overpunch.OpCodec.Decode(bytes, pic, options, out decimal sign);
-        return ParseToValue(numeric, sign, pic);
-    }
+        Span<byte> chars = Base.Overpunch.OpCodec.Decode(bytes, pic, options, out decimal sign);
 
-    private static readonly IMapper _SIntMapper = new SIntMapper();
-    private static readonly IMapper _UIntMapper = new UIntMapper();
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="numeric">數字文</param>
-    /// <param name="sign">(+/-)</param>
-    /// <param name="pic"></param>
-    /// <returns></returns>
-    private static object ParseToValue(Span<byte> numeric, decimal sign, PicMeta pic)
-    {
-        if (pic.DigitCount > 28)
-            throw new OverflowException($"PIC {pic} has {pic.IntegerDigits} + {pic.DecimalDigits} = {pic.DigitCount} digit(s), which exceeds the supported maximum (28 digits).");
-
-        if (numeric.Length != pic.DigitCount)
-            throw new FormatException($"Numeric length mismatch for PIC. Expected {pic.DigitCount}, actual {numeric.Length}.");
+        if (chars.Length != pic.DigitCount)
+            throw new FormatException($"Numeric length mismatch for PIC. Expected {pic.DigitCount}, actual {chars.Length}.");
         
-        decimal value = CbDecimal.Decode(numeric, pic.DecimalDigits, sign < 0);
+        bool isNegative = sign < 0;
+
+        decimal value = CbDecimal.Decode(chars, pic.DecimalDigits, isNegative);
 
         IMapper mapper = pic.Signed ? _SIntMapper : _UIntMapper;
 

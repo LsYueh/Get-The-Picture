@@ -24,9 +24,6 @@ public readonly struct NumericMeta(byte[] chars, int decimalDigits, bool isNegat
         if (!IsNumericType(value))
             throw new NotSupportedException($"Type {value.GetType().Name} is not supported.");
 
-        if (pic.DigitCount > 28)
-            throw new NotSupportedException($"PIC digit count {pic.DigitCount} exceeds supported 28 digits.");
-
         byte[] digits = new byte[pic.DigitCount];
 
         bool isNegative;

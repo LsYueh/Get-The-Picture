@@ -1,6 +1,6 @@
 using GetThePicture.Picture.Clause.Base;
 
-namespace GetThePicture.Picture.Clause.Decoder.Category.Mapper;
+namespace GetThePicture.Picture.Clause.Decoder.Category.NumericMapper;
 
 public interface IMapper
 {
