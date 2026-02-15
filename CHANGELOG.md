@@ -13,9 +13,10 @@
 ### Refact
 - 重構 PICTURE 子句中 **numeric** 解碼的 `Mapper`。
     - 讓 `DISPLAY` `COMP-3` `COMP-6` 共用同一個 CLR 轉換規則。
-- PICTURE 子句的 **Numeric** 編解碼有自己的資料夾。
-    - Decode : `Decoder` + `Mapper`
-    - Encode : `Encoder` + `Meta`
+- PICTURE 子句的 **Numeric** Codec 有自己的資料夾。
+    - Codec 有各自自己需要的前置或後製處理工具：
+        - Decode : `Decoder` + `Mapper`
+        - Encode : `Encoder` + `Meta`
 
 <br><br>
 
