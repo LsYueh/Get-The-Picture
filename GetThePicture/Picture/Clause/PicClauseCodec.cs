@@ -1,6 +1,8 @@
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Options;
+using GetThePicture.Picture.Clause.Codec;
+
 
 namespace GetThePicture.Picture.Clause;
 
@@ -102,7 +104,7 @@ public sealed class CodecContext(PicMeta meta)
         if (buffer.Length == 0)
             throw new ArgumentException("Buffer is empty.", nameof(buffer));
         
-        return Decoder.PicDecoder.Decode(buffer, _picMeta, _options);
+        return Decoder.Decode(buffer, _picMeta, _options);
     }
 
     /// <summary>
@@ -114,6 +116,6 @@ public sealed class CodecContext(PicMeta meta)
     {
         ArgumentNullException.ThrowIfNull(value);
 
-        return Encoder.PicEncoder.Encode(value, _picMeta, _options);
+        return Encoder.Encode(value, _picMeta, _options);
     }
 }

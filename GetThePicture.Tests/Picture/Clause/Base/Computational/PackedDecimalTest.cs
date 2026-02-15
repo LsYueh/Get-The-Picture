@@ -4,7 +4,7 @@ using System.Text;
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Computational;
-using GetThePicture.Picture.Clause.Encoder.Category.Numeric;
+using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Tests.Picture.Clause.Base.Computational;

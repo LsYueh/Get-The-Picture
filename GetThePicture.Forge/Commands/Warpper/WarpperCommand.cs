@@ -3,11 +3,12 @@ using System.Text;
 using GetThePicture.Copybook.Compiler.Storage;
 using GetThePicture.Copybook.Compiler.Storage.Base;
 using GetThePicture.Copybook.Provider;
+
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
+using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
 
 using GetThePicture.Forge.Core;
-using GetThePicture.Picture.Clause.Decoder.Category.Mapper;
 
 namespace GetThePicture.Forge.Commands.Warpper;
 
