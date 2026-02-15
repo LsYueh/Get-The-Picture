@@ -1,5 +1,5 @@
 using GetThePicture.Picture.Clause.Base.Options;
-using GetThePicture.Picture.Clause.Encoder.Category;
+using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
 

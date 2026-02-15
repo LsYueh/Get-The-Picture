@@ -4,7 +4,7 @@ using System.Text;
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Computational;
-using GetThePicture.Picture.Clause.Encoder.Category;
+using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Tests.Picture.Clause.Base.Computational;
@@ -13,67 +13,34 @@ namespace GetThePicture.Tests.Picture.Clause.Base.Computational;
 public class PackedDecimalTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
-    
-    private static byte[] HexToBytes(string hex)
-    {
-        if (hex.Length % 2 != 0)
-            throw new ArgumentException("Hex string length must be even");
-
-        byte[] buffer = new byte[hex.Length / 2];
-
-        for (int i = 0; i < buffer.Length; i++)
-        {
-            buffer[i] = Convert.ToByte(hex.Substring(i * 2, 2), 16);
-        }
-
-        return buffer;
-    }
 
     [DataTestMethod]
-    [DataRow("S9(5)", "12345C",  12345L)]
-    [DataRow("S9(5)", "12345D", -12345L)]
-    [DataRow("S9(5)", "98765D", -98765L)]
-    [DataRow("S9(5)", "00001C",      1L)]
-    [DataRow("S9(3)",   "000C",      0L)] // 邊界測試
-    public void Decode_Integer(string picText, string hex, long expected)
+    [DataRow("S9(5)", new byte[] { 0x12, 0x34, 0x5C }                  ,        12345,    typeof(int))]
+    [DataRow("S9(5)", new byte[] { 0x12, 0x34, 0x5D }                  ,       -12345,    typeof(int))]
+    [DataRow("S9(5)", new byte[] { 0x98, 0x76, 0x5D }                  ,       -98765,    typeof(int))]
+    [DataRow("S9(5)", new byte[] { 0x00, 0x00, 0x1C }                  ,            1,    typeof(int))]
+    [DataRow("S9(3)", new byte[] { 0x00, 0x0C }                        , (short)    0,  typeof(short))] // 邊界測試
+    [DataRow("9(05)", new byte[] { 0x12, 0x34, 0x5F }                  , (uint) 12345,   typeof(uint))]
+    [DataRow("9(10)", new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F }, (ulong)    1,  typeof(ulong))]
+    [DataRow("9(03)", new byte[] { 0x00, 0x0F }                        , (ushort) 0UL, typeof(ushort))] // 邊界測試
+    public void Decode_Integer(string picText, byte[] buffer, object expected, Type expectedType)
     {
         var pic = PicMeta.Parse(picText);
         pic.Usage = PicUsage.PackedDecimal;
-
-        byte[] buffer = HexToBytes(hex);
 
         object value = COMP3.Decode(buffer, pic);
 
-        Assert.IsInstanceOfType(value, typeof(long));
-        Assert.AreEqual(expected, (long)value);
+        Assert.IsInstanceOfType(value, expectedType);
+        Assert.AreEqual(expected, value);
     }
 
     [DataTestMethod]
-    [DataRow("9(05)",       "12345F", 12345UL)]
-    [DataRow("9(10)", "00000000001F",     1UL)]
-    [DataRow("9(03)",         "000F",     0UL)] // 邊界測試
-    public void Decode_Unsigned_Integer(string picText, string hex, ulong expected)
+    [DataRow("S9(5)V9(2)", new byte[] { 0x12, 0x34, 0x56, 0x7C }, "12345.67")]
+    [DataRow("S9(3)V9(2)", new byte[] { 0x12, 0x34, 0x5D }      ,  "-123.45")]
+    public void Decode_Decimal(string picText, byte[] buffer, string expectedValue)
     {
         var pic = PicMeta.Parse(picText);
         pic.Usage = PicUsage.PackedDecimal;
-
-        byte[] buffer = HexToBytes(hex);
-
-        object value = COMP3.Decode(buffer, pic);
-
-        Assert.IsInstanceOfType(value, typeof(ulong));
-        Assert.AreEqual(expected, (ulong)value);
-    }
-
-    [DataTestMethod]
-    [DataRow("S9(5)V9(2)", "1234567C", "12345.67")]
-    [DataRow("S9(3)V9(2)", "12345D"  ,  "-123.45")]
-    public void Decode_Decimal(string picText, string hex, string expectedValue)
-    {
-        var pic = PicMeta.Parse(picText);
-        pic.Usage = PicUsage.PackedDecimal;
-
-        byte[] buffer = HexToBytes(hex);
 
         object value = COMP3.Decode(buffer, pic);
 
@@ -102,6 +69,6 @@ public class PackedDecimalTest
         byte[] buffer = COMP3.Encode(nMeta, pic);
 
         // 12 34 5F
-        CollectionAssert.AreEqual(HexToBytes("12345F"), buffer);
+        CollectionAssert.AreEqual(new byte[] { 0x12, 0x34, 0x5F }, buffer);
     }
 }

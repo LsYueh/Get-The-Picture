@@ -1,5 +1,3 @@
-using System.Text;
-
 using GetThePicture.Picture.Clause.Base.Options;
 
 namespace GetThePicture.Picture.Clause.Base.Overpunch;

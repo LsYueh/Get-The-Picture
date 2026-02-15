@@ -3,7 +3,7 @@ using System.Text;
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.Computational;
 using GetThePicture.Picture.Clause.Base.Options;
-using GetThePicture.Picture.Clause.Encoder.Category;
+using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Tests.Picture.Clause.Base.Computational;
@@ -33,7 +33,7 @@ public class NativeBinaryTest
     }
     
     [DataTestMethod]
-    [DataRow("9(4)", false, "0", (ushort) 0)]
+    [DataRow("9(4)", false,     "0",      (ushort) 0)]
     [DataRow("9(4)", false, "65535", ushort.MaxValue)]
     public void Codec_Halfword(string picString, bool isNegative, string digits, ushort expected)
     {
@@ -87,7 +87,7 @@ public class NativeBinaryTest
     }
 
     [DataTestMethod]
-    [DataRow("9(9)", false, "0", (uint) 0)]
+    [DataRow("9(9)", false,          "0",      (uint) 0)]
     [DataRow("9(9)", false, "4294967295", uint.MaxValue)]
     public void Codec_Fullword(string picString, bool isNegative, string digits, uint expected)
     {
@@ -141,7 +141,7 @@ public class NativeBinaryTest
     }
 
     [DataTestMethod]
-    [DataRow("9(18)", false, "0", (ulong) 0)]
+    [DataRow("9(18)", false,                    "0",      (ulong) 0)]
     [DataRow("9(18)", false, "18446744073709551615", ulong.MaxValue)]
     public void Codec_Doubleword(string picString, bool isNegative, string digits, ulong expected)
     {
@@ -199,9 +199,9 @@ public class NativeBinaryTest
     // -------------------------
 
     [DataTestMethod]
-    [DataRow(  "9(4)", false, "65536")]
-    [DataRow( "S9(4)", false, "32768")]
-    [DataRow( "S9(9)", false, "2147483648")]
+    [DataRow(  "9(4)", false,               "65536")]
+    [DataRow( "S9(4)", false,               "32768")]
+    [DataRow( "S9(9)", false,          "2147483648")]
     [DataRow("S9(18)", false, "9223372036854775808")]
     public void Codec_Numeric_Overflow(string picString, bool isNegative, string digits)
     {

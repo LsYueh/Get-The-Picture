@@ -43,10 +43,10 @@ public class Comp3Test
     // ------------------------- 
 
     [DataTestMethod]
-    [DataRow( "9(5)",  52194UL, new byte[] { 0x52, 0x19, 0x4F })]
-    [DataRow( "9(5)",  52194UL, new byte[] { 0x52, 0x19, 0x4C })] // TODO: Sign Nibble 與 PIC 定義不合，看看要不要擋
-    [DataRow("S9(5)",  52194L , new byte[] { 0x52, 0x19, 0x4C })]
-    [DataRow("S9(5)", -52194L , new byte[] { 0x52, 0x19, 0x4D })]
+    [DataRow( "9(5)",(uint)  52194, new byte[] { 0x52, 0x19, 0x4F })]
+    [DataRow( "9(5)",(uint)  52194, new byte[] { 0x52, 0x19, 0x4C })] // TODO: Sign Nibble 與 PIC 定義不合，看看要不要擋
+    [DataRow("S9(5)",(int)   52194, new byte[] { 0x52, 0x19, 0x4C })]
+    [DataRow("S9(5)",(int)  -52194, new byte[] { 0x52, 0x19, 0x4D })]
     public void Decode_Combination_Test(string picString, object expected, byte[] buffer)
     {
         var pic = PicMeta.Parse(picString);
@@ -67,7 +67,7 @@ public class Comp3Test
 
         var value = PicClauseCodec.ForMeta(pic).Decode([0x52, 0x19, 0x4D]);
 
-        Assert.AreEqual(-194L, value);
+        Assert.AreEqual((short) -194, value);
     }
 
     // -------------------------
