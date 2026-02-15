@@ -1,7 +1,7 @@
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.Computational;
 
-namespace GetThePicture.Picture.Clause.Decoder.Category.NumericMapper;
+namespace GetThePicture.Picture.Clause.Decoder.Category.Numeric.Mapper;
 
 public abstract class MapperBase : IMapper
 {

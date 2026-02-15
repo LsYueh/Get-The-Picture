@@ -4,10 +4,10 @@ using System.Text;
 using GetThePicture.Picture.Clause;
 using GetThePicture.Picture.Clause.Base;
 
-namespace GetThePicture.Tests.Picture.Clause.Decoder.Category;
+namespace GetThePicture.Tests.Picture.Clause.Decoder.Category.Numeric;
 
 [TestClass]
-public class NumericDecoderForDecimalTest
+public class DecoderForDecimalTest
 {
     [DataTestMethod]
     [DataRow( "01234",  "9(3)V9(2)", typeof(decimal),  "12.34")]

@@ -1,5 +1,5 @@
-using GetThePicture.Picture.Clause.Decoder.Category.NumericMapper;
-using GetThePicture.Picture.Clause.Encoder.Category;
+using GetThePicture.Picture.Clause.Decoder.Category.Numeric.Mapper;
+using GetThePicture.Picture.Clause.Encoder.Category.Numeric;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
 

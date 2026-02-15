@@ -3,13 +3,13 @@ using System.Text;
 
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
-using GetThePicture.Picture.Clause.Encoder.Category;
+using GetThePicture.Picture.Clause.Encoder.Category.Numeric;
 using GetThePicture.Picture.Clause.Utils;
 
-namespace GetThePicture.Tests.Picture.Clause.Encoder.Category;
+namespace GetThePicture.Tests.Picture.Clause.Encoder.Category.Numeric;
 
 [TestClass]
-public class NumericValueTest
+public class MetaTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     

@@ -1,7 +1,7 @@
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.Computational;
 
-namespace GetThePicture.Picture.Clause.Encoder.Category;
+namespace GetThePicture.Picture.Clause.Encoder.Category.Numeric;
 
 public readonly struct NumericMeta(byte[] chars, int decimalDigits, bool isNegative)
 {

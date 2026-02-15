@@ -2,9 +2,9 @@ using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Computational;
 using GetThePicture.Picture.Clause.Base.Options;
-using GetThePicture.Picture.Clause.Decoder.Category.NumericMapper;
+using GetThePicture.Picture.Clause.Decoder.Category.Numeric.Mapper;
 
-namespace GetThePicture.Picture.Clause.Decoder.Category;
+namespace GetThePicture.Picture.Clause.Decoder.Category.Numeric;
 
 public static class NumericDecoder
 {

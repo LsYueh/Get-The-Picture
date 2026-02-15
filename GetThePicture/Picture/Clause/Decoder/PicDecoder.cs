@@ -1,6 +1,8 @@
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Options;
+using GetThePicture.Picture.Clause.Decoder.Category;
+using GetThePicture.Picture.Clause.Decoder.Category.Numeric;
 
 namespace GetThePicture.Picture.Clause.Decoder;
 
@@ -43,9 +45,9 @@ public static class PicDecoder
 #pragma warning disable IDE0066 // Convert switch statement to expression
         switch (pic.BaseClass)
         {
-            case PicBaseClass.Numeric     : return      Category.NumericDecoder.Decode(buffer, pic, options);
-            case PicBaseClass.Alphanumeric: return Category.AlphanumericDecoder.Decode(buffer, pic);
-            case PicBaseClass.Alphabetic  : return   Category.AlphabeticDecoder.Decode(buffer, pic);
+            case PicBaseClass.Numeric     : return      NumericDecoder.Decode(buffer, pic, options);
+            case PicBaseClass.Alphanumeric: return AlphanumericDecoder.Decode(buffer, pic);
+            case PicBaseClass.Alphabetic  : return   AlphabeticDecoder.Decode(buffer, pic);
             default:
                 throw new NotSupportedException($"Unsupported PIC Data Type [Decode] : {pic.BaseClass}");
         }

@@ -5,10 +5,10 @@ using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.Options;
 using GetThePicture.Picture.Clause.Utils;
 
-namespace GetThePicture.Tests.Picture.Clause.Encoder.Category;
+namespace GetThePicture.Tests.Picture.Clause.Encoder.Category.Numeric;
 
 [TestClass]
-public class NumericEncoderTest
+public class EncoderTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     

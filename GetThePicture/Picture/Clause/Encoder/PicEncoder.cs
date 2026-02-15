@@ -1,6 +1,8 @@
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Options;
+using GetThePicture.Picture.Clause.Encoder.Category;
+using GetThePicture.Picture.Clause.Encoder.Category.Numeric;
 
 namespace GetThePicture.Picture.Clause.Encoder;
 
@@ -50,7 +52,7 @@ internal static class PicEncoder
                 if (value is string text)
                     throw new NotSupportedException($"PIC {pic.Raw} expects Numeric value (number), but got string. Value: \"{text}\"");
 
-                normalized = Category.NumericEncoder.Encode(value, pic, options);
+                normalized = NumericEncoder.Encode(value, pic, options);
                 break;
             }
 
@@ -59,7 +61,7 @@ internal static class PicEncoder
                 if (value is not string text)
                     throw new NotSupportedException( $"PIC {pic.Raw} expects Alphanumeric value (string), but got {value?.GetType().Name ?? "null"}.");
                 
-                normalized = Category.AlphanumericEncoder.Encode(text, pic);
+                normalized = AlphanumericEncoder.Encode(text, pic);
                 break;
             }
 
@@ -68,7 +70,7 @@ internal static class PicEncoder
                 if (value is not string text)
                     throw new NotSupportedException($"PIC {pic.Raw} expects Alphabetic value (string), but got {value?.GetType().Name ?? "null"}.");
 
-                normalized = Category.AlphabeticEncoder.Encode(text, pic);
+                normalized = AlphabeticEncoder.Encode(text, pic);
                 break;
             }
 

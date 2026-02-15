@@ -3,7 +3,7 @@ using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Computational;
 using GetThePicture.Picture.Clause.Base.Options;
 
-namespace GetThePicture.Picture.Clause.Encoder.Category;
+namespace GetThePicture.Picture.Clause.Encoder.Category.Numeric;
 
 public static class NumericEncoder
 {
