@@ -10,6 +10,13 @@
 - Picture 子句的 `NumericDecoder` 不再「**根據 PIC 和 value 決定最佳型別**」，現在改為「**根據 PIC 決定最佳型別**」。
     - 之前有點搞混`資料型態`與`資料內容`的主從關係。預期結果應該是從 Picture 子句的定義觀察出來，而不是資料本身決定。
 
+### Refact
+- 重構 PICTURE 子句中 **numeric** 解碼的 `Mapper`。
+    - 讓 `DISPLAY` `COMP-3` `COMP-6` 共用同一個 CLR 轉換規則。
+- PICTURE 子句的 **Numeric** 編解碼有自己的資料夾。
+    - Decode : `Decoder` + `Mapper`
+    - Encode : `Encoder` + `Meta`
+
 <br><br>
 
 ## [26.11.4] – 2026-02-13
