@@ -37,11 +37,11 @@ public class PicMeta
     public int StorageOccupied =>
         Usage switch
         {
-            PicUsage.Display       => DigitCount,
-            PicUsage.Binary        => Computational.COMP5.GetByteLength(this),
-            PicUsage.UPackedDecimal or
-            PicUsage.PackedDecimal => (DigitCount + 1) / 2,
-            PicUsage.NativeBinary  => Computational.COMP5.GetByteLength(this),
+            PicUsage.Display => DigitCount,
+            PicUsage.COMP3 or
+            PicUsage.COMP6   => Computational.COMP3.GetByteLength(DigitCount),
+            PicUsage.COMP4   => Computational.COMP5.GetByteLength(DigitCount),
+            PicUsage.COMP5   => Computational.COMP5.GetByteLength(DigitCount),
             _ => throw new NotSupportedException()
         };
 

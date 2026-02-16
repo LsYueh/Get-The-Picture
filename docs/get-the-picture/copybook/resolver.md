@@ -58,7 +58,7 @@ COPYBOOK-STORAGE-MAP
 索引值採 `1-based` 方式顯示，以貼近 COBOL 在顯示資料時的習慣。
 其中 `CUSTOMER-BALANCE` 的 USAGE 是 `COMP-3`，根據計算公式：
 
-> bytes = (digits + 1) / 2  
+> bytes = floor ( `(digits + 1) / 2` )  
 
 所以 `S9(7)V99` 對應的資料長度為 (9 + 1) / 2 = `5`，Dump 顯示出的 `len=5` 實為記憶體的資料長度。
 

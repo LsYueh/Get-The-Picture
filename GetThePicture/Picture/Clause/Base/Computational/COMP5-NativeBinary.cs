@@ -13,7 +13,7 @@ internal static class COMP5
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException($"COMP-5 does not support decimal digits. PIC has {pic.DecimalDigits} decimal digits.");
         
-        int length = GetByteLength(pic);
+        int length = GetByteLength(pic.DigitCount);
         
         if (buffer.Length < length)
             throw new ArgumentException("Buffer too short");
@@ -48,7 +48,7 @@ internal static class COMP5
         if (value != decimal.Truncate(value))
             throw new InvalidOperationException($"COMP-5 Encode can only handle integers. Value {value} has fractional part.");
 
-        int length = GetByteLength(pic);
+        int length = GetByteLength(pic.DigitCount);
 
         // 範圍檢查
         switch (length)
@@ -96,11 +96,9 @@ internal static class COMP5
         return bytes.ToArray();
     }
 
-    public static int GetByteLength(PicMeta pic)
+    public static int GetByteLength(int digitCount)
     {
-        int digits = pic.DigitCount;
-
-        return digits switch
+        return digitCount switch
         {
             <=  4 => 2,
             <=  9 => 4,

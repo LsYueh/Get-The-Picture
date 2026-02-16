@@ -5,7 +5,7 @@ using GetThePicture.Picture.Clause.Base.ClauseItems;
 namespace GetThePicture.Tests.Picture.Clause;
 
 [TestClass]
-public class Comp5Test
+public class CodecComp5Test
 {
     // -------------------------
     // Encode

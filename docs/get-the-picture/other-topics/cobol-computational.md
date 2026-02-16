@@ -1,4 +1,4 @@
-# `COMP-3` (Packed Decimal)
+# COMP-3 (`Packed Decimal`)
 與 `DISPLAY` 不同，`COMP-3` 不是用**字元**儲存數字，而是用 `Binary Packed` 的方式壓縮存放。
 
 <br>
@@ -30,7 +30,7 @@
 <br>
 
 ## 位元組長度計算
-> bytes = (digits + 1) / 2  
+> bytes = floor ( `(digits + 1) / 2` )  
 
 | PIC                     | digits | bytes |
 | ----------------------- | ------ | ----- |
@@ -57,16 +57,16 @@ PIC 9(5) COMP-3（Unsigned）
 
 <br>
 
-PIC S9(5)V9(2) COMP-3  
+PIC S9(5)V9(2) COMP-3 (Decimal Digits : 2)  
 | 值          | Packed Hex    |
 | ---------- | ------------- |
 | `12345.67` | `12 34 56 7C` |
-| `-123.45`  | `01 23 45 D`  |
+| `-123.45`  | `00 12 34 5D`  |
 
 <br><br>
 
 
-# COMP-4 / COMP-5
+# COMP-4 (`Binary`) / COMP-5 (`Native binary`)
 在 COBOL 中，`COMP-4` 屬於二進位整數（binary integer）儲存格式。於大型主機環境（例如 IBM z/OS COBOL）中，其資料以 **Big Endian** 方式儲存。  
 因此，在以 **Little Endian** 為主的現代平台（如 x86 / x64）上進行解析或寫入時，必須進行位元組順序轉換（byte order reversal），以確保與大型主機資料格式相容。  
 
@@ -91,10 +91,10 @@ PIC S9(5)V9(2) COMP-3
 
 ## COMP-4 vs COMP-5
 
-| USAGE  | 行為                                |
-| ------ | --------------------------------- |
-| COMP-4 | Binary integer（可能受 PIC 限制）        |
-| COMP-5 | Native binary，不受 PIC decimal 範圍限制 |
+| USAGE  | 行為                                            | Endian    |
+| ------ | ---------------------------------------------- | ---------- |
+| COMP-4 | 可能受 PIC 長度限制                              | Big Endian |
+| COMP-5 | 不受 PIC 範圍限制，精度由底層 `Binary Length` 決定 | (Platform-dependent) |
 
 <br>
 
@@ -123,24 +123,24 @@ PIC S9(5)V9(2) COMP-3
 ## Storage Occupied
 
 ```cobol
-01 WS-A PIC 9(4) COMP.
-01 WS-B PIC 9(5) COMP.
-01 WS-C PIC 9(10) COMP.
+01 WS-A PIC 9(4) COMP-4.
+01 WS-B PIC 9(5) COMP-4.
+01 WS-C PIC 9(10) COMP-4.
 ```
 
-| Item | PIC        | Digits | Storage | 說明      |
-| ---- | ---------- | :----: | ------- | ------- |
-| WS-A | 9(4) COMP  | 4      | 2 bytes | `short` |
-| WS-B | 9(5) COMP  | 5      | 4 bytes | `int`   |
-| WS-C | 9(10) COMP | 10     | 8 bytes | `long`  |
+| Item | PIC          | Digits | Storage | 說明      |
+| ---- | ------------ | :----: | ------- | ------- |
+| WS-A | 9(4) COMP-4  | 4      | 2 bytes | `short` |
+| WS-B | 9(5) COMP-4  | 5      | 4 bytes | `int`   |
+| WS-C | 9(10) COMP-4 | 10     | 8 bytes | `long`  |
 
 <br>
 
 ## Signed vs Unsigned
 
 ```cobol
-PIC S9(4) COMP.   *> signed
-PIC  9(4) COMP.   *> unsigned
+PIC S9(4) COMP-4.   *> signed
+PIC  9(4) COMP-4.   *> unsigned
 ```
 
 | PIC          | Signed | C# Decode 型別            |
@@ -156,7 +156,7 @@ PIC  9(4) COMP.   *> unsigned
 <br><br>
 
 
-# `COMP-6` (Unsigned Packed Decimal)
+# COMP-6 (`Unsigned Packed Decimal`)
 `COMP-6` 並非 ANSI/ISO 標準 COBOL 定義，而是多數商用 COBOL（如 IBM Enterprise COBOL、Micro Focus）提供的擴充型態。  
 
 | 特性 | COMP-3 | COMP-6 |
