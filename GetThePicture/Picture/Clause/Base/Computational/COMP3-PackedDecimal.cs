@@ -49,7 +49,7 @@ internal static class COMP3
     //     C = positive
     //     D = negative
     //     F = unsigned / positive (vendor dependent)
-    // - Total bytes = floor((DigitCount + 1) / 2)
+    // - Total bytes = ceil(nibbles / 2)
     //
 
     /// <summary>
@@ -62,8 +62,9 @@ internal static class COMP3
     {
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(digitCount);
 
-        // Each byte stores two digits; one extra digit accounts for the sign nibble.
-        return (digitCount + 1) / 2;
+        int totalNibbles = digitCount + 1; // include sign
+
+        return (totalNibbles + 1) / 2; // ceil(nibbles / 2)
     }
 
     private static readonly SIntMapper _SIntMapper = new();

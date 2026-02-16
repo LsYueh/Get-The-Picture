@@ -38,8 +38,10 @@ public class PicMeta
         Usage switch
         {
             PicUsage.Display => DigitCount,
-            PicUsage.COMP3 or PicUsage.COMP6 => Computational.COMP3.GetByteLength(DigitCount),
-            PicUsage.COMP4 or PicUsage.COMP5 => Computational.COMP5.GetByteLength(DigitCount),
+            PicUsage.COMP3 => Computational.COMP3.GetByteLength(DigitCount),
+            PicUsage.COMP4 or 
+            PicUsage.COMP5 => Computational.COMP5.GetByteLength(DigitCount),
+            PicUsage.COMP6 => Computational.COMP6.GetByteLength(DigitCount),
             _ => throw new NotSupportedException()
         };
 

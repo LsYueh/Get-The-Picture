@@ -40,8 +40,15 @@ internal static class COMP6
     //
     // Rules:
     // - Each digit occupies one nibble (0x0 – 0x9)
-    // - Total bytes = floor((DigitCount + 1) / 2)
+    // - Total bytes = ceil(nibbles / 2)
     //
+
+    public static int GetByteLength(int digitCount)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(digitCount);
+
+        return (digitCount + 1) / 2; // ceil(nibbles / 2)
+    }
 
     private static readonly UIntMapper _UIntMapper = new();
 
