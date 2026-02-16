@@ -5,6 +5,10 @@
 ### Bugfix
 - 修正 `COMP-4` 要維持 **Big Endian** 的方式來處理資料。
 
+### Refact
+- 調整 `PicUsage` (USAGE clause) 的列舉定義。
+    - 增加 `COMP3` / `COMP4`(`COMP`) / `COMP5` / `COMP6` 定義，並共享自身對應**計算項目**原始說明的列舉值。
+
 <br><br>
 
 ## [26.11.5] – 2026-02-15
