@@ -96,21 +96,29 @@ internal static class COMP3
         int byteLen = GetByteLength(pic.DigitCount);
         byte[] buffer = new byte[byteLen];
 
-        ReadOnlySpan<byte> digits = nMeta.Chars;
+        ReadOnlySpan<byte> chars = nMeta.Chars;
 
-        int digitIndex = digits.Length - 1;
-        int byteIndex  = buffer.Length - 1;
+        int charIndex = chars.Length - 1;
+        int byteIndex = byteLen - 1;
 
-        // LSB : digit + sign
-        int low  = (!pic.Signed) ? UNSIGNED : (nMeta.IsNegative ? NEGATIVE_SIGN : POSITIVE_SIGN);
-        int high = digitIndex >= 0 ? digits[digitIndex--] - (byte)'0' : 0;
+        // ---- 處理 sign byte ----
+
+        int signNibble = !pic.Signed
+            ? UNSIGNED
+            : (nMeta.IsNegative ? NEGATIVE_SIGN : POSITIVE_SIGN);
+
+        int low  = signNibble;
+        int high = charIndex >= 0 ? chars[charIndex--] - '0' : 0;
 
         buffer[byteIndex--] = (byte)((high << 4) | low);
 
-        while (byteIndex >= 0)
+        // ---- 剩餘 digit 每兩個一組 ----
+
+        while (charIndex >= 0)
         {
-            low  = digitIndex >= 0 ? digits[digitIndex--] - (byte)'0' : 0;
-            high = digitIndex >= 0 ? digits[digitIndex--] - (byte)'0' : 0;
+            low  = chars[charIndex--] - '0';
+            high = charIndex >= 0 ? chars[charIndex--] - '0' : 0;
+
             buffer[byteIndex--] = (byte)((high << 4) | low);
         }
 
@@ -124,36 +132,39 @@ internal static class COMP3
         
         byte[] bytes = new byte[digits];
 
-        int idx = digits - 1;
-        negative = false;
+        int outIndex = digits - 1;
+        int byteIndex = buffer.Length - 1;
 
-        int LSB = buffer.Length - 1;
+        // ---- 處理最後一個 byte（含 sign） ----
 
-        for (int i = LSB; i >= 0; i--)
+        byte lastByte = buffer[byteIndex--];
+
+        int signNibble = lastByte & 0x0F;
+        negative = signNibble switch
         {
-            byte b = buffer[i];
-            int low  =  b       & 0x0F; // Bit Mask
-            int high = (b >> 4) & 0x0F; // Bit Mask
+            NEGATIVE_SIGN => true,
+            POSITIVE_SIGN or UNSIGNED => false,
+            _ => throw new FormatException($"Invalid sign nibble: {signNibble:X}")
+        };
 
-            if (i == LSB)
+        // 先寫最後一個 digit（high nibble）
+        bytes[outIndex--] = (byte)('0' + ((lastByte >> 4) & 0x0F));
+
+        int remaining = digits - 1; // 已寫 1 個 digit
+
+        while (remaining > 0)
+        {
+            byte b = buffer[byteIndex--];
+
+            // low nibble
+            bytes[outIndex--] = (byte)('0' + (b & 0x0F));
+            remaining--;
+
+            if (remaining > 0)
             {
-                negative = low switch
-                {
-                    NEGATIVE_SIGN => true,
-                    POSITIVE_SIGN or UNSIGNED => false,
-                    _ => throw new FormatException($"Invalid COMP-3 sign nibble: {low:X}")
-                };
-
-                if (idx >= 0)
-                    bytes[idx--] = (byte)('0' + high);
-            }
-            else
-            {
-                if (idx >= 0)
-                    bytes[idx--] = (byte)('0' + low);
-
-                if (idx >= 0)
-                    bytes[idx--] = (byte)('0' + high);
+                // high nibble
+                bytes[outIndex--] = (byte)('0' + ((b >> 4) & 0x0F));
+                remaining--;
             }
         }
 

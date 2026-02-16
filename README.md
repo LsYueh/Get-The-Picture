@@ -503,10 +503,14 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 
 | Method              | Mean      | Error    | StdDev   |
 |-------------------- |----------:|---------:|---------:|
-| Comp3_Read_Integer  |  75.58 ns | 0.476 ns | 0.422 ns |
-| Comp3_Write_Integer |  74.19 ns | 0.441 ns | 0.413 ns |
-| Comp3_Read_Decimal  |  98.16 ns | 0.203 ns | 0.180 ns |
-| Comp3_Write_Decimal | 152.32 ns | 0.361 ns | 0.301 ns |
+| Comp3_Read_Integer  |  76.36 ns | 0.458 ns | 0.428 ns |
+| Comp3_Write_Integer |  76.04 ns | 0.405 ns | 0.339 ns |
+| Comp3_Read_Decimal  |  96.37 ns | 0.237 ns | 0.198 ns |
+| Comp3_Write_Decimal | 152.43 ns | 0.610 ns | 0.541 ns |
+
+<br>
+
+> 1 µs = 1000 ns  
 
 <br>
 
