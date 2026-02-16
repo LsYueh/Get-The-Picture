@@ -4,7 +4,7 @@ using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
 /// <summary>
-/// COMP-5 (native binary)
+/// COMP-5 (Native Binary)
 /// </summary>
 internal static class COMP5
 {

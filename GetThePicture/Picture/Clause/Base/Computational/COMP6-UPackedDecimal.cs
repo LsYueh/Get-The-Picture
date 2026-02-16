@@ -5,7 +5,7 @@ using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
 /// <summary>
-/// COMP-6 (Unsigned Packed Decimal)
+/// COMP-6 (Unsigned Packed-Decimal)
 /// </summary>
 internal static class COMP6
 {

@@ -6,7 +6,7 @@ using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
 /// <summary>
-/// COMP-3 (Packed Decimal)
+/// COMP-3 (Packed-Decimal)
 /// </summary>
 internal static class COMP3
 {
@@ -14,7 +14,7 @@ internal static class COMP3
     private const int NEGATIVE_SIGN = 0x0D;
     private const int UNSIGNED      = 0x0F;
 
-    // Packed Decimal (COMP-3) Bit / Nibble Format
+    // Packed-Decimal (COMP-3) Bit / Nibble Format
     //  
     // Byte n-2           Byte n-1 (last)
     // +--------+--------+--------+--------+
