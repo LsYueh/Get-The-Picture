@@ -1,6 +1,6 @@
 # Changelog
 
-## [26.11.6] – (unreleased)
+## [26.11.6] – 2026-02-16
 
 ### ⚠️ Breaking Changes
 - PicClauseCodec 的二進制端序 (**Endianness**) 選項由 `WithReversedBinary()` 選項改成 `IsLittleEndian()`。
