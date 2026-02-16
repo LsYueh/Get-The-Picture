@@ -26,7 +26,7 @@ public class CodecComp5Test
         var pic = PicMeta.Parse(picString);
         pic.Usage = PicUsage.NativeBinary;
 
-        byte[] buffer = PicClauseCodec.ForMeta(pic).WithStrict().Encode(value);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).WithStrict().IsLittleEndian().Encode(value);
 
         CollectionAssert.AreEqual(expected, buffer);
     }
@@ -39,7 +39,7 @@ public class CodecComp5Test
         var pic = PicMeta.Parse(picString);
         pic.Usage = PicUsage.NativeBinary;
 
-        byte[] buffer = PicClauseCodec.ForMeta(pic).WithStrict().WithReversedBinary().Encode(value);
+        byte[] buffer = PicClauseCodec.ForMeta(pic).WithStrict().Encode(value);
 
         CollectionAssert.AreEqual(expected, buffer);
     }
@@ -63,7 +63,7 @@ public class CodecComp5Test
         var pic = PicMeta.Parse(picString);
         pic.Usage = PicUsage.NativeBinary;
 
-        var value = PicClauseCodec.ForMeta(pic).WithStrict().Decode(buffer);
+        var value = PicClauseCodec.ForMeta(pic).WithStrict().IsLittleEndian().Decode(buffer);
 
         Assert.AreEqual(expected, value);
     }
@@ -76,7 +76,7 @@ public class CodecComp5Test
         var pic = PicMeta.Parse(picString);
         pic.Usage = PicUsage.NativeBinary;
 
-        var value = PicClauseCodec.ForMeta(pic).WithStrict().WithReversedBinary().Decode(buffer);
+        var value = PicClauseCodec.ForMeta(pic).WithStrict().Decode(buffer);
 
         Assert.AreEqual(expected, value);
     }
@@ -89,10 +89,23 @@ public class CodecComp5Test
     [ExpectedException(typeof(OverflowException))]
     public void Encode_Without_Sign_Negative_ThrowsOverflowException()
     {
-        // PIC 9(4) COMP.
+        // PIC 9(4) COMP-4.
         var pic = PicMeta.Parse("9(4)");
         pic.Usage = PicUsage.Binary;
 
         PicClauseCodec.ForMeta(pic).WithStrict().Encode(-9999);
+    }
+
+    [DataTestMethod]
+    [DataRow( "9(28)",  9999)]
+    [DataRow("S9(28)",  9999)]
+    [DataRow("S9(28)", -9999)]
+    [ExpectedException(typeof(NotSupportedException))]
+    public void Encode_For_BigInt_NotSupported(string picString, object value)
+    {
+        var pic = PicMeta.Parse(picString);
+        pic.Usage = PicUsage.Binary;
+
+        PicClauseCodec.ForMeta(pic).WithStrict().Encode(value);
     }
 }

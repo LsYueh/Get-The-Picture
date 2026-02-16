@@ -28,10 +28,10 @@ public static class Encoder
         byte[] buffer = pic.Usage switch
         {
             PicUsage.Display => Display_Encode(nMeta, pic, options),
-            PicUsage.COMP3   => COMP3.Encode(nMeta, pic),
-            PicUsage.COMP4   => COMP4.Encode(nMeta, pic),
-            PicUsage.COMP5   => COMP5.Encode(nMeta, pic, options.Binary),
-            PicUsage.COMP6   => COMP6.Encode(nMeta, pic),
+            PicUsage.COMP3   =>   COMP3.Encode(nMeta, pic),
+            PicUsage.COMP4   =>   COMP4.Encode(nMeta, pic),
+            PicUsage.COMP5   =>   COMP5.Encode(nMeta, pic, options.IsBigEndian),
+            PicUsage.COMP6   =>   COMP6.Encode(nMeta, pic),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
 

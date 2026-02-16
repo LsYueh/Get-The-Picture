@@ -38,16 +38,11 @@ internal static class COMP4
     // +---------------------+------------+-------------+------------+
     //
     // https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=options-trunc
-
+    
     /// <summary>
     /// COMP-4 is stored as Big Endian binary on mainframe systems. <br/>
     /// When running on Little Endian platforms (x86/x64), <br/>
     /// byte order must be reversed to maintain compatibility. <br/>
-    /// </summary>
-    private static BinaryOptions MainframeOption => BitConverter.IsLittleEndian ? BinaryOptions.Reversed : BinaryOptions.Normal;
-    
-    /// <summary>
-    /// 
     /// </summary>
     /// <param name="buffer"></param>
     /// <param name="pic"></param>
@@ -56,11 +51,13 @@ internal static class COMP4
     {
         // TODO: 只實作 TRUNC STD
         
-        return COMP5.Decode(buffer, pic, MainframeOption);
+        return COMP5.Decode(buffer, pic, isBigEndian: true);
     }
 
     /// <summary>
-    /// 
+    /// COMP-4 is stored as Big Endian binary on mainframe systems. <br/>
+    /// When running on Little Endian platforms (x86/x64), <br/>
+    /// byte order must be reversed to maintain compatibility. <br/>
     /// </summary>
     /// <param name="nMeta"></param>
     /// <param name="pic"></param>
@@ -69,6 +66,6 @@ internal static class COMP4
     {
         // TODO: 只實作 TRUNC STD
        
-        return COMP5.Encode(nMeta, pic, MainframeOption);
+        return COMP5.Encode(nMeta, pic, isBigEndian: true);
     }
 }

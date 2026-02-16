@@ -2,8 +2,15 @@
 
 ## [26.11.6] – (unreleased)
 
+### ⚠️ Breaking Changes
+- PicClauseCodec 的二進制端序 (**Endianness**) 選項由 `WithReversedBinary()` 選項改成 `IsLittleEndian()`。
+    - 現在 `COMP-4` 與 `COMP-5` 均以 **Big Endian** 儲存二進制資料。
+    - `COMP-5` 提供額外選項，可選擇使用 **Little Endian** 以符合跨平台需求。
+
 ### Bugfix
 - 修正 `COMP-4` 要維持 **Big Endian** 的方式來處理資料。
+
+### Changed
 
 ### Refact
 - 調整 `PicUsage` (USAGE clause) 的列舉定義。

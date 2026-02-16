@@ -34,10 +34,10 @@ public static class Decoder
         return pic.Usage switch
         {
             PicUsage.Display => Display_Decode(bytes, pic, options),
-            PicUsage.COMP3   => COMP3.Decode(bytes, pic),
-            PicUsage.COMP4   => COMP4.Decode(bytes, pic),
-            PicUsage.COMP5   => COMP5.Decode(bytes, pic, options.Binary),
-            PicUsage.COMP6   => COMP6.Decode(bytes, pic),
+            PicUsage.COMP3   =>   COMP3.Decode(bytes, pic),
+            PicUsage.COMP4   =>   COMP4.Decode(bytes, pic),
+            PicUsage.COMP5   =>   COMP5.Decode(bytes, pic, options.IsBigEndian),
+            PicUsage.COMP6   =>   COMP6.Decode(bytes, pic),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
     }
