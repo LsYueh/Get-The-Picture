@@ -467,7 +467,7 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 | Alphabetic | Alphabetic | DISPLAY |
 | Alphanumeric | Alphanumeric | DISPLAY |
 | Date-Time <br> (Alphanumeric) | Date <br> Time <Timestamp> | DISPLAY |
-| Numeric | Numeric | DISPLAY <br> COMP (Binary) <br> COMP-3 (Packed Decimal) <br> COMP-5 (Native Binary) |
+| Numeric | Numeric | DISPLAY <br> COMP (Binary) <br> COMP-3 (Packed Decimal) <br> COMP-4 (Binary) <br> COMP-5 (Native Binary) |
 
 <br><br>
 

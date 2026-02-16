@@ -1,19 +1,22 @@
-using GetThePicture.Picture.Clause.Base.Options;
 using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
 /// <summary>
-/// COMP-5 (native binary)
+/// COMP-5 (Native Binary) <br/>
+/// - Uses platform-native endian. <br/>
+/// - Little Endian on x86/x64, Big Endian on mainframe. <br/>
+/// - Cross-platform use: handle endian conversion as needed. <br/>
+/// - For consistency with COMP-4/COMP-3, codec may optionally normalize to Big Endian. <br/>
 /// </summary>
 internal static class COMP5
 {
-    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, bool isBigEndian = true)
     {
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException($"COMP-5 does not support decimal digits. PIC has {pic.DecimalDigits} decimal digits.");
         
-        int length = GetByteLength(pic);
+        int length = GetByteLength(pic.DigitCount);
         
         if (buffer.Length < length)
             throw new ArgumentException("Buffer too short");
@@ -21,7 +24,7 @@ internal static class COMP5
         Span<byte> bytes = stackalloc byte[length];
         buffer[..length].CopyTo(bytes);
 
-        if (endian == BinaryOptions.Reversed)
+        if (BitConverter.IsLittleEndian && isBigEndian)
             bytes.Reverse();
 
         return length switch
@@ -37,7 +40,7 @@ internal static class COMP5
         };
     }
 
-    public static byte[] Encode(NumericMeta nMeta, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
+    public static byte[] Encode(NumericMeta nMeta, PicMeta pic, bool isBigEndian = true)
     {
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException($"COMP-5 does not support decimal digits. PIC has {pic.DecimalDigits} decimal digits.");
@@ -48,7 +51,7 @@ internal static class COMP5
         if (value != decimal.Truncate(value))
             throw new InvalidOperationException($"COMP-5 Encode can only handle integers. Value {value} has fractional part.");
 
-        int length = GetByteLength(pic);
+        int length = GetByteLength(pic.DigitCount);
 
         // 範圍檢查
         switch (length)
@@ -90,22 +93,20 @@ internal static class COMP5
             _ => throw new NotSupportedException()
         };
 
-        if (endian == BinaryOptions.Reversed)
+        if (BitConverter.IsLittleEndian && isBigEndian)
             bytes.Reverse();
 
         return bytes.ToArray();
     }
 
-    public static int GetByteLength(PicMeta pic)
+    public static int GetByteLength(int digitCount)
     {
-        int digits = pic.DigitCount;
-
-        return digits switch
+        return digitCount switch
         {
             <=  4 => 2,
             <=  9 => 4,
             <= 18 => 8,
-            _ => throw new NotSupportedException("Too many digits for COMP-5 (Native-Binary)")
+            _ => throw new NotSupportedException("Too many digits for COMP-4 (Binary) or COMP-5 (Native-Binary)")
         };
     }
 }

@@ -11,22 +11,27 @@ public enum PicUsage
     Display,
 
     /// <summary>
-    /// COMP (binary)
-    /// </summary>
-    Binary,
-
-    /// <summary>
-    /// COMP-3 (packed decimal)
+    /// COMP-3 (Packed-Decimal)
     /// </summary>
     PackedDecimal,
+    COMP3 = PackedDecimal,
 
     /// <summary>
-    /// COMP-5 (native binary)
+    /// COMP-4 (Binary)
+    /// </summary>
+    Binary,
+    COMP4 = Binary,
+    COMP = Binary,
+
+    /// <summary>
+    /// COMP-5 (Native Binary)
     /// </summary>
     NativeBinary,
+    COMP5 = NativeBinary,
 
     /// <summary>
-    /// COMP-6 (Unsigned Packed Decimal)
+    /// COMP-6 (Unsigned Packed-Decimal)
     /// </summary>
     UPackedDecimal,
+    COMP6 = UPackedDecimal,
 }

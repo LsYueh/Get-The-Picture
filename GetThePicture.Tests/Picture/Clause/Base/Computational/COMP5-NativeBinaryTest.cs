@@ -35,19 +35,19 @@ public class NativeBinaryTest
     [DataTestMethod]
     [DataRow("9(4)", false,     "0",      (ushort) 0)]
     [DataRow("9(4)", false, "65535", ushort.MaxValue)]
-    public void Codec_Halfword(string picString, bool isNegative, string digits, ushort expected)
+    public void Codec_Halfword(string picString, bool isNegative, string digits, object expected)
     {
         var pic = PicMeta.Parse(picString);
         
         var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(nMeta, pic);
 
         // Decode
-        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -69,12 +69,12 @@ public class NativeBinaryTest
         var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(nMeta, pic);
 
         // Decode
-        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -96,12 +96,12 @@ public class NativeBinaryTest
         var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(nMeta, pic);
 
         // Decode
-        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -123,12 +123,12 @@ public class NativeBinaryTest
         var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(nMeta, pic);
 
         // Decode
-        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -150,12 +150,12 @@ public class NativeBinaryTest
         var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(nMeta, pic);
 
         // Decode
-        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);
@@ -177,12 +177,12 @@ public class NativeBinaryTest
         var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, BinaryOptions.Normal); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic, BinaryOptions.Reversed);
+        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(nMeta, pic);
 
         // Decode
-        object decodedLE = COMP5.Decode(bytesLE, pic, BinaryOptions.Normal); // x86/x86-64
-        object decodedBE = COMP5.Decode(bytesBE, pic, BinaryOptions.Reversed);
+        object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
+        object decodedBE = COMP5.Decode(bytesBE, pic);
 
         // 檢查型別
         Type expectedType = GetExpectedType(pic);

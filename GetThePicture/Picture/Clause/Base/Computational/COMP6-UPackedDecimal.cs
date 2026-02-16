@@ -1,10 +1,11 @@
+using GetThePicture.Picture.Clause.Base.Computational.Base;
 using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
 /// <summary>
-/// COMP-6 (Unsigned Packed Decimal)
+/// COMP-6 (Unsigned Packed-Decimal)
 /// </summary>
 internal static class COMP6
 {
@@ -39,7 +40,7 @@ internal static class COMP6
     //
     // Rules:
     // - Each digit occupies one nibble (0x0 – 0x9)
-    // - Total bytes = (number_of_digits + 1) / 2
+    // - Total bytes = floor((DigitCount + 1) / 2)
     //
 
     private static readonly UIntMapper _UIntMapper = new();
@@ -71,7 +72,7 @@ internal static class COMP6
         if (nMeta.IsNegative)
             throw new ArgumentException("Negative value is not valid for COMP-6", nameof(nMeta));
 
-        int byteLen = (pic.DigitCount + 1) / 2;
+        int byteLen = COMP3.GetByteLength(pic.DigitCount); // 共用計算公式
         byte[] buffer = new byte[byteLen];
 
         ReadOnlySpan<byte> digits = nMeta.Chars;

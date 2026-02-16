@@ -1,3 +1,4 @@
+using GetThePicture.Picture.Clause.Base.Computational.Base;
 using GetThePicture.Picture.Clause.Base.Options;
 using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
@@ -5,7 +6,7 @@ using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
 /// <summary>
-/// COMP-3 (Packed Decimal)
+/// COMP-3 (Packed-Decimal)
 /// </summary>
 internal static class COMP3
 {
@@ -13,7 +14,7 @@ internal static class COMP3
     private const int NEGATIVE_SIGN = 0x0D;
     private const int UNSIGNED      = 0x0F;
 
-    // Packed Decimal (COMP-3) Bit / Nibble Format
+    // Packed-Decimal (COMP-3) Bit / Nibble Format
     //  
     // Byte n-2           Byte n-1 (last)
     // +--------+--------+--------+--------+
@@ -48,8 +49,22 @@ internal static class COMP3
     //     C = positive
     //     D = negative
     //     F = unsigned / positive (vendor dependent)
-    // - Total bytes = (number_of_digits + 1) / 2
+    // - Total bytes = floor((DigitCount + 1) / 2)
     //
+
+    /// <summary>
+    /// Calculates the byte length required for a COMP-3 (Packed Decimal) field. <br/>
+    /// Two digits are stored per byte, and the final half-byte contains the sign. <br/>
+    /// </summary>
+    /// <param name="digitCount"></param>
+    /// <returns></returns>
+    public static int GetByteLength(int digitCount)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(digitCount);
+
+        // Each byte stores two digits; one extra digit accounts for the sign nibble.
+        return (digitCount + 1) / 2;
+    }
 
     private static readonly SIntMapper _SIntMapper = new();
     private static readonly UIntMapper _UIntMapper = new();
@@ -77,7 +92,7 @@ internal static class COMP3
         if (!pic.Signed && nMeta.IsNegative)
             throw new InvalidOperationException("Unsigned PIC cannot encode negative value");
 
-        int byteLen = (pic.DigitCount + 1) / 2;
+        int byteLen = GetByteLength(pic.DigitCount);
         byte[] buffer = new byte[byteLen];
 
         ReadOnlySpan<byte> digits = nMeta.Chars;

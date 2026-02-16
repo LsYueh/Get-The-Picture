@@ -4,7 +4,7 @@ using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 namespace GetThePicture.Picture.Clause.Base.Computational;
 
 /// <summary>
-/// COMP (binary)
+/// COMP (Binary)
 /// </summary>
 internal static class COMP4
 {
@@ -39,17 +39,33 @@ internal static class COMP4
     //
     // https://www.ibm.com/docs/en/cobol-zos/6.5.0?topic=options-trunc
     
-    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
+    /// <summary>
+    /// COMP-4 is stored as Big Endian binary on mainframe systems. <br/>
+    /// When running on Little Endian platforms (x86/x64), <br/>
+    /// byte order must be reversed to maintain compatibility. <br/>
+    /// </summary>
+    /// <param name="buffer"></param>
+    /// <param name="pic"></param>
+    /// <returns></returns>
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
         // TODO: 只實作 TRUNC STD
         
-        return COMP5.Decode(buffer, pic, endian);
+        return COMP5.Decode(buffer, pic, isBigEndian: true);
     }
 
-    public static byte[] Encode(NumericMeta nMeta, PicMeta pic, BinaryOptions endian = BinaryOptions.Normal)
+    /// <summary>
+    /// COMP-4 is stored as Big Endian binary on mainframe systems. <br/>
+    /// When running on Little Endian platforms (x86/x64), <br/>
+    /// byte order must be reversed to maintain compatibility. <br/>
+    /// </summary>
+    /// <param name="nMeta"></param>
+    /// <param name="pic"></param>
+    /// <returns></returns>
+    public static byte[] Encode(NumericMeta nMeta, PicMeta pic)
     {
-       // TODO: 只實作 TRUNC STD
+        // TODO: 只實作 TRUNC STD
        
-       return COMP5.Encode(nMeta, pic, endian);
+        return COMP5.Encode(nMeta, pic, isBigEndian: true);
     }
 }

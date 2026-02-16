@@ -26,5 +26,5 @@ public sealed class CodecOptions
     /// <br/>
     /// Ref. <see href="https://www.ibm.com/docs/en/cobol-linux-x86/1.2.0?topic=options-binary">BINARY</see>
     /// </summary>
-    public BinaryOptions Binary { get; set; } = BinaryOptions.Normal;
+    public bool IsBigEndian { get; set; } = true;
 }

@@ -24,10 +24,6 @@
 <br>
 
 ## 使用方式:
-```csharp
-using GetThePicture.Picture.Clause;      // PicClauseCodec
-using GetThePicture.Picture.Clause.Base; // PicMeta
-```
 
 ```csharp
 var pic = PicMeta.Parse("9(3)");
@@ -56,14 +52,6 @@ PicClauseCodec.ForMeta(pic).Decode("12L"); // >> -12.3
 <br>
 
 ### COMP-3
-```csharp
-using GetThePicture.Picture.Clause;      // PicClauseCodec
-using GetThePicture.Picture.Clause.Base; // PicMeta
-```
-
-```csharp
-using GetThePicture.Picture.Clause.Base.ClauseItems; // PicUsage
-```
 
 <br>
 
@@ -121,28 +109,22 @@ using GetThePicture.Picture.Clause.Base.ClauseItems; // PicUsage
 <br>
 
 ### COMP-4 / COMP-5
-```csharp
-using GetThePicture.Picture.Clause;      // PicClauseCodec
-using GetThePicture.Picture.Clause.Base; // PicMeta
-```
 
-```csharp
-using GetThePicture.Picture.Clause.Base.ClauseItems; // PicUsage
-```
-
-<br>
-
-1. 指定 `Usage`  
+1. 指定 `Usage`
     ```csharp
     // PIC 9(04)  USAGE  COMP-4.
     var pic = PicMeta.Parse("S9(04))");
-    pic.Usage = PicUsage.Binary;
+    pic.Usage = PicUsage.COMP4;
 
     // Encode: CLR → COBOL
-    PicClauseCodec.ForMeta(pic).WithStrict().Encode(9999); // >> 0x270F >> (Little Endian) >> [0x0F, 0x27]
+    PicClauseCodec.ForMeta(pic)
+        .WithStrict()
+        .Encode(9999); // >> 0x270F >> [0x27, 0x0F]
 
     // Decode: COBOL → CLR
-    PicClauseCodec.ForMeta(pic).WithStrict().Decode([0x0F, 0x27]); // >> (short) 9999
+    PicClauseCodec.ForMeta(pic)
+        .WithStrict()
+        .Decode([0x27, 0x0F]); // >> (short) 9999
     ```
 <br>
 
@@ -150,30 +132,25 @@ using GetThePicture.Picture.Clause.Base.ClauseItems; // PicUsage
     在使用 PIC 搭配二進位儲存格式（COMP-4/COMP-5） 時，數值在記憶體中的位元組排列順序（Endianness）會因執行平台而有所不同：  
     - Big-Endian（BE）  
     IBM z/OS 主機（Mainframe）環境傳統上採用 Big-Endian，高位元組（Most Significant Byte）儲存在較低的記憶體位址。  
+    (⚠️ `COMP-4` 一律以 **Big-Endian** 表示)  
 
     - Little-Endian（LE）  
     以 Intel 架構為基礎的平台（例如 x86 的 Linux 或 Windows 個人電腦）通常採用 Little-Endian，低位元組（Least Significant Byte）儲存在較低的記憶體位址。  
 
-    故在進行跨平台資料交換或解析 COBOL `COMP-4`/`COMP-5` 欄位時，必須明確指定並正確處理端序，否則可能導致數值資料轉換錯誤。
+    ⚠️ 在進行跨平台資料交換或解析 COBOL `COMP-5` 欄位時，必須明確指定並正確處理端序，否則可能導致數值資料轉換錯誤。
 
     <br>
 
     ```csharp
-    // PIC 9(04)  USAGE  COMP-4.
+    // PIC 9(04)  USAGE  COMP-5.
     var pic = PicMeta.Parse("S9(04))");
-    pic.Usage = PicUsage.Binary;
+    pic.Usage = PicUsage.COMP5;
 
     // Encode: CLR → COBOL
-    PicClauseCodec.ForMeta(pic)
-        .WithStrict()
-        .WithReversedBinary()
-        .Encode(9999); // >> 0x270F >> (Little Endian) >> (Binary Reverse) >> [0x27, 0x0F]
+    PicClauseCodec.ForMeta(pic).WithStrict().IsLittleEndian().Encode(9999); // >> 0x270F >> (Little Endian) >> [0x0F, 0x27]
 
     // Decode: COBOL → CLR
-    PicClauseCodec.ForMeta(pic)
-        .WithStrict()
-        .WithReversedBinary()
-        .Decode([0x27, 0x0F]); // >> (short) 9999
+    PicClauseCodec.ForMeta(pic).WithStrict().IsLittleEndian().Decode([0x0F, 0x27]); // >> (short) 9999
     ```
 
 <br><br>

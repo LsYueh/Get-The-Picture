@@ -64,12 +64,12 @@ public sealed class CodecContext(PicMeta meta)
     }
 
     /// <summary>
-    /// For COMP/COMP-5 use only.
+    /// For COMP-5 use only.
     /// </summary>
     /// <returns></returns>
-    public CodecContext WithReversedBinary()
+    public CodecContext IsLittleEndian()
     {
-        _options.Binary = BinaryOptions.Reversed;
+        _options.IsBigEndian = false;
         return this;
     }
 
