@@ -481,6 +481,8 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
 > dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj --filter *   
 
+> dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj --anyCategories {BenchmarkCategory}  
+
 <br>
 
 ## 跑分結果
@@ -507,6 +509,12 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 | Comp3_Write_Integer |  76.04 ns | 0.405 ns | 0.339 ns |
 | Comp3_Read_Decimal  |  96.37 ns | 0.237 ns | 0.198 ns |
 | Comp3_Write_Decimal | 152.43 ns | 0.610 ns | 0.541 ns |
+
+| Method              | Mean     | Error    | StdDev   |
+|-------------------- |---------:|---------:|---------:|
+| Comp6_Read_Integer  | 71.58 ns | 0.326 ns | 0.272 ns |
+| Comp6_Write_Integer | 74.64 ns | 0.390 ns | 0.346 ns |
+
 
 <br>
 
