@@ -1,5 +1,20 @@
 # Changelog
 
+## [26.11.7] – ????-??-??
+
+### Added
+- 增加 `COMP-3` 的效能基準測試。
+
+### Bugfix
+- 修正 `COMP-3` 長度計算錯誤的問題。
+
+### Improved
+- 稍微再最佳化 `COMP-3` 的編解碼效率。
+    - 把最後一個 for 迴圈拿掉。
+
+<br><br>
+
+
 ## [26.11.6] – 2026-02-16
 
 ### ⚠️ Breaking Changes
@@ -15,6 +30,7 @@
     - 增加 `COMP3` / `COMP4`(`COMP`) / `COMP5` / `COMP6` 定義，並共享自身對應**計算項目**原始說明的列舉值。
 
 <br><br>
+
 
 ## [26.11.5] – 2026-02-15
 
@@ -36,7 +52,12 @@
 
 <br><br>
 
+
 ## [26.11.4] – 2026-02-13
+
+### Changed
+- 將 Numeric Encoder 內暫存的資料 `NumericValue` 改為 `NumericMeta`。
+
 
 ### Improved
 - 加速 Numeric Decoder/Encoder 計算。
@@ -45,9 +66,6 @@
     | 26.11.1 | Warpper_Write_Decimal | 23.445 μs | 0.0766 μs | 0.0717 μs |
     | 26.11.2 | Warpper_Write_Decimal | 18.889 μs | 0.1028 μs | 0.0961 μs |
     | 26.11.4 | Warpper_Write_Decimal |  9.463 μs | 0.0331 μs | 0.0276 μs |
-
-### Changed
-- 將 Numeric Encoder 內暫存的資料 `NumericValue` 改為 `NumericMeta`。
 
 <br><br>
 
