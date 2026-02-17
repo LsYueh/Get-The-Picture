@@ -512,8 +512,8 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 
 | Method              | Mean      | Error    | StdDev   |
 |-------------------- |----------:|---------:|---------:|
-| Comp4_Read_Integer  |  40.91 ns | 0.118 ns | 0.092 ns |
-| Comp4_Write_Integer | 125.36 ns | 0.551 ns | 0.460 ns |
+| Comp4_Read_Integer  |  41.70 ns | 0.222 ns | 0.208 ns |
+| Comp4_Write_Integer | 127.47 ns | 0.464 ns | 0.387 ns |
 
 | Method              | Mean     | Error    | StdDev   |
 |-------------------- |---------:|---------:|---------:|

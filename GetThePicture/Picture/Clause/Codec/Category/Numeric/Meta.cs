@@ -19,6 +19,61 @@ public readonly struct NumericMeta(byte[] chars, int decimalDigits, bool isNegat
     /// </summary>
     public decimal Value { get; } = CbDecimal.Decode(chars, decimalDigits, isNegative);
 
+    public long ToInt64()
+    {
+        if (DecimalDigits != 0)
+            throw new InvalidOperationException("Cannot convert to Int64 when decimal digits exist.");
+
+        if (Chars.Length == 0)
+            throw new FormatException("Empty numeric value.");
+
+        long result = 0;
+
+        if (IsNegative)
+        {
+            foreach (byte b in Chars)
+            {
+                int digit = b - (byte)'0';
+                result = checked(result * 10 - digit);
+            }
+        }
+        else
+        {
+            foreach (byte b in Chars)
+            {
+                int digit = b - (byte)'0';
+                result = checked(result * 10 + digit);
+            }
+        }
+
+        return result;
+    }
+
+    public ulong ToUInt64()
+    {
+        if (DecimalDigits != 0)
+            throw new InvalidOperationException("Cannot convert to UInt64 when decimal digits exist.");
+
+        if (Chars.Length == 0)
+            throw new FormatException("Empty numeric value.");
+
+        if (IsNegative)
+            throw new OverflowException("Negative value cannot convert to UInt64.");
+
+        ulong result = 0;
+
+        foreach (byte b in Chars)
+        {
+            result = checked(result * 10 + (ulong)(b - (byte)'0'));
+        }
+
+        return result;
+    }
+
+    // ----------------------------
+    // Helpers
+    // ----------------------------
+
     public static NumericMeta Parse(object value, PicMeta pic)
     {
         if (!IsNumericType(value))
