@@ -455,19 +455,25 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 ![USAGE clause](docs/get-the-picture/usage-clause.png)  
 
 `USAGE` 定義欄位在記憶體中的儲存方式，影響資料的物理編碼與運算行為。  
-- DISPLAY（預設）：以可讀字元存放，每個數字或字母對應一個 byte，便於輸入輸出與檢視。DISPLAY numeric 可能包含 Overpunch 符號。  
-- COMP / COMP-5（Binary）：以二進位形式存放，運算效率高，但不可直接讀取文字。  
-- COMP-3（Packed Decimal）：將兩個數字壓縮在一個 nibble，最後一個 nibble 用於符號，節省空間且方便算術運算。  
-  - [`COMPUTATIONAL` 轉換規則](docs/get-the-picture/other-topics/cobol-computational.md)  
+- DISPLAY（預設）：以可讀**字元**存放，每個數字或字母對應一個 byte，便於輸入輸出與檢視。  
+- ***COMPUTATIONAL***：用**電腦原生格式**儲存，只用於 `Numeric` 欄位。
+    - COMP-3（Packed Decimal）：將兩個數字壓縮在一個 nibble，最後一個 nibble 用於符號，節省空間且方便算術運算。  
+    - COMP-4（Binary）/ COMP-5（Native Binary）：以二進位形式存放，運算效率高 (對 COBOL 而言)，但不可直接讀取文字。  
+    - COMP-6（Unsigned Packed Decimal）：非標準 COBOL 定義。與 COMP-3 方式一樣，但是沒有 sign nibble。
 
 <br>
 
+USAGE 項目的適用範圍:  
 | Class | Category/Semantic | Usage |
 | :---: | :---------------: | ----- |
 | Alphabetic | Alphabetic | DISPLAY |
 | Alphanumeric | Alphanumeric | DISPLAY |
-| Date-Time <br> (Alphanumeric) | Date <br> Time <Timestamp> | DISPLAY |
-| Numeric | Numeric | DISPLAY <br> COMP (Binary) <br> COMP-3 (Packed Decimal) <br> COMP-4 (Binary) <br> COMP-5 (Native Binary) |
+| Numeric | Numeric | DISPLAY <br> COMP (Binary) <br> COMP-3 (Packed Decimal) <br> COMP-4 (Binary) <br> COMP-5 (Native Binary) <br> COMP-6 (Unsigned Packed Decimal) |
+| Date-Time <br> (Alphanumeric) | Date <br> Time <br> Timestamp | DISPLAY |
+
+<br>
+
+📖 更多關於 [COMPUTATIONAL 轉換規則](/docs/get-the-picture/other-topics/cobol-computational.md) ...  
 
 <br><br>
 
@@ -478,6 +484,8 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 - 部分**櫃買中心** (OTC) 的 `T30.DAT`：漲跌幅度資料 55 筆   
 
 <br>
+
+執行指令:
 
 > dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj --filter *   
 
