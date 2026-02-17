@@ -4,13 +4,21 @@
 
 ### Added
 - 增加 `COMP-3` 的效能基準測試。
+- 增加 `COMP-4` (`COMP-5`) 的效能基準測試。
+- 增加 `COMP-6` 的效能基準測試。
 
 ### Bugfix
 - 修正 `COMP-3` 長度計算錯誤的問題。
 
 ### Improved
-- 稍微再最佳化 `COMP-3` 的編解碼效率。
+- 稍微再最佳化一點 `COMP-3` 的編解碼效率。
     - 把最後一個 for 迴圈拿掉。
+
+- `COMP-5` Encode 改用 `long` / `ulong` 進行運算。
+
+- 改善 `COMP-5` Encode 的程式碼閱讀性。
+    - 將原本混合在同一段邏輯中的 `Signed` / `Unsigned` 分支拆分為獨立處理流程。
+    - 移除巢狀條件判斷，改為依 `Pic.Signed` 先行分流，降低認知負擔。
 
 <br><br>
 

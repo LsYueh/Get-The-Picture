@@ -24,25 +24,51 @@ public readonly struct NumericMeta(byte[] chars, int decimalDigits, bool isNegat
         if (DecimalDigits != 0)
             throw new InvalidOperationException("Cannot convert to Int64 when decimal digits exist.");
 
-        if (Chars.Length == 0)
+        Span<byte> span = Chars;
+        if (span.Length == 0)
             throw new FormatException("Empty numeric value.");
 
         long result = 0;
 
         if (IsNegative)
         {
-            foreach (byte b in Chars)
+            // 10 的界線
+            const long minDiv10 = long.MinValue / 10;
+
+            for (int i = 0; i < span.Length; i++)
             {
-                int digit = b - (byte)'0';
-                result = checked(result * 10 - digit);
+                int digit = span[i] - 48;
+                
+                // 先檢查 *10 是否會溢位
+                if (result < minDiv10)
+                    throw new OverflowException();
+
+                result *= 10;
+
+                // 再檢查 +/- digit 是否會溢位
+                if (result < long.MinValue + digit)
+                    throw new OverflowException();
+
+                result -= digit;
             }
         }
         else
         {
-            foreach (byte b in Chars)
+            const long maxDiv10 = long.MaxValue / 10;
+
+            for (int i = 0; i < span.Length; i++)
             {
-                int digit = b - (byte)'0';
-                result = checked(result * 10 + digit);
+                int digit = span[i] - 48;
+
+                if (result > maxDiv10)
+                    throw new OverflowException();
+
+                result *= 10;
+
+                if (result > long.MaxValue - digit)
+                    throw new OverflowException();
+
+                result += digit;
             }
         }
 
@@ -54,7 +80,8 @@ public readonly struct NumericMeta(byte[] chars, int decimalDigits, bool isNegat
         if (DecimalDigits != 0)
             throw new InvalidOperationException("Cannot convert to UInt64 when decimal digits exist.");
 
-        if (Chars.Length == 0)
+        Span<byte> span = Chars;
+        if (span.Length == 0)
             throw new FormatException("Empty numeric value.");
 
         if (IsNegative)
@@ -62,9 +89,23 @@ public readonly struct NumericMeta(byte[] chars, int decimalDigits, bool isNegat
 
         ulong result = 0;
 
-        foreach (byte b in Chars)
+        const ulong maxDiv10 = ulong.MaxValue / 10;
+
+        for (int i = 0; i < span.Length; i++)
         {
-            result = checked(result * 10 + (ulong)(b - (byte)'0'));
+            int digit = span[i] - 48;
+
+            // 檢查 *10 是否溢位
+            if (result > maxDiv10)
+                throw new OverflowException();
+
+            result *= 10;
+
+            // 檢查 +digit 是否溢位
+            if (result > ulong.MaxValue - (ulong)digit)
+                throw new OverflowException();
+
+            result += (ulong)digit;
         }
 
         return result;
