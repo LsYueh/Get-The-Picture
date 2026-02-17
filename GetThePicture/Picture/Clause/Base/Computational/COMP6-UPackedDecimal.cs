@@ -40,8 +40,15 @@ internal static class COMP6
     //
     // Rules:
     // - Each digit occupies one nibble (0x0 – 0x9)
-    // - Total bytes = floor((DigitCount + 1) / 2)
+    // - Total bytes = ceil(nibbles / 2)
     //
+
+    public static int GetByteLength(int digitCount)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(digitCount);
+
+        return (digitCount + 1) / 2; // ceil(nibbles / 2)
+    }
 
     private static readonly UIntMapper _UIntMapper = new();
 
@@ -97,21 +104,25 @@ internal static class COMP6
         
         byte[] bytes = new byte[digits];
 
-        int idx = digits - 1;
+        int outIndex = digits - 1;
+        int byteIndex = buffer.Length - 1;
 
-        for (int i = buffer.Length - 1; i >= 0; i--)
+        int remaining = digits;
+
+        while (remaining > 0)
         {
-            byte b = buffer[i];
-            int low  =  b       & 0x0F; // Bit Mask
-            int high = (b >> 4) & 0x0F; // Bit Mask
+            byte b = buffer[byteIndex--];
 
-            if (low > 9 || high > 9)
-                throw new FormatException("Invalid COMP-6 packed digit.");
+            // low nibble
+            bytes[outIndex--] = (byte)('0' + (b & 0x0F));
+            remaining--;
 
-            if (idx >= 0)
-                bytes[idx--] = (byte)('0' + low);
-            if (idx >= 0)
-                bytes[idx--] = (byte)('0' + high);
+            if (remaining > 0)
+            {
+                // high nibble
+                bytes[outIndex--] = (byte)('0' + ((b >> 4) & 0x0F));
+                remaining--;
+            }
         }
 
         return bytes;

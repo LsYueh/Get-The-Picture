@@ -479,7 +479,9 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
 <br>
 
-> dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj   
+> dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj --filter *   
+
+> dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj --anyCategories {BenchmarkCategory}  
 
 <br>
 
@@ -501,6 +503,27 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 | Warpper_Read_Decimal  | 6.185 μs | 0.0163 μs | 0.0144 μs |
 | Warpper_Write_Decimal | 9.463 μs | 0.0331 μs | 0.0276 μs |
 
+| Method              | Mean      | Error    | StdDev   |
+|-------------------- |----------:|---------:|---------:|
+| Comp3_Read_Integer  |  76.36 ns | 0.458 ns | 0.428 ns |
+| Comp3_Write_Integer |  76.04 ns | 0.405 ns | 0.339 ns |
+| Comp3_Read_Decimal  |  96.37 ns | 0.237 ns | 0.198 ns |
+| Comp3_Write_Decimal | 152.43 ns | 0.610 ns | 0.541 ns |
+
+| Method              | Mean      | Error    | StdDev   |
+|-------------------- |----------:|---------:|---------:|
+| Comp4_Read_Integer  |  41.25 ns | 0.131 ns | 0.116 ns |
+| Comp4_Write_Integer | 129.49 ns | 0.584 ns | 0.547 ns |
+
+| Method              | Mean     | Error    | StdDev   |
+|-------------------- |---------:|---------:|---------:|
+| Comp6_Read_Integer  | 71.58 ns | 0.326 ns | 0.272 ns |
+| Comp6_Write_Integer | 74.64 ns | 0.390 ns | 0.346 ns |
+
+
+<br>
+
+> 1 µs = 1000 ns  
 
 <br>
 

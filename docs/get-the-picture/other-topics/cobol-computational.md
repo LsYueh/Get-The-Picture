@@ -30,7 +30,7 @@
 <br>
 
 ## 位元組長度計算
-> bytes = floor ( `(digits + 1) / 2` )  
+> bytes = `ceil(nibbles / 2)`  
 
 | PIC                     | digits | bytes |
 | ----------------------- | ------ | ----- |

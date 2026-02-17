@@ -1,5 +1,28 @@
 # Changelog
 
+## [26.11.7] – 2026-02-17
+
+### Added
+- 增加 `COMP-3` 的效能基準測試。
+- 增加 `COMP-4` (`COMP-5`) 的效能基準測試。
+- 增加 `COMP-6` 的效能基準測試。
+
+### Bugfix
+- 修正 `COMP-3` 長度計算錯誤的問題。
+
+### Improved
+- 稍微再最佳化一點 `COMP-3` 的編解碼效率。
+    - 把最後一個 for 迴圈拿掉。
+
+- `COMP-5` Encode 改用 `long` / `ulong` 進行運算。
+
+- 改善 `COMP-5` Encode 的程式碼閱讀性。
+    - 將原本混合在同一段邏輯中的 `Signed` / `Unsigned` 分支拆分為獨立處理流程。
+    - 移除巢狀條件判斷，改為依 `Pic.Signed` 先行分流，降低認知負擔。
+
+<br><br>
+
+
 ## [26.11.6] – 2026-02-16
 
 ### ⚠️ Breaking Changes
@@ -15,6 +38,7 @@
     - 增加 `COMP3` / `COMP4`(`COMP`) / `COMP5` / `COMP6` 定義，並共享自身對應**計算項目**原始說明的列舉值。
 
 <br><br>
+
 
 ## [26.11.5] – 2026-02-15
 
@@ -36,7 +60,12 @@
 
 <br><br>
 
+
 ## [26.11.4] – 2026-02-13
+
+### Changed
+- 將 Numeric Encoder 內暫存的資料 `NumericValue` 改為 `NumericMeta`。
+
 
 ### Improved
 - 加速 Numeric Decoder/Encoder 計算。
@@ -45,9 +74,6 @@
     | 26.11.1 | Warpper_Write_Decimal | 23.445 μs | 0.0766 μs | 0.0717 μs |
     | 26.11.2 | Warpper_Write_Decimal | 18.889 μs | 0.1028 μs | 0.0961 μs |
     | 26.11.4 | Warpper_Write_Decimal |  9.463 μs | 0.0331 μs | 0.0276 μs |
-
-### Changed
-- 將 Numeric Encoder 內暫存的資料 `NumericValue` 改為 `NumericMeta`。
 
 <br><br>
 

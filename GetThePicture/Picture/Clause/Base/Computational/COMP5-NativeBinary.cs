@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using GetThePicture.Picture.Clause.Codec.Category.Numeric;
 
 namespace GetThePicture.Picture.Clause.Base.Computational;
@@ -43,60 +44,23 @@ internal static class COMP5
     public static byte[] Encode(NumericMeta nMeta, PicMeta pic, bool isBigEndian = true)
     {
         if (pic.DecimalDigits > 0)
-            throw new NotSupportedException($"COMP-5 does not support decimal digits. PIC has {pic.DecimalDigits} decimal digits.");
-
-        decimal value = nMeta.Value;
-
-        // 檢查是否有小數位
-        if (value != decimal.Truncate(value))
-            throw new InvalidOperationException($"COMP-5 Encode can only handle integers. Value {value} has fractional part.");
-
+            throw new NotSupportedException("COMP-5 does not support decimal digits.");
+        
         int length = GetByteLength(pic.DigitCount);
-
-        // 範圍檢查
-        switch (length)
+        byte[] bytes = new byte[length];
+        
+        if (pic.Signed)
         {
-            case 2: // Binary halfword (2 bytes)
-                if (pic.Signed && (value < short.MinValue || value > short.MaxValue))
-                    throw new OverflowException($"Value {value} exceeds 2-byte signed range.");
-                if (!pic.Signed && (value < 0 || value > ushort.MaxValue))
-                    throw new OverflowException($"Value {value} exceeds 2-byte unsigned range.");
-                break;
-
-            case 4: // Binary fullword (4 bytes)
-                if (pic.Signed && (value < int.MinValue || value > int.MaxValue))
-                    throw new OverflowException($"Value {value} exceeds 4-byte signed range.");
-                if (!pic.Signed && (value < 0 || value > uint.MaxValue))
-                    throw new OverflowException($"Value {value} exceeds 4-byte unsigned range.");
-                break;
-
-            case 8: // Binary doubleword (8 bytes)
-                if (pic.Signed && (value < long.MinValue || value > long.MaxValue))
-                    throw new OverflowException($"Value {value} exceeds 8-byte signed range.");
-                if (!pic.Signed && (value < 0 || value > ulong.MaxValue))
-                    throw new OverflowException($"Value {value} exceeds 8-byte unsigned range.");
-                break;
-
-            default:
-                throw new NotSupportedException("Unsupported COMP-5 length");
+            long value = nMeta.ToInt64();
+            WriteSigned(bytes, value, length, isBigEndian);
+        }
+        else
+        {
+            ulong value = nMeta.ToUInt64();
+            WriteUnsigned(bytes, value, length, isBigEndian);
         }
 
-        Span<byte> bytes = length switch
-        {
-            // Binary halfword (2 bytes)
-            2 => pic.Signed ? BitConverter.GetBytes((short)value) : BitConverter.GetBytes((ushort)value),
-            // Binary fullword (4 bytes)
-            4 => pic.Signed ? BitConverter.GetBytes((int)  value) : BitConverter.GetBytes((uint)  value),
-            // Binary doubleword (8 bytes)
-            8 => pic.Signed ? BitConverter.GetBytes((long) value) : BitConverter.GetBytes((ulong) value),
-
-            _ => throw new NotSupportedException()
-        };
-
-        if (BitConverter.IsLittleEndian && isBigEndian)
-            bytes.Reverse();
-
-        return bytes.ToArray();
+        return bytes;
     }
 
     public static int GetByteLength(int digitCount)
@@ -108,5 +72,77 @@ internal static class COMP5
             <= 18 => 8,
             _ => throw new NotSupportedException("Too many digits for COMP-4 (Binary) or COMP-5 (Native-Binary)")
         };
+    }
+
+    private static void WriteSigned(Span<byte> buffer, long value, int length, bool isBigEndian)
+    {
+        switch (length)
+        {
+            case 2:
+                if (value < short.MinValue || value > short.MaxValue)
+                    throw new OverflowException("Value exceeds 2-byte signed range.");
+
+                if (isBigEndian)
+                    BinaryPrimitives.WriteInt16BigEndian(buffer, (short)value);
+                else
+                    BinaryPrimitives.WriteInt16LittleEndian(buffer, (short)value);
+                break;
+
+            case 4:
+                if (value < int.MinValue || value > int.MaxValue)
+                    throw new OverflowException("Value exceeds 4-byte signed range.");
+
+                if (isBigEndian)
+                    BinaryPrimitives.WriteInt32BigEndian(buffer, (int)value);
+                else
+                    BinaryPrimitives.WriteInt32LittleEndian(buffer, (int)value);
+                break;
+
+            case 8:
+                if (isBigEndian)
+                    BinaryPrimitives.WriteInt64BigEndian(buffer, value);
+                else
+                    BinaryPrimitives.WriteInt64LittleEndian(buffer, value);
+                break;
+
+            default:
+                throw new NotSupportedException("Unsupported COMP-5 length");
+        }
+    }
+
+    private static void WriteUnsigned(Span<byte> buffer, ulong value, int length, bool isBigEndian)
+    {
+        switch (length)
+        {
+            case 2:
+                if (value > ushort.MaxValue)
+                    throw new OverflowException("Value exceeds 2-byte unsigned range.");
+
+                if (isBigEndian)
+                    BinaryPrimitives.WriteUInt16BigEndian(buffer, (ushort)value);
+                else
+                    BinaryPrimitives.WriteUInt16LittleEndian(buffer, (ushort)value);
+                break;
+
+            case 4:
+                if (value > uint.MaxValue)
+                    throw new OverflowException("Value exceeds 4-byte unsigned range.");
+
+                if (isBigEndian)
+                    BinaryPrimitives.WriteUInt32BigEndian(buffer, (uint)value);
+                else
+                    BinaryPrimitives.WriteUInt32LittleEndian(buffer, (uint)value);
+                break;
+
+            case 8:
+                if (isBigEndian)
+                    BinaryPrimitives.WriteUInt64BigEndian(buffer, value);
+                else
+                    BinaryPrimitives.WriteUInt64LittleEndian(buffer, value);
+                break;
+
+            default:
+                throw new NotSupportedException("Unsupported COMP-5 length");
+        }
     }
 }
