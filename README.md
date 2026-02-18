@@ -79,6 +79,7 @@ COBOL 的 `PICTURE` 子句，以極少的符號，精確地描述出資料的**�
 
 <br><br>
 
+
 # COBOL Copybook
 `Copybook` 是 COBOL 中用來定義資料結構的重用檔案，透過 COPY 指令引入，常用於描述檔案格式、資料欄位配置與記憶體布局。在大型主機與金融系統中，Copybook 是資料交換與系統整合的核心。  
 
@@ -98,15 +99,15 @@ Copybook Warpper 是一個 Raw Buffer 層級的存取工具。提供**欄位級�
 ![work flow](docs/get-the-picture/warpper-work-flow.png)  
 
 <details>
-    <summary>Warpper vs SerDes</summary>
+    <summary>Warpper vs Serialization（序列化）</summary>
 
-| 功能         | SerDes       | Warpper                      |
-| ---------- | --------------- | ------------------------------- |
-| Raw ↔ 物件   | Yes, 一次性 DTO    | 不需要 DTO，直接欄位級存取                 |
-| 欄位抽象化      | No / 需要 mapping | Yes，靠 `CbAddress` + indexer/屬性 |
-| Memory 複製  | 全部複製            | 幾乎零複製，Span 直接操作 Raw             |
-| 動態欄位讀寫     | 一般不方便           | 內建 indexer 或強型別屬性               |
-| 物件圖 / 狀態管理 | Yes             | No，Raw 是唯一來源                    |
+| 功能         | Warpper                      | Serialization |
+| ---------- | ------------------------------- | --------------- |
+| Raw ↔ 物件   | 不需要 DTO，直接欄位級存取                 | Yes, 一次性 DTO    |
+| 欄位抽象化      | Yes，靠 `CbAddress` + indexer/屬性 | No / 需要 mapping |
+| Memory 複製  | 幾乎零複製，Span 直接操作 Raw             | 全部複製            |
+| 動態欄位讀寫     | 內建 indexer 或強型別屬性               | 一般不方便           |
+| 物件圖 / 狀態管理 | No，Raw 是唯一來源                    | Yes             |
 
 </details>
 
@@ -219,12 +220,8 @@ public class T30_t(byte[] raw) : CbWarpper(raw)
 📖 更多關於 [Copybook Resolver](docs/get-the-picture/copybook/resolver.md) ...  
 📖 更多關於 Sub-Class Generator : [Forge](docs/forge/forge.md) ...  
 
-<br>
-
-## ⚠️ Copybook SerDes ⚠️
-📖 更多關於 [Copybook SerDes](docs/get-the-picture/copybook/serdes.md) ... (Obsolete)  
-
 <br><br>
+
 
 # COBOL Coding Sheet (Reference Format)
 COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed Format）` 下很重要。主要分為 `Sequence Area`, `Indicator Area`, `Area A`, `Area B` 等區域。
@@ -278,6 +275,7 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 
 <br><br>
 
+
 # COBOL DATA DIVISION (Data description entry)
 
 用於描述程式中所有資料的結構、型態與儲存方式。
@@ -316,29 +314,34 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 | Format 2 | `66 RENAMES`                    | ❌ 未支援 | 屬於語意別名（Alias）的定義，不影響實際的資料儲存結構；相關別名可由 Warpper 於應用層自行進行二次定義，因此目前未納入解析與生成範圍。 |
 | Format 3 | `88 LEVEL` 條件名稱                 | ❌ 未支援 | 為條件常數定義（Condition Name），本身不佔用任何實體儲存空間。 <br/> 當與 OCCURS 子句混合使用時，條件判斷的呼叫與對應關係在實作上較為複雜，易影響可讀性與使用一致性，建議直接呼叫 Warpper 內的屬性來處理。 |
 
-
 <br><br>
+
 
 # Level Numbers
 
 COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
-| Level         | 用途             | 說明                  |
-| ------------- | -------------- | ------------------- |
-| **01**        | 主結構            | 定義檔案或記錄的頂層結構        |
-| **05/10/15…** | 子結構            | 01 之下的子群組或欄位，形成巢狀結構 |
-| **66**        | RENAMES        | 將已有欄位重新命名或形成別名區段    |
-| **77**        | 單一變數           | 不屬於群組，獨立使用          |
-| **88**        | Condition Name | 定義邏輯條件（True/False）  |
+| Level       | 用途             | 說明                  |
+| ----------- | -------------- | ------------------- |
+| **01**      | 主結構            | 定義檔案或記錄的頂層結構        |
+| **02 … 49** | 子結構            | 01 之下的子群組或欄位，形成巢狀結構 |
+| **66**      | RENAMES        | 將已有欄位重新命名或形成別名區段    |
+| **77**      | 單一變數           | 不屬於群組，獨立使用          |
+| **88**      | Condition Name | 定義邏輯條件（True/False）  |
 
 > ⚠️ Level number 越小層級越高，01 是最外層。
 
-### 詳細說明
-- Level [66 — RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md)
-- Level [77 — Standalone Variable (單一變數)](docs/get-the-picture/cobol-level-numbers/lv77.md)
-- Level [88 — Condition Name](docs/get-the-picture/cobol-level-numbers/lv88.md)  
+<details>
+    <summary>📖 更多關於特殊層級 ... </summary>
+
+Level 66 — [RENAMES](docs/get-the-picture/cobol-level-numbers/lv66.md)  
+Level 77 — [Standalone Variable (單一變數)](docs/get-the-picture/cobol-level-numbers/lv77.md)  
+Level 88 — [Condition Name](docs/get-the-picture/cobol-level-numbers/lv88.md)  
+
+</details>
 
 <br><br>
+
 
 # REDEFINES 子句
 
@@ -417,6 +420,7 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
 <br><br>
 
+
 # PICTURE 子句
 
 ![PICTURE clause](docs/get-the-picture/cobol-picture/picture-clause.png)  
@@ -433,7 +437,7 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 
 - [文字 (`Alphabetic`/`Alphanumeric`)](docs/get-the-picture/cobol-picture/category/alphabetic-alphanumeric.md)  
 - [數字 (`Numeric`)](docs/get-the-picture/cobol-picture/category/numeric.md)  
-  - [`S9`數字轉換規則](docs/get-the-picture/other-topics/pic-s9-overpunch.md)  
+    - [`S9`數字轉換規則](docs/get-the-picture/other-topics/pic-s9-overpunch.md)  
 
 <br>
 
@@ -449,6 +453,7 @@ COBOL 使用 `Level Number`（層級號） 來描述資料結構，主要有：
 📖 更多關於 [PICTURE Clause Codec](docs/get-the-picture/cobol-picture/codec.md) ...  
 
 <br><br>
+
 
 # USAGE 子句
 
@@ -477,6 +482,7 @@ USAGE 項目的適用範圍:
 
 <br><br>
 
+
 # Performance
 
 ## 數據內容
@@ -502,6 +508,12 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
   DefaultJob : .NET 8.0.24 (8.0.24, 8.0.2426.7010), X64 RyuJIT x86-64-v3
 ```
 
+> 1 µs = 1000 ns  
+
+<br>
+
+### Warpper
+
 | Method                | Mean     | Error     | StdDev    |
 |---------------------- |---------:|----------:|----------:|
 | Warpper_Read_String   | 4.536 μs | 0.0340 μs | 0.0318 μs |
@@ -511,6 +523,13 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 | Warpper_Read_Decimal  | 6.185 μs | 0.0163 μs | 0.0144 μs |
 | Warpper_Write_Decimal | 9.463 μs | 0.0331 μs | 0.0276 μs |
 
+> ⚠️ T30 的資料內沒有進行 `COMP`，目前的 Warpper 跑分算是 Best Case。  
+> ⚠️ Warpper 只做**單筆欄位**讀取。  
+
+<br>
+
+### COMP-3
+
 | Method              | Mean      | Error    | StdDev   |
 |-------------------- |----------:|---------:|---------:|
 | Comp3_Read_Integer  |  76.36 ns | 0.458 ns | 0.428 ns |
@@ -518,10 +537,18 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 | Comp3_Read_Decimal  |  96.37 ns | 0.237 ns | 0.198 ns |
 | Comp3_Write_Decimal | 152.43 ns | 0.610 ns | 0.541 ns |
 
+<br>
+
+### COMP-4 (COMP-5)
+
 | Method              | Mean      | Error    | StdDev   |
 |-------------------- |----------:|---------:|---------:|
 | Comp4_Read_Integer  |  41.25 ns | 0.131 ns | 0.116 ns |
 | Comp4_Write_Integer | 129.49 ns | 0.584 ns | 0.547 ns |
+
+<br>
+
+### COMP-6
 
 | Method              | Mean     | Error    | StdDev   |
 |-------------------- |---------:|---------:|---------:|
@@ -529,16 +556,8 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 | Comp6_Write_Integer | 74.64 ns | 0.390 ns | 0.346 ns |
 
 
-<br>
-
-> 1 µs = 1000 ns  
-
-<br>
-
-> ⚠️ T30 的資料內沒有進行 `COMP`，目前的跑分算是 Best Case。  
-> ⚠️ Warpper 只做**單筆欄位**讀取。  
-
 <br><br>
+
 
 # 參考
 
