@@ -528,6 +528,19 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 
 <br>
 
+### DISPLAY
+
+| Method                       | Mean        | Error    | StdDev   |
+|----------------------------- |------------:|---------:|---------:|
+| Display_Read_Integer         |    83.79 ns | 0.567 ns | 0.503 ns |
+| Display_Write_Integer        |   109.68 ns | 0.284 ns | 0.251 ns |
+| Display_Read_Signed_Integer  |    96.71 ns | 0.392 ns | 0.367 ns |
+| Display_Write_Signed_Integer | 1,593.44 ns | 6.809 ns | 6.036 ns |
+| Display_Read_Decimal         |   101.40 ns | 0.271 ns | 0.227 ns |
+| Display_Write_Decimal        | 1,610.61 ns | 3.881 ns | 3.440 ns |
+
+<br>
+
 ### COMP-3
 
 Integer: `PIC 9(18)` / `PIC S9(18)`   
@@ -550,10 +563,10 @@ Integer: `PIC 9(18)` / `PIC S9(18)`
 
 | Method                     | Mean      | Error    | StdDev   |
 |--------------------------- |----------:|---------:|---------:|
-| Comp4_Read_Integer         |  43.56 ns | 0.166 ns | 0.147 ns |
-| Comp4_Write_Integer        | 127.96 ns | 0.856 ns | 0.801 ns |
-| Comp4_Read_Signed_Integer  |  42.96 ns | 0.206 ns | 0.192 ns |
-| Comp4_Write_Signed_Integer | 133.86 ns | 0.519 ns | 0.460 ns |
+| Comp4_Read_Integer         |  42.45 ns | 0.225 ns | 0.210 ns |
+| Comp4_Write_Integer        | 128.89 ns | 0.522 ns | 0.488 ns |
+| Comp4_Read_Signed_Integer  |  41.66 ns | 0.328 ns | 0.307 ns |
+| Comp4_Write_Signed_Integer | 132.02 ns | 0.562 ns | 0.525 ns |
 
 <br>
 
@@ -563,10 +576,10 @@ Integer: `PIC S9(18)`
 
 | Method                 | Mean      | Error    | StdDev   |
 |----------------------- |----------:|---------:|---------:|
-| Comp5_Read_Integer_BE  |  42.00 ns | 0.129 ns | 0.108 ns |
-| Comp5_Write_Integer_BE | 129.64 ns | 0.568 ns | 0.504 ns |
-| Comp5_Read_Integer_LE  |  39.97 ns | 0.214 ns | 0.189 ns |
-| Comp5_Write_Integer_LE | 129.60 ns | 0.450 ns | 0.399 ns |
+| Comp5_Read_Integer_BE  |  42.15 ns | 0.270 ns | 0.239 ns |
+| Comp5_Write_Integer_BE | 131.92 ns | 0.813 ns | 0.721 ns |
+| Comp5_Read_Integer_LE  |  39.65 ns | 0.090 ns | 0.070 ns |
+| Comp5_Write_Integer_LE | 131.94 ns | 0.313 ns | 0.244 ns |
 
 <br>
 
