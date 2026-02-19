@@ -11,8 +11,8 @@ namespace GetThePicture.Benchmarks.Category.Computational;
 [BenchmarkCategory("COMP-6")]
 public class Comp6Benchmark
 {
-    private static readonly PicMeta intPic = PicMeta.Parse("9(10)");
-    private static readonly byte[] intBuffer = [0x00, 0x00, 0x00, 0x00, 0x01];
+    private static readonly PicMeta intPic = PicMeta.Parse("9(18)");
+    private static readonly byte[] intBuffer = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01];
     private static readonly ulong intValue = 1;
 
     private readonly Consumer consumer = new();

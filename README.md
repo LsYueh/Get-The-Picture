@@ -530,31 +530,54 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 
 ### COMP-3
 
-| Method              | Mean      | Error    | StdDev   |
-|-------------------- |----------:|---------:|---------:|
-| Comp3_Read_Integer  |  76.36 ns | 0.458 ns | 0.428 ns |
-| Comp3_Write_Integer |  76.04 ns | 0.405 ns | 0.339 ns |
-| Comp3_Read_Decimal  |  96.37 ns | 0.237 ns | 0.198 ns |
-| Comp3_Write_Decimal | 152.43 ns | 0.610 ns | 0.541 ns |
+Integer: `PIC 9(18)` / `PIC S9(18)`   
+Decimal: `PIC S9(5)V9(2)`  
+
+| Method                     | Mean      | Error    | StdDev   |
+|--------------------------- |----------:|---------:|---------:|
+| Comp3_Read_Integer         |  88.05 ns | 0.581 ns | 0.543 ns |
+| Comp3_Write_Integer        |  89.36 ns | 0.292 ns | 0.259 ns |
+| Comp3_Read_Signed_Integer  |  83.44 ns | 0.367 ns | 0.326 ns |
+| Comp3_Write_Signed_Integer |  90.67 ns | 0.277 ns | 0.231 ns |
+| Comp3_Read_Decimal         |  97.48 ns | 1.361 ns | 1.206 ns |
+| Comp3_Write_Decimal        | 150.30 ns | 0.619 ns | 0.548 ns |
 
 <br>
 
-### COMP-4 (COMP-5)
+### COMP-4 (BE)
 
-| Method              | Mean      | Error    | StdDev   |
-|-------------------- |----------:|---------:|---------:|
-| Comp4_Read_Integer  |  41.25 ns | 0.131 ns | 0.116 ns |
-| Comp4_Write_Integer | 129.49 ns | 0.584 ns | 0.547 ns |
+Integer: `PIC 9(18)` / `PIC S9(18)`  
+
+| Method                     | Mean      | Error    | StdDev   |
+|--------------------------- |----------:|---------:|---------:|
+| Comp4_Read_Integer         |  43.56 ns | 0.166 ns | 0.147 ns |
+| Comp4_Write_Integer        | 127.96 ns | 0.856 ns | 0.801 ns |
+| Comp4_Read_Signed_Integer  |  42.96 ns | 0.206 ns | 0.192 ns |
+| Comp4_Write_Signed_Integer | 133.86 ns | 0.519 ns | 0.460 ns |
+
+<br>
+
+### COMP-5
+
+Integer: `PIC S9(18)`  
+
+| Method                 | Mean      | Error    | StdDev   |
+|----------------------- |----------:|---------:|---------:|
+| Comp5_Read_Integer_BE  |  42.00 ns | 0.129 ns | 0.108 ns |
+| Comp5_Write_Integer_BE | 129.64 ns | 0.568 ns | 0.504 ns |
+| Comp5_Read_Integer_LE  |  39.97 ns | 0.214 ns | 0.189 ns |
+| Comp5_Write_Integer_LE | 129.60 ns | 0.450 ns | 0.399 ns |
 
 <br>
 
 ### COMP-6
 
+Integer: `PIC 9(18)`  
+
 | Method              | Mean     | Error    | StdDev   |
 |-------------------- |---------:|---------:|---------:|
-| Comp6_Read_Integer  | 71.58 ns | 0.326 ns | 0.272 ns |
-| Comp6_Write_Integer | 74.64 ns | 0.390 ns | 0.346 ns |
-
+| Comp6_Read_Integer  | 86.75 ns | 0.405 ns | 0.338 ns |
+| Comp6_Write_Integer | 92.43 ns | 0.370 ns | 0.347 ns |
 
 <br><br>
 

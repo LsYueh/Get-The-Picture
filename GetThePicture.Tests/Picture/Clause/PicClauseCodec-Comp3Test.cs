@@ -12,9 +12,11 @@ public class CodecComp3Test
     // ------------------------- 
 
     [DataTestMethod]
-    [DataRow( "9(5)",  52194, new byte[] { 0x52, 0x19, 0x4F })]
-    [DataRow("S9(5)",  52194, new byte[] { 0x52, 0x19, 0x4C })]
-    [DataRow("S9(5)", -52194, new byte[] { 0x52, 0x19, 0x4D })]
+    [DataRow(  "9(5)",     52194, new byte[] { 0x52, 0x19, 0x4F })]
+    [DataRow( "S9(5)",     52194, new byte[] { 0x52, 0x19, 0x4C })]
+    [DataRow( "S9(5)",    -52194, new byte[] { 0x52, 0x19, 0x4D })]
+    [DataRow( "9(18)", (ulong) 1, new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F })]
+    [DataRow("S9(18)", (long)  1, new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1C })]
     public void Encode_Combination_Test(string picString, object value, byte[] expected)
     {
         var pic = PicMeta.Parse(picString);
@@ -48,6 +50,8 @@ public class CodecComp3Test
     [DataRow( "9(10)", (ulong)     1, new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F })]
     [DataRow("S9(05)", (int)   52194, new byte[] { 0x52, 0x19, 0x4C })]
     [DataRow("S9(05)", (int)  -52194, new byte[] { 0x52, 0x19, 0x4D })]
+    [DataRow( "9(18)", (ulong) 1, new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F })]
+    [DataRow("S9(18)", (long)  1, new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x1C })]
     public void Decode_Combination_Test(string picString, object expected, byte[] buffer)
     {
         var pic = PicMeta.Parse(picString);
