@@ -44,13 +44,12 @@ public static class Encoder
 
     private static byte[] Display_Encode(NumericMeta nMeta, PicMeta pic, CodecOptions options)
     {
-        // sign: 1 或 -1
-        decimal sign = nMeta.IsNegative ? -1.0m : 1.0m;
+        bool isNegative = nMeta.IsNegative;
 
-        // magnitude buffer
-        byte[] numeric = [.. nMeta.Chars]; // 如果不想複製，可直接用 ReadOnlyMemory<byte>
+        // Note: 如果不想複製，可直接用 ReadOnlyMemory<byte>
+        byte[] numeric = [.. nMeta.Chars]; 
 
-        byte[] buffer = Base.Overpunch.OpCodec.Encode(sign, numeric, pic, options);
+        byte[] buffer = Base.Overpunch.OpCodec.Encode(isNegative, numeric, pic, options);
 
         return buffer;
     }

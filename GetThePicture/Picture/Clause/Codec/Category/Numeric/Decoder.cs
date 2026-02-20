@@ -47,12 +47,10 @@ public static class Decoder
 
     private static object Display_Decode(Span<byte> bytes, PicMeta pic, CodecOptions options)
     {
-        Span<byte> chars = Base.Overpunch.OpCodec.Decode(bytes, pic, options, out decimal sign);
+        Span<byte> chars = Base.Overpunch.OpCodec.Decode(bytes, pic, options, out bool isNegative);
 
         if (chars.Length != pic.DigitCount)
             throw new FormatException($"Numeric length mismatch for PIC. Expected {pic.DigitCount}, actual {chars.Length}.");
-        
-        bool isNegative = sign < 0;
 
         decimal value = CbDecimal.Decode(chars, pic.DecimalDigits, isNegative);
 

@@ -1,11 +1,27 @@
 # Changelog
 
+## [26.12.1] – 2026-02-20
+
+### Added
+- 新增 DISPLAY Benchmark。
+
+### Improved
+- `Numeric` 轉換的性能改善。
+    - 重構 Overpunch Codex ，移除**物件等級的查表**與 **decimal**。
+    - 提升 Overpunch Codec 的處理速度。
+
+- 改善 `NumericMeta` 整數轉換流程的程式碼閱讀性。
+
+<br><br>
+
+
 ## [26.12.0] – 2026-02-18
 
 ### ⚠️ Breaking Changes
 - ❌ 移除 `CbSerDes` 相關功能、測試、與說明。
 
 <br><br>
+
 
 ## [26.11.7] – 2026-02-17
 
