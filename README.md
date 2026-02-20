@@ -530,6 +530,9 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 
 ### DISPLAY
 
+Integer: `PIC 9(18)` / `PIC S9(18)`   
+Decimal: `PIC S9(5)V9(2)`  
+
 | Method                       | Mean      | Error    | StdDev   |
 |----------------------------- |----------:|---------:|---------:|
 | Display_Read_Integer         |  80.43 ns | 0.254 ns | 0.225 ns |
