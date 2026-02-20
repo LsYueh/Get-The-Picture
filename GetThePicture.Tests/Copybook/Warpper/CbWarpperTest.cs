@@ -1,12 +1,12 @@
 using System.Text;
-using GetThePicture.Copybook.Warpper;
-using GetThePicture.Copybook.Warpper.Base;
+using GetThePicture.Copybook.Wrapper;
+using GetThePicture.Copybook.Wrapper.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Utils;
 
-namespace GetThePicture.Tests.Copybook.Warpper;
+namespace GetThePicture.Tests.Copybook.Wrapper;
 
-public class T30_t(byte[] raw) : CbWarpper(raw)
+public class T30_t(byte[] raw) : CbWrapper(raw)
 {
     // ----------------------------
     // Copybook Address Map
@@ -86,13 +86,13 @@ public class T30_t(byte[] raw) : CbWarpper(raw)
 }
 
 [TestClass]
-public class CbWarpperTest
+public class CbWrapperTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
     [TestMethod]
     [TestCategory("Demo")]
-    public void Warpper_T30_Test()
+    public void Wrapper_T30_Test()
     {
         const string before = "11011 00106600000096950000087300020251219000000  0台泥一永        000000000000000000000 0           ";
         const string after  = "2330  00106600000096950000087300020251114000000  0台積電          000000000000000000000X0           ";

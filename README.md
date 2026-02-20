@@ -92,16 +92,16 @@ Copybook 通常包含：
 
 <br>
 
-## Copybook Warpper
+## Copybook Wrapper
 
-Copybook Warpper 是一個 Raw Buffer 層級的存取工具。提供**欄位級別抽象存取**，不需要傳統的 DTO（`Data Transfer Object`，資料傳輸物件）或序列化/反序列化過程。
+Copybook Wrapper 是一個 Raw Buffer 層級的存取工具。提供**欄位級別抽象存取**，不需要傳統的 DTO（`Data Transfer Object`，資料傳輸物件）或序列化/反序列化過程。
 
-![work flow](docs/get-the-picture/warpper-work-flow.png)  
+![work flow](docs/get-the-picture/wrapper-work-flow.png)  
 
 <details>
-    <summary>Warpper vs Serialization（序列化）</summary>
+    <summary>Wrapper vs Serialization（序列化）</summary>
 
-| 功能         | Warpper                      | Serialization |
+| 功能         | Wrapper                      | Serialization |
 | ---------- | ------------------------------- | --------------- |
 | Raw ↔ 物件   | 不需要 DTO，直接欄位級存取                 | Yes, 一次性 DTO    |
 | 欄位抽象化      | Yes，靠 `CbAddress` + indexer/屬性 | No / 需要 mapping |
@@ -114,7 +114,7 @@ Copybook Warpper 是一個 Raw Buffer 層級的存取工具。提供**欄位級�
 <br>
 
 ### 使用方式
-資料物件需**繼承**核心物件 `CbWarpper`，根據 Copybook 定義，透過 `CbAddress` 設定每個欄位的起始位置、長度及格式。  
+資料物件需**繼承**核心物件 `CbWrapper`，根據 Copybook 定義，透過 `CbAddress` 設定每個欄位的起始位置、長度及格式。  
 - 可透過 indexer 或 **強型別屬性**存取欄位
 - 支援即時驗證 Raw Buffer 長度是否符合欄位配置
 
@@ -140,7 +140,7 @@ Console.WriteLine(T30.LastMthDate); // "2025-12-19"
     <summary>T30_t</summary>
 
 ```csharp
-public class T30_t(byte[] raw) : CbWarpper(raw)
+public class T30_t(byte[] raw) : CbWrapper(raw)
 {
     // ----------------------------
     // Copybook Address Map
@@ -311,8 +311,8 @@ COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed For
 | Format   | 語法用途                            | 支援狀態  | 說明                                            |
 | -------- | ------------------------------- | ----- | --------------------------------------------- |
 | Format 1 | 一般資料項目（Group / Elementary Item） | ✅ 支援  | 用於描述資料結構、型別、PIC、USAGE、OCCURS 等，是目前解析與生成的核心格式。 |
-| Format 2 | `66 RENAMES`                    | ❌ 未支援 | 屬於語意別名（Alias）的定義，不影響實際的資料儲存結構；相關別名可由 Warpper 於應用層自行進行二次定義，因此目前未納入解析與生成範圍。 |
-| Format 3 | `88 LEVEL` 條件名稱                 | ❌ 未支援 | 為條件常數定義（Condition Name），本身不佔用任何實體儲存空間。 <br/> 當與 OCCURS 子句混合使用時，條件判斷的呼叫與對應關係在實作上較為複雜，易影響可讀性與使用一致性，建議直接呼叫 Warpper 內的屬性來處理。 |
+| Format 2 | `66 RENAMES`                    | ❌ 未支援 | 屬於語意別名（Alias）的定義，不影響實際的資料儲存結構；相關別名可由 Wrapper 於應用層自行進行二次定義，因此目前未納入解析與生成範圍。 |
+| Format 3 | `88 LEVEL` 條件名稱                 | ❌ 未支援 | 為條件常數定義（Condition Name），本身不佔用任何實體儲存空間。 <br/> 當與 OCCURS 子句混合使用時，條件判斷的呼叫與對應關係在實作上較為複雜，易影響可讀性與使用一致性，建議直接呼叫 Wrapper 內的屬性來處理。 |
 
 <br><br>
 
@@ -512,19 +512,19 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 
 <br>
 
-### Warpper
+### Wrapper
 
 | Method                | Mean     | Error     | StdDev    |
 |---------------------- |---------:|----------:|----------:|
-| Warpper_Read_String   | 4.418 μs | 0.0156 μs | 0.0130 μs |
-| Warpper_Write_String  | 4.265 μs | 0.0273 μs | 0.0255 μs |
-| Warpper_Read_Integer  | 4.410 μs | 0.0364 μs | 0.0341 μs |
-| Warpper_Write_Integer | 5.406 μs | 0.0152 μs | 0.0134 μs |
-| Warpper_Read_Decimal  | 5.865 μs | 0.0434 μs | 0.0339 μs |
-| Warpper_Write_Decimal | 9.547 μs | 0.0875 μs | 0.0775 μs |
+| Wrapper_Read_String   | 4.418 μs | 0.0156 μs | 0.0130 μs |
+| Wrapper_Write_String  | 4.265 μs | 0.0273 μs | 0.0255 μs |
+| Wrapper_Read_Integer  | 4.410 μs | 0.0364 μs | 0.0341 μs |
+| Wrapper_Write_Integer | 5.406 μs | 0.0152 μs | 0.0134 μs |
+| Wrapper_Read_Decimal  | 5.865 μs | 0.0434 μs | 0.0339 μs |
+| Wrapper_Write_Decimal | 9.547 μs | 0.0875 μs | 0.0775 μs |
 
-> ⚠️ T30 的資料內沒有進行 `COMP`，目前的 Warpper 跑分算是 Best Case。  
-> ⚠️ Warpper 只做**單筆欄位**讀取。  
+> ⚠️ T30 的資料內沒有進行 `COMP`，目前的 Wrapper 跑分算是 Best Case。  
+> ⚠️ Wrapper 只做**單筆欄位**讀取。  
 
 <br>
 

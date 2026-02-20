@@ -10,11 +10,11 @@ using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
 
 using GetThePicture.Forge.Core;
 
-namespace GetThePicture.Forge.Commands.Warpper;
+namespace GetThePicture.Forge.Commands.Wrapper;
 
-public class WarpperCommand(WarpperOptions? opts = null)
+public class WrapperCommand(WrapperOptions? opts = null)
 {
-    private readonly WarpperOptions _opts = opts ?? new (); // 預設選項
+    private readonly WrapperOptions _opts = opts ?? new (); // 預設選項
 
     private Dictionary<string, LeafNode> _map = null!;
 
@@ -26,8 +26,8 @@ public class WarpperCommand(WarpperOptions? opts = null)
         
         using var w = new StreamWriter($"{fileName}.cs", false, Encoding.UTF8);
 
-        w.WriteLine($"using GetThePicture.Copybook.Warpper;");
-        w.WriteLine($"using GetThePicture.Copybook.Warpper.Base;");
+        w.WriteLine($"using GetThePicture.Copybook.Wrapper;");
+        w.WriteLine($"using GetThePicture.Copybook.Wrapper.Base;");
         w.WriteLine();
 
         w.WriteLine($"namespace GetThePicture;");
@@ -40,7 +40,7 @@ public class WarpperCommand(WarpperOptions? opts = null)
     {
         var indent = Indent(indentLevel);
 
-        w.WriteLine($"{indent}public class {className}_t(byte[] raw) : CbWarpper(raw)");
+        w.WriteLine($"{indent}public class {className}_t(byte[] raw) : CbWrapper(raw)");
         w.WriteLine($"{indent}{{");
 
         ForgeAddressMap(w, indentLevel + 1);

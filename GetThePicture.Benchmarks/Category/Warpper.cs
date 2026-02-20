@@ -3,14 +3,14 @@ using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 
-using GetThePicture.Copybook.Warpper;
-using GetThePicture.Copybook.Warpper.Base;
+using GetThePicture.Copybook.Wrapper;
+using GetThePicture.Copybook.Wrapper.Base;
 
 using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Benchmarks.Category;
 
-public class T30_t(byte[] raw) : CbWarpper(raw)
+public class T30_t(byte[] raw) : CbWrapper(raw)
 {
     // ----------------------------
     // Copybook Address Map
@@ -76,8 +76,8 @@ public class T30_t(byte[] raw) : CbWarpper(raw)
     }
 }
 
-[BenchmarkCategory("Warpper")]
-public class WarpperBenchmark
+[BenchmarkCategory("Wrapper")]
+public class WrapperBenchmark
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
 
@@ -99,7 +99,7 @@ public class WarpperBenchmark
 
     
     [Benchmark]
-    public T30_t[] Warpper_Read_String()
+    public T30_t[] Wrapper_Read_String()
     {
         foreach (var t30 in _t30s)
         {
@@ -112,7 +112,7 @@ public class WarpperBenchmark
     }
 
     [Benchmark]
-    public T30_t[] Warpper_Write_String()
+    public T30_t[] Wrapper_Write_String()
     {
         foreach (var t30 in _t30s)
         {
@@ -125,7 +125,7 @@ public class WarpperBenchmark
     }
 
     [Benchmark]
-    public T30_t[] Warpper_Read_Integer()
+    public T30_t[] Wrapper_Read_Integer()
     {
         foreach (var t30 in _t30s)
         {
@@ -138,7 +138,7 @@ public class WarpperBenchmark
     }
 
     [Benchmark]
-    public T30_t[] Warpper_Write_Integer()
+    public T30_t[] Wrapper_Write_Integer()
     {
         foreach (var t30 in _t30s)
         {
@@ -151,7 +151,7 @@ public class WarpperBenchmark
     }
 
     [Benchmark]
-    public T30_t[] Warpper_Read_Decimal()
+    public T30_t[] Wrapper_Read_Decimal()
     {
         foreach (var t30 in _t30s)
         {
@@ -164,7 +164,7 @@ public class WarpperBenchmark
     }
 
     [Benchmark]
-    public T30_t[] Warpper_Write_Decimal()
+    public T30_t[] Wrapper_Write_Decimal()
     {
         foreach (var t30 in _t30s)
         {

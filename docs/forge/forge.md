@@ -1,5 +1,5 @@
 # Forge
-將 `Copybook` 中的 PICTURE / 資料欄位結構，轉換成 `CbWarpper` 的子類別。
+將 `Copybook` 中的 PICTURE / 資料欄位結構，轉換成 `CbWrapper` 的子類別。
 
 <br>
 
@@ -12,21 +12,21 @@ forge --copybook twse/t30-otc.cpy
 
 輸出結果:  
 ```bash
-New warpper class generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\T30Otc.cs"
+New wrapper class generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\T30Otc.cs"
 ```
 
 <br>
 
 <details>
-    <summary>產出的 Warpper Class 內容：</summary>
+    <summary>產出的 Wrapper Class 內容：</summary>
 
 ```csharp
-using GetThePicture.Copybook.Warpper;
-using GetThePicture.Copybook.Warpper.Base;
+using GetThePicture.Copybook.Wrapper;
+using GetThePicture.Copybook.Wrapper.Base;
 
 namespace GetThePicture;
 
-public class T30Otc_t(byte[] raw) : CbWarpper(raw)
+public class T30Otc_t(byte[] raw) : CbWrapper(raw)
 {
     // ----------------------------
     // Copybook Address Map
@@ -279,7 +279,7 @@ forge --copybook twse/t30-otc.cpy --verbose
 <br>
 
 <details>
-    <summary>產出的 Warpper Class 內容：</summary>
+    <summary>產出的 Wrapper Class 內容：</summary>
 
 ```bash
 ==== LAYOUT ====
@@ -338,7 +338,7 @@ COPYBOOK-STORAGE-MAP
   FILLER start=90 len=11 end=101
 ================
 
-New warpper class generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\T30Otc.cs"
+New wrapper class generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\T30Otc.cs"
 ```
 
 </details>

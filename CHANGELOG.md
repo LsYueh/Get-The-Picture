@@ -1,5 +1,18 @@
 # Changelog
 
+## [26.13.0] – 2026-02-20
+
+### ⚠️ Breaking Changes
+- 拼字錯誤修正: W**ar**pper >> W**ra**pper
+    - ⚠️ 所有使用 `CbWarpper` 的程式碼需改成 `CbWrapper`。
+
+### Changed
+- CbWrapper 的 `getter` 不再回傳 `nullable object`。
+    - Buffer 層應該要要永遠回傳對應的 CLR 型別，且無法再 COBOL 中找到對應 null 的用法。
+
+<br><br>
+
+
 ## [26.12.1] – 2026-02-20
 
 ### Added
@@ -94,9 +107,9 @@
 - 加速 Numeric Decoder/Encoder 計算。
     | Version | Method                | Mean      | Error     | StdDev    |
     |---------|---------------------- |----------:|----------:|----------:|
-    | 26.11.1 | Warpper_Write_Decimal | 23.445 μs | 0.0766 μs | 0.0717 μs |
-    | 26.11.2 | Warpper_Write_Decimal | 18.889 μs | 0.1028 μs | 0.0961 μs |
-    | 26.11.4 | Warpper_Write_Decimal |  9.463 μs | 0.0331 μs | 0.0276 μs |
+    | 26.11.1 | Wrapper_Write_Decimal | 23.445 μs | 0.0766 μs | 0.0717 μs |
+    | 26.11.2 | Wrapper_Write_Decimal | 18.889 μs | 0.1028 μs | 0.0961 μs |
+    | 26.11.4 | Wrapper_Write_Decimal |  9.463 μs | 0.0331 μs | 0.0276 μs |
 
 <br><br>
 
@@ -126,8 +139,8 @@
 - 對 PICTURE 子句內的 Decimal 編碼過程效能改善。
     | Version | Method                | Mean      | Error     | StdDev    |
     |---------|---------------------- |----------:|----------:|----------:|
-    | 26.11.1 | Warpper_Write_Decimal | 23.445 μs | 0.0766 μs | 0.0717 μs |
-    | 26.11.2 | Warpper_Write_Decimal | 18.889 μs | 0.1028 μs | 0.0961 μs |
+    | 26.11.1 | Wrapper_Write_Decimal | 23.445 μs | 0.0766 μs | 0.0717 μs |
+    | 26.11.2 | Wrapper_Write_Decimal | 18.889 μs | 0.1028 μs | 0.0961 μs |
 
 - 重構後的 **PicEncoder** 移除 `CobMeta` 過渡物件。
     - 與 **PicDecoder** 的架構看齊：先處理**語意資料**，再處理基本的 COBOL 資料格式。
@@ -149,13 +162,13 @@
     - **CbSerDes** 已標記為 `Obsolete`，不再作為建議的 `Copybook` 操作與序列化介面。
     - **namespace** 從 `GetThePicture.Copybook.SerDes` 改為 `GetThePicture.Obsolete.SerDes`。
 
-- ✅ 新增 Warpper 相關功能，並成為核心使用介面
+- ✅ 新增 Wrapper 相關功能，並成為核心使用介面
     - 更明確的資料記憶體映射
     - 與 Copybook 欄位一一對應的強型別屬性
     - 可預期的欄位存取行為
 
 - ✅ 新增 CLI 應用程式子專案：**Forge**
-    - 用於協助快速轉換 `Copybook` 成為 `CbWarpper` 的子類別。
+    - 用於協助快速轉換 `Copybook` 成為 `CbWrapper` 的子類別。
 
 <br><br>
 

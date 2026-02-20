@@ -127,7 +127,7 @@
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram id="0QP51vLPPPxPg2ltZTNh" name="warpper-work-flow">
+  <diagram id="0QP51vLPPPxPg2ltZTNh" name="wrapper-work-flow">
     <mxGraphModel dx="1426" dy="1668" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
       <root>
         <mxCell id="0" />
@@ -199,7 +199,7 @@
             <mxPoint x="526.22" y="240" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="aom09nALay6sKi96UFPn-18" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/blockchain/ABS_Member.svg;labelBackgroundColor=none;fontStyle=1" value="&lt;span style=&quot;&quot;&gt;Warpper&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color: rgb(66, 66, 66);&quot;&gt;Object&lt;/span&gt;" vertex="1">
+        <mxCell id="aom09nALay6sKi96UFPn-18" parent="1" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/blockchain/ABS_Member.svg;labelBackgroundColor=none;fontStyle=1" value="&lt;span style=&quot;&quot;&gt;Wrapper&lt;br&gt;&lt;/span&gt;&lt;span style=&quot;color: rgb(66, 66, 66);&quot;&gt;Object&lt;/span&gt;" vertex="1">
           <mxGeometry height="65" width="56.00000000000001" x="517" y="170" as="geometry" />
         </mxCell>
         <mxCell id="aom09nALay6sKi96UFPn-24" connectable="0" parent="1" style="group" value="" vertex="1">

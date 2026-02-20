@@ -4,7 +4,7 @@ using CommandLine;
 using GetThePicture.Copybook.Provider;
 using GetThePicture.Picture.Clause.Utils;
 
-using GetThePicture.Forge.Commands.Warpper;
+using GetThePicture.Forge.Commands.Wrapper;
 using GetThePicture.Forge.Core;
 
 
@@ -42,7 +42,7 @@ class Program
             return 1;
         }
 
-        WarpperCommand cmd = new ();
+        WrapperCommand cmd = new ();
 
         var provider = new DataProvider(new StreamReader(opts.Copybook.FullName, CP950));
 
@@ -62,7 +62,7 @@ class Program
         
         cmd.ForgeCode(provider, fileName);
 
-        Console.WriteLine($"New warpper class generated: \"{Path.GetFullPath($"{fileName}.cs")}\"");
+        Console.WriteLine($"New wrapper class generated: \"{Path.GetFullPath($"{fileName}.cs")}\"");
 
         return 0;
     }

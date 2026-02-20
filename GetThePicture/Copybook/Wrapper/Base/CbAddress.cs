@@ -1,7 +1,7 @@
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 
-namespace GetThePicture.Copybook.Warpper.Base;
+namespace GetThePicture.Copybook.Wrapper.Base;
 
 public readonly struct CbAddress
 {
