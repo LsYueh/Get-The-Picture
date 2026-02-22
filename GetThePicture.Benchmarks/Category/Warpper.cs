@@ -53,8 +53,8 @@ public class T30_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string StockNo
     {
-        get => (string)this["STOCK-NO"]!;
-        set => this["STOCK-NO"] = value;
+        get => this["STOCK-NO"].Get<string>();
+        set => this["STOCK-NO"].Set(value);
     }
 
     /// <summary>
@@ -62,8 +62,8 @@ public class T30_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public decimal BullPrice
     {
-        get => (decimal)this["BULL-PRICE"]!;
-        set => this["BULL-PRICE"] = value;
+        get => this["BULL-PRICE"].Get<decimal>();
+        set => this["BULL-PRICE"].Set(value);
     }
 
     /// <summary>
@@ -71,8 +71,8 @@ public class T30_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public uint LastMthDate
     {
-        get => (uint)this["LAST-MTH-DATE"]!;
-        set => this["LAST-MTH-DATE"] = value;
+        get => this["LAST-MTH-DATE"].Get<uint>();
+        set => this["LAST-MTH-DATE"].Set(value);
     }
 }
 

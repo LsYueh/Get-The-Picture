@@ -1,7 +1,42 @@
 using GetThePicture.Copybook.Wrapper.Base;
 using GetThePicture.Picture.Clause;
+using GetThePicture.Picture.Clause.Base.ClauseItems;
 
 namespace GetThePicture.Copybook.Wrapper;
+
+/// <summary>
+/// 表示 <see cref="CbWrapper"/> 中的單一欄位存取代理。
+/// <para>
+/// <c>CbField</c> 封裝指定欄位的位址資訊與讀寫行為，
+/// 提供型別安全的 <c>Get&lt;T&gt;()</c>、<c>Set&lt;T&gt;()</c>
+/// 以及 <c>Clear()</c> 操作。
+/// </para>
+/// <para>
+/// 此型別為 <see langword="readonly struct"/>，
+/// 設計為輕量級值型別，以避免在頻繁欄位操作時產生額外的堆積配置。
+/// </para>
+/// <para>
+/// 注意：欄位不支援 <c>null</c> 語意，
+/// 清除欄位時將依 PIC 類型寫入對應的預設值（例如 SPACES 或 ZEROS）。
+/// </para>
+/// </summary>
+public readonly struct CbField
+{
+    private readonly CbWrapper _wrapper;
+    private readonly CbAddress _addr;
+
+    internal CbField(CbWrapper wrapper, CbAddress addr)
+    {
+        _wrapper = wrapper;
+        _addr = addr;
+    }
+
+    public T Get<T>() => (T)_wrapper.Read(_addr);
+
+    public void Set<T>(T value) => _wrapper.Write(value!, _addr);
+
+    public void Clear() => CbWrapper.WriteDefault(_addr);
+}
 
 /// <summary>
 /// 抽象 Copybook wrapper base class
@@ -18,35 +53,54 @@ public abstract class CbWrapper : IWrapper
 
     /// <summary>
     /// 透過欄位名稱存取資料
+    /// <example>
     /// <code>
     /// var wrapper = CbWrapper(100);
     /// 
-    /// wrapper["FIELD1"] = 1234;
-    /// wrapper["FIELD2"] = "Hello!";
+    /// wrapper["FIELD1"].Set(1234);
+    /// wrapper["FIELD2"].Set("Hello!");
     /// 
-    /// int field1 = (int)wrapper["FIELD1"];
-    /// string field2 = (string)wrapper["FIELD2"];
+    /// int field1 = wrapper["FIELD1"].Get&lt;int&gt;();
+    /// string field2 = wrapper["FIELD2"].Get&lt;string&gt;();
     /// </code>
+    /// </example>
     /// </summary>
-    public object this[string name]
+    /// <param name="name">欄位名稱。</param>
+    /// <returns>對應的 <see cref="CbField"/>。</returns>
+    /// <exception cref="KeyNotFoundException">
+    /// 當指定欄位不存在時拋出。
+    /// </exception>
+    public CbField this[string name]
     {
         get
         {
             if (!AddressMap.TryGetValue(name, out var addr))
                 throw new KeyNotFoundException($"Field '{name}' does not exist.");
 
-            return Read(addr);
-        }
-        set
-        {
-            ArgumentNullException.ThrowIfNull(value);
-
-            if (!AddressMap.TryGetValue(name, out var addr))
-                throw new KeyNotFoundException($"Field '{name}' does not exist.");
-
-            _ = Write(value, addr);
+            return new CbField(this, addr);
         }
     }
+
+    /// <summary>
+    /// 依欄位名稱取得對應的 <see cref="CbField"/> 存取代理。
+    /// <para>
+    /// 此方法提供更具語意的欄位存取方式，
+    /// 適用於需要明確表達「操作欄位」語意的情境。
+    /// </para>
+    /// <para>
+    /// 與 <c>this[string]</c> 等價：
+    /// </para>
+    /// <code>
+    /// wrapper.Field("NAME").Set("HELLO");
+    /// var value = wrapper.Field("NAME").Get&lt;string&gt;();
+    /// </code>
+    /// </summary>
+    /// <param name="name">欄位名稱。</param>
+    /// <returns>對應的 <see cref="CbField"/>。</returns>
+    /// <exception cref="KeyNotFoundException">
+    /// 當指定欄位不存在時拋出。
+    /// </exception>
+    public CbField Field(string name) => this[name];
 
     // ----------------------------
     // Wrapper
@@ -89,7 +143,7 @@ public abstract class CbWrapper : IWrapper
     }
 
     /// <summary>讀取欄位值 (零複製)</summary>
-    protected object Read(CbAddress addr)
+    internal object Read(CbAddress addr)
     {
         var buffer = _raw.AsSpan(addr.Start, addr.Length);
 
@@ -98,7 +152,7 @@ public abstract class CbWrapper : IWrapper
     }
 
     /// <summary>寫入欄位值 (零複製)</summary>
-    protected int Write(object value, CbAddress addr)
+    internal int Write(object value, CbAddress addr)
     {
         Span<byte> bytes = PicClauseCodec.ForMeta(addr.Meta).WithStrict().Encode(value);
 
@@ -107,5 +161,35 @@ public abstract class CbWrapper : IWrapper
 
         bytes.CopyTo(_raw.AsSpan(addr.Start, addr.Length));
         return bytes.Length;
+    }
+
+    /// <summary>
+    /// 將指定欄位重設為其 COBOL 預設值。
+    /// <para>
+    /// 預設值將依 PIC 類型決定：
+    /// </para>
+    /// <list type="bullet">
+    /// <item>
+    /// <description>Alphabetic / Alphanumeric → SPACES</description>
+    /// </item>
+    /// <item>
+    /// <description>Numeric → ZEROS</description>
+    /// </item>
+    /// </list>
+    /// </summary>
+    /// <param name="addr"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    /// <exception cref="NotSupportedException"></exception>
+    internal static void WriteDefault(CbAddress addr)
+    {
+        var meta = addr.Meta;
+
+        throw meta.BaseClass switch
+        {
+            PicBaseClass.Alphabetic or
+            PicBaseClass.Alphanumeric => new NotImplementedException("Default value for Alphabetic/Alphanumeric is not implemented yet."),
+            PicBaseClass.Numeric      => new NotImplementedException("Default value for Numeric is not implemented yet."),
+            _ => new NotSupportedException(),
+        };
     }
 }
