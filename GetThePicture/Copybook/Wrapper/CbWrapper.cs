@@ -195,7 +195,7 @@ public abstract class CbWrapper : IWrapper
     /// <exception cref="NotSupportedException"></exception>
     internal int WriteDefault(CbAddress addr)
     {
-        Span<byte> bytes = PicClauseCodec.ForMeta(addr.Meta).WithStrict().Init();
+        Span<byte> bytes = PicClauseCodec.ForMeta(addr.Meta).WithStrict().CreateDefaultRepresentation();
 
         if (bytes.Length != addr.Length)
             throw new InvalidOperationException($"Initialized length {bytes.Length} does not match expected length {addr.Length}");

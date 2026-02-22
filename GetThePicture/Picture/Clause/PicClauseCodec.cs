@@ -133,7 +133,7 @@ public sealed class CodecContext(PicMeta meta)
     /// <returns>
     /// A newly allocated byte array containing the initialized representation.
     /// </returns>
-    public byte[] Init()
+    public byte[] CreateDefaultRepresentation()
     {
        return Initializer.Initialize(_picMeta, _options);
     }
