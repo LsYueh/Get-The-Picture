@@ -142,7 +142,11 @@ public abstract class CbWrapper : IWrapper
         }
     }
 
-    /// <summary>讀取欄位值 (零複製)</summary>
+    /// <summary>
+    /// 讀取欄位值
+    /// </summary>
+    /// <param name="addr"></param>
+    /// <returns></returns>
     internal object Read(CbAddress addr)
     {
         var buffer = _raw.AsSpan(addr.Start, addr.Length);
@@ -151,7 +155,13 @@ public abstract class CbWrapper : IWrapper
         return value;
     }
 
-    /// <summary>寫入欄位值 (零複製)</summary>
+    /// <summary>
+    /// 寫入欄位值
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="addr"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
     internal int Write(object value, CbAddress addr)
     {
         Span<byte> bytes = PicClauseCodec.ForMeta(addr.Meta).WithStrict().Encode(value);
@@ -182,14 +192,35 @@ public abstract class CbWrapper : IWrapper
     /// <exception cref="NotSupportedException"></exception>
     internal static void WriteDefault(CbAddress addr)
     {
-        var meta = addr.Meta;
+        var pic = addr.Meta;
 
-        throw meta.BaseClass switch
+        switch (pic.BaseClass)
         {
-            PicBaseClass.Alphabetic or
-            PicBaseClass.Alphanumeric => new NotImplementedException("Default value for Alphabetic/Alphanumeric is not implemented yet."),
-            PicBaseClass.Numeric      => new NotImplementedException("Default value for Numeric is not implemented yet."),
-            _ => new NotSupportedException(),
-        };
+            case PicBaseClass.Alphabetic:
+            case PicBaseClass.Alphanumeric:
+                WriteSpaces(addr);
+                break;
+
+            case PicBaseClass.Numeric:
+                WriteZeros(addr);
+                break;
+
+            default:
+                throw new NotSupportedException($"PIC base class '{pic.BaseClass}' is not supported.");
+        }
+    }
+
+    private static void WriteSpaces(CbAddress addr)
+    {
+        // PicClauseCodec.ForMeta(addr.Meta).WithStrict().Encode("");
+
+        throw new NotImplementedException("Default value for Alphabetic/Alphanumeric is not implemented yet.");
+    }
+
+    private static void WriteZeros(CbAddress addr)
+    {
+        // PicClauseCodec.ForMeta(addr.Meta).WithStrict().Encode(0);
+
+        throw new NotImplementedException("Default value for Numeric is not implemented yet.");
     }
 }
