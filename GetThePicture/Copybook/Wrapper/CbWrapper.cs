@@ -35,7 +35,7 @@ public readonly struct CbField
 
     public void Set<T>(T value) => _wrapper.Write(value!, _addr);
 
-    public void Clear() => CbWrapper.WriteDefault(_addr);
+    public void Clear() => _wrapper.WriteDefault(_addr);
 }
 
 /// <summary>
@@ -81,27 +81,6 @@ public abstract class CbWrapper : IWrapper
         }
     }
 
-    /// <summary>
-    /// 依欄位名稱取得對應的 <see cref="CbField"/> 存取代理。
-    /// <para>
-    /// 此方法提供更具語意的欄位存取方式，
-    /// 適用於需要明確表達「操作欄位」語意的情境。
-    /// </para>
-    /// <para>
-    /// 與 <c>this[string]</c> 等價：
-    /// </para>
-    /// <code>
-    /// wrapper.Field("NAME").Set("HELLO");
-    /// var value = wrapper.Field("NAME").Get&lt;string&gt;();
-    /// </code>
-    /// </summary>
-    /// <param name="name">欄位名稱。</param>
-    /// <returns>對應的 <see cref="CbField"/>。</returns>
-    /// <exception cref="KeyNotFoundException">
-    /// 當指定欄位不存在時拋出。
-    /// </exception>
-    public CbField Field(string name) => this[name];
-
     // ----------------------------
     // Wrapper
     // ----------------------------
@@ -126,13 +105,37 @@ public abstract class CbWrapper : IWrapper
     /// 以最大欄位的 (Start + Length) 為基準，
     /// Start 為 1-based，因此需扣除 1。
     /// </summary>
-    protected int RequiredBufferLength => AddressMap.Values.Max(a => a.Start + a.Length) - 1; // 1-based
+    private int RequiredBufferLength => AddressMap.Values.Max(a => a.Start + a.Length);
+
+    /// <summary>
+    /// 依欄位名稱取得對應的 <see cref="CbField"/> 存取代理。
+    /// <para>
+    /// 此方法提供更具語意的欄位存取方式，
+    /// 適用於需要明確表達「操作欄位」語意的情境。
+    /// </para>
+    /// <para>
+    /// 與 <c>this[string]</c> 等價：
+    /// </para>
+    /// <code>
+    /// wrapper.Field("NAME").Set("HELLO");
+    /// var value = wrapper.Field("NAME").Get&lt;string&gt;();
+    /// </code>
+    /// </summary>
+    /// <param name="name">欄位名稱。</param>
+    /// <returns>對應的 <see cref="CbField"/>。</returns>
+    /// <exception cref="KeyNotFoundException">
+    /// 當指定欄位不存在時拋出。
+    /// </exception>
+    public CbField Field(string name) => this[name];
+
+    private CbField[]? _fields;
+    public CbField[] Fields =>  _fields ??= [.. AddressMap.Values.Select(addr => new CbField(this, addr))];
 
     /// <summary>
     /// 驗證目前 Raw buffer 是否足以容納整個 Copybook 佈局 (AddressMap)。 <br/>
     /// 若長度不足，代表資料不完整或 Copybook 定義錯誤。
     /// </summary>
-    protected void ValidateLayout()
+    private void ValidateLayout()
     {
         int required = RequiredBufferLength;
 
@@ -190,37 +193,14 @@ public abstract class CbWrapper : IWrapper
     /// <param name="addr"></param>
     /// <exception cref="NotImplementedException"></exception>
     /// <exception cref="NotSupportedException"></exception>
-    internal static void WriteDefault(CbAddress addr)
+    internal int WriteDefault(CbAddress addr)
     {
-        var pic = addr.Meta;
+        Span<byte> bytes = PicClauseCodec.ForMeta(addr.Meta).WithStrict().Init();
 
-        switch (pic.BaseClass)
-        {
-            case PicBaseClass.Alphabetic:
-            case PicBaseClass.Alphanumeric:
-                WriteSpaces(addr);
-                break;
+        if (bytes.Length != addr.Length)
+            throw new InvalidOperationException($"Initialized length {bytes.Length} does not match expected length {addr.Length}");
 
-            case PicBaseClass.Numeric:
-                WriteZeros(addr);
-                break;
-
-            default:
-                throw new NotSupportedException($"PIC base class '{pic.BaseClass}' is not supported.");
-        }
-    }
-
-    private static void WriteSpaces(CbAddress addr)
-    {
-        // PicClauseCodec.ForMeta(addr.Meta).WithStrict().Encode("");
-
-        throw new NotImplementedException("Default value for Alphabetic/Alphanumeric is not implemented yet.");
-    }
-
-    private static void WriteZeros(CbAddress addr)
-    {
-        // PicClauseCodec.ForMeta(addr.Meta).WithStrict().Encode(0);
-
-        throw new NotImplementedException("Default value for Numeric is not implemented yet.");
+        bytes.CopyTo(_raw.AsSpan(addr.Start, addr.Length));
+        return bytes.Length;
     }
 }

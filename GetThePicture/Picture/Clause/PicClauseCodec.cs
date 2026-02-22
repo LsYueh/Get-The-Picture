@@ -118,4 +118,13 @@ public sealed class CodecContext(PicMeta meta)
 
         return Encoder.Encode(value, _picMeta, _options);
     }
+
+    /// <summary>
+    /// Init COBOL Elementary Item (buffer)
+    /// </summary>
+    /// <returns></returns>
+    public byte[] Init()
+    {
+       return Initializer.Initialize(_picMeta, _options);
+    }
 }

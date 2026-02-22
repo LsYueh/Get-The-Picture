@@ -6,7 +6,7 @@ using GetThePicture.Picture.Clause.Utils;
 
 namespace GetThePicture.Tests.Copybook.Wrapper;
 
-public class T30_t(byte[] raw) : CbWrapper(raw)
+public class T30_t(byte[]? raw = null) : CbWrapper(raw)
 {
     // ----------------------------
     // Copybook Address Map
@@ -132,7 +132,23 @@ public class CbWrapperTest
 
         var str = cp950.GetString(T30.Raw);
 
-         Assert.AreEqual(after, str);
+        Assert.AreEqual(after, str);
+    }
+
+    [TestMethod]
+    public void Wrapper_Default_Value()
+    {
+        var T30 = new T30_t();
+
+        foreach (var field in T30.Fields)
+        {
+            field.Clear();
+        }
+
+        var str = cp950.GetString(T30.Raw);
+
+        const string expected = "      00000000000000000000000000000000000                         000000000000000000                ";
+        Assert.AreEqual(expected, str);
     }
 
     [TestMethod]
