@@ -4,7 +4,7 @@ namespace GetThePicture.Copybook.Compiler.Layout;
 
 public sealed class RedefinesItem(
     int level, string name, string targetName,
-    string? comment = null) : GroupItem(level, name, null, comment)
+    string? comment = null) : GroupItem(level, name, null, false, comment)
 {
     // ----------------------------
     // REDEFINES

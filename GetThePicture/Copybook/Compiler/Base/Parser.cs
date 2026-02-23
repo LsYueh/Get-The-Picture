@@ -264,7 +264,7 @@ public class Parser(List<Token> tokens)
                 return new RedefinesItem(level, name, targetName, comment);
             
             if (pic is null)
-                return new GroupItem(level, name, occurs, comment);
+                return new GroupItem(level, name, occurs, isFiller, comment);
 
             var item = new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment);
             

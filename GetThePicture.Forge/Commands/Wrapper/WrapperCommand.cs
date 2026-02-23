@@ -22,7 +22,17 @@ public class WrapperCommand(WrapperOptions? opts = null)
 
     public void ForgeCode(IDataProvider provider, string fileName)
     {
-        _map = BuildFlatLeafMap(provider.GetStorage());
+        var storage = provider.GetStorage();
+
+        // 如果只有一個 Level 1 的 Group Item，就拿這個 Group Item 來當作 Class 的名稱
+        bool haveSingleLevel1 = TryResolveSingleLevel1Name(storage, out string? name);
+
+        if (haveSingleLevel1 && name != null)
+        {
+            fileName = name;
+        }
+        
+        _map = BuildFlatLeafMap(storage, haveSingleLevel1);
         
         using var w = new StreamWriter($"{fileName}.cs", false, Encoding.UTF8);
 
@@ -232,18 +242,29 @@ public class WrapperCommand(WrapperOptions? opts = null)
         };
     }
 
-    private static Dictionary<string, LeafNode> BuildFlatLeafMap(IStorageNode node)
+    private static Dictionary<string, LeafNode> BuildFlatLeafMap(IStorageNode node, bool ignoredLevelOne = false)
     {
         var dict = new Dictionary<string, LeafNode>();
 
         int fillerCount = 0;
 
-        void Walk(IStorageNode n, string parentPath)
+        void Walk(IStorageNode node, string? parentPath = null, IStorageNode? parentNode = null)
         {
-            // 如果有 Index (OCCURS)，就加上 (Index)
-            string fieldName = n.Index.HasValue ? $"{n.Name}({n.Index.Value})" : n.Name;
+            string localPath = node.Name;
+            
+            // 如果 parent 是 Unnamed Group Item，子節點要繼承 index
+            if (parentNode is GroupNode { Ignored: true, Index: not null } && parentNode.Index.HasValue)
+            {
+                localPath = $"{localPath}({parentNode.Index.Value})";
+            }
+            
+            // 如果自己是 OCCURS
+            if (node.Index.HasValue)
+            {
+                localPath = $"{localPath}({node.Index.Value})";
+            }
 
-            switch (n)
+            switch (node)
             {
                 case CbStorage root:
                 {
@@ -257,11 +278,15 @@ public class WrapperCommand(WrapperOptions? opts = null)
 
                 case GroupNode group:
                 {
-                    var groupPath = string.IsNullOrEmpty(parentPath) ? fieldName : $"{parentPath}::{fieldName}";
-                    
+                    string _path = string.IsNullOrEmpty(parentPath) ? localPath : $"{parentPath}::{localPath}";
+
+                    // Level 1 或 Unnamed Group Item 輸出處裡
+                    bool ignored = (group.Level == 1 && ignoredLevelOne) || group.Ignored;
+                    string? groupPath = ignored ? parentPath : _path;
+                                    
                     foreach (var child in group.Children)
                     {
-                        Walk(child, groupPath);
+                        Walk(child, groupPath, group);
                     }
                         
                     break;
@@ -276,7 +301,7 @@ public class WrapperCommand(WrapperOptions? opts = null)
                     }
                     else
                     {
-                        leafPath = string.IsNullOrEmpty(parentPath) ? fieldName : $"{parentPath}::{fieldName}";
+                        leafPath = string.IsNullOrEmpty(parentPath) ? localPath : $"{parentPath}::{localPath}";
                     }
 
                     if (dict.ContainsKey(leafPath))
@@ -287,12 +312,72 @@ public class WrapperCommand(WrapperOptions? opts = null)
                     break;
 
                 default:
-                    throw new InvalidOperationException($"Unsupported storage node type: {n.GetType().Name}");
+                    throw new InvalidOperationException($"Unsupported storage node type: {node.GetType().Name}");
             }
         }
 
-        Walk(node, string.Empty);
+        Walk(node);
 
         return dict;
+    }
+
+    /// <summary>
+    /// Try to retrieve the Level 1 node file name from the storage. <br/>
+    /// <br/>
+    /// Rules: <br/>
+    /// - Only succeeds when Level 1 node count is 1. <br/>
+    /// - If more than 2 Level 1 nodes exist, the operation is considered invalid. <br/>
+    /// - Returns the name of the first Level 1 node when valid. <br/>
+    /// <br/>
+    /// Design Notes: <br/>
+    /// - Early exit is applied when Level 1 node count exceeds 1. <br/>
+    /// - Avoids full dictionary traversal when possible. <br/>
+    /// </summary>
+    private static bool TryResolveSingleLevel1Name(IStorageNode storage, out string? name)
+    {
+        ArgumentNullException.ThrowIfNull(storage);
+
+        int count = 0;
+        IStorageNode? level1 = null;
+
+        bool stopTraversal = false;
+
+        void WalkLevel1(IStorageNode node)
+        {
+            if (stopTraversal) return;
+            
+            if (node.Level == 1)
+            {
+                count++;
+
+                if (count == 1)
+                    level1 = node;
+
+                if (count > 1)
+                {
+                    stopTraversal = true;
+                    return;
+                }
+            }
+
+            switch (node)
+            {
+                case CbStorage root:
+                    foreach (var child in root.Children)
+                        WalkLevel1(child);
+                    break;
+
+                case GroupNode group:
+                    foreach (var child in group.Children)
+                        WalkLevel1(child);
+                    break;
+            }
+        }
+
+        WalkLevel1(storage);
+
+        name = (count == 1 && level1 != null) ? level1.Name : null;
+
+        return name != null;
     }
 }
