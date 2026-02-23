@@ -1,5 +1,9 @@
 # Forge
-將 `Copybook` 中的 PICTURE / 資料欄位結構，轉換成 `CbWrapper` 的子類別。
+將 Copybook 中的 PICTURE（資料欄位結構）轉換為 `CbWrapper` 的子類別實作。  
+
+Forge 會依據 Storage Tree 中 `Level 1` 節點的唯一性判斷，決定是否縮減生成的屬性名稱。  
+
+若 Copybook 內僅存在單一個 Level 1 Group Item，則會自動以該節點名稱作為 Wrapper Class 名稱基底，並在屬性生成時**省略該層級前綴**，以提升程式碼可讀性。  
 
 <br>
 
@@ -7,12 +11,12 @@
 
 使用 `--copybook` 指定要轉換的 Copybook  
 ```bash
-forge --copybook twse/t30-otc.cpy
+forge --copybook Copybooks/t30-otc.cpy
 ```
 
 輸出結果:  
 ```bash
-New wrapper class generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\T30Otc.cs"
+New wrapper class generated: "D:\Projects\get-the-picture\GetThePicture.Forge\T30Otc.cs"
 ```
 
 <br>
@@ -68,8 +72,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string StockNo
     {
-        get => (string)this["STOCK-NO"]!;
-        set => this["STOCK-NO"] = value;
+        get => this["STOCK-NO"].Get<string>();
+        set => this["STOCK-NO"].Set(value);
     }
 
     /// <summary>
@@ -77,8 +81,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public decimal BullPrice
     {
-        get => (decimal)this["BULL-PRICE"]!;
-        set => this["BULL-PRICE"] = value;
+        get => this["BULL-PRICE"].Get<decimal>();
+        set => this["BULL-PRICE"].Set(value);
     }
 
     /// <summary>
@@ -86,8 +90,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public decimal LdcPrice
     {
-        get => (decimal)this["LDC-PRICE"]!;
-        set => this["LDC-PRICE"] = value;
+        get => this["LDC-PRICE"].Get<decimal>();
+        set => this["LDC-PRICE"].Set(value);
     }
 
     /// <summary>
@@ -95,8 +99,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public decimal BearPrice
     {
-        get => (decimal)this["BEAR-PRICE"]!;
-        set => this["BEAR-PRICE"] = value;
+        get => this["BEAR-PRICE"].Get<decimal>();
+        set => this["BEAR-PRICE"].Set(value);
     }
 
     /// <summary>
@@ -104,8 +108,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public uint LastMthDate
     {
-        get => (uint)this["LAST-MTH-DATE"]!;
-        set => this["LAST-MTH-DATE"] = value;
+        get => this["LAST-MTH-DATE"].Get<uint>();
+        set => this["LAST-MTH-DATE"].Set(value);
     }
 
     /// <summary>
@@ -113,8 +117,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string Settype
     {
-        get => (string)this["SETTYPE"]!;
-        set => this["SETTYPE"] = value;
+        get => this["SETTYPE"].Get<string>();
+        set => this["SETTYPE"].Set(value);
     }
 
     /// <summary>
@@ -122,8 +126,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string MarkW
     {
-        get => (string)this["MARK-W"]!;
-        set => this["MARK-W"] = value;
+        get => this["MARK-W"].Get<string>();
+        set => this["MARK-W"].Set(value);
     }
 
     /// <summary>
@@ -131,8 +135,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string MarkP
     {
-        get => (string)this["MARK-P"]!;
-        set => this["MARK-P"] = value;
+        get => this["MARK-P"].Get<string>();
+        set => this["MARK-P"].Set(value);
     }
 
     /// <summary>
@@ -140,8 +144,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string MarkL
     {
-        get => (string)this["MARK-L"]!;
-        set => this["MARK-L"] = value;
+        get => this["MARK-L"].Get<string>();
+        set => this["MARK-L"].Set(value);
     }
 
     /// <summary>
@@ -149,8 +153,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string IndCode
     {
-        get => (string)this["IND-CODE"]!;
-        set => this["IND-CODE"] = value;
+        get => this["IND-CODE"].Get<string>();
+        set => this["IND-CODE"].Set(value);
     }
 
     /// <summary>
@@ -158,8 +162,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string IndSubCode
     {
-        get => (string)this["IND-SUB-CODE"]!;
-        set => this["IND-SUB-CODE"] = value;
+        get => this["IND-SUB-CODE"].Get<string>();
+        set => this["IND-SUB-CODE"].Set(value);
     }
 
     /// <summary>
@@ -167,8 +171,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string MarkM
     {
-        get => (string)this["MARK-M"]!;
-        set => this["MARK-M"] = value;
+        get => this["MARK-M"].Get<string>();
+        set => this["MARK-M"].Set(value);
     }
 
     /// <summary>
@@ -176,8 +180,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string StockName
     {
-        get => (string)this["STOCK-NAME"]!;
-        set => this["STOCK-NAME"] = value;
+        get => this["STOCK-NAME"].Get<string>();
+        set => this["STOCK-NAME"].Set(value);
     }
 
     /// <summary>
@@ -185,8 +189,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public ushort MarkWDetails_MatchInterval
     {
-        get => (ushort)this["MARK-W-DETAILS::MATCH-INTERVAL"]!;
-        set => this["MARK-W-DETAILS::MATCH-INTERVAL"] = value;
+        get => this["MARK-W-DETAILS::MATCH-INTERVAL"].Get<ushort>();
+        set => this["MARK-W-DETAILS::MATCH-INTERVAL"].Set(value);
     }
 
     /// <summary>
@@ -194,8 +198,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public uint MarkWDetails_OrderLimit
     {
-        get => (uint)this["MARK-W-DETAILS::ORDER-LIMIT"]!;
-        set => this["MARK-W-DETAILS::ORDER-LIMIT"] = value;
+        get => this["MARK-W-DETAILS::ORDER-LIMIT"].Get<uint>();
+        set => this["MARK-W-DETAILS::ORDER-LIMIT"].Set(value);
     }
 
     /// <summary>
@@ -203,8 +207,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public uint MarkWDetails_OrdersLimit
     {
-        get => (uint)this["MARK-W-DETAILS::ORDERS-LIMIT"]!;
-        set => this["MARK-W-DETAILS::ORDERS-LIMIT"] = value;
+        get => this["MARK-W-DETAILS::ORDERS-LIMIT"].Get<uint>();
+        set => this["MARK-W-DETAILS::ORDERS-LIMIT"].Set(value);
     }
 
     /// <summary>
@@ -212,8 +216,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public ushort MarkWDetails_PrepayRate
     {
-        get => (ushort)this["MARK-W-DETAILS::PREPAY-RATE"]!;
-        set => this["MARK-W-DETAILS::PREPAY-RATE"] = value;
+        get => this["MARK-W-DETAILS::PREPAY-RATE"].Get<ushort>();
+        set => this["MARK-W-DETAILS::PREPAY-RATE"].Set(value);
     }
 
     /// <summary>
@@ -221,8 +225,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string MarkS
     {
-        get => (string)this["MARK-S"]!;
-        set => this["MARK-S"] = value;
+        get => this["MARK-S"].Get<string>();
+        set => this["MARK-S"].Set(value);
     }
 
     /// <summary>
@@ -230,8 +234,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string StkMark
     {
-        get => (string)this["STK-MARK"]!;
-        set => this["STK-MARK"] = value;
+        get => this["STK-MARK"].Get<string>();
+        set => this["STK-MARK"].Set(value);
     }
 
     /// <summary>
@@ -239,8 +243,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string MarkF
     {
-        get => (string)this["MARK-F"]!;
-        set => this["MARK-F"] = value;
+        get => this["MARK-F"].Get<string>();
+        set => this["MARK-F"].Set(value);
     }
 
     /// <summary>
@@ -248,8 +252,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string MarkDayTrade
     {
-        get => (string)this["MARK-DAY-TRADE"]!;
-        set => this["MARK-DAY-TRADE"] = value;
+        get => this["MARK-DAY-TRADE"].Get<string>();
+        set => this["MARK-DAY-TRADE"].Set(value);
     }
 
     /// <summary>
@@ -257,8 +261,8 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
     /// </summary>
     public string StkCtgcd
     {
-        get => (string)this["STK-CTGCD"]!;
-        set => this["STK-CTGCD"] = value;
+        get => this["STK-CTGCD"].Get<string>();
+        set => this["STK-CTGCD"].Set(value);
     }
 }
 ```
@@ -273,7 +277,7 @@ public class T30Otc_t(byte[] raw) : CbWrapper(raw)
 額外顯示 Copybook 解析後的資料綱要內容
 
 ```bash
-forge --copybook twse/t30-otc.cpy --verbose
+forge --copybook Copybooks/t30-otc.cpy --verbose
 ```
 
 <br>
@@ -284,61 +288,61 @@ forge --copybook twse/t30-otc.cpy --verbose
 ```bash
 ==== LAYOUT ====
 COPYBOOK-LAYOUT
-  1 STOCK-NO [股票代號] >> PIC: [X(6)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=6, Dec=0, Len=6, Usage='Display'
-  1 BULL-PRICE [漲停價] >> PIC: [9(5)V9(4)] Class='Numeric' (Semantic='None'), Signed=False, Int=5, Dec=4, Len=9, Usage='Display'
-  1 LDC-PRICE [開盤競價基準] >> PIC: [9(5)V9(4)] Class='Numeric' (Semantic='None'), Signed=False, Int=5, Dec=4, Len=9, Usage='Display'
-  1 BEAR-PRICE [跌停價] >> PIC: [9(5)V9(4)] Class='Numeric' (Semantic='None'), Signed=False, Int=5, Dec=4, Len=9, Usage='Display'
-  1 LAST-MTH-DATE [上次成交日] >> PIC: [9(8)] Class='Numeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
-  1 SETTYPE [交易方式] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
-  1 MARK-W [處置股票註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
-  1 MARK-P [注意股票註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
-  1 MARK-L [委託限制註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
-  1 IND-CODE [產業別代碼] >> PIC: [X(02)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=2, Dec=0, Len=2, Usage='Display'
-  1 IND-SUB-CODE [證券別代碼] >> PIC: [X(02)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=2, Dec=0, Len=2, Usage='Display'
-  1 MARK-M [豁免平盤下融券賣出註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
-  1 STOCK-NAME [股票中文名稱] >> PIC: [X(16)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=16, Dec=0, Len=16, Usage='Display'
-  1 MARK-W-DETAILS [處置股票資訊]
-    2 MATCH-INTERVAL [撮合循環時間（分）] >> PIC: [9(03)] Class='Numeric' (Semantic='None'), Signed=False, Int=3, Dec=0, Len=3, Usage='Display'
-    2 ORDER-LIMIT [單筆委託限制數量（張）] >> PIC: [9(06)] Class='Numeric' (Semantic='None'), Signed=False, Int=6, Dec=0, Len=6, Usage='Display'
-    2 ORDERS-LIMIT [多筆委託限制數量（張）] >> PIC: [9(06)] Class='Numeric' (Semantic='None'), Signed=False, Int=6, Dec=0, Len=6, Usage='Display'
-    2 PREPAY-RATE [款券預收成數（%）] >> PIC: [9(03)] Class='Numeric' (Semantic='None'), Signed=False, Int=3, Dec=0, Len=3, Usage='Display'
-  1 MARK-S [豁免平盤下借券賣出註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
-  1 STK-MARK [類股註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
-  1 MARK-F [面額註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
-  1 MARK-DAY-TRADE [可現股當沖註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
-  1 STK-CTGCD [板別註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
-  1 FILLER >> PIC: [X(11)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=11, Dec=0, Len=11, Usage='Display'
+  01 STOCK-NO [股票代號] >> PIC: [X(6)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=6, Dec=0, Len=6, Usage='Display'
+  01 BULL-PRICE [漲停價] >> PIC: [9(5)V9(4)] Class='Numeric' (Semantic='None'), Signed=False, Int=5, Dec=4, Len=9, Usage='Display'
+  01 LDC-PRICE [開盤競價基準] >> PIC: [9(5)V9(4)] Class='Numeric' (Semantic='None'), Signed=False, Int=5, Dec=4, Len=9, Usage='Display'
+  01 BEAR-PRICE [跌停價] >> PIC: [9(5)V9(4)] Class='Numeric' (Semantic='None'), Signed=False, Int=5, Dec=4, Len=9, Usage='Display'
+  01 LAST-MTH-DATE [上次成交日] >> PIC: [9(8)] Class='Numeric' (Semantic='None'), Signed=False, Int=8, Dec=0, Len=8, Usage='Display'
+  01 SETTYPE [交易方式] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
+  01 MARK-W [處置股票註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
+  01 MARK-P [注意股票註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
+  01 MARK-L [委託限制註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
+  01 IND-CODE [產業別代碼] >> PIC: [X(02)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=2, Dec=0, Len=2, Usage='Display'
+  01 IND-SUB-CODE [證券別代碼] >> PIC: [X(02)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=2, Dec=0, Len=2, Usage='Display'
+  01 MARK-M [豁免平盤下融券賣出註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
+  01 STOCK-NAME [股票中文名稱] >> PIC: [X(16)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=16, Dec=0, Len=16, Usage='Display'
+  01 MARK-W-DETAILS [處置股票資訊]
+    02 MATCH-INTERVAL [撮合循環時間（分）] >> PIC: [9(03)] Class='Numeric' (Semantic='None'), Signed=False, Int=3, Dec=0, Len=3, Usage='Display'
+    02 ORDER-LIMIT [單筆委託限制數量（張）] >> PIC: [9(06)] Class='Numeric' (Semantic='None'), Signed=False, Int=6, Dec=0, Len=6, Usage='Display'
+    02 ORDERS-LIMIT [多筆委託限制數量（張）] >> PIC: [9(06)] Class='Numeric' (Semantic='None'), Signed=False, Int=6, Dec=0, Len=6, Usage='Display'
+    02 PREPAY-RATE [款券預收成數（%）] >> PIC: [9(03)] Class='Numeric' (Semantic='None'), Signed=False, Int=3, Dec=0, Len=3, Usage='Display'
+  01 MARK-S [豁免平盤下借券賣出註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
+  01 STK-MARK [類股註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
+  01 MARK-F [面額註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
+  01 MARK-DAY-TRADE [可現股當沖註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
+  01 STK-CTGCD [板別註記] >> PIC: [X(01)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=1, Dec=0, Len=1, Usage='Display'
+  01 FILLER >> PIC: [X(11)] Class='Alphanumeric' (Semantic='None'), Signed=False, Int=11, Dec=0, Len=11, Usage='Display'
 ================
 
 ==== Storage ====
 COPYBOOK-STORAGE-MAP
-  STOCK-NO start=1 len=6 end=7
-  BULL-PRICE start=7 len=9 end=16
-  LDC-PRICE start=16 len=9 end=25
-  BEAR-PRICE start=25 len=9 end=34
-  LAST-MTH-DATE start=34 len=8 end=42
-  SETTYPE start=42 len=1 end=43
-  MARK-W start=43 len=1 end=44
-  MARK-P start=44 len=1 end=45
-  MARK-L start=45 len=1 end=46
-  IND-CODE start=46 len=2 end=48
-  IND-SUB-CODE start=48 len=2 end=50
-  MARK-M start=50 len=1 end=51
-  STOCK-NAME start=51 len=16 end=67
-  MARK-W-DETAILS start=67
-    MATCH-INTERVAL start=67 len=3 end=70
-    ORDER-LIMIT start=70 len=6 end=76
-    ORDERS-LIMIT start=76 len=6 end=82
-    PREPAY-RATE start=82 len=3 end=85
-  MARK-S start=85 len=1 end=86
-  STK-MARK start=86 len=1 end=87
-  MARK-F start=87 len=1 end=88
-  MARK-DAY-TRADE start=88 len=1 end=89
-  STK-CTGCD start=89 len=1 end=90
-  FILLER start=90 len=11 end=101
+  01 STOCK-NO start=1 len=6 end=7
+  01 BULL-PRICE start=7 len=9 end=16
+  01 LDC-PRICE start=16 len=9 end=25
+  01 BEAR-PRICE start=25 len=9 end=34
+  01 LAST-MTH-DATE start=34 len=8 end=42
+  01 SETTYPE start=42 len=1 end=43
+  01 MARK-W start=43 len=1 end=44
+  01 MARK-P start=44 len=1 end=45
+  01 MARK-L start=45 len=1 end=46
+  01 IND-CODE start=46 len=2 end=48
+  01 IND-SUB-CODE start=48 len=2 end=50
+  01 MARK-M start=50 len=1 end=51
+  01 STOCK-NAME start=51 len=16 end=67
+  01 MARK-W-DETAILS start=67
+    02 MATCH-INTERVAL start=67 len=3 end=70
+    02 ORDER-LIMIT start=70 len=6 end=76
+    02 ORDERS-LIMIT start=76 len=6 end=82
+    02 PREPAY-RATE start=82 len=3 end=85
+  01 MARK-S start=85 len=1 end=86
+  01 STK-MARK start=86 len=1 end=87
+  01 MARK-F start=87 len=1 end=88
+  01 MARK-DAY-TRADE start=88 len=1 end=89
+  01 STK-CTGCD start=89 len=1 end=90
+  01 FILLER start=90 len=11 end=101
 ================
 
-New wrapper class generated: "D:\Projects\get-the-picture\GetThePicture.Tests\TestData\T30Otc.cs"
+New wrapper class generated: "D:\Projects\get-the-picture\GetThePicture.Forge\T30Otc.cs"
 ```
 
 </details>
