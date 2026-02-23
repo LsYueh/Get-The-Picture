@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GetThePicture.TestData\GetThePicture.TestData.csproj" />
     <ProjectReference Include="..\GetThePicture\GetThePicture.csproj" />
   </ItemGroup>
 
@@ -25,9 +26,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestData\**">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+    <None Include="..\TestData\**\*.*" Link="TestData\%(RecursiveDir)%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

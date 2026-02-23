@@ -3,6 +3,7 @@ using System.Text;
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.TestData;
 
 namespace GetThePicture.Tests.Copybook.Compiler;
 
@@ -14,7 +15,7 @@ public class CbCompilerTest
     [TestMethod]
     public void Copybook_Compiler_Test_01()
     {        
-        const string filePath = @"TestData/sample-cobol-copybook.cpy";
+        string filePath = TestFileProvider.GetPath("sample-cobol-copybook.cpy");
         using var sr = new StreamReader(filePath, cp950);
 
         CbLayout layout = CbCompiler.FromStreamReader(sr);
@@ -41,7 +42,7 @@ public class CbCompilerTest
     [TestMethod]
     public void Copybook_Compiler_Test_02()
     {
-        const string filePath = @"TestData/employee-record-with-levle-88.cpy";
+        string filePath = TestFileProvider.GetPath("employee-record-with-levle-88.cpy");
         using var sr = new StreamReader(filePath, cp950);
 
         CbLayout layout = CbCompiler.FromStreamReader(sr);
