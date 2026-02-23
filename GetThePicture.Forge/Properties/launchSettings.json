@@ -3,14 +3,14 @@
     "profiles": {
         "Debug": {
             "commandName": "Project",
-            "workingDirectory": "$(ProjectDir)/../GetThePicture.Tests/TestData",
+            "workingDirectory": "$(ProjectDir)/",
             "dotnetRunMessages": true,
             "launchBrowser": false,
             "applicationUrl": null,
             "environmentVariables": {
                 "DOTNET_ENVIRONMENT": "Development"
             },
-            "commandLineArgs": "--copybook twse/m02.cpy --verbose"
+            "commandLineArgs": "--copybook ../Copybooks/m02.cpy --verbose"
         },
     }
 }
