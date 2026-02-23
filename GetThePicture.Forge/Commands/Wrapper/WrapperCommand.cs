@@ -9,6 +9,7 @@ using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
 
 using GetThePicture.Forge.Core;
+using GetThePicture.Forge.Commands.Wrapper.Base;
 
 namespace GetThePicture.Forge.Commands.Wrapper;
 
@@ -248,20 +249,20 @@ public class WrapperCommand(WrapperOptions? opts = null)
 
         int fillerCount = 0;
 
-        void Walk(IStorageNode node, string? parentPath = null, IStorageNode? parentNode = null)
+        void Walk(IStorageNode node, IReadOnlyList<PathSegment> parentPath, IStorageNode? parentNode = null)
         {
-            string localPath = node.Name;
+            PathSegment localPath = new(node.Name);
             
             // 如果 parent 是 Unnamed Group Item，子節點要繼承 index
-            if (parentNode is GroupNode { Ignored: true, Index: not null } && parentNode.Index.HasValue)
+            if (parentNode is GroupNode { Ignored: true, Index: int index })
             {
-                localPath = $"{localPath}({parentNode.Index.Value})";
+                localPath.AddIndex(index);
             }
             
             // 如果自己是 OCCURS
             if (node.Index.HasValue)
             {
-                localPath = $"{localPath}({node.Index.Value})";
+                localPath.AddIndex(node.Index.Value);
             }
 
             switch (node)
@@ -271,18 +272,21 @@ public class WrapperCommand(WrapperOptions? opts = null)
                     foreach (var child in root.Children)
                     {
                         // COPYBOOK-STORAGE-MAP 要排除
-                        Walk(child, string.Empty);
+                        Walk(child, []);
                     }
                     break;
                 }
 
                 case GroupNode group:
                 {
-                    string _path = string.IsNullOrEmpty(parentPath) ? localPath : $"{parentPath}::{localPath}";
-
                     // Level 1 或 Unnamed Group Item 輸出處裡
                     bool ignored = (group.Level == 1 && ignoredLevelOne) || group.Ignored;
-                    string? groupPath = ignored ? parentPath : _path;
+                    
+                    List<PathSegment> currentPath = (parentPath.Count == 0)
+                        ? [localPath]
+                        : [.. parentPath, localPath];
+                    
+                    List<PathSegment> groupPath = ignored ? [.. parentPath] : currentPath;
                                     
                     foreach (var child in group.Children)
                     {
@@ -293,32 +297,39 @@ public class WrapperCommand(WrapperOptions? opts = null)
                 }   
 
                 case LeafNode leaf:
-                    string leafPath;
-
-                    if (leaf.Ignored) // FILLER 
+                {
+                    if (leaf.Ignored) // FILLER
                     {
-                        leafPath = $"FILLER{++fillerCount:D2}"; // FILLER01, FILLER02 ...
-                    }
-                    else
-                    {
-                        leafPath = string.IsNullOrEmpty(parentPath) ? localPath : $"{parentPath}::{localPath}";
+                        string fillerName = $"FILLER{++fillerCount:D2}";
+                        dict.Add(fillerName, leaf);
+                        return;
                     }
 
-                    if (dict.ContainsKey(leafPath))
-                        throw new InvalidOperationException($"Duplicate leaf path: {leafPath}");
+                    List<PathSegment> currentPath = (parentPath.Count == 0)
+                        ? [localPath]
+                        : [.. parentPath, localPath];
 
-                    dict.Add(leafPath, leaf);
+                    string fullPath = FormatPath(currentPath);
+
+                    if (!dict.TryAdd(fullPath, leaf))
+                        throw new InvalidOperationException($"Duplicate leaf path: {fullPath}");
 
                     break;
+                }
 
                 default:
                     throw new InvalidOperationException($"Unsupported storage node type: {node.GetType().Name}");
             }
         }
 
-        Walk(node);
+        Walk(node, []);
 
         return dict;
+    }
+
+    private static string FormatPath(IEnumerable<PathSegment> segments)
+    {
+        return string.Join("::", segments);
     }
 
     /// <summary>
