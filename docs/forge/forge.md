@@ -283,7 +283,7 @@ forge --copybook Copybooks/t30-otc.cpy --verbose
 <br>
 
 <details>
-    <summary>產出的 Wrapper Class 內容：</summary>
+    <summary>輸出的 verbose 內容：</summary>
 
 ```bash
 ==== LAYOUT ====
