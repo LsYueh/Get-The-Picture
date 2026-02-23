@@ -40,7 +40,7 @@ public class WrapperCommand(WrapperOptions? opts = null)
     {
         var indent = Indent(indentLevel);
 
-        w.WriteLine($"{indent}public class {className}_t(byte[] raw) : CbWrapper(raw)");
+        w.WriteLine($"{indent}public class {className}_t(byte[]? raw = null) : CbWrapper(raw)");
         w.WriteLine($"{indent}{{");
 
         ForgeAddressMap(w, indentLevel + 1);
@@ -165,8 +165,8 @@ public class WrapperCommand(WrapperOptions? opts = null)
     {
         var indent = Indent(indentLevel);
 
-        w.WriteLine($"{indent}get => ({clrType})this[\"{keyName}\"]!;");
-        w.WriteLine($"{indent}set => this[\"{keyName}\"] = value;");
+        w.WriteLine($"{indent}get => this[\"{keyName}\"].Get<{clrType}>();");
+        w.WriteLine($"{indent}set => this[\"{keyName}\"].Set(value);");
     }
 
     /// <summary>
