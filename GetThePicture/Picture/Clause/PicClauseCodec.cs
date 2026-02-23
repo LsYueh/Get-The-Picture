@@ -118,4 +118,23 @@ public sealed class CodecContext(PicMeta meta)
 
         return Encoder.Encode(value, _picMeta, _options);
     }
+
+    /// <summary>
+    /// Creates the default byte representation for a COBOL elementary item <br/>
+    /// based on its PICTURE clause and codec options.
+    /// </summary>
+    /// <remarks>
+    /// The returned buffer contains the initialized (default) value: <br/>
+    /// - Numeric types are initialized to zero. <br/>
+    /// - Alphanumeric and alphabetic types are initialized to spaces. <br/>
+    /// The exact representation depends on the underlying codec <br/>
+    /// (e.g., DISPLAY, COMP-3, COMP-5).
+    /// </remarks>
+    /// <returns>
+    /// A newly allocated byte array containing the initialized representation.
+    /// </returns>
+    public byte[] CreateDefaultRepresentation()
+    {
+       return Initializer.Initialize(_picMeta, _options);
+    }
 }

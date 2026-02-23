@@ -9,5 +9,5 @@ public interface IWrapper
     byte[] Raw { get; }
 
     /// <summary>透過欄位名稱讀寫資料</summary>
-    object this[string name] { get; set; }
+    CbField this[string name] { get; }
 }

@@ -39,7 +39,7 @@ public static class Encoder
         return normalized;
     }
 
-    private static byte[] EncodeBaseType(object value, PicMeta pic, CodecOptions options)
+    internal static byte[] EncodeBaseType(object value, PicMeta pic, CodecOptions options)
     {
         byte[] normalized;
 

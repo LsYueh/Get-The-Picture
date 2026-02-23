@@ -516,12 +516,12 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 
 | Method                | Mean     | Error     | StdDev    |
 |---------------------- |---------:|----------:|----------:|
-| Wrapper_Read_String   | 4.418 μs | 0.0156 μs | 0.0130 μs |
-| Wrapper_Write_String  | 4.265 μs | 0.0273 μs | 0.0255 μs |
-| Wrapper_Read_Integer  | 4.410 μs | 0.0364 μs | 0.0341 μs |
-| Wrapper_Write_Integer | 5.406 μs | 0.0152 μs | 0.0134 μs |
-| Wrapper_Read_Decimal  | 5.865 μs | 0.0434 μs | 0.0339 μs |
-| Wrapper_Write_Decimal | 9.547 μs | 0.0875 μs | 0.0775 μs |
+| Wrapper_Read_String   | 4.703 μs | 0.0660 μs | 0.0618 μs |
+| Wrapper_Write_String  | 4.413 μs | 0.0258 μs | 0.0241 μs |
+| Wrapper_Read_Integer  | 4.613 μs | 0.0311 μs | 0.0291 μs |
+| Wrapper_Write_Integer | 5.609 μs | 0.0249 μs | 0.0233 μs |
+| Wrapper_Read_Decimal  | 6.050 μs | 0.0553 μs | 0.0490 μs |
+| Wrapper_Write_Decimal | 9.828 μs | 0.0362 μs | 0.0302 μs |
 
 > ⚠️ T30 的資料內沒有進行 `COMP`，目前的 Wrapper 跑分算是 Best Case。  
 > ⚠️ Wrapper 只做**單筆欄位**讀取。  

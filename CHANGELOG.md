@@ -1,5 +1,46 @@
 # Changelog
 
+## [26.14.0] – 2026-02-23
+
+### ⚠️ Breaking Changes
+- `CbWrapper` 的欄位存取方式已重構。
+    - 原本使用：
+        ```csharp
+        object this[string name] { get; set; }
+        ```
+      現在改為回傳欄位代理型別：
+        ```csharp
+        CbField this[string name] { get; }
+        ```
+
+- 欄位值的讀寫改為使用**泛型**方法，以提升型別安全性。
+    - 舊寫法：
+        ```csharp
+        public string StockNo
+        {
+            get => (string)this["STOCK-NO"]!;
+            set => this["STOCK-NO"] = value;
+        }
+        ```
+      新寫法：
+        ```csharp
+        public string StockNo
+        {
+            get => this["STOCK-NO"].Get<string>();
+            set => this["STOCK-NO"].Set(value);
+        }
+        ```
+      呼叫端現在必須明確指定型別，避免執行期轉型錯誤。
+
+### Added
+- Picture Clause Codec 新增 `Initializer` 機制，用於根據 PIC 子句規則產生欄位的預設值。
+    - 將原本分散於 `CbField` / `CbWrapper` 的初始化邏輯集中至 Codec 層。
+    - 在資料交換回 COBOL 系統時，欄位的預設內容必須符合子句與儲存格式規範，否則可能導致主機端解析錯誤。
+        - 主要因應證券申報作業，例如 ETF 申購買回等業務，對資料正確性的嚴格要求。
+
+<br><br>
+
+
 ## [26.13.0] – 2026-02-20
 
 ### ⚠️ Breaking Changes
