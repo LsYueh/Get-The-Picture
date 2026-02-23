@@ -140,11 +140,6 @@ public class CbWrapperTest
     {
         var T30 = new T30_t();
 
-        foreach (var field in T30.Fields)
-        {
-            field.Clear();
-        }
-
         var str = cp950.GetString(T30.Raw);
 
         const string expected = "      00000000000000000000000000000000000                         000000000000000000                ";

@@ -87,9 +87,22 @@ public abstract class CbWrapper : IWrapper
 
     public CbWrapper(byte[]? raw = null)
     {
-        _raw = raw is null ? new byte[RequiredBufferLength] : (byte[])raw.Clone();
+        if (raw is null)
+        {
+            _raw = new byte[RequiredBufferLength];
 
-        ValidateLayout();
+            foreach (var addr in AddressMap.Values)
+            {
+                new CbField(this, addr).Clear();
+            }
+        }
+        else
+        {
+            if (raw.Length != RequiredBufferLength)
+                throw new ArgumentException($"Buffer length must be {RequiredBufferLength}.", nameof(raw));
+
+            _raw = [.. raw];
+        }
     }
 
     // (真身)
@@ -127,23 +140,6 @@ public abstract class CbWrapper : IWrapper
     /// 當指定欄位不存在時拋出。
     /// </exception>
     public CbField Field(string name) => this[name];
-
-    private CbField[]? _fields;
-    public CbField[] Fields =>  _fields ??= [.. AddressMap.Values.Select(addr => new CbField(this, addr))];
-
-    /// <summary>
-    /// 驗證目前 Raw buffer 是否足以容納整個 Copybook 佈局 (AddressMap)。 <br/>
-    /// 若長度不足，代表資料不完整或 Copybook 定義錯誤。
-    /// </summary>
-    private void ValidateLayout()
-    {
-        int required = RequiredBufferLength;
-
-        if (_raw.Length < required)
-        {
-            throw new InvalidOperationException($"Raw length {_raw.Length} is smaller than required {required}.");
-        }
-    }
 
     /// <summary>
     /// 讀取欄位值
