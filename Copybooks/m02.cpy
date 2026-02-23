@@ -20,6 +20,6 @@
            05  ARBITRAGE-NOS       PIC 9(10).  *> 套利賣空部位
            05  ERROR-CODE          PIC X(02).  *> 錯誤代碼(空白) 
            05  STOCK-NOS-5         PIC 9(10).  *> 前日申購/買回部位
-           05  FILLER                  PIC X(27).
+           05  FILLER              PIC X(27).
        
        

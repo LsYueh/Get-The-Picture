@@ -26,5 +26,5 @@
            05  AMOUNT              PIC 9(18).  *> ²{ª÷¥ÓÅ«ª÷ÃB
            05  RM-ACNT-NAME        PIC X(60).  *> ¶×´Ú±b¤á¦W
            05  RM-ACNT-ID          PIC X(10).  *> ¶×´Ú±b¤áID
-           05  FILLER                  PIC X(65).
+           05  FILLER              PIC X(65).
        
