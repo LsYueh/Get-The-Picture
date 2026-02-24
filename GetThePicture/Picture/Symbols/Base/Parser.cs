@@ -92,11 +92,11 @@ public class Parser()
                     if (symbolMeta.Signed)
                         throw new Exception($"Sign cannot be combined with {token.Type} at position {token.Position}");
 
-                    ParseOccurs(symbolMeta, inDecimal);
+                    ParseRepeat(symbolMeta, inDecimal);
                     break;
 
                 case TokenType.Numeric:
-                    ParseOccurs(symbolMeta, inDecimal);
+                    ParseRepeat(symbolMeta, inDecimal);
                     break;
 
                 // --------------------
@@ -129,10 +129,10 @@ public class Parser()
     }
 
     /// <summary>
-    /// 解析 Numeral / Alpha token，並處理可選的 (Occurs)
+    /// 解析 Numeral / Alpha token，並處理可選的 (Repeat)
     /// 累積到 SymbolMeta 的 IntegerDigits 或 DecimalDigits
     /// </summary>
-    private void ParseOccurs(SymbolMeta symbolMeta, bool inDecimal)
+    private void ParseRepeat(SymbolMeta symbolMeta, bool inDecimal)
     {
         var token = Consume(); // consume current token
 
@@ -142,7 +142,7 @@ public class Parser()
             throw new Exception($"Invalid symbol token '{token.Type}' at position {token.Position}");
 
 
-        // 設定 BaseClass（首次解析時）
+        // ===== BaseClass lock =====
         if (symbolMeta.BaseClass == PicBaseClass.Unknown)
         {
             symbolMeta.BaseClass = tokenClass;
@@ -156,15 +156,26 @@ public class Parser()
 
         int repeat = 1;
 
-        // 檢查是否有重複次數 (Occurs)
+        // ===== Optional repeat clause =====
         if (Current?.Type == TokenType.LParen)
         {
             Consume(); // consume '('
-            var occurs_t = Expect(TokenType.Numeric);
-            repeat = int.Parse(occurs_t.Value);
+
+            // 讀取完整數字
+            string text = "";
+
+            while (Current != null && Current.Type == TokenType.Numeric)
+            {
+                text += Current.Value;
+                Consume();
+            }
+
+            repeat = int.Parse(text);
+
             Expect(TokenType.RParen); // consume ')'
         }
 
+        // ===== Semantic accumulation =====
         switch (token.Type)
         {
             case TokenType.Numeric:
@@ -180,7 +191,7 @@ public class Parser()
                 break;
 
             default:
-                throw new Exception($"ParseOccurs called on invalid token '{token.Type}' at position {token.Position}");
+                throw new Exception($"ParseRepeat called on invalid token '{token.Type}' at position {token.Position}");
         }
     }
 

@@ -11,7 +11,7 @@ public enum TokenType
 
     Alphabetic,       // 'A"
     Alphanumeric,     // 'X'
-    Numeric,          // '9' or 0-9 (inside parentheses)
+    Numeric,          // 0-9
 
     Sign,             // 'S'
     ImpliedDecimal,   // 'V' or '.'

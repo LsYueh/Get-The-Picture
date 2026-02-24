@@ -61,49 +61,28 @@ public class Lexer()
 
     private Token ReadToken(char ch, int tokenPos)
     {
-        Token _t;
+        if (char.IsDigit(ch))
+        {
+            Advance();
+            return new Token(TokenType.Numeric, ch.ToString(), tokenPos);
+        }
 
         switch (ch)
         {
-            case 'A': _t = new Token(TokenType.Alphabetic  , Lexemes.A   , tokenPos); Advance(); break;
-            case 'X': _t = new Token(TokenType.Alphanumeric, Lexemes.X   , tokenPos); Advance(); break;
-            case '9': _t = new Token(TokenType.Numeric     , Lexemes.Nine, tokenPos); Advance(); break;
+            case 'A': Advance(); return new Token(TokenType.Alphabetic  , Lexemes.A   , tokenPos);
+            case 'X': Advance(); return new Token(TokenType.Alphanumeric, Lexemes.X   , tokenPos);
 
-            case 'S': _t = new Token(TokenType.Sign          , Lexemes.S  , tokenPos); Advance(); break;
-            case 'V': _t = new Token(TokenType.ImpliedDecimal, Lexemes.V  , tokenPos); Advance(); break;
-            case '.': _t = new Token(TokenType.ImpliedDecimal, Lexemes.Dot, tokenPos); Advance(); break;
-            case 'P': _t = new Token(TokenType.Scaling       , Lexemes.P  , tokenPos); Advance(); break;
+            case 'S': Advance(); return new Token(TokenType.Sign          , Lexemes.S  , tokenPos);
+            case 'V': Advance(); return new Token(TokenType.ImpliedDecimal, Lexemes.V  , tokenPos);
+            case '.': Advance(); return new Token(TokenType.ImpliedDecimal, Lexemes.Dot, tokenPos);
+            case 'P': Advance(); return new Token(TokenType.Scaling       , Lexemes.P  , tokenPos);
 
-            case '(': _t = new Token(TokenType.LParen, Lexemes.LParen, tokenPos); Advance(); break;
-            case ')': _t = new Token(TokenType.RParen, Lexemes.RParen, tokenPos); Advance(); break;
+            case '(': Advance(); return new Token(TokenType.LParen, Lexemes.LParen, tokenPos);
+            case ')': Advance(); return new Token(TokenType.RParen, Lexemes.RParen, tokenPos);
 
             default:
-                // Number (repeat count) — only meaningful after '('
-                if (char.IsDigit(ch))
-                {
-                    string number = ReadNumber();
-                    _t = new Token(TokenType.Numeric, number, tokenPos);
-                }
-                else
-                {
-                    _t = new Token(TokenType.Unknown, ch.ToString(), tokenPos);
-                    Advance();
-                }
-                break;
+                Advance();
+                return new Token(TokenType.Unknown, ch.ToString(), tokenPos);
         }
-
-        return _t;
-    }
-
-    private string ReadNumber()
-    {
-        int start = _pos;
-        
-        while (!IsEnd() && char.IsDigit(Peek()))
-        {
-            Advance();
-        }
-
-        return _symbols[start.._pos];
     }
 }
