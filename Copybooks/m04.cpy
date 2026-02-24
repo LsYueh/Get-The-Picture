@@ -18,5 +18,5 @@
                10 ACNT-NO              PIC 9(07).  *> 申請人帳號
                10 ETF-SHR              PIC 9(18).  *> 單位數
            05 APPLY-FEE            PIC 9(08).  *> 申購買回手續費
-           05 MANAGEMENT-CHARGE    PIC 9(08).  *> 行政處理費    
-           05 FILLER               PIC X(36).  *> 空白         
+           05 MANAGEMENT-CHARGE    PIC 9(08).  *> 行政處理費
+           05 FILLER               PIC X(36).
