@@ -2,13 +2,14 @@ using System.Text;
 
 using GetThePicture.Copybook.Base;
 using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.TestData;
 
 namespace GetThePicture.Tests.Copybook.Base;
 
 [TestClass]
 public class CobolLineTest
 {
-    private const string filePath = @"TestData/sample-cobol-copybook.cpy";
+    private readonly string filePath = TestFileProvider.GetPath("sample-cobol-copybook.cpy");
 
     private static readonly Encoding cp950 = EncodingFactory.CP950;
 

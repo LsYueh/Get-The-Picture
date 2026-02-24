@@ -4,6 +4,7 @@ using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Compiler.Storage;
 using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.TestData;
 
 namespace GetThePicture.Tests.Copybook.Compiler;
 
@@ -15,7 +16,7 @@ public class CbResolverTest
     [TestMethod]
     public void Copybook_Resolver_Test_01()
     {
-        const string filePath = @"TestData/sample-cobol-copybook.cpy";
+        string filePath = TestFileProvider.GetPath("sample-cobol-copybook.cpy");
         using var sr = new StreamReader(filePath, cp950);
 
         CbLayout layout = CbCompiler.FromStreamReader(sr);
@@ -41,7 +42,7 @@ public class CbResolverTest
     [TestMethod]
     public void Copybook_Resolver_Test_02()
     {
-        const string filePath = @"TestData/copybook-with-redefines.cpy";
+        string filePath = TestFileProvider.GetPath("copybook-with-redefines.cpy");
         using var sr = new StreamReader(filePath, cp950);
 
         CbLayout layout = CbCompiler.FromStreamReader(sr);
@@ -69,7 +70,7 @@ public class CbResolverTest
     [TestMethod]
     public void Copybook_Resolver_Test_03()
     {
-        const string filePath = @"TestData/copybook-with-redefines-group-in-middle.cpy";
+        string filePath = TestFileProvider.GetPath("copybook-with-redefines-group-in-middle.cpy");
         using var sr = new StreamReader(filePath, cp950);
 
         CbLayout layout = CbCompiler.FromStreamReader(sr);
@@ -102,7 +103,7 @@ public class CbResolverTest
     [TestMethod]
     public void Copybook_Resolver_Test_04()
     {
-        const string filePath = @"TestData/nested-occurs-record.cpy";
+        string filePath = TestFileProvider.GetPath("nested-occurs-record.cpy");
         using var sr = new StreamReader(filePath, cp950);
 
         CbLayout layout = CbCompiler.FromStreamReader(sr);

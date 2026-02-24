@@ -4,6 +4,8 @@ namespace GetThePicture.Copybook.Compiler.Storage.Base;
 
 public interface IStorageNode
 {
+    int Level { get; }
+
     /// <summary>
     /// Tree/節點名稱
     /// </summary>

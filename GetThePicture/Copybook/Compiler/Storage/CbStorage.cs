@@ -3,7 +3,7 @@ namespace GetThePicture.Copybook.Compiler.Storage;
 /// <summary>
 /// Root of Group Nodes
 /// </summary>
-public sealed class CbStorage(int totalLength) : GroupNode("COPYBOOK-STORAGE-MAP")
+public sealed class CbStorage(int totalLength) : GroupNode(0, "COPYBOOK-STORAGE-MAP")
 {
     public int TotalLength { get; } = totalLength;
 

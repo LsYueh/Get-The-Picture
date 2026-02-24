@@ -37,7 +37,7 @@ public sealed class ElementaryDataItem(
 
     public override void Dump(TextWriter w, int indent = 0)
     {        
-        w.Write($"{Indent(indent)}{Level} {Name}{FormatComment()} >>");
+        w.Write($"{Indent(indent)}{Level:D2} {Name}{FormatComment()} >>");
 
         if (Pic != null)
             w.Write($" PIC: {Pic}");

@@ -46,7 +46,7 @@ public sealed class CbResolver
                     {
                         var alias = ResolveAlias(r.TargetName, node.Children, node.Name);
 
-                        var groupNode = new GroupNode(r.Name, -1);
+                        var groupNode = new GroupNode(r.Level, r.Name, -1);
                         groupNode.SetAlias(alias);
                         node.AddNode(groupNode);
 
@@ -62,7 +62,7 @@ public sealed class CbResolver
                     {
                         var instanceOffset = baseOffset + storageOffset;
                         
-                        var groupNode = new GroupNode(g.Name, instanceOffset, occursIndex);
+                        var groupNode = BuildGroupNode(g, instanceOffset, occursIndex);
                         node.AddNode(groupNode);
                         
                         int groupSize = ResolveGroupNodes(g, groupNode, instanceOffset);
@@ -93,9 +93,19 @@ public sealed class CbResolver
         return storageOffset;
     }
 
+    private static GroupNode BuildGroupNode(GroupItem g, int instanceOffset, int? occursIndex)
+    {
+        var groupNode = new GroupNode(g.Level, g.Name, instanceOffset, occursIndex);
+
+        if (g.IsFiller)
+            groupNode.Unnamed();
+
+        return groupNode;
+    }
+
     private static LeafNode BuildLeafNode(ElementaryDataItem e, int instanceOffset, int storageOccupied, int? occursIndex)
     {
-        var leafNode = new LeafNode(e.Name, instanceOffset, storageOccupied, occursIndex);
+        var leafNode = new LeafNode(e.Level, e.Name, instanceOffset, storageOccupied, occursIndex);
 
         leafNode.SetPicMeta(e.Pic);
         

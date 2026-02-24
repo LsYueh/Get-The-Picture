@@ -7,6 +7,7 @@ using GetThePicture.Copybook.Wrapper;
 using GetThePicture.Copybook.Wrapper.Base;
 
 using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.TestData;
 
 namespace GetThePicture.Benchmarks.Category;
 
@@ -90,7 +91,9 @@ public class WrapperBenchmark
     [GlobalSetup]
     public void Setup()
     {
-        var lines = File.ReadAllLines(@"TestData/twse/t30-otc-lite.dat", cp950);
+        string filePath = TestFileProvider.GetPath("twse/t30-otc-lite.dat");
+
+        var lines = File.ReadAllLines(filePath, cp950);
 
         _records = [.. lines.Select(l => cp950.GetBytes(l))];
 

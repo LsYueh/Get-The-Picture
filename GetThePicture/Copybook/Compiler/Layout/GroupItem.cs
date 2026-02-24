@@ -4,8 +4,13 @@ namespace GetThePicture.Copybook.Compiler.Layout;
 
 public class GroupItem(
     int level, string name, int? occurs = null,
-    string? comment = null) : DataItem(level, name, occurs, comment)
+    bool isFiller = false, string? comment = null) : DataItem(level, name, occurs, comment)
 { 
+    /// <summary>
+    /// Unnamed Group Item
+    /// </summary>
+    public bool IsFiller { get; init; } = isFiller;
+    
     // ----------------------------
     // IDataItem
     // ----------------------------
@@ -57,7 +62,7 @@ public class GroupItem(
 
     public override void Dump(TextWriter w, int indent = 0)
     {
-        w.WriteLine($"{Indent(indent)}{Level} {Name}{FormatOccurs()}{FormatComment()}");
+        w.WriteLine($"{Indent(indent)}{Level:D2} {Name}{FormatOccurs()}{FormatComment()}");
 
         foreach (var child in _children) child.Dump(w, indent + 1);
     }

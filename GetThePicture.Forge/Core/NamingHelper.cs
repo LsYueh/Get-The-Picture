@@ -4,7 +4,7 @@ namespace GetThePicture.Forge.Core;
 
 public static partial class NamingHelper
 {
-    [GeneratedRegex(@"\((\d+)\)")]
+    [GeneratedRegex(@"\(([\d,]+)\)")]
     private static partial Regex OccursIndexRegex();
 
     private static readonly HashSet<string> CSharpKeywords = new(StringComparer.OrdinalIgnoreCase)
@@ -27,19 +27,21 @@ public static partial class NamingHelper
         if (string.IsNullOrWhiteSpace(cobolName))
             return cobolName;
 
-        // 1. 替換 OCCURS index，例如 NAME(1) >> NAME1
-        cobolName = OccursIndexRegex().Replace(cobolName, "$1");
-
-        // 2. 以 '-' 或 '_' 分割
+        // 1. 以 '-' 或 '_' 分割
         var parts = cobolName.Split('-', '_', StringSplitOptions.RemoveEmptyEntries);
 
-        // 3. 轉 PascalCase
+        // 2. 轉 PascalCase
         var pascal = string.Concat(parts.Select(p =>
             char.ToUpperInvariant(p[0]) + p[1..].ToLowerInvariant()));
 
-        // 4. 避免 C# 保留字
+        // 3. 避免 C# 保留字
         if (CSharpKeywords.Contains(pascal))
             pascal += "_";
+
+        // 4. 替換 OCCURS index，例如 NAME(1,1) >> Name1_1
+        pascal = OccursIndexRegex().Replace(pascal, m => {
+            return m.Groups[1].Value.Replace(",", "_");
+        });
 
         return pascal;
     }

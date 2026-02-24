@@ -1,9 +1,11 @@
 namespace GetThePicture.Copybook.Compiler.Storage.Base;
 
 public abstract class StorageNode(
-    string name, int offset = 0, int? storageOccupied = null, int? index = null
+    int level, string name, int offset = 0, int? storageOccupied = null, int? index = null
 ) : IStorageNode
 {
+    public int Level { get; } = level;
+
     public string Name { get; private init; } = name;
 
     public int? Index { get; } = index;
@@ -64,7 +66,7 @@ public abstract class StorageNode(
 
     protected void DumpBase(TextWriter writer, int indent)
     {
-        writer.WriteLine($"{Indent(indent)}{Name}{FormatIndex()}{FormatOffset()}{FormatOccupied()}");
+        writer.WriteLine($"{Indent(indent)}{Level:D2} {Name}{FormatIndex()}{FormatOffset()}{FormatOccupied()}");
     }
 
     protected static string Indent(int i) => new(' ', i * 2);

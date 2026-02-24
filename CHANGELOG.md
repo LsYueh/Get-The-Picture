@@ -1,5 +1,63 @@
 # Changelog
 
+## [26.14.1] – 2026-02-24
+
+### Added
+- 支援 `Unnamed Group Item` (FILLER Group) 輸出處理。
+    - `GroupItem` 類別新增 `Unnamed()` 方法，用於標記 FILLER。
+    - `CbStorage` 的介面 `IStorageNode` 新增屬性：
+        - `int Level` — 保留 COBOL 原始層級資訊。
+
+    Unnamed Group Item：
+    ```cobol
+    05  APPLIER-NUMBER      PIC 9(01).
+    05  FILLER              OCCURS 3 TIMES. *> (Unnamed Group Item)
+        10  ACNT-BROKER         PIC X(04).
+        10  ACNT-NO             PIC 9(07).
+        10  KEEP-ACNT           PIC X(11).
+        10  ID-CODE             PIC X(03).
+        10  CASH-ASSIGN         PIC X(01).
+        10  MERGE-ASSIGN        PIC X(01).
+    05  APPLY-FEE           PIC 9(08).
+    ```
+
+- Forge 在扁平化 `CbStorage` 時，`BuildFlatLeafMap()` 現在可以：
+    - 根據 COBOL 的 `OCCURS` 或 `Unnamed Group Item` 建立對應的欄位別名。
+
+    Copybook：
+    ```cobol
+    05  FILLER           OCCURS 3 TIMES. *> (申請人)
+        10  ACNT-BROKER  PIC X(04).      *> 開戶券商代號
+        ...
+    ```
+
+    產生的 `CbWrapper` 子類別：
+    ```csharp
+    protected override Dictionary<string, CbAddress> AddressMap { get; } = new Dictionary<string, CbAddress>
+    {
+        ["ACNT-BROKER(1)"] = new CbAddress( 48, 4, "X(04)"), // 開戶券商代號
+        ["ACNT-BROKER(2)"] = new CbAddress( 75, 4, "X(04)"), // 開戶券商代號
+        ["ACNT-BROKER(3)"] = new CbAddress(102, 4, "X(04)"), // 開戶券商代號
+    }
+    ```
+
+- 新增 `TestData` 專案。
+    - 讓 **Unit Tests** 與 **Benchmarks** 共用測試資料
+    - 減少測試資料散落於不同專案。
+    - 提升測試資料集中管理與可維護性。
+
+### Changed
+- Forge 屬性命名策略調整
+    - Forge 會依據 `Storage Tree` (CbStorage) 中 Level 1 節點是否唯一，自動判斷是否縮減（簡化）產生的屬性名稱。
+    - 當僅存在單一 Level 1 Root 時：
+        - 生成的屬性名稱將移除多餘的上層前綴
+        - 使 Wrapper API 的欄位別名更精簡，在維持「別名唯一性」的前提下提升可讀性。
+    - 當存在多個 Level 1 Root 時：
+        - 仍保留完整命名以避免名稱衝突
+
+<br><br>
+
+
 ## [26.14.0] – 2026-02-23
 
 ### ⚠️ Breaking Changes
