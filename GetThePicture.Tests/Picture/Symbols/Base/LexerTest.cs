@@ -33,12 +33,13 @@ public class LexerParserTest
 
         var tokens = lexer.Tokenize(symbols);
 
-        Assert.AreEqual(4, tokens.Count);
+        Assert.AreEqual(5, tokens.Count);
 
         AssertToken(tokens[0], TokenType.Alphanumeric, "X");
         AssertToken(tokens[1], TokenType.LParen , "(");
-        AssertToken(tokens[2], TokenType.Numeric, "10");
-        AssertToken(tokens[3], TokenType.RParen , ")");
+        AssertToken(tokens[2], TokenType.Numeric, "1");
+        AssertToken(tokens[3], TokenType.Numeric, "0");
+        AssertToken(tokens[4], TokenType.RParen , ")");
     }
 
     [TestMethod]
@@ -61,11 +62,12 @@ public class LexerParserTest
 
         var tokens = lexer.Tokenize(symbols);
 
-        Assert.AreEqual(4, tokens.Count);
+        Assert.AreEqual(5, tokens.Count);
 
         AssertToken(tokens[0], TokenType.Numeric, "9");
         AssertToken(tokens[1], TokenType.LParen , "(");
-        AssertToken(tokens[2], TokenType.Numeric, "10");
-        AssertToken(tokens[3], TokenType.RParen , ")");
+        AssertToken(tokens[2], TokenType.Numeric, "1");
+        AssertToken(tokens[3], TokenType.Numeric, "0");
+        AssertToken(tokens[4], TokenType.RParen , ")");
     }
 }

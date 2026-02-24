@@ -1,5 +1,20 @@
 # Changelog
 
+## [26.14.2] – 2026-02-24
+
+### Added
+- 在 Copybooks 中新增範例資料：
+    - 「證券商 ETF 電腦作業」的交換資料 M03 ~ M05。
+
+### Fixed
+- 修正 Picture Symbols Parser 在解析 repeat 語法時的 token stream 錯位問題。
+    - 調整 Lexer 與 Parser 行為分工：
+        - Lexer 不再進行 repeat-count 合併。
+        - repeat 語法解析統一交由 Parser 處理。
+
+<br><br>
+
+
 ## [26.14.1] – 2026-02-24
 
 ### Added
@@ -142,7 +157,7 @@
 - 增加 `COMP-4` (`COMP-5`) 的效能基準測試。
 - 增加 `COMP-6` 的效能基準測試。
 
-### Bugfix
+### Fixed
 - 修正 `COMP-3` 長度計算錯誤的問題。
 
 ### Improved
@@ -165,7 +180,7 @@
     - 現在 `COMP-4` 與 `COMP-5` 均以 **Big Endian** 儲存二進制資料。
     - `COMP-5` 提供額外選項，可選擇使用 **Little Endian** 以符合跨平台需求。
 
-### Bugfix
+### Fixed
 - 修正 `COMP-4` 要維持 **Big Endian** 的方式來處理資料。
 
 ### Refact
@@ -249,7 +264,7 @@
 
 ## [26.11.1] – 2026-02-09
 
-### Bugfix
+### Fixed
 - 修正 Forge 在 CLR 型別轉錯的問題。
 
 <br><br>
@@ -313,7 +328,7 @@
 
 ## [26.8.1] – 2026-02-05
 
-### Bugfix
+### Fixed
 - 修正 Copycat 的編譯錯誤
 
 <br><br>
@@ -348,7 +363,7 @@
 
 ## [26.6.1] – 2026-02-02
 
-### Bugfix
+### Fixed
 - 修正 Deserialize OCCURS 子句時在 ReadElementaryDataItem 內的錯誤。
 
 <br><br>
