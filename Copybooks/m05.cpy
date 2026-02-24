@@ -60,6 +60,6 @@
                07 FILLER           PIC X(01).
                07 BASKET-VALUE-P   PIC 9(14).  *> 前一日每實際申購總價金
                07 FILLER           PIC X(01).
-               07 DIFF-BASKET-VALUE-S PIC X(01). *> 前一日申購總價金差異額 S9(09)
-               07 DIFF-BASKET-VALUE-9 PIC 9(14). *> 前一日申購總價金差異額 S9(09)
+               07 DIFF-BASKET-VALUE-S PIC X(01). *> 前一日申購總價金差異額 S9(14)
+               07 DIFF-BASKET-VALUE-9 PIC 9(14). *> 前一日申購總價金差異額 S9(14)
                07 FILLER           PIC X(59).
