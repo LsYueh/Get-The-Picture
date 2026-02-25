@@ -246,6 +246,8 @@ public class WrapperCommand(ForgeConfig config)
 
     private Dictionary<string, LeafNode> BuildFlatLeafMap(IStorageNode node, bool ignoredLevelOne = false)
     {
+        var fields = _config.Fields();
+        
         var dict = new Dictionary<string, LeafNode>();
 
         int fillerCount = 0;
@@ -299,12 +301,20 @@ public class WrapperCommand(ForgeConfig config)
 
                 case LeafNode leaf:
                 {
+                    var key = leaf.Name;
+                    
                     // Field Override
-                    if (_config.Fields().TryGetValue(leaf.Name, out var field))
+                    if (fields.TryGetValue(key, out var field) && field != null)
                     {
-                        // TODO: ...
+                        Console.WriteLine($"⚠ Field override applied: <{key}>");
+
+                        if (!string.IsNullOrWhiteSpace(field.Type))
+                            Console.WriteLine($"    Type    : {field.Type}");
+
+                        if (!string.IsNullOrWhiteSpace(field.Comment))
+                            Console.WriteLine($"    Comment : {field.Comment}");
                         
-                        Console.WriteLine($"⚠ Field override applied: {leaf.Name}");
+                        // TODO: ...
                     }
                     
                     if (leaf.Ignored) // FILLER
