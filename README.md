@@ -180,32 +180,32 @@ public class T30_t(byte[] raw) : CbWrapper(raw)
 
     public string StockNo
     {
-        get => (string)this["STOCK-NO"]!;
-        set => this["STOCK-NO"] = value;
+        get => this["STOCK-NO"].Get<string>();
+        set => this["STOCK-NO"].Set(value);
     }
 
     public decimal BullPrice
     {
-        get => (decimal)this["BULL-PRICE"]!;
-        set => this["BULL-PRICE"] = value;
+        get => this["BULL-PRICE"].Get<decimal>();
+        set => this["BULL-PRICE"].Set(value);
     }
 
     public decimal LdcPrice
     {
-        get => (decimal)this["LDC-PRICE"]!;
-        set => this["LDC-PRICE"] = value;
+        get => this["LDC-PRICE"].Get<decimal>();
+        set => this["LDC-PRICE"].Set(value);
     }
 
     public decimal BearPrice
     {
-        get => (decimal)this["BEAR-PRICE"]!;
-        set => this["BEAR-PRICE"] = value;
+        get => this["BEAR-PRICE"].Get<decimal>();
+        set => this["BEAR-PRICE"].Set(value);
     }
 
     public DateOnly LastMthDate
     {
-        get => (DateOnly)this["LAST-MTH-DATE"]!;
-        set => this["LAST-MTH-DATE"] = value;
+        get => this["LAST-MTH-DATE"].Get<DateOnly>();
+        set => this["LAST-MTH-DATE"].Set(value);
     }
 
     // (略...)
