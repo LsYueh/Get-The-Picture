@@ -2,9 +2,8 @@
   "fields": {
     "TX-DATE": {
         "type": "DATE",
-        "nullable": true,
         "propertyName": "TransactionDate",
-        "comment": "需要轉換成日期"
+        "comment" : ""
     }
   }
 }

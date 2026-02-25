@@ -25,6 +25,8 @@ public class WrapperCommand(ForgeConfig config)
 
     public void ForgeCode(IDataProvider provider, string fileName)
     {
+        var fields = _config.Fields();
+
         var storage = provider.GetStorage();
 
         // 如果只有一個 Level 1 的 Group Item，就拿這個 Group Item 來當作 Class 的名稱
@@ -41,6 +43,12 @@ public class WrapperCommand(ForgeConfig config)
 
         w.WriteLine($"using GetThePicture.Copybook.Wrapper;");
         w.WriteLine($"using GetThePicture.Copybook.Wrapper.Base;");
+
+        if (fields.Values.Any(f => !string.IsNullOrWhiteSpace(f.Type)))
+        {
+            w.WriteLine("using GetThePicture.Picture.Clause.Base.ClauseItems;");
+        }
+        
         w.WriteLine();
 
         w.WriteLine($"namespace GetThePicture;");
@@ -95,10 +103,13 @@ public class WrapperCommand(ForgeConfig config)
 
         var info = !string.IsNullOrEmpty(node.Info) ? $" // {node.Info}" : $"";
 
+        var semantic = (node.Pic.Semantic != PicSemantic.None) ? $", PicSemantic.{node.Pic.Semantic}" : "";
+
         // keyName 右補空格，對齊 "="
         string paddedKey = $"[\"{keyName}\"]".PadRight(maxKeyLength + 4); // 4 是額外空格補償
 
-        w.WriteLine($"{indent}{paddedKey} = new CbAddress({node.Offset + 1, 4:D}, {node.StorageOccupied, 3:D}, \"{node.Pic.Raw}\"),{info}");
+        w.WriteLine($"{indent}{paddedKey} = new CbAddress({node.Offset + 1, 4:D}, {node.StorageOccupied, 3:D}, \"{node.Pic.Raw}\"{semantic}),{info}");
+
     }
 
     private void ForgeProperties(StreamWriter w, int indentLevel = 0)
@@ -299,7 +310,7 @@ public class WrapperCommand(ForgeConfig config)
                     if (fields.TryGetValue(key, out var field) && field != null)
                     {
                         Console.WriteLine($"⚠ Override detected for field <{key}>");
-                        ApplyFieldOverride(leaf, field);
+                        SemanticOverride(leaf, field);
                     }
                     
                     if (leaf.Ignored) // FILLER
@@ -331,26 +342,33 @@ public class WrapperCommand(ForgeConfig config)
         return dict;
     }
 
-    private static void ApplyFieldOverride(LeafNode leaf, FieldOverride field)
+    private static bool SemanticOverride(LeafNode leaf, FieldOverride field)
     {
-        if (!string.IsNullOrWhiteSpace(field.Type))
-        {
-            Console.WriteLine($"    Type    : {field.Type}");
+        if (string.IsNullOrWhiteSpace(field.Type))
+            return false;
 
-            // TODO: ...
+        if (!PicSemanticMap.TryResolve(field.Type, out var semantic))
+            throw new InvalidOperationException($"Unknown semantic type: {field.Type}");
 
-            // leaf.Pic.Semantic;
-        }
+        if (leaf.Pic.Semantic == semantic)
+            return false;
+        
+        leaf.Pic.Semantic = semantic;
+        
+        Console.WriteLine($"    Semantic override → {semantic}");
 
         if (!string.IsNullOrWhiteSpace(field.Comment))
         {
-            // 只做為處理原因說明
             Console.WriteLine($"    Comment : {field.Comment}");
         }
+
+        return true;
     }
 
     private static string FormatPath(IEnumerable<PathSegment> segments)
     {
+        // TODO: Property Name Override
+        
         return string.Join("::", segments);
     }
 
