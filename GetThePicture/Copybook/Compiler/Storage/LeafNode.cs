@@ -4,7 +4,7 @@ using GetThePicture.Picture.Clause.Base;
 namespace GetThePicture.Copybook.Compiler.Storage;
 
 public class LeafNode(
-    int level, string name, int offset = 0, int storageOccupied = 0, int? index = null
+    int level, string name, PicMeta pic, int offset = 0, int storageOccupied = 0, int? index = null
 ) : StorageNode(level, name, offset, storageOccupied, index)
 {
     // ----------------------------
@@ -32,10 +32,7 @@ public class LeafNode(
     // PICTURE Clause
     // ----------------------------
 
-    public PicMeta? Pic { get; private set; } = null;
-
-    public void SetPicMeta(PicMeta pic) => Pic = pic;
-
+    public PicMeta Pic { get; } = pic;
 
     // ----------------------------
     // Dump

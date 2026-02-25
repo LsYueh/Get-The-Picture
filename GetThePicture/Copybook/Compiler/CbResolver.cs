@@ -105,9 +105,10 @@ public sealed class CbResolver
 
     private static LeafNode BuildLeafNode(ElementaryDataItem e, int instanceOffset, int storageOccupied, int? occursIndex)
     {
-        var leafNode = new LeafNode(e.Level, e.Name, instanceOffset, storageOccupied, occursIndex);
-
-        leafNode.SetPicMeta(e.Pic);
+        var leafNode = new LeafNode(
+            e.Level, e.Name, e.Pic, 
+            instanceOffset, storageOccupied, occursIndex
+        );
         
         if (e.Comment is not null)
             leafNode.SetInfo(e.Comment);

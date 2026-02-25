@@ -11,6 +11,7 @@ using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
 using GetThePicture.Forge.Core;
 using GetThePicture.Forge.Commands.Wrapper.Base;
 using GetThePicture.Forge.Core.Config;
+using GetThePicture.Forge.Core.Config.Section;
 
 namespace GetThePicture.Forge.Commands.Wrapper;
 
@@ -92,9 +93,6 @@ public class WrapperCommand(ForgeConfig config)
     {
         var indent = Indent(indentLevel);
 
-        if (node.Pic is null)
-            throw new InvalidOperationException($"Leaf node {keyName} does not have PICTURE clause.");
-
         var info = !string.IsNullOrEmpty(node.Info) ? $" // {node.Info}" : $"";
 
         // keyName 右補空格，對齊 "="
@@ -135,9 +133,6 @@ public class WrapperCommand(ForgeConfig config)
 
         string propName = NamingHelper.ToQualifiedPascalName(NamingHelper.ToPascalCase(keyName),"_");
 
-        if (node.Pic is null)
-            throw new InvalidOperationException($"Leaf node {keyName} does not have PICTURE clause.");
-
         string clrType = GetClrType(node.Pic);
 
         ForgePropertySummary(w, node, indentLevel);
@@ -153,9 +148,6 @@ public class WrapperCommand(ForgeConfig config)
     private static void ForgePropertySummary(StreamWriter w, LeafNode node, int indentLevel = 0)
     {
         var indent = Indent(indentLevel);
-
-        if (node.Pic is null)
-            throw new InvalidOperationException($"Leaf node {node.Name} does not have PICTURE clause.");
 
         string occursIndex = (node.Index is > 1) ? $" ({node.Index})" : "";
         
@@ -306,15 +298,8 @@ public class WrapperCommand(ForgeConfig config)
                     // Field Override
                     if (fields.TryGetValue(key, out var field) && field != null)
                     {
-                        Console.WriteLine($"⚠ Field override applied: <{key}>");
-
-                        if (!string.IsNullOrWhiteSpace(field.Type))
-                            Console.WriteLine($"    Type    : {field.Type}");
-
-                        if (!string.IsNullOrWhiteSpace(field.Comment))
-                            Console.WriteLine($"    Comment : {field.Comment}");
-                        
-                        // TODO: ...
+                        Console.WriteLine($"⚠ Override detected for field <{key}>");
+                        ApplyFieldOverride(leaf, field);
                     }
                     
                     if (leaf.Ignored) // FILLER
@@ -344,6 +329,24 @@ public class WrapperCommand(ForgeConfig config)
         Walk(node, []);
 
         return dict;
+    }
+
+    private static void ApplyFieldOverride(LeafNode leaf, FieldOverride field)
+    {
+        if (!string.IsNullOrWhiteSpace(field.Type))
+        {
+            Console.WriteLine($"    Type    : {field.Type}");
+
+            // TODO: ...
+
+            // leaf.Pic.Semantic;
+        }
+
+        if (!string.IsNullOrWhiteSpace(field.Comment))
+        {
+            // 只做為處理原因說明
+            Console.WriteLine($"    Comment : {field.Comment}");
+        }
     }
 
     private static string FormatPath(IEnumerable<PathSegment> segments)

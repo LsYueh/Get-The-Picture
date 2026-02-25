@@ -1,5 +1,14 @@
 # Changelog
 
+## [26.14.3] – 2026-??-??
+
+### Changed
+- `LeafNode` 內的 `PicMeta` 不再允許為 `null。`
+    - Picture Clause 在轉換流程中屬於核心語意資訊，必須保留。
+
+<br><br>
+
+
 ## [26.14.2] – 2026-02-24
 
 ### Added
