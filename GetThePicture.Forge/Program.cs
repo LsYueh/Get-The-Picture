@@ -1,12 +1,14 @@
 ﻿using System.Text;
+
 using CommandLine;
+using Microsoft.Extensions.Configuration;
 
 using GetThePicture.Copybook.Provider;
 using GetThePicture.Picture.Clause.Utils;
 
 using GetThePicture.Forge.Commands.Wrapper;
 using GetThePicture.Forge.Core;
-
+using GetThePicture.Forge.Core.Config;
 
 namespace GetThePicture.Forge;
 
@@ -42,20 +44,15 @@ class Program
             return 1;
         }
 
-        WrapperCommand cmd = new ();
+        var config = new ForgeConfig(BuildConfiguration(opts));
 
-        var provider = new DataProvider(new StreamReader(opts.Copybook.FullName, CP950));
+        WrapperCommand cmd = new (config);
+        
+        using var reader = new StreamReader(opts.Copybook.FullName, CP950);
+        var provider = new DataProvider(reader);
 
         if (opts.Verbose) {
-            Console.WriteLine("==== LAYOUT ====");
-            provider.GetLayout().Dump(Console.Out);
-            Console.WriteLine("================");
-            Console.WriteLine();
-
-            Console.WriteLine("==== Storage ====");
-            provider.GetStorage().Dump(Console.Out);
-            Console.WriteLine("================");
-            Console.WriteLine();
+            DumpDataProvider(provider);
         }
 
         string fileName = NamingHelper.ToPascalCase(Path.GetFileNameWithoutExtension(opts.Copybook.FullName));
@@ -65,6 +62,39 @@ class Program
         Console.WriteLine($"New wrapper class generated: \"{Path.GetFullPath($"{fileName}.cs")}\"");
 
         return 0;
+    }
+
+    private static IConfiguration BuildConfiguration(Options opts)
+    {
+        var builder = new ConfigurationBuilder();
+
+        // global config
+        builder.AddJsonFile("forge.json", optional: true);
+
+        // per copybook config
+        var localConfig = Path.ChangeExtension(opts.Copybook!.FullName, ".forge.json");
+        builder.AddJsonFile(localConfig, optional: true);
+
+        if (File.Exists(localConfig))
+        {
+            Console.WriteLine($"⚠ Local configuration detected: {localConfig}");
+        }
+
+        return builder.Build();
+    }
+
+    private static void DumpDataProvider(DataProvider provider)
+    {
+        Console.WriteLine();
+        Console.WriteLine("==== LAYOUT ====");
+        provider.GetLayout().Dump(Console.Out);
+        Console.WriteLine("================");
+        Console.WriteLine();
+
+        Console.WriteLine("==== Storage ====");
+        provider.GetStorage().Dump(Console.Out);
+        Console.WriteLine("================");
+        Console.WriteLine();
     }
 
     private static int HandleParseError(IEnumerable<Error> errors)

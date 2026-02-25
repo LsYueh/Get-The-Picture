@@ -10,13 +10,14 @@ using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
 
 using GetThePicture.Forge.Core;
 using GetThePicture.Forge.Commands.Wrapper.Base;
+using GetThePicture.Forge.Core.Config;
 
 namespace GetThePicture.Forge.Commands.Wrapper;
 
-public class WrapperCommand(WrapperOptions? opts = null)
+public class WrapperCommand(ForgeConfig config)
 {
-    private readonly WrapperOptions _opts = opts ?? new (); // 預設選項
-
+    private readonly ForgeConfig _config = config;
+    
     private Dictionary<string, LeafNode> _map = null!;
 
     private protected static string Indent(int i) => new(' ', i * 4);
@@ -243,7 +244,7 @@ public class WrapperCommand(WrapperOptions? opts = null)
         };
     }
 
-    private static Dictionary<string, LeafNode> BuildFlatLeafMap(IStorageNode node, bool ignoredLevelOne = false)
+    private Dictionary<string, LeafNode> BuildFlatLeafMap(IStorageNode node, bool ignoredLevelOne = false)
     {
         var dict = new Dictionary<string, LeafNode>();
 
@@ -298,6 +299,14 @@ public class WrapperCommand(WrapperOptions? opts = null)
 
                 case LeafNode leaf:
                 {
+                    // Field Override
+                    if (_config.Fields().TryGetValue(leaf.Name, out var field))
+                    {
+                        // TODO: ...
+                        
+                        Console.WriteLine($"⚠ Field override applied: {leaf.Name}");
+                    }
+                    
                     if (leaf.Ignored) // FILLER
                     {
                         string fillerName = $"FILLER{++fillerCount:D2}";
