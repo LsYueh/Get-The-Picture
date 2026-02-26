@@ -38,8 +38,8 @@
            05 OBJ-DATA REDEFINES FIELD-DATA.   *> FIELD-NAME = "OBJ "
                07 OBJ-ID           PIC X(06).  *> 布腹(Θだ)
                07 OBJ-STOCK-NOS    PIC 9(08).  *> 计
-               07 OBJ-NOS-DIFF-S   PIC X(01). *> 籔玡ら计畉钵计 S9(07)
-               07 OBJ-NOS-DIFF-9   PIC 9(07). *> 籔玡ら计畉钵计 S9(07)
+               07 OBJ-NOS-DIFF-S   PIC X(01).  *> 籔玡ら计畉钵计 S9(07)
+               07 OBJ-NOS-DIFF-9   PIC 9(07).  *> 籔玡ら计畉钵计 S9(07)
                07 OBJ-PRICE        PIC 9(5)V9(4). *> Μ絃基
                07 OBJ-LIEU-MARK    PIC X(01).  *> 瞷蠢
                07 OBJ-SUSPEND      PIC X(01).  *> 既氨ユ
