@@ -10,9 +10,6 @@ internal static class Decoder
 {
     public static DateTime Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
-        Constraint rule = Rules.GetConstraint(pic.Semantic);
-        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
-
         return pic.Semantic switch
         {
             PicSemantic.Timestamp14 => ParseTimestamp14(buffer),

@@ -10,9 +10,6 @@ internal static class Encoder
         if (value is not DateOnly date)
             throw new FormatException($"Invalid value type for DateOnly encoding: {value.GetType().FullName}");
 
-        Constraint rule = Rules.GetConstraint(pic.Semantic);
-        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
-
         string s = pic.Semantic switch
         {
             PicSemantic.GregorianDate => date.ToString("yyyyMMdd"),

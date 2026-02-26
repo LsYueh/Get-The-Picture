@@ -5,14 +5,10 @@ namespace GetThePicture.Picture.Clause.Codec.Semantic.Boolean;
 
 internal static class Encoder
 {
-    private static readonly Constraint rule = Rules.GetConstraint(PicSemantic.Boolean);
-    
     public static byte[] Encode(object value, PicMeta pic)
     {
         if (value is not bool b)
             throw new ArgumentException($"Value must be of type bool, got {value?.GetType().Name}");
-
-        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
         
         var encoded = pic.BaseClass switch
         {

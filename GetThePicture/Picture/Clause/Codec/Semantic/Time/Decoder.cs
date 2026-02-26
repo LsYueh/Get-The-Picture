@@ -10,11 +10,6 @@ internal static class Decoder
 {
     public static TimeOnly Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
-        Constraint rule = Rules.GetConstraint(pic.Semantic);
-        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
-
-        // TODO: 看看要不要支援 COMP-3 (PACKED-DECIMAL)
-
         return pic.Semantic switch
         {
             PicSemantic.Time6 => ParseTime6(buffer),

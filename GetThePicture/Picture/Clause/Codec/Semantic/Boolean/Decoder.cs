@@ -5,12 +5,8 @@ namespace GetThePicture.Picture.Clause.Codec.Semantic.Boolean;
 
 internal static class Decoder
 {
-    private static readonly Constraint rule = Rules.GetConstraint(PicSemantic.Boolean);
-    
     public static bool Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
-        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
-
         byte raw = buffer[0];
 
         // 如果是數字型 PIC 9(1)，'0' = false, '1' = true

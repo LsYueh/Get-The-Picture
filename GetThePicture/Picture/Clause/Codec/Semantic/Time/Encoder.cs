@@ -11,9 +11,6 @@ internal static class Encoder
         if (value is not TimeOnly time)
             throw new FormatException($"Invalid value type for TimeOnly encoding: {value.GetType().FullName}");
 
-        Constraint rule = Rules.GetConstraint(pic.Semantic);
-        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
-
         string s = pic.Semantic switch
         {
             PicSemantic.Time6 => time.ToString("HHmmss"   , CultureInfo.InvariantCulture),

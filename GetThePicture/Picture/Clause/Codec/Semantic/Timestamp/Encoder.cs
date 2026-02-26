@@ -16,9 +16,6 @@ internal static class Encoder
             throw new NotSupportedException($"DateTime can only be encoded as Timestamp14, but was {pic.Semantic}");
         }
 
-        Constraint rule = Rules.GetConstraint(pic.Semantic);
-        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
-
         string s = dt.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture);
 
         return System.Text.Encoding.ASCII.GetBytes(s);

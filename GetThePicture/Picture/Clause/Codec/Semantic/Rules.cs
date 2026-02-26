@@ -4,6 +4,8 @@ namespace GetThePicture.Picture.Clause.Codec.Semantic;
 
 public static class Rules
 {
+    // TODO: 看看 Date/Time/Timestamp 要不要支援 COMP-3
+
     private static readonly Dictionary<PicSemantic, Constraint> _rules = new() {
         {
             PicSemantic.GregorianDate, new Constraint

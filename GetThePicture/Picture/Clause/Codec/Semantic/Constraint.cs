@@ -3,12 +3,6 @@ using GetThePicture.Picture.Clause.Base.ClauseItems;
 
 namespace GetThePicture.Picture.Clause.Codec.Semantic;
 
-public sealed class ValidationResult
-{
-    public bool IsValid => Errors.Count == 0;
-    public List<string> Errors { get; } = new();
-}
-
 /// <summary>
 /// 語意約束模型
 /// </summary>
@@ -49,8 +43,10 @@ public sealed class Constraint
         return true;
     }
 
-    public void ValidateOrThrow(PicMeta pic, string semanticName)
+    public void ValidateOrThrow(PicMeta pic)
     {
+        string semanticName = pic.Semantic.ToString();
+        
         if (AllowedClasses.Length > 0 && !AllowedClasses.Contains(pic.BaseClass))
             throw new NotSupportedException($"{semanticName} does not support BaseClass '{pic.BaseClass}'.");
 

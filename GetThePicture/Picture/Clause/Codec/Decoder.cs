@@ -1,6 +1,7 @@
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Options;
+using GetThePicture.Picture.Clause.Codec.Semantic;
 
 namespace GetThePicture.Picture.Clause.Codec;
 
@@ -21,6 +22,12 @@ public static class Decoder
         if (options.Strict && (buffer.Length != pic.StorageOccupied))
         {
             throw new FormatException($"DISPLAY length mismatch. Expected {pic.StorageOccupied}, actual {buffer.Length}.");
+        }
+
+        if (pic.Semantic != PicSemantic.None)
+        {
+            Constraint rule = Rules.GetConstraint(pic.Semantic);
+            rule.ValidateOrThrow(pic);
         }
 
         return pic.Semantic switch

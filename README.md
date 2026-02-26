@@ -516,12 +516,12 @@ Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
 
 | Method                | Mean     | Error     | StdDev    |
 |---------------------- |---------:|----------:|----------:|
-| Wrapper_Read_String   | 4.703 μs | 0.0660 μs | 0.0618 μs |
-| Wrapper_Write_String  | 4.413 μs | 0.0258 μs | 0.0241 μs |
-| Wrapper_Read_Integer  | 4.613 μs | 0.0311 μs | 0.0291 μs |
-| Wrapper_Write_Integer | 5.609 μs | 0.0249 μs | 0.0233 μs |
-| Wrapper_Read_Decimal  | 6.050 μs | 0.0553 μs | 0.0490 μs |
-| Wrapper_Write_Decimal | 9.828 μs | 0.0362 μs | 0.0302 μs |
+| Wrapper_Read_String   | 4.362 μs | 0.0176 μs | 0.0156 μs |
+| Wrapper_Write_String  | 4.267 μs | 0.0222 μs | 0.0186 μs |
+| Wrapper_Read_Integer  | 4.511 μs | 0.0249 μs | 0.0233 μs |
+| Wrapper_Write_Integer | 5.450 μs | 0.0198 μs | 0.0165 μs |
+| Wrapper_Read_Decimal  | 5.895 μs | 0.0376 μs | 0.0333 μs |
+| Wrapper_Write_Decimal | 9.589 μs | 0.0614 μs | 0.0574 μs |
 
 > ⚠️ T30 的資料內沒有進行 `COMP`，目前的 Wrapper 跑分算是 Best Case。  
 > ⚠️ Wrapper 只做**單筆欄位**讀取。  
@@ -535,12 +535,12 @@ Decimal: `PIC S9(5)V9(2)`
 
 | Method                       | Mean      | Error    | StdDev   |
 |----------------------------- |----------:|---------:|---------:|
-| Display_Read_Integer         |  80.43 ns | 0.254 ns | 0.225 ns |
-| Display_Write_Integer        | 114.08 ns | 1.735 ns | 1.623 ns |
-| Display_Read_Signed_Integer  |  96.25 ns | 0.543 ns | 0.482 ns |
-| Display_Write_Signed_Integer | 184.50 ns | 1.158 ns | 1.027 ns |
-| Display_Read_Decimal         |  97.81 ns | 0.490 ns | 0.458 ns |
-| Display_Write_Decimal        | 204.62 ns | 0.547 ns | 0.485 ns |
+| Display_Read_Integer         |  79.69 ns | 0.447 ns | 0.418 ns |
+| Display_Write_Integer        | 113.33 ns | 0.418 ns | 0.370 ns |
+| Display_Read_Signed_Integer  |  98.95 ns | 0.496 ns | 0.464 ns |
+| Display_Write_Signed_Integer | 183.39 ns | 0.948 ns | 0.840 ns |
+| Display_Read_Decimal         |  97.51 ns | 0.309 ns | 0.274 ns |
+| Display_Write_Decimal        | 206.42 ns | 0.992 ns | 0.928 ns |
 
 <br>
 
@@ -551,12 +551,12 @@ Decimal: `PIC S9(5)V9(2)`
 
 | Method                     | Mean      | Error    | StdDev   |
 |--------------------------- |----------:|---------:|---------:|
-| Comp3_Read_Integer         |  86.53 ns | 0.337 ns | 0.299 ns |
-| Comp3_Write_Integer        |  90.31 ns | 0.429 ns | 0.359 ns |
-| Comp3_Read_Signed_Integer  |  82.67 ns | 0.330 ns | 0.293 ns |
-| Comp3_Write_Signed_Integer |  91.55 ns | 0.564 ns | 0.528 ns |
-| Comp3_Read_Decimal         |  97.86 ns | 1.094 ns | 1.024 ns |
-| Comp3_Write_Decimal        | 151.75 ns | 0.422 ns | 0.375 ns |
+| Comp3_Read_Integer         |  87.85 ns | 0.218 ns | 0.182 ns |
+| Comp3_Write_Integer        |  88.29 ns | 0.446 ns | 0.372 ns |
+| Comp3_Read_Signed_Integer  |  84.39 ns | 0.440 ns | 0.412 ns |
+| Comp3_Write_Signed_Integer |  91.66 ns | 0.343 ns | 0.304 ns |
+| Comp3_Read_Decimal         |  96.58 ns | 0.642 ns | 0.601 ns |
+| Comp3_Write_Decimal        | 151.53 ns | 1.131 ns | 1.058 ns |
 
 <br>
 
@@ -566,10 +566,10 @@ Integer: `PIC 9(18)` / `PIC S9(18)`
 
 | Method                     | Mean      | Error    | StdDev   |
 |--------------------------- |----------:|---------:|---------:|
-| Comp4_Read_Integer         |  41.71 ns | 0.174 ns | 0.163 ns |
-| Comp4_Write_Integer        | 131.35 ns | 0.706 ns | 0.626 ns |
-| Comp4_Read_Signed_Integer  |  41.66 ns | 0.111 ns | 0.093 ns |
-| Comp4_Write_Signed_Integer | 132.77 ns | 0.771 ns | 0.684 ns |
+| Comp4_Read_Integer         |  41.56 ns | 0.201 ns | 0.178 ns |
+| Comp4_Write_Integer        | 129.20 ns | 0.395 ns | 0.330 ns |
+| Comp4_Read_Signed_Integer  |  42.06 ns | 0.154 ns | 0.129 ns |
+| Comp4_Write_Signed_Integer | 132.84 ns | 0.555 ns | 0.463 ns |
 
 <br>
 
@@ -579,10 +579,10 @@ Integer: `PIC S9(18)`
 
 | Method                 | Mean      | Error    | StdDev   |
 |----------------------- |----------:|---------:|---------:|
-| Comp5_Read_Integer_BE  |  41.78 ns | 0.146 ns | 0.129 ns |
-| Comp5_Write_Integer_BE | 132.56 ns | 0.626 ns | 0.523 ns |
-| Comp5_Read_Integer_LE  |  39.02 ns | 0.135 ns | 0.113 ns |
-| Comp5_Write_Integer_LE | 131.66 ns | 0.701 ns | 0.621 ns |
+| Comp5_Read_Integer_BE  |  40.91 ns | 0.223 ns | 0.209 ns |
+| Comp5_Write_Integer_BE | 132.44 ns | 0.655 ns | 0.580 ns |
+| Comp5_Read_Integer_LE  |  40.76 ns | 0.253 ns | 0.224 ns |
+| Comp5_Write_Integer_LE | 132.85 ns | 0.747 ns | 0.663 ns |
 
 <br>
 
@@ -592,8 +592,8 @@ Integer: `PIC 9(18)`
 
 | Method              | Mean     | Error    | StdDev   |
 |-------------------- |---------:|---------:|---------:|
-| Comp6_Read_Integer  | 87.03 ns | 0.271 ns | 0.226 ns |
-| Comp6_Write_Integer | 92.37 ns | 0.338 ns | 0.264 ns |
+| Comp6_Read_Integer  | 84.26 ns | 0.365 ns | 0.323 ns |
+| Comp6_Write_Integer | 92.26 ns | 0.246 ns | 0.192 ns |
 
 <br><br>
 

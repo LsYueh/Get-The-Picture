@@ -8,15 +8,8 @@ namespace GetThePicture.Picture.Clause.Codec.Semantic.Date;
 
 internal static class Decoder
 {
-    private static readonly Constraint rule = Rules.GetConstraint(PicSemantic.GregorianDate);
-    
     public static DateOnly Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
-        Constraint rule = Rules.GetConstraint(pic.Semantic);
-        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
-        
-        // TODO: 看看要不要支援 COMP-3 (PACKED-DECIMAL)
-
         return pic.Semantic switch
         {
             PicSemantic.GregorianDate => ParseGregorianDate(buffer),
