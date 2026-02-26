@@ -38,30 +38,43 @@ class Program
 
     private static int RunOptions(Options opts)
     {
-        if (!opts.Copybook!.Exists)
+        if (opts.Copybook is null || !opts.Copybook.Exists)
         {
-            Console.Error.WriteLine($"Copybook not found: {opts.Copybook.FullName}");
+            Console.Error.WriteLine($"Copybook not found: {opts.Copybook?.FullName}");
             return 1;
         }
 
-        var config = new ForgeConfig(BuildConfiguration(opts));
+        try
+        {
+            var config = new ForgeConfig(BuildConfiguration(opts));
 
-        WrapperCommand cmd = new (config);
-        
-        using var reader = new StreamReader(opts.Copybook.FullName, CP950);
-        var provider = new DataProvider(reader);
+            WrapperCommand cmd = new (config);
+            
+            using var reader = new StreamReader(opts.Copybook.FullName, CP950);
+            var provider = new DataProvider(reader);
 
-        if (opts.Verbose) {
-            DumpDataProvider(provider);
+            if (opts.Verbose) {
+                DumpDataProvider(provider);
+            }
+
+            string fileName = NamingHelper.ToPascalCase(Path.GetFileNameWithoutExtension(opts.Copybook.FullName));
+            
+            cmd.ForgeCode(provider, fileName);
+
+            Console.WriteLine($"New wrapper class generated: \"{Path.GetFullPath($"{fileName}.cs")}\"");
+
+            return 0;
         }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine("Forge execution failed.");
+            Console.Error.WriteLine(ex.Message);
 
-        string fileName = NamingHelper.ToPascalCase(Path.GetFileNameWithoutExtension(opts.Copybook.FullName));
-        
-        cmd.ForgeCode(provider, fileName);
-
-        Console.WriteLine($"New wrapper class generated: \"{Path.GetFullPath($"{fileName}.cs")}\"");
-
-        return 0;
+#if DEBUG
+            Console.Error.WriteLine(ex.StackTrace);
+#endif
+            return 1;
+        }
     }
 
     private static IConfiguration BuildConfiguration(Options opts)

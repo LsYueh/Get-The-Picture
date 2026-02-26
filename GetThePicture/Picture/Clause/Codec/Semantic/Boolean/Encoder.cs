@@ -5,19 +5,15 @@ namespace GetThePicture.Picture.Clause.Codec.Semantic.Boolean;
 
 internal static class Encoder
 {
+    private static readonly Constraint rule = Rules.GetConstraint(PicSemantic.Boolean);
+    
     public static byte[] Encode(object value, PicMeta pic)
     {
-        if (pic.Signed)
-            throw new NotSupportedException($"Unsupported Boolean base type: PIC S9");
-
-        if (pic.Usage != PicUsage.Display)
-            throw new NotSupportedException($"'Boolean' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-
-        if (pic.StorageOccupied != 1)
-            throw new NotSupportedException($"Boolean must occupy exactly 1 byte in DISPLAY usage. Actual: {pic.StorageOccupied}");
-
         if (value is not bool b)
             throw new ArgumentException($"Value must be of type bool, got {value?.GetType().Name}");
+
+        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
+        
         var encoded = pic.BaseClass switch
         {
             // 0/1

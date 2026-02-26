@@ -3,8 +3,15 @@
 ## [26.14.3] – 2026-??-??
 
 ### Changed
+- 語意驗證已集中至 `Picture/Clause/Codec/Semantic` 統一處理，不再由各語意 Codec 分別負責。
+
+- 調整 `LeafNode` 語意處理機制：
+    - `LeafNode` 於 `SetSemantic()` (Field Override) 時會進行結構性驗證。
+    - 當語意與 `PIC` 結構不相容時，會立即拋出例外。
+        - 避免不合法狀態進入後續產碼流程。
+
 - `LeafNode` 內的 `PicMeta` 不再允許為 `null。`
-    - Picture Clause 在轉換流程中屬於核心語意資訊，必須保留。
+    - `Picture Clause` 為轉換流程中的核心語意資訊，必須在節點生命週期內保持存在。
 
 <br><br>
 

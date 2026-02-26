@@ -8,14 +8,13 @@ namespace GetThePicture.Picture.Clause.Codec.Semantic.Date;
 
 internal static class Decoder
 {
+    private static readonly Constraint rule = Rules.GetConstraint(PicSemantic.GregorianDate);
+    
     public static DateOnly Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
-        if (pic.BaseClass == PicBaseClass.Numeric && pic.Signed)
-            throw new NotSupportedException($"Unsupported DateOnly base type: PIC S9");
-
-        if (pic.Usage != PicUsage.Display)
-            throw new NotSupportedException($"'Date' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-
+        Constraint rule = Rules.GetConstraint(pic.Semantic);
+        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
+        
         // TODO: 看看要不要支援 COMP-3 (PACKED-DECIMAL)
 
         return pic.Semantic switch

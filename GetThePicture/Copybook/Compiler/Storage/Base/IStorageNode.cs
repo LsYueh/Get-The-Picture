@@ -1,5 +1,3 @@
-using GetThePicture.Copybook.Compiler.Layout;
-
 namespace GetThePicture.Copybook.Compiler.Storage.Base;
 
 public interface IStorageNode

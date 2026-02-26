@@ -1,5 +1,7 @@
 using GetThePicture.Copybook.Compiler.Storage.Base;
 using GetThePicture.Picture.Clause.Base;
+using GetThePicture.Picture.Clause.Base.ClauseItems;
+using GetThePicture.Picture.Clause.Codec.Semantic;
 
 namespace GetThePicture.Copybook.Compiler.Storage;
 
@@ -33,6 +35,21 @@ public class LeafNode(
     // ----------------------------
 
     public PicMeta Pic { get; } = pic;
+
+    public void SetSemantic(PicSemantic semantic)
+    {
+        Pic.Semantic = semantic;
+
+        EnsureConsistency();
+    }
+
+    private void EnsureConsistency()
+    {
+        var rule = Rules.GetConstraint(Pic.Semantic);
+
+        if (!rule.IsStructureValid(Pic))
+            throw new InvalidOperationException($"Semantic '{Pic.Semantic}' is not compatible with PIC structure '{Pic}'.");
+    }
 
     // ----------------------------
     // Dump

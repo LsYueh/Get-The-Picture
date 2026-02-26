@@ -4,14 +4,14 @@ using GetThePicture.Picture.Clause.Base.ClauseItems;
 namespace GetThePicture.Picture.Clause.Codec.Semantic.Date;
 
 internal static class Encoder
-{
+{    
     public static byte[] Encode(object value, PicMeta pic)
     {
         if (value is not DateOnly date)
             throw new FormatException($"Invalid value type for DateOnly encoding: {value.GetType().FullName}");
 
-        if (pic.Usage != PicUsage.Display)
-            throw new NotSupportedException($"'Date' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
+        Constraint rule = Rules.GetConstraint(pic.Semantic);
+        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
 
         string s = pic.Semantic switch
         {

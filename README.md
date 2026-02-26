@@ -474,7 +474,7 @@ USAGE 項目的適用範圍:
 | Alphabetic | Alphabetic | DISPLAY |
 | Alphanumeric | Alphanumeric | DISPLAY |
 | Numeric | Numeric | DISPLAY <br> COMP (Binary) <br> COMP-3 (Packed Decimal) <br> COMP-4 (Binary) <br> COMP-5 (Native Binary) <br> COMP-6 (Unsigned Packed Decimal) |
-| Date-Time <br> (Alphanumeric) | Date <br> Time <br> Timestamp | DISPLAY |
+| Date-Time | Date <br> Time <br> Timestamp | DISPLAY |
 
 <br>
 

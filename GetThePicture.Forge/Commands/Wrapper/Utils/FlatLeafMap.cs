@@ -122,12 +122,13 @@ public class FlatLeafMap()
         if (leaf.Pic.Semantic == semantic)
             return false;
         
-        leaf.Pic.Semantic = semantic;
+        leaf.SetSemantic(semantic);
         
         Console.WriteLine($"    Semantic override → {semantic}");
 
         return true;
     }
+    
 
     private static string FormatPath(IEnumerable<PathSegment> segments)
     {

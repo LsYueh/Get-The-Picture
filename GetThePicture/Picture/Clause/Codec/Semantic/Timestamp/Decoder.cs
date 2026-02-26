@@ -10,11 +10,8 @@ internal static class Decoder
 {
     public static DateTime Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
-        if (pic.BaseClass == PicBaseClass.Numeric && pic.Signed)
-            throw new NotSupportedException($"Unsupported DateTime base type: PIC S9");
-
-        if (pic.Usage != PicUsage.Display)
-            throw new NotSupportedException($"'Timestamp' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
+        Constraint rule = Rules.GetConstraint(pic.Semantic);
+        rule.ValidateOrThrow(pic, pic.Semantic.ToString());
 
         return pic.Semantic switch
         {
