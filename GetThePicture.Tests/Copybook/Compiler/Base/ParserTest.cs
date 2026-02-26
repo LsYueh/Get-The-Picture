@@ -189,14 +189,15 @@ public class ParserTest
 
         Parser parser = new(tokens);
 
-        var model = parser.Analyze();
-        
-        Assert.IsNotNull(model);
+        var layout = parser.Analyze();
+        layout.Seal();
+
+        Assert.IsNotNull(layout);
 
         var sb = new StringBuilder();
         using var writer = new StringWriter(sb);
 
-        model.Dump(writer);
+        layout.Dump(writer);
 
         string result = sb.ToString();
 

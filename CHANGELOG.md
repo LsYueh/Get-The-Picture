@@ -13,6 +13,18 @@
 - `LeafNode` 內的 `PicMeta` 不再允許為 `null。`
     - `Picture Clause` 為轉換流程中的核心語意資訊，必須在節點生命週期內保持存在。
 
+### Refact
+- 重構 `CbLayout`
+    - 引入 `Seal()` 機制，明確區分 **語法樹建構階段** 與 **語意凍結階段**。
+    - `Seal()` 會進行：
+        - `CalculateStorage()`
+        - 建立 66 層級 `RENAMES` 快取
+
+- 重構 `CbCompiler`
+    - 原本的 `SetRedefinesTargets()` 與 `SetRenames66()`，拆分至 `Compiler/Utils` 資料夾中。
+        - 明確區分：編譯流程控制（Compiler）與 語意解析工具（Utils）
+    - 增加 `REDEFINES` 語法限制條件。
+
 <br><br>
 
 

@@ -18,14 +18,15 @@ public class ParserForRedefinesTest
 
         Parser parser = new(tokens);
 
-        var model = parser.Analyze();
+        var layout = parser.Analyze();
+        layout.Seal();
         
-        Assert.IsNotNull(model);
+        Assert.IsNotNull(layout);
 
         var sb = new StringBuilder();
         using var writer = new StringWriter(sb);
 
-        model.Dump(writer);
+        layout.Dump(writer);
 
         string result = sb.ToString();
         

@@ -19,14 +19,18 @@ public class ParserForLv66Test
 
         Parser parser = new(tokens);
 
-        var model = parser.Analyze();
+        var layout = parser.Analyze();
+        layout.Seal();
         
-        Assert.IsNotNull(model);
+        Assert.IsNotNull(layout);
+
+        var _66 = layout.GetRenames66();
+        Assert.AreEqual(1, _66.Count);
 
         var sb = new StringBuilder();
         using var writer = new StringWriter(sb);
 
-        model.Dump(writer);
+        layout.Dump(writer);
 
         string result = sb.ToString();
         
