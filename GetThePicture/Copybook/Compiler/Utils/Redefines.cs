@@ -4,7 +4,7 @@ using GetThePicture.Copybook.Compiler.Layout.Base;
 
 namespace GetThePicture.Copybook.Compiler.Utils;
 
-public class CobolRedefines()
+public class Redefines()
 {
     /// <summary>
     /// 解析 REDEFINES，找到 RedefinesItem 內的 Target 所對應的 ElementaryDataItem

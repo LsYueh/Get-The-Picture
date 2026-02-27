@@ -34,7 +34,7 @@ public sealed class CbCompiler
     /// <param name="layout"></param>
     private static void Finalize(CbLayout layout)
     {
-        CobolRedefines.SetTargets(layout);
-        CobolRenames66.SetFrom(layout);
+        Redefines.SetTargets(layout);
+        Renames66.SetFrom(layout);
     }
 }

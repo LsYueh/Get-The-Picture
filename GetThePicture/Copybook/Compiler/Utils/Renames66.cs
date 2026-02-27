@@ -2,7 +2,7 @@ using GetThePicture.Copybook.Compiler.Layout;
 
 namespace GetThePicture.Copybook.Compiler.Utils;
 
-public class CobolRenames66()
+public class Renames66()
 {
     /// <summary>
     /// 解析 66 層級 RENAMES，對應 From ~ Through 範圍
