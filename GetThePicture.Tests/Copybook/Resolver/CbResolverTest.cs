@@ -2,7 +2,8 @@ using System.Text;
 
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
-using GetThePicture.Copybook.Compiler.Storage;
+using GetThePicture.Copybook.Resolver;
+using GetThePicture.Copybook.Resolver.Storage;
 using GetThePicture.Picture.Clause.Utils;
 using GetThePicture.TestData;
 

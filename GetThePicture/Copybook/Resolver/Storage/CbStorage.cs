@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler.Storage;
+namespace GetThePicture.Copybook.Resolver.Storage;
 
 /// <summary>
 /// Root of Group Nodes

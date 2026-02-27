@@ -1,10 +1,10 @@
 using GetThePicture.Copybook.Compiler.Base;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Compiler.Layout.Base;
-using GetThePicture.Copybook.Compiler.Storage;
-using GetThePicture.Copybook.Compiler.Storage.Base;
+using GetThePicture.Copybook.Resolver.Storage;
+using GetThePicture.Copybook.Resolver.Storage.Base;
 
-namespace GetThePicture.Copybook.Compiler;
+namespace GetThePicture.Copybook.Resolver;
 
 public sealed class CbResolver
 {

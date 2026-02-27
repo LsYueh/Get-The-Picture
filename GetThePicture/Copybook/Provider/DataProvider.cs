@@ -1,6 +1,7 @@
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
-using GetThePicture.Copybook.Compiler.Storage;
+using GetThePicture.Copybook.Resolver;
+using GetThePicture.Copybook.Resolver.Storage;
 
 namespace GetThePicture.Copybook.Provider;
 

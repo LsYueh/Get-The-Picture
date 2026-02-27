@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler.Storage.Base;
+namespace GetThePicture.Copybook.Resolver.Storage.Base;
 
 public abstract class StorageNode(
     int level, string name, int offset = 0, int? storageOccupied = null, int? index = null

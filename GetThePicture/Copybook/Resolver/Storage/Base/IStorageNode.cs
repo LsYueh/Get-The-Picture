@@ -1,4 +1,4 @@
-namespace GetThePicture.Copybook.Compiler.Storage.Base;
+namespace GetThePicture.Copybook.Resolver.Storage.Base;
 
 public interface IStorageNode
 {
