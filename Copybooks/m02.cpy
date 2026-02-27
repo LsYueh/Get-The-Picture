@@ -21,5 +21,6 @@
            05  ERROR-CODE          PIC X(02).  *> 錯誤代碼(空白)
            05  STOCK-NOS-5         PIC 9(10).  *> 前日申購/買回部位
            05  FILLER              PIC X(27).
-       
+       66  M02-KEY  RENAMES BROKER-ID THRU SEQNO.
+       66  M02-ACNT RENAMES ACNT-BROKER THRU ACNT-NO.
        

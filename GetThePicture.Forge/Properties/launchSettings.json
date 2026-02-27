@@ -10,7 +10,7 @@
             "environmentVariables": {
                 "DOTNET_ENVIRONMENT": "Development"
             },
-            "commandLineArgs": "--copybook ../Copybooks/m05.cpy"
+            "commandLineArgs": "--copybook ../Copybooks/m02.cpy --verbose"
         },
     }
 }

@@ -42,6 +42,12 @@ public sealed class CbResolver
                 
                 switch (child)
                 {
+                    case Renames66Item re:
+                    {
+                        // 暫時先不處理 Level 66，但是遇到了不能 throw Exception
+                        break;
+                    }
+                    
                     case RedefinesItem r:
                     {
                         var alias = ResolveAlias(r.TargetName, node.Children, node.Name);

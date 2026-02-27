@@ -24,6 +24,8 @@ public class CobolRenames66()
             {
                 if (flatten[i].Name == rename.From)
                 {
+                    // TODO: 只能允許 Elementary Data Item
+
                     start = i;
                     break;
                 }
@@ -40,6 +42,8 @@ public class CobolRenames66()
                 {
                     if (flatten[i].Name == rename.Thru)
                     {
+                        // TODO: 只能允許 Elementary Data Item
+                        
                         end = i;
                         break;
                     }
