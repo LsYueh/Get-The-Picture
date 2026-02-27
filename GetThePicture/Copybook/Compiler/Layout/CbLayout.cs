@@ -1,4 +1,5 @@
 using GetThePicture.Copybook.Compiler.Layout.Base;
+using GetThePicture.Copybook.Compiler.Utils;
 
 namespace GetThePicture.Copybook.Compiler.Layout;
 
@@ -9,8 +10,8 @@ public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
 {
     private bool _sealed;
 
-    private List<Renames66Item> _renames66Cache = [];
     private List<IDataItem> _flattenCache = [];
+    private List<Renames66Item> _renames66Cache = [];
 
     /// <summary>
     /// Freeze semantic layout and build runtime cache.
@@ -20,25 +21,26 @@ public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
     {
         if (_sealed) return;
 
-        _renames66Cache.Clear();
-        _flattenCache.Clear();
-
         CalculateStorage();
         
-        Build();
+        ResolveReferences();
 
         _sealed = true;
     }
 
-    /// <summary>
-    /// Build semantic runtime projection.
-    /// </summary>
-    private void Build()
+    private void ResolveReferences()
     {        
+        _flattenCache.Clear();
+        _renames66Cache.Clear();
+
         void Walk(IDataItem node)
         {
             switch (node)
             {
+                case Renames66Item re:
+                    _renames66Cache.Add(re);
+                    return;
+                
                 case RedefinesItem r:
                     _flattenCache.Add(r);
 
@@ -60,10 +62,6 @@ public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
                         _flattenCache.Add(e);
 
                     return;
-
-                case Renames66Item r:
-                    _renames66Cache.Add(r);
-                    return;
             }
 
             // Defensive traversal for future IDataItem extension
@@ -73,17 +71,20 @@ public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
 
         foreach (var child in Children)
             Walk(child);
+
+        Redefines.SetTargets(this);
+        Renames66.SetFrom(this);
     }
 
     /// <summary>
-    /// RENAMES 66 semantic collection.
-    /// </summary>
-    public IReadOnlyList<Renames66Item> GetRenames66() => _renames66Cache;
-
-    /// <summary>
-    /// Runtime semantic linear view.
+    /// Linear view.
     /// </summary>
     public IReadOnlyList<IDataItem> GetFlatten() => _flattenCache;
+
+    /// <summary>
+    /// RENAMES 66 collection.
+    /// </summary>
+    public IReadOnlyList<Renames66Item> GetRenames66() => _renames66Cache;
 
     // ----------------------------
     // Dump

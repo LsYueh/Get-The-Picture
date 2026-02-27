@@ -11,9 +11,9 @@ public class Renames66()
     /// <exception cref="InvalidOperationException"></exception>
     public static void SetFrom(CbLayout layout)
     {
-        var renames66 = layout.GetRenames66();
-
         var flatten = layout.GetFlatten();
+
+        var renames66 = layout.GetRenames66();
 
         foreach (var rename in renames66)
         {
