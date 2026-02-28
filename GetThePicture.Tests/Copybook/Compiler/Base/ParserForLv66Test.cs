@@ -1,4 +1,6 @@
 using System.Text;
+
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Base;
 
 namespace GetThePicture.Tests.Copybook.Compiler.Base;
@@ -22,7 +24,7 @@ public class ParserForLv66Test
         "COPYBOOK-LAYOUT", "  66 EMP-KEY >> Renames EMP-ID through EMP-DEPT")]
     public void Test_Set(string line, string expected_01, string expected_02)
     {        
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 

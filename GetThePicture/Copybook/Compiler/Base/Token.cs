@@ -28,7 +28,7 @@ public enum TokenType
     Dot, Hyphen,
 }
 
-public sealed class Token(TokenType type, string value, int lineNumber, Area_t area = Area_t.None)
+public sealed class Token(TokenType type, string value, int lineNumber, Area_t area)
 {
     public TokenType Type { get; } = type;
     public string Value { get; } = value;

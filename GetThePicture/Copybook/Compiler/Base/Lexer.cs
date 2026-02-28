@@ -1,4 +1,5 @@
 using GetThePicture.Cobol;
+using GetThePicture.Cobol.Base;
 
 namespace GetThePicture.Copybook.Compiler.Base;
 
@@ -28,14 +29,14 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
                 allTokens.Add(token);
             }
 
-            var tokens = Tokenize(l.Text, l.LineNumber).ToList();
+            var tokens = Tokenize(l.Text, l.LineNumber, l.Area).ToList();
             allTokens.AddRange(tokens);
         }
 
         return allTokens;
     }
 
-    internal IEnumerable<Token> Tokenize(string line, int lineNumber)
+    internal IEnumerable<Token> Tokenize(string line, int lineNumber, Area_t area)
     {
         _pos = 0;
 
@@ -47,45 +48,45 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
             if (_pos + 1 < line.Length && line[_pos] == '*' && line[_pos + 1] == '>')
             {
                 string comment = line[(_pos + 2)..].Trim();
-                yield return new Token(TokenType.Comment, comment, lineNumber);
+                yield return new Token(TokenType.Comment, comment, lineNumber, area);
                 break; // ⚠️ 結束 while（本行），不是整個 Tokenize 呼叫
             }
             
             if (IsWordChar(Current))
             {
-                yield return ScanWord(line, lineNumber);
+                yield return ScanWord(line, lineNumber, area);
                 continue;
             }
 
             // Alphanumeric Literal (String Literal)
             if (Current == '\'')
             {
-                yield return ScanAlphanumericLiteral(line, lineNumber, '\'');
+                yield return ScanAlphanumericLiteral(line, lineNumber, area, '\'');
                 continue;
             }
 
             // Alphanumeric Literal (String Literal)
             if (Current == '"')
             {
-                yield return ScanAlphanumericLiteral(line, lineNumber, '"');
+                yield return ScanAlphanumericLiteral(line, lineNumber, area, '"');
                 continue;
             }
 
             if (Current == '(')
             {
-                yield return new Token(TokenType.LParen, line[_pos++].ToString(), lineNumber);
+                yield return new Token(TokenType.LParen, line[_pos++].ToString(), lineNumber, area);
                 continue;
             }
 
             if (Current == ')')
             {
-                yield return new Token(TokenType.RParen, line[_pos++].ToString(), lineNumber);
+                yield return new Token(TokenType.RParen, line[_pos++].ToString(), lineNumber, area);
                 continue;
             }
 
             if (Current == '.')
             {
-                yield return new Token(TokenType.Dot, line[_pos++].ToString(), lineNumber);
+                yield return new Token(TokenType.Dot, line[_pos++].ToString(), lineNumber, area);
                 continue;
             }
 
@@ -98,7 +99,7 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
             // ----------------------------
             // Fallback: Unknown char
             // ----------------------------
-            yield return new Token(TokenType.Unknown, line[_pos++].ToString(), lineNumber);
+            yield return new Token(TokenType.Unknown, line[_pos++].ToString(), lineNumber, area);
         }
     }
 
@@ -115,7 +116,7 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
     /// <param name="line"></param>
     /// <param name="lineNumber"></param>
     /// <returns></returns>
-    private Token ScanWord(string line, int lineNumber)
+    private Token ScanWord(string line, int lineNumber, Area_t area)
     {
         int start = _pos;
 
@@ -124,10 +125,10 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
 
         string word = line[start.._pos];
 
-        return ClassifyWord(word, lineNumber);
+        return ClassifyWord(word, lineNumber, area);
     }
 
-    private Token ScanAlphanumericLiteral(string line, int lineNumber, char quoteChar = '\'')
+    private Token ScanAlphanumericLiteral(string line, int lineNumber, Area_t area, char quoteChar = '\'')
     {
         int start = _pos;
         _pos++; // skip opening quote
@@ -156,58 +157,58 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
 
         // 即使沒有閉合也會生成 Token
         string tokenText = line[start.._pos];
-        return new Token(TokenType.AlphanumericLiteral, tokenText, lineNumber);
+        return new Token(TokenType.AlphanumericLiteral, tokenText, lineNumber, area);
     }
 
     // ----------------------------
     // Helpers
     // ----------------------------
 
-    private static Token ClassifyWord(string word, int lineNumber)
+    private static Token ClassifyWord(string word, int lineNumber, Area_t area)
     {
         // NumericLiteral
         if (IsNumeric(word))
-            return new Token(TokenType.NumericLiteral, word, lineNumber);
+            return new Token(TokenType.NumericLiteral, word, lineNumber, area);
 
         // Reserved Word or Alphanumeric Literal
         return word switch
         {
             "PICTURE" or
-            "PIC"       => new Token(TokenType.Picture  , word, lineNumber),
-            "USAGE"     => new Token(TokenType.Usage    , word, lineNumber),
-            "DISPLAY"   => new Token(TokenType.Display  , word, lineNumber),
+            "PIC"       => new Token(TokenType.Picture  , word, lineNumber, area),
+            "USAGE"     => new Token(TokenType.Usage    , word, lineNumber, area),
+            "DISPLAY"   => new Token(TokenType.Display  , word, lineNumber, area),
             "COMPUTATIONAL"   or
-            "COMP"      => new Token(TokenType.Comp     , word, lineNumber),
+            "COMP"      => new Token(TokenType.Comp     , word, lineNumber, area),
             "COMPUTATIONAL-1" or
-            "COMP-1"    => new Token(TokenType.Comp1    , word, lineNumber),
+            "COMP-1"    => new Token(TokenType.Comp1    , word, lineNumber, area),
             "COMPUTATIONAL-2" or
-            "COMP-2"    => new Token(TokenType.Comp2    , word, lineNumber),
+            "COMP-2"    => new Token(TokenType.Comp2    , word, lineNumber, area),
             "COMPUTATIONAL-3" or
-            "COMP-3"    => new Token(TokenType.Comp3    , word, lineNumber),
+            "COMP-3"    => new Token(TokenType.Comp3    , word, lineNumber, area),
             "COMPUTATIONAL-4" or
-            "COMP-4"    => new Token(TokenType.Comp4    , word, lineNumber),
+            "COMP-4"    => new Token(TokenType.Comp4    , word, lineNumber, area),
             "COMPUTATIONAL-5" or
-            "COMP-5"    => new Token(TokenType.Comp5    , word, lineNumber),
+            "COMP-5"    => new Token(TokenType.Comp5    , word, lineNumber, area),
             "COMPUTATIONAL-6" or
-            "COMP-6"    => new Token(TokenType.Comp6    , word, lineNumber),
-            "BINARY"    => new Token(TokenType.Binary   , word, lineNumber),
-            "PACKED-DECIMAL" => new Token(TokenType.PackedDecimal, word, lineNumber),
-            "VALUE"     => new Token(TokenType.Value    , word, lineNumber),
-            "VALUES"    => new Token(TokenType.Values   , word, lineNumber),
+            "COMP-6"    => new Token(TokenType.Comp6    , word, lineNumber, area),
+            "BINARY"    => new Token(TokenType.Binary   , word, lineNumber, area),
+            "PACKED-DECIMAL" => new Token(TokenType.PackedDecimal, word, lineNumber, area),
+            "VALUE"     => new Token(TokenType.Value    , word, lineNumber, area),
+            "VALUES"    => new Token(TokenType.Values   , word, lineNumber, area),
             "THROUGH" or
-            "THRU"      => new Token(TokenType.Through  , word, lineNumber),
+            "THRU"      => new Token(TokenType.Through  , word, lineNumber, area),
             "SPACE" or
-            "SPACES"    => new Token(TokenType.Space    , word, lineNumber),
+            "SPACES"    => new Token(TokenType.Space    , word, lineNumber, area),
             "ZERO" or
             "ZEROS" or
-            "ZEROES"    => new Token(TokenType.Zero     , word, lineNumber),
-            "REDEFINES" => new Token(TokenType.Redefines, word, lineNumber),
-            "RENAMES"   => new Token(TokenType.Renames  , word, lineNumber),
-            "OCCURS"    => new Token(TokenType.Occurs   , word, lineNumber),
-            "TIMES"     => new Token(TokenType.Times    , word, lineNumber),
-            "FILLER"    => new Token(TokenType.Filler   , word, lineNumber),
+            "ZEROES"    => new Token(TokenType.Zero     , word, lineNumber, area),
+            "REDEFINES" => new Token(TokenType.Redefines, word, lineNumber, area),
+            "RENAMES"   => new Token(TokenType.Renames  , word, lineNumber, area),
+            "OCCURS"    => new Token(TokenType.Occurs   , word, lineNumber, area),
+            "TIMES"     => new Token(TokenType.Times    , word, lineNumber, area),
+            "FILLER"    => new Token(TokenType.Filler   , word, lineNumber, area),
 
-            _ => new Token(TokenType.AlphanumericLiteral, word, lineNumber),
+            _ => new Token(TokenType.AlphanumericLiteral, word, lineNumber, area),
         }; 
     }
 

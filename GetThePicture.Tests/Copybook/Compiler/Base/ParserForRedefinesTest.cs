@@ -1,4 +1,6 @@
 using System.Text;
+
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Base;
 
 namespace GetThePicture.Tests.Copybook.Compiler.Base;
@@ -20,7 +22,7 @@ public class ParserForRedefinesTest
         "COPYBOOK-LAYOUT", "05 COMT-DATA REDEFINES FIELD-DATA.")]
     public void Test_Set(string line, string expected_01, string expected_02)
     {        
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 
@@ -52,7 +54,7 @@ public class ParserForRedefinesTest
     [ExpectedException(typeof(CompileException))]
     public void Test_Throw_CompileException(string line, string expected_01, string expected_02)
     {
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 

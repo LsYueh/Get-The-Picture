@@ -1,4 +1,6 @@
 using System.Text;
+
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Base;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Compiler.Layout.Item;
@@ -16,7 +18,7 @@ public class ParserTest
     {        
         string line = "05 CUSTOMER-NAME PIC X(10).";
 
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 
@@ -30,7 +32,7 @@ public class ParserTest
     {        
         string line = "05 CUSTOMER-NAME PIC X(10) VALUE 'ABC'.";
 
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 
@@ -44,7 +46,7 @@ public class ParserTest
     {        
         string line = "05 MONTH-NAME PIC X(3) OCCURS 12 TIMES VALUE \"---\".";
 
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 
@@ -62,7 +64,7 @@ public class ParserTest
                05 MSGIDA                       PIC  X(030).
         ";
 
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 
@@ -100,7 +102,7 @@ public class ParserTest
                05 MSGID                        PIC  X(010).
 ";
 
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 
@@ -149,7 +151,7 @@ public class ParserTest
            05  ZIP                     PIC 9(5).
 ";
 
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 
@@ -186,7 +188,7 @@ public class ParserTest
     {        
         string line = "05 FILLER                PIC 9(10) VALUE ZEROS.";
 
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 
