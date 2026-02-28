@@ -1,6 +1,6 @@
 using GetThePicture.Copybook.Resolver.Storage.Base;
 
-namespace GetThePicture.Copybook.Resolver.Storage;
+namespace GetThePicture.Copybook.Resolver.Storage.Node;
 
 public class GroupNode(
     int level, string name, int offset = 0, int? index = null

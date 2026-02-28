@@ -1,6 +1,6 @@
 using GetThePicture.Copybook.Compiler.Layout.Base;
 
-namespace GetThePicture.Copybook.Compiler.Layout;
+namespace GetThePicture.Copybook.Compiler.Layout.Item;
 
 public sealed class Renames66Item(
     string name, string from, string? through, string? comment = null

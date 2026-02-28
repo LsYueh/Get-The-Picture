@@ -1,6 +1,6 @@
 using GetThePicture.Copybook.Compiler.Layout.Base;
 
-namespace GetThePicture.Copybook.Compiler.Layout;
+namespace GetThePicture.Copybook.Compiler.Layout.Item;
 
 public sealed class RedefinesItem(
     int level, string name, string targetName,

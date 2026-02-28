@@ -1,3 +1,5 @@
+using GetThePicture.Copybook.Resolver.Storage.Node;
+
 namespace GetThePicture.Copybook.Resolver.Storage;
 
 /// <summary>

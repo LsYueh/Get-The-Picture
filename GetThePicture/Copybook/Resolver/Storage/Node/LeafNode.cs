@@ -3,7 +3,7 @@ using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Codec.Semantic;
 using GetThePicture.Copybook.Resolver.Storage.Base;
 
-namespace GetThePicture.Copybook.Resolver.Storage;
+namespace GetThePicture.Copybook.Resolver.Storage.Node;
 
 public class LeafNode(
     int level, string name, PicMeta pic, int offset = 0, int storageOccupied = 0, int? index = null

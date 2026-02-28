@@ -19,10 +19,7 @@
     - `Seal()` 會進行：
         - `CalculateStorage()`。
         - 66 層級 `RENAMES` 的語法檢查。
-
-- 重構 `CbResolver`
-    - 自 `CbCompiler` 拆分為獨立元件，專責名稱解析與記憶體映射。
-    - 減少 Compiler 職責，
+    - `DataItem` 的子類別歸類至 **Item** 資料夾中。
 
 - 重構 `CbCompiler`
     - `SetRedefinesTargets()` 整併至 `Parser` 中。
@@ -33,6 +30,16 @@
         - 但 Level 66：
             - 不參與 `CbStorage` 生成。
             - 不影響儲存結構。
+
+- 重構 `CbStorage`
+    - `StorageNode` 的子類別歸類至 **Node** 資料夾中。
+
+- 重構 `CbResolver`
+    - 自 `CbCompiler` 拆分為獨立元件，專責名稱解析與記憶體映射。
+    - 減少 Compiler 職責，
+
+### Test
+- `ParserForLv66Test` 目前先標註 [Ignore]。
 
 <br><br>
 

@@ -1,5 +1,6 @@
 using GetThePicture.Copybook.Resolver.Storage;
 using GetThePicture.Copybook.Resolver.Storage.Base;
+using GetThePicture.Copybook.Resolver.Storage.Node;
 
 namespace GetThePicture.Forge.Commands.Wrapper.Utils;
 

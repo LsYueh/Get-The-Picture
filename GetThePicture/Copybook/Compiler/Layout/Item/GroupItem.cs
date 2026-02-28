@@ -1,6 +1,6 @@
 using GetThePicture.Copybook.Compiler.Layout.Base;
 
-namespace GetThePicture.Copybook.Compiler.Layout;
+namespace GetThePicture.Copybook.Compiler.Layout.Item;
 
 public class GroupItem(
     int level, string name, int? occurs = null,
