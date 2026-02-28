@@ -94,13 +94,33 @@ public class Parser(List<Token> tokens)
     /// <param name="parent"></param>
     /// <returns></returns>
     /// <exception cref="CompileException"></exception>
-    private IDataItem? ParseDataItem(IDataItem? parent = null)
+    private void ParseDataItem(IDataItem? parent = null, int previousLevel = 0)
     {
         // 遞迴終止
-        if (Current == null) return null;
+        if (Current == null) return;
 
         // 解析
         IDataItem item = ParseSingleDataItem();
+
+        // 位置順序限制：重新定義的項目必須緊接在被重新定義項目的描述之後。
+        if (item is RedefinesItem redefines)
+        {
+            // 同級別限制
+            IDataItem? target = parent?.Children.FirstOrDefault(e => e.Name == redefines.TargetName);
+
+            if (target is null)
+                throw new CompileException($"Cannot resolve REDEFINES target '{redefines.TargetName}' for '{redefines.Name}'.");
+
+            // 不能重新定義 66
+            if (target is Renames66Item)
+                throw new CompileException($"Cannot redefine 66-level item '{redefines.TargetName}' with '{redefines.Name}'.");
+
+            // 不能重新定義 88
+            if (target is Condition88Item)
+                throw new CompileException($"Cannot redefine 88-level item '{redefines.TargetName}' with '{redefines.Name}'.");
+
+            redefines.SetTarget(target);
+        }
 
         // 加入 parent 的 Subordinates / 88 處理
         switch (parent)
@@ -119,32 +139,37 @@ public class Parser(List<Token> tokens)
         }
 
         // 過濾可遞迴的子項
-        IDataItem? parentItem = item switch
+
+        IDataItem? currentItem = item switch
         {
-            RedefinesItem r => r,
-            GroupItem g => g,
-            ElementaryDataItem e => e,
+            RedefinesItem       r => r,
+            GroupItem           g => g,
+            ElementaryDataItem  e => e,
+            Renames66Item      re => re,
             _ => null
         };
 
-        if (parentItem != null)
+        if (currentItem != null)
         {
-            int parentLevel = parentItem.Level;
+            int currentLevel = currentItem.Level;
+
             while (IsNextDataItemStart())
             {
                 int nextLevel = int.Parse(Current.Value);
-                
-                // Level 層級結束
-                if (nextLevel <= parentLevel) break;
 
-                // Level 66 是 record-level 的語意節點，除了 Root 外不屬於任何 GroupItem 或 ElementaryDataItem 
-                if (nextLevel == 66) break;
+                if (nextLevel == 66 || currentLevel == 66)
+                {
+                    ParseDataItem(parent, nextLevel); break;
+                }
                 
-                ParseDataItem(parentItem);
+                if (nextLevel <= currentLevel)
+                    break;
+                
+                ParseDataItem(currentItem, nextLevel);
             }
         }
 
-        return item;
+        return;
     }
 
     /// <summary>
@@ -570,6 +595,11 @@ public class Parser(List<Token> tokens)
     // ----------------------------
     // Helpers
     // ----------------------------
+
+    bool IsHierarchyLevel(int level)
+    {
+        return level is >= 1 and <= 49 || level == 77;
+    }
 
     private void CollectComments(List<string> target)
     {

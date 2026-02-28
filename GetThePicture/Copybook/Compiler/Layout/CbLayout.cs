@@ -1,5 +1,4 @@
 using GetThePicture.Copybook.Compiler.Layout.Base;
-using GetThePicture.Copybook.Compiler.Utils;
 
 namespace GetThePicture.Copybook.Compiler.Layout;
 
@@ -10,8 +9,7 @@ public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
 {
     private bool _sealed;
 
-    private List<IDataItem> _flattenCache = [];
-    private List<Renames66Item> _renames66Cache = [];
+    private List<Renames66Item> _renames66 = [];
 
     /// <summary>
     /// Freeze semantic layout and build runtime cache.
@@ -23,26 +21,27 @@ public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
 
         CalculateStorage();
         
-        ResolveReferences();
+        ValidateRenamesReferences();
 
         _sealed = true;
     }
 
-    private void ResolveReferences()
+    private void ValidateRenamesReferences()
     {        
-        _flattenCache.Clear();
-        _renames66Cache.Clear();
+        List<IDataItem> flatten = [];
+
+        _renames66.Clear();
 
         void Walk(IDataItem node)
         {
             switch (node)
             {
                 case Renames66Item re:
-                    _renames66Cache.Add(re);
+                    _renames66.Add(re);
                     return;
                 
                 case RedefinesItem r:
-                    _flattenCache.Add(r);
+                    flatten.Add(r);
 
                     foreach (var child in r.Children)
                         Walk(child);
@@ -50,7 +49,7 @@ public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
                     return;
                 
                 case GroupItem g:
-                    _flattenCache.Add(g);
+                    flatten.Add(g);
 
                     foreach (var child in g.Children)
                         Walk(child);
@@ -59,7 +58,7 @@ public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
 
                 case ElementaryDataItem e:
                     if (e.IsFiller != true)
-                        _flattenCache.Add(e);
+                        flatten.Add(e);
 
                     return;
             }
@@ -72,19 +71,14 @@ public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
         foreach (var child in Children)
             Walk(child);
 
-        Redefines.SetTargets(this);
-        Renames66.SetFrom(this);
+        foreach (var rename in _renames66)
+            rename.SetAffectedItems(flatten);
     }
-
-    /// <summary>
-    /// Linear view.
-    /// </summary>
-    public IReadOnlyList<IDataItem> GetFlatten() => _flattenCache;
 
     /// <summary>
     /// RENAMES 66 collection.
     /// </summary>
-    public IReadOnlyList<Renames66Item> GetRenames66() => _renames66Cache;
+    public IReadOnlyList<Renames66Item> GetRenames66() => _renames66;
 
     // ----------------------------
     // Dump

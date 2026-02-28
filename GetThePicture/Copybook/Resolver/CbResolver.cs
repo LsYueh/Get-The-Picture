@@ -41,13 +41,7 @@ public sealed class CbResolver
                 int? occursIndex = occurs > 1 ? i + 1 : null;
                 
                 switch (child)
-                {
-                    case Renames66Item re:
-                    {
-                        // 暫時先不處理 Level 66，但是遇到了不能 throw Exception
-                        break;
-                    }
-                    
+                {   
                     case RedefinesItem r:
                     {
                         var alias = ResolveAlias(r.TargetName, node.Children, node.Name);
@@ -75,6 +69,12 @@ public sealed class CbResolver
 
                         storageOffset += groupSize;
 
+                        break;
+                    }
+
+                    case Renames66Item re:
+                    {
+                        // 暫時先不處理 Level 66，但是遇到了不能 throw Exception
                         break;
                     }
 

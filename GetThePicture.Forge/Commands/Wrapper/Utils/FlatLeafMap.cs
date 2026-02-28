@@ -1,5 +1,5 @@
-using GetThePicture.Copybook.Compiler.Storage;
-using GetThePicture.Copybook.Compiler.Storage.Base;
+using GetThePicture.Copybook.Resolver.Storage;
+using GetThePicture.Copybook.Resolver.Storage.Base;
 using GetThePicture.Forge.Commands.Wrapper.Base;
 using GetThePicture.Forge.Core.Config.Section;
 

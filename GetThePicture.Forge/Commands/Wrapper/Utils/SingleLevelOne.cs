@@ -1,5 +1,5 @@
-using GetThePicture.Copybook.Compiler.Storage;
-using GetThePicture.Copybook.Compiler.Storage.Base;
+using GetThePicture.Copybook.Resolver.Storage;
+using GetThePicture.Copybook.Resolver.Storage.Base;
 
 namespace GetThePicture.Forge.Commands.Wrapper.Utils;
 
