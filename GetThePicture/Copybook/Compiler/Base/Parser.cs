@@ -122,6 +122,12 @@ public class Parser(List<Token> tokens)
             redefines.SetTarget(target);
         }
 
+        if (item is Renames66Item renames)
+        {
+            // 不處理 66 RENAMES 子句
+            return;
+        }
+
         // 加入 parent 的 Subordinates / 88 處理
         switch (parent)
         {

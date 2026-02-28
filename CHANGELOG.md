@@ -1,6 +1,6 @@
 # Changelog
 
-## [26.14.3] – 2026-??-??
+## [26.14.3] – 2026-03-02
 
 ### Changed
 - 語意驗證已集中至 `Picture/Clause/Codec/Semantic` 統一處理，不再由各語意 Codec 分別負責。
@@ -17,13 +17,22 @@
 - 重構 `CbLayout`
     - 引入 `Seal()` 機制，明確區分 **語法樹建構階段** 與 **語意凍結階段**。
     - `Seal()` 會進行：
-        - `CalculateStorage()`
-        - 建立 66 層級 `RENAMES` 快取
+        - `CalculateStorage()`。
+        - 66 層級 `RENAMES` 的語法檢查。
+
+- 重構 `CbResolver`
+    - 自 `CbCompiler` 拆分為獨立元件，專責名稱解析與記憶體映射。
+    - 減少 Compiler 職責，
 
 - 重構 `CbCompiler`
-    - 原本的 `SetRedefinesTargets()` 與 `SetRenames66()`，拆分至 `Compiler/Utils` 資料夾中。
-        - 明確區分：編譯流程控制（Compiler）與 語意解析工具（Utils）
-    - 增加 `REDEFINES` 語法限制條件。
+    - `SetRedefinesTargets()` 整併至 `Parser` 中。
+        - 於語法階段即完成 `REDEFINES` 綁定與合法性驗證。
+        - 強化限制條件檢查（不可跨層、不可 OCCURS 等）。
+    - `SetRenames66()` 改為 `CbLayout.Seal()` 流程的一部分。
+        - `Parser` 可以解析任何層級的 `66 RENAMES`。
+        - 但 Level 66：
+            - 不參與 `CbStorage` 生成。
+            - 不影響儲存結構。
 
 <br><br>
 
