@@ -1,3 +1,5 @@
+using GetThePicture.Cobol.Base;
+
 namespace GetThePicture.Copybook.Compiler.Base;
 
 /// <summary>
@@ -26,11 +28,13 @@ public enum TokenType
     Dot, Hyphen,
 }
 
-public class Token(TokenType type, string value, int lineNumber)
+public sealed class Token(TokenType type, string value, int lineNumber, Area_t area = Area_t.None)
 {
     public TokenType Type { get; } = type;
     public string Value { get; } = value;
     public int LineNumber { get; } = lineNumber;
+
+    public Area_t Area { get; } = area;
 
     public override string ToString() => $"{Type}: '{Value}' (Line {LineNumber})";
 }

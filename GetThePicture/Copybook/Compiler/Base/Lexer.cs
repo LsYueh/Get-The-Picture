@@ -1,4 +1,4 @@
-using GetThePicture.Copybook.Base;
+using GetThePicture.Cobol;
 
 namespace GetThePicture.Copybook.Compiler.Base;
 
@@ -19,16 +19,16 @@ public class Lexer(IReadOnlyList<CobolLine>? lines = null)
 
         for (int lineNumber = 0; lineNumber < _lines.Count; lineNumber++)
         {
-            var l = _lines[lineNumber];
+            CobolLine l = _lines[lineNumber];
 
             // Column 7 是延續符號
             if (l.Indicator == '-')
             {
-                var token = new Token(TokenType.Hyphen, l.Indicator.ToString(), lineNumber);
+                var token = new Token(TokenType.Hyphen, l.Indicator.ToString(), lineNumber, l.Area);
                 allTokens.Add(token);
             }
 
-            var tokens = Tokenize(l.Line, l.LineNumber).ToList();
+            var tokens = Tokenize(l.Text, l.LineNumber).ToList();
             allTokens.AddRange(tokens);
         }
 

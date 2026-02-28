@@ -1,4 +1,4 @@
-using GetThePicture.Copybook.Base;
+using GetThePicture.Cobol;
 using GetThePicture.Copybook.Compiler.Base;
 using GetThePicture.Copybook.Compiler.Layout;
 

@@ -14,6 +14,10 @@
     - `Picture Clause` 為轉換流程中的核心語意資訊，必須在節點生命週期內保持存在。
 
 ### Refact
+- 重構 `CobolLine`
+    - 新增 **Area A** / **Area B** 分類機制（Fixed Format）。
+    - 將行區域資訊傳遞至 Lexer，並寫入 Token 以保留版面語意。
+
 - 重構 `CbLayout`
     - 引入 `Seal()` 機制，明確區分 **語法樹建構階段** 與 **語意凍結階段**。
     - `Seal()` 會進行：

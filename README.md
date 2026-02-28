@@ -224,7 +224,10 @@ public class T30_t(byte[] raw) : CbWrapper(raw)
 
 
 # COBOL Coding Sheet (Reference Format)
-COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed Format）` 下很重要。主要分為 `Sequence Area`, `Indicator Area`, `Area A`, `Area B` 等區域。
+
+![punched card](/docs/source/punched-card.webp) 
+
+COBOL 程式有一套固定的欄位規則，尤其在 `固定格式（Fixed Format）` 下很重要。主要分為 `Sequence Area`, `Indicator Area`, `Area A`, `Area B` 等區域。  
 
 <br>
 
