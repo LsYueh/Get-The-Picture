@@ -3,6 +3,14 @@ using GetThePicture.Copybook.Compiler.Layout.Base;
 
 namespace GetThePicture.Copybook.Compiler.Layout.Item;
 
+/// <summary>
+/// RENAMES
+/// </summary>
+/// <param name="area"></param>
+/// <param name="name"></param>
+/// <param name="from"></param>
+/// <param name="through"></param>
+/// <param name="comment"></param>
 public sealed class Renames66Item(
     Area_t area,
     string name, string from, string? through, string? comment = null

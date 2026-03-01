@@ -118,12 +118,6 @@ public class Parser(List<Token> tokens)
             redefines.SetTarget(target);
         }
 
-        if (item is Renames66Item renames)
-        {
-            // 不處理 66 RENAMES 子句
-            return;
-        }
-
         // 加入 parent 的 Subordinates / 88 處理
         switch (parent)
         {
@@ -153,11 +147,20 @@ public class Parser(List<Token> tokens)
 
         if (currentItem != null)
         {
+            var currentArea  = currentItem.Area;
             int currentLevel = currentItem.Level;
 
             while (IsNextDataItemStart())
             {
+                var nextArea  = Current.Area;
                 int nextLevel = int.Parse(Current.Value);
+
+                // Note: Break 是離開遞迴 (退回上一層)
+                //       ParseDataItem 是繼續處理下一個 DataItem 或進入下一層
+
+                // 從 Area B 出去到 Area A (或是非 Area B)
+                if (currentArea == Area_t.B && nextArea != Area_t.B)
+                    break;
 
                 if (nextLevel == 66 || currentLevel == 66)
                 {
@@ -332,24 +335,26 @@ public class Parser(List<Token> tokens)
         return (area, level, name, false);
     }
 
+    /// <summary>
+    /// DataItem 的結束一定是 Dot (.) <br/>
+    /// 但 Dot 後面可能會插入 Floating Comment (TokenType.Comment) <br/>
+    /// <br/>
+    /// 例如：<br/>
+    ///   05 A PIC X. <br/>
+    ///   *> comment <br/>
+    ///   05 B PIC 9. <br/>
+    /// <br/>
+    /// Token 串實際上會是： <br/>
+    ///   Dot -> Comment -> NumericLiteral(05) <br/>
+    /// <br/>
+    /// 因此： <br/>
+    ///   - Comment 不能影響結構判斷 <br/>
+    ///   - 必須找「前一個非 Comment token」 <br/>
+    ///     以及「下一個非 Comment token」來判斷邊界 <br/>
+    /// </summary>
+    /// <returns></returns>
     private bool IsNextDataItemStart()
     {
-        // DataItem 的結束一定是 Dot (.)
-        // 但 Dot 後面可能會插入 Floating Comment (TokenType.Comment)
-        //
-        // 例如：
-        //   05 A PIC X.
-        //   *> comment
-        //   05 B PIC 9.
-        //
-        // Token 串實際上會是：
-        //   Dot -> Comment -> NumericLiteral(05)
-        //
-        // 因此：
-        //   - Comment 不影響結構判斷
-        //   - 必須找「前一個非 Comment token」
-        //     以及「下一個非 Comment token」來判斷邊界
-
         return PreviousMeaningfulType() == TokenType.Dot
             && CurrentMeaningfulType()  == TokenType.NumericLiteral;
     }

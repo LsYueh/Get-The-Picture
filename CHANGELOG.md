@@ -42,9 +42,6 @@
     - 自 `CbCompiler` 拆分為獨立元件，專責名稱解析與記憶體映射。
     - 減少 Compiler 職責，
 
-### Test
-- `ParserForLv66Test` 目前先標註 [Ignore]。
-
 <br><br>
 
 

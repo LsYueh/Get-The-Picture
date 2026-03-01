@@ -11,7 +11,6 @@ public class ParserForLv66Test
 {
     private static readonly Lexer lexer = new();
 
-    [Ignore]
     [DataTestMethod]
     [DataRow(
         "05 EMP-ID PIC X(10)." +
