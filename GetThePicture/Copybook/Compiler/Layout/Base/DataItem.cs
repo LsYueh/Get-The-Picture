@@ -25,5 +25,18 @@ public abstract class DataItem(
 
     public abstract void Dump(TextWriter writer, int indent = 0);
 
-    private protected static string Indent(int i) => new(' ', i * 2);
+    private protected string Indent(int i)
+    {
+        return new string(' ', i * 2) + Margin();
+    }
+
+    private protected string Margin()
+    {
+        return Area switch
+        {
+            Area_t.A => "[A] ",
+            Area_t.B => "[B] ",
+            _ => "",
+        };
+    }
 }
