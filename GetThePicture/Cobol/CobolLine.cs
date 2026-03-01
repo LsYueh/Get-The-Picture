@@ -134,6 +134,7 @@ public class CobolLine(int lineNumber, string rawText) : ICobolCodingSheet
     {
         if (!string.IsNullOrWhiteSpace(AreaA))
         {
+            ValidateLevelIfNumeric(AreaA);
             Area = Area_t.A;
             return;
         }
@@ -145,5 +146,40 @@ public class CobolLine(int lineNumber, string rawText) : ICobolCodingSheet
         }
 
         Area = Area_t.Free;
+    }
+
+    private void ValidateLevelIfNumeric(string areaA)
+    {
+        var text = areaA.Trim();
+
+        // 不是純數字 → 不處理（可能是 SECTION / FD）
+        if (!text.All(char.IsDigit))
+            return;
+
+        if (text.Length != 2)
+            throw new FormatException(
+                $"Line {LineNumber}: Level number must be 2 digits.");
+
+        if (!int.TryParse(text, out int level))
+            return;
+
+        if (!IsValidLevel(level))
+        {
+            throw new FormatException(
+                $"Line {LineNumber}: Invalid level number '{level}'.");
+        }
+    }
+
+    /// <summary>
+    /// 只做範圍檢查，進階判斷交給編譯器處理
+    /// </summary>
+    /// <param name="level"></param>
+    /// <returns></returns>
+    private static bool IsValidLevel(int level)
+    {
+        if (level >= 1 && level <= 49)
+            return true;
+
+        return level is 66 or 77 or 88;
     }
 }

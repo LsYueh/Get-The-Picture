@@ -1,10 +1,12 @@
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Layout.Base;
 
 namespace GetThePicture.Copybook.Compiler.Layout.Item;
 
 public sealed class Renames66Item(
+    Area_t area,
     string name, string from, string? through, string? comment = null
-) : DataItem(66, name, null, comment)
+) : DataItem(area, 66, name, null, comment)
 {
     // ----------------------------
     // RENAMES

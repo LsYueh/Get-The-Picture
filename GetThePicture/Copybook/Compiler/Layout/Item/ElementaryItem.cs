@@ -1,12 +1,14 @@
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Layout.Base;
 using GetThePicture.Picture.Clause.Base;
 
 namespace GetThePicture.Copybook.Compiler.Layout.Item;
 
 public sealed class ElementaryDataItem(
+    Area_t area,
     int level, string name, PicMeta pic, int? occurs = null,
     string? value = null,
-    bool isFiller = false, string? comment = null) : DataItem(level, name, occurs, comment)
+    bool isFiller = false, string? comment = null) : DataItem(area, level, name, occurs, comment)
 {
     public PicMeta Pic { get; init; } = pic ?? throw new ArgumentNullException(nameof(pic));
 

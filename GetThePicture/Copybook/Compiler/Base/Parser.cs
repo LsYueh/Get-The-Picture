@@ -1,5 +1,5 @@
 using System.Text;
-
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Compiler.Layout.Base;
 using GetThePicture.Copybook.Compiler.Layout.Item;
@@ -7,11 +7,6 @@ using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 
 namespace GetThePicture.Copybook.Compiler.Base;
-
-public sealed record DataItemHeader(
-    int Level,
-    string Name
-);
 
 public class Parser(List<Token> tokens)
 {
@@ -228,7 +223,7 @@ public class Parser(List<Token> tokens)
 
         CollectComments(comments); // 行首 comment（很少，但合法）
 
-        var (level, name, isFiller) = ParseDataItemHeader();
+        var (area, level, name, isFiller) = ParseDataItemHeader();
 
         while (Current != null && Current.Type != TokenType.Dot)
         {
@@ -293,12 +288,12 @@ public class Parser(List<Token> tokens)
         {
             // REDEFINES 優先處理
             if (targetName is not null)
-                return new RedefinesItem(level, name, targetName, comment);
+                return new RedefinesItem(area, level, name, targetName, comment);
             
             if (pic is null)
-                return new GroupItem(level, name, occurs, isFiller, comment);
+                return new GroupItem(area, level, name, occurs, isFiller, comment);
 
-            var item = new ElementaryDataItem(level, name, pic, occurs, value, isFiller, comment);
+            var item = new ElementaryDataItem(area, level, name, pic, occurs, value, isFiller, comment);
             
             return item;
         }
@@ -307,26 +302,34 @@ public class Parser(List<Token> tokens)
         IDataItem item = level switch
         {
             >= 1 and <= 49 => CreateLevel1To49(),
-            66 => new Renames66Item(name, lv66From, lv66Through, comment),
-            88 => new Condition88Item(name, lv88Values, lv88Through),
+            66 => new Renames66Item(area, name, lv66From, lv66Through, comment),
+            88 => new Condition88Item(area, name, lv88Values, lv88Through),
             _ => throw new CompileException($"Unsupported level {level} for data item '{name}'", Current ?? Previous),
         };
 
         return item;
     }
 
-    private (int Level, string Name, bool IsFiller) ParseDataItemHeader()
+    private (Area_t Area, int Level, string Name, bool IsFiller) ParseDataItemHeader()
     {
-        int level = int.Parse(Expect(TokenType.NumericLiteral).Value);
+        var levelToken = Expect(TokenType.NumericLiteral);
 
+        if (!int.TryParse(levelToken.Value, out int level))
+            throw new CompileException("Invalid level number.", Current ?? Previous);
+
+        ValidateLevelNumber(level, levelToken);
+
+        Area_t area = levelToken.Area;
+
+        // FILLER
         if (Current?.Type == TokenType.Filler)
         {
             Consume(); // FILLER
-            return (level, "FILLER", true);
+            return (area, level, "FILLER", true);
         }
 
         string name = Expect(TokenType.AlphanumericLiteral).Value;
-        return (level, name, false);
+        return (area, level, name, false);
     }
 
     private bool IsNextDataItemStart()
@@ -603,9 +606,40 @@ public class Parser(List<Token> tokens)
     // Helpers
     // ----------------------------
 
-    bool IsHierarchyLevel(int level)
+    private static void ValidateLevelNumber(int level, Token token)
     {
-        return level is >= 1 and <= 49 || level == 77;
+        // 必須 1~2 位數
+        if (token.Value.Length is < 1 or > 2)
+            throw new CompileException(
+                "Level number must be one or two digits.", token);
+
+        // 合法範圍
+        if (!IsValidLevel(level))
+            throw new CompileException(
+                $"Invalid level number '{level}'. " + "Valid values are 01-49, 66, 77, 88.", token);
+
+        // Free format → 不檢查 Area 規則
+        if (token.Area == Area_t.Free)
+            return;
+
+        // Level numbers 01 or 77 should begin in Area A.
+        if (level is 1 or 77)
+        {
+            if (token.Area != Area_t.A)
+            {
+                throw new CompileException(
+                    $"Level {level:D2} must begin in Area A.", token);
+            }
+        }
+
+        // A level-numbers 02 through 49, 66 and 88 can begin in either Area A or Area B.
+        return;
+    }
+
+    private static bool IsValidLevel(int level)
+    {
+        return (level >= 1 && level <= 49)
+            || level is 66 or 77 or 88;
     }
 
     private void CollectComments(List<string> target)

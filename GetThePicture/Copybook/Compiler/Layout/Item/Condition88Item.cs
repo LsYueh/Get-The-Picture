@@ -1,12 +1,14 @@
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Layout.Base;
 
 namespace GetThePicture.Copybook.Compiler.Layout.Item;
 
 public sealed class Condition88Item(
+    Area_t area,
     string name,
     IEnumerable<object>? values = null,
     object? through = null
-) : DataItem(88, name)
+) : DataItem(area, 88, name)
 {
     /// <summary>
     /// 88 VALUE 列表，可以是一個或多個

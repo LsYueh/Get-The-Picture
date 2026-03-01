@@ -1,10 +1,12 @@
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Layout.Base;
 
 namespace GetThePicture.Copybook.Compiler.Layout.Item;
 
 public sealed class RedefinesItem(
+    Area_t area,
     int level, string name, string targetName,
-    string? comment = null) : GroupItem(level, name, null, false, comment)
+    string? comment = null) : GroupItem(area, level, name, null, false, comment)
 {
     // ----------------------------
     // REDEFINES

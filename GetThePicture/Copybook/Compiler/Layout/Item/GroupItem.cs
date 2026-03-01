@@ -1,10 +1,12 @@
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Layout.Base;
 
 namespace GetThePicture.Copybook.Compiler.Layout.Item;
 
 public class GroupItem(
+    Area_t area,
     int level, string name, int? occurs = null,
-    bool isFiller = false, string? comment = null) : DataItem(level, name, occurs, comment)
+    bool isFiller = false, string? comment = null) : DataItem(area, level, name, occurs, comment)
 { 
     /// <summary>
     /// Unnamed Group Item

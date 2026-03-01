@@ -1,3 +1,4 @@
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Layout.Base;
 using GetThePicture.Copybook.Compiler.Layout.Item;
 
@@ -6,11 +7,11 @@ namespace GetThePicture.Copybook.Compiler.Layout;
 /// <summary>
 /// Root of Group Items
 /// </summary>
-public sealed class CbLayout() : GroupItem(0, "COPYBOOK-LAYOUT")
+public sealed class CbLayout() : GroupItem(Area_t.None, 0, "COPYBOOK-LAYOUT")
 {
     private bool _sealed;
 
-    private List<Renames66Item> _renames66 = [];
+    private readonly List<Renames66Item> _renames66 = [];
 
     /// <summary>
     /// Freeze semantic layout and build runtime cache.
