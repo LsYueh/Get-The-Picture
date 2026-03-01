@@ -613,6 +613,23 @@ public class Parser(List<Token> tokens)
 
     private static void ValidateLevelNumber(int level, Token token)
     {
+        // ------------------------------------------------------------
+        // Level number rules
+        //
+        // 1. Level number is a one or two-digit numeric value.
+        //
+        // 2. Valid level numbers are:
+        //      01–49
+        //      66
+        //      77
+        //      88
+        //
+        // 3. Area rules (Fixed Format only):
+        //      - 01 and 77 must begin in Area A.
+        //      - 02–49, 66 and 88 may begin in Area A or Area B.
+        //      - Area_t.Free skips area validation.
+        // ------------------------------------------------------------
+
         // 必須 1~2 位數
         if (token.Value.Length is < 1 or > 2)
             throw new CompileException(
