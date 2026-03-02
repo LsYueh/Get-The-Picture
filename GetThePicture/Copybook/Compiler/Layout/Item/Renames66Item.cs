@@ -94,7 +94,7 @@ public sealed class Renames66Item(
 
     public override void Dump(TextWriter w, int indent = 0)
     {
-        w.Write($"{Indent(indent)}66 {Name} >> Renames {FromName}");
+        w.Write($"{Indent(indent)}66 {Name}{FormatComment()} >> Renames {FromName}");
 
         if (!string.IsNullOrEmpty(ThruName))
         {
@@ -107,6 +107,4 @@ public sealed class Renames66Item(
         From.Dump(w, indent + 1);
         Thru?.Dump(w, indent + 1);
     }
-
-    private string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
 }

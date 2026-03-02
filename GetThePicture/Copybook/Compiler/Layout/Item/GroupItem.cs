@@ -68,8 +68,4 @@ public class GroupItem(
 
         foreach (var child in _children) child.Dump(w, indent + 1);
     }
-
-    private string FormatOccurs() => Occurs is > 1 ? $" OCCURS {Occurs}" : "";
-
-    private string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
 }

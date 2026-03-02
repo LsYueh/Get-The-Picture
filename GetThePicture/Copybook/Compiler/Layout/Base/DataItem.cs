@@ -25,12 +25,12 @@ public abstract class DataItem(
 
     public abstract void Dump(TextWriter writer, int indent = 0);
 
-    private protected string Indent(int i)
+    protected string Indent(int i)
     {
         return new string(' ', i * 2) + Margin();
     }
 
-    private protected string Margin()
+    protected string Margin()
     {
         return Area switch
         {
@@ -39,4 +39,8 @@ public abstract class DataItem(
             _ => "",
         };
     }
+
+    protected string FormatOccurs() => Occurs is > 1 ? $" OCCURS {Occurs}" : "";
+
+    protected string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
 }

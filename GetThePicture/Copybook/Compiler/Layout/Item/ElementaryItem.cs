@@ -54,6 +54,4 @@ public sealed class ElementaryDataItem(
 
         foreach (var c in _conditions) c.Dump(w, indent + 1);
     }
-
-    private string FormatComment() => (Comment != null) ? $" [{Comment}]" : "";
 }

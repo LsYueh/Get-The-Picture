@@ -1,6 +1,6 @@
 # Changelog
 
-## [26.14.3] – 2026-03-02
+## [26.14.3] – 2026-03-??
 
 ### Changed
 - 語意驗證已集中至 `Picture/Clause/Codec/Semantic` 統一處理，不再由各語意 Codec 分別負責。

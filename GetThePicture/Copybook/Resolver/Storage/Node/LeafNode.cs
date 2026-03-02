@@ -19,7 +19,6 @@ public class LeafNode(
     /// 標記為 FILLER，可忽略
     /// </summary>
     public void CanIgnore() => Ignored = true;
-
     
     // ----------------------------
     // StorageNode
@@ -36,6 +35,8 @@ public class LeafNode(
 
     public PicMeta Pic { get; } = pic;
 
+    public bool IsRenames66 { get; private set;} = false;
+
     public void SetSemantic(PicSemantic semantic)
     {
         Pic.Semantic = semantic;
@@ -51,12 +52,19 @@ public class LeafNode(
             throw new InvalidOperationException($"Semantic '{Pic.Semantic}' is not compatible with PIC structure '{Pic}'.");
     }
 
+    public void AsRenames()
+    {
+        IsRenames66 = true;
+    }
+
     // ----------------------------
     // Dump
     // ----------------------------
 
     public override void Dump(TextWriter writer, int indent)
     {
-        writer.WriteLine($"{Indent(indent)}{Level:D2} {Name}{FormatIndex()}{FormatOffset()}{FormatOccupied()}");
+        string name = IsRenames66 ? $"*{Name}" : Name;
+
+        writer.WriteLine($"{Indent(indent)}{Level:D2} {name}{FormatIndex()}{FormatOffset()}{FormatOccupied()}");
     }
 }
