@@ -21,23 +21,20 @@ public class WrapperCommand(ForgeConfig config)
     
     private Dictionary<string, LeafNode> _map = null!;
 
-    private protected static string Indent(int i) => new(' ', i * 4);
+    private static string Indent(int i) => new(' ', i * 4);
 
-    public void ForgeCode(IDataProvider provider, string fileName)
+    public void ForgeCode(WrapperContext context)
     {
         var fields = _config.Fields();
 
-        var storage = provider.GetStorage();
+        var storage = context.Provider.GetStorage();
 
         // 如果只有一個 Level 1 的 Group Item，就拿這個 Group Item 來當作 Class 的名稱
-        bool haveSingleLevel1 = SingleLevelOne.TryResolve(storage, out string? name);
+        bool haveSingleLevel1 = SingleLevelOne.TryResolve(storage, out string? levelName);
 
-        if (haveSingleLevel1 && name != null)
-        {
-            fileName = name;
-        }
+        string fileName = (haveSingleLevel1 && levelName != null) ? levelName : context.FileName;
         
-        _map = FlatLeafMap.Build(storage, fields, haveSingleLevel1);
+        _map = FlatLeafMap.Build(storage, fields, haveSingleLevel1, context.WithRenames66);
         
         using var w = new StreamWriter($"{fileName}.cs", false, Encoding.UTF8);
 
@@ -164,7 +161,7 @@ public class WrapperCommand(ForgeConfig config)
         
         var namePart = $"{node.Name}{occursIndex}";
         var picPart  = $"{node.Pic.Raw}";
-        var prefix   = $"{namePart} {picPart}";
+        var prefix   = node.IsRenames66 ? $"{namePart} (66 RENAMES)" : $"{namePart} {picPart}";
 
         w.WriteLine($"{indent}/// <summary>");
 

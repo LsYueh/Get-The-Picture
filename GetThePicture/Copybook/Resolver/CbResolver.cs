@@ -119,6 +119,14 @@ public sealed class CbResolver
         return groupNode;
     }
 
+    /// <summary>
+    /// Elementary Data Item
+    /// </summary>
+    /// <param name="e"></param>
+    /// <param name="instanceOffset"></param>
+    /// <param name="storageOccupied"></param>
+    /// <param name="occursIndex"></param>
+    /// <returns></returns>
     private static LeafNode BuildLeafNode(ElementaryDataItem e, int instanceOffset, int storageOccupied, int? occursIndex)
     {
         var leafNode = new LeafNode(
@@ -135,6 +143,14 @@ public sealed class CbResolver
         return leafNode;
     }
 
+    /// <summary>
+    /// Lv 66 RENAMES
+    /// </summary>
+    /// <param name="re"></param>
+    /// <param name="from"></param>
+    /// <param name="thru"></param>
+    /// <returns></returns>
+    /// <exception cref="CompileException"></exception>
     private static LeafNode BuildLeafNode(Renames66Item re, LeafNode from, LeafNode? thru)
     {
         if (thru is not null && thru.Offset < from.Offset)
@@ -184,6 +200,13 @@ public sealed class CbResolver
         throw new CompileException($"Cannot resolve REDEFINES target '{name}' in group '{parent.Name}'.");
     }
 
+    /// <summary>
+    /// 遞迴搜尋 IStorageNode（包含所有子節點）
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="parent"></param>
+    /// <returns></returns>
+    /// <exception cref="CompileException"></exception>
     private static LeafNode ResolveAliasRecursive(string name, IStorageNode parent)
     {
         return TryResolveAliasRecursive(name, parent)
@@ -192,8 +215,11 @@ public sealed class CbResolver
     }
 
     /// <summary>
-    /// 遞迴搜尋 IStorageNode（包含所有子節點）
+    /// 
     /// </summary>
+    /// <param name="name"></param>
+    /// <param name="parent"></param>
+    /// <returns></returns>
     private static LeafNode? TryResolveAliasRecursive(string name, IStorageNode parent)
     {
         foreach (var node in parent.Children)

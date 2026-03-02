@@ -3,26 +3,27 @@
 using CommandLine;
 using Microsoft.Extensions.Configuration;
 
-using GetThePicture.Copybook.Provider;
 using GetThePicture.Picture.Clause.Utils;
 
 using GetThePicture.Forge.Commands.Wrapper;
-using GetThePicture.Forge.Core;
 using GetThePicture.Forge.Core.Config;
 
 namespace GetThePicture.Forge;
 
-class Program
+public class Program
 {
     private static readonly Encoding CP950 = EncodingFactory.CP950;
     
     public sealed class Options
     {
         [Option('c', "copybook", Required = true, HelpText = "Path to the copybook file.")]
-        public FileInfo? Copybook { get; set; }
+        public FileInfo? Copybook { get; private set; }
 
         [Option('v', "verbose", HelpText = "Enable verbose output.")]
-        public bool Verbose { get; set; }
+        public bool Verbose { get; private set; }
+
+        [Option("with-renames", HelpText = "Enable generation of properties with renamed field names (Level 66).")]
+        public bool WithRenames66 { get; private set; }
     }
 
     static int Main(string[] args)
@@ -47,21 +48,12 @@ class Program
         try
         {
             var config = new ForgeConfig(BuildConfiguration(opts));
-
             WrapperCommand cmd = new (config);
-            
-            using var reader = new StreamReader(opts.Copybook.FullName, CP950);
-            var provider = new DataProvider(reader);
 
-            if (opts.Verbose) {
-                DumpDataProvider(provider);
-            }
+            var context = new WrapperContext(opts);
+            cmd.ForgeCode(context);
 
-            string fileName = NamingHelper.ToPascalCase(Path.GetFileNameWithoutExtension(opts.Copybook.FullName));
-            
-            cmd.ForgeCode(provider, fileName);
-
-            Console.WriteLine($"New wrapper class generated: \"{Path.GetFullPath($"{fileName}.cs")}\"");
+            Console.WriteLine($"New wrapper class generated: \"{Path.GetFullPath($"{context.FileName}.cs")}\"");
 
             return 0;
         }
@@ -94,20 +86,6 @@ class Program
         }
 
         return builder.Build();
-    }
-
-    private static void DumpDataProvider(DataProvider provider)
-    {
-        Console.WriteLine();
-        Console.WriteLine("==== LAYOUT ====");
-        provider.GetLayout().Dump(Console.Out);
-        Console.WriteLine("================");
-        Console.WriteLine();
-
-        Console.WriteLine("==== Storage ====");
-        provider.GetStorage().Dump(Console.Out);
-        Console.WriteLine("================");
-        Console.WriteLine();
     }
 
     private static int HandleParseError(IEnumerable<Error> errors)

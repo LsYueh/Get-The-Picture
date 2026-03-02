@@ -347,4 +347,66 @@ New wrapper class generated: "D:\Projects\get-the-picture\GetThePicture.Forge\T3
 
 </details>
 
+<br>
+
+## `with-renames`
+額外加入解析 `RENAMES` 子句後屬性
+
+```bash
+forge --copybook Copybooks/m02.cpy --with-renames
+```
+
+<details>
+    <summary>產出的 Wrapper Class 內容：</summary>
+
+```csharp
+public class M02_t(byte[]? raw = null) : CbWrapper(raw)
+{
+    // ----------------------------
+    // Copybook Address Map
+    // ----------------------------
+
+    protected override Dictionary<string, CbAddress> AddressMap { get; } = new Dictionary<string, CbAddress>
+    {
+        ...
+        ["BROKER-ID"]          = new CbAddress(   8,   4, "X(04)"),
+        ["TX-DATE"]            = new CbAddress(  12,   8, "9(08)"),
+        ["SEQNO"]              = new CbAddress(  20,   3, "X(03)"),
+        ["ACNT-BROKER"]        = new CbAddress(  23,   4, "X(04)"),
+        ["ACNT-NO"]            = new CbAddress(  27,   7, "9(07)"),
+        ["ACNT"]               = new CbAddress(  23,  11, "X(11)"), // (66) ACNT-BROKER ~ ACNT-NO
+        ...
+        ["M02-KEY"]            = new CbAddress(   8,  15, "X(15)"), // (66) BROKER-ID ~ SEQNO
+    };
+
+    // ----------------------------
+    // Strongly Typed Properties
+    // ----------------------------
+
+    ...
+
+    /// <summary>
+    /// ACNT (66 RENAMES) : 帳號流水號
+    /// </summary>
+    public string Acnt
+    {
+        get => this["ACNT"].Get<string>();
+        set => this["ACNT"].Set(value);
+    }
+
+    ...
+
+    /// <summary>
+    /// M02-KEY (66 RENAMES) : PK
+    /// </summary>
+    public string M02Key
+    {
+        get => this["M02-KEY"].Get<string>();
+        set => this["M02-KEY"].Set(value);
+    }
+}
+```
+
+</details>
+
 <br><br>

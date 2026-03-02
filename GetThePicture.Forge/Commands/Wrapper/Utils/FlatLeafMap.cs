@@ -20,7 +20,7 @@ public class FlatLeafMap()
     public static Dictionary<string, LeafNode> Build(
         IStorageNode node,
         IReadOnlyDictionary<string, FieldOverride> fields,
-        bool ignoredLevelOne = false)
+        bool ignoredLevelOne = false, bool withRenames66 = false)
     {
         var dict = new Dictionary<string, LeafNode>();
 
@@ -88,6 +88,11 @@ public class FlatLeafMap()
                     {
                         string fillerName = $"FILLER{++fillerCount:D2}";
                         dict.Add(fillerName, leaf);
+                        return;
+                    }
+
+                    if (leaf.IsRenames66 && ! withRenames66) {
+                        Console.WriteLine($"⚠ Skipping renamed property: {key} (use --with-renames to include)");
                         return;
                     }
 

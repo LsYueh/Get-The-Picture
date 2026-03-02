@@ -13,6 +13,9 @@
 - `LeafNode` 內的 `PicMeta` 不再允許為 `null。`
     - `Picture Clause` 為轉換流程中的核心語意資訊，必須在節點生命週期內保持存在。
 
+### Improved
+- 改善 **Level 66 RENAMES**  子句解析功能。
+
 ### Refact
 - 重構 `CobolLine`
     - 新增 **Area A** / **Area B** 分類機制（Fixed Format）。

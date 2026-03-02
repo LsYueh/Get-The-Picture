@@ -51,6 +51,8 @@ public sealed class Renames66Item(
         int end = start;
         if (!string.IsNullOrEmpty(ThruName))
         {
+            // TODO: the OCCURS DEPENDING clause must not be specified for any item defined between data-name-2 and data-name-3.
+
             for (int i = start; i < flatten.Count; i++)
             {
                 if (flatten[i].Name == ThruName)
