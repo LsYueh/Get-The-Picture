@@ -410,3 +410,55 @@ public class M02_t(byte[]? raw = null) : CbWrapper(raw)
 </details>
 
 <br><br>
+
+# Semantic Override
+在不修改原始 Copybook (.cpy) 的前提下：
+- 允許使用者覆寫語意層資訊  
+- 不破壞語法解析結果  
+- 保持 Copybook 原始結構純粹  
+- 提供業務系統可控的語意調整機制  
+
+## 檔案結構
+```code
+{copybook-name}.cpy
+{copybook-name}.forge.json
+```
+
+<br>
+
+`{copybook-name}.cpy`
+- 原始 COBOL Copybook
+- 僅負責語法與儲存結構
+- 不包含業務語意調整
+
+<br>
+
+`{copybook-name}.forge.json`
+- 語意覆寫設定檔
+- 用於改變：
+    - 型別映射
+    - Decode 行為
+    - 命名策略
+    - 特殊欄位語意
+
+<br>
+
+## 覆寫的項目
+
+### 型別覆寫
+```json
+{
+  "fields": {
+    "TX-DATE": {
+        "type": "DATE",
+    }
+  }
+}
+```
+
+影響：
+- Decode() 回傳型別
+- 生成 Wrapper 屬性型別
+- 可能影響 Encode
+
+<br><br>
