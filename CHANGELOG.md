@@ -3,6 +3,8 @@
 ## [26.15.0] – 2026-03-04
 
 ### Added
+- Forge 新增 `Semantic Override` 的功能。
+    - 允許使用者覆寫**語意**層資訊。
 - Forge 新增參數 `--with-renames`。
     - 用於 `Wrapper` 子類別輸出 66 層級 `RENAMES` 的屬性。
 
