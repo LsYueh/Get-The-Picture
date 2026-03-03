@@ -1,6 +1,10 @@
 # Changelog
 
-## [26.14.3] – 2026-03-??
+## [26.15.0] – 2026-03-04
+
+### Added
+- Forge 新增參數 `--with-renames`。
+    - 用於 `Wrapper` 子類別輸出 66 層級 `RENAMES` 的屬性。
 
 ### Changed
 - 語意驗證已集中至 `Picture/Clause/Codec/Semantic` 統一處理，不再由各語意 Codec 分別負責。
@@ -21,29 +25,25 @@
     - 新增 **Area A** / **Area B** 分類機制（Fixed Format）。
     - 將行區域資訊傳遞至 Lexer，並寫入 Token 以保留版面語意。
 
-- 重構 `CbLayout`
-    - 引入 `Seal()` 機制，明確區分 **語法樹建構階段** 與 **語意凍結階段**。
-    - `Seal()` 會進行：
-        - `CalculateStorage()`。
-        - 66 層級 `RENAMES` 的語法檢查。
-    - `DataItem` 的子類別歸類至 **Item** 資料夾中。
+- 重構 `Compiler`
+    - `CbLayout`
+        - 引入 `Seal()` 機制，明確區分 **語法樹建構階段** 與 **語意凍結階段**。
+        - `Seal()` 會進行：
+            - `CalculateStorage()`。
+            - 66 層級 `RENAMES` 的語法檢查。
+        - `DataItem` 的子類別歸類至 **Item** 資料夾中。
 
-- 重構 `CbCompiler`
-    - `SetRedefinesTargets()` 整併至 `Parser` 中。
-        - 於語法階段即完成 `REDEFINES` 綁定與合法性驗證。
-        - 強化限制條件檢查（不可跨層、不可 OCCURS 等）。
-    - `SetRenames66()` 改為 `CbLayout.Seal()` 流程的一部分。
-        - `Parser` 可以解析任何層級的 `66 RENAMES`。
-        - 但 Level 66：
-            - 不參與 `CbStorage` 生成。
-            - 不影響儲存結構。
+    - `CbCompiler`
+        - `SetRedefinesTargets()` 整併至 `Parser` 中。
+            - 於語法階段即完成 `REDEFINES` 綁定與合法性驗證。
+            - 強化限制條件檢查（不可跨層、不可 OCCURS 等）。
+        - `SetRenames66()` 改為 `CbLayout.Seal()` 流程的一部分。
+            - `Parser` 可以解析任何層級的 `66 RENAMES`。
 
-- 重構 `CbStorage`
-    - `StorageNode` 的子類別歸類至 **Node** 資料夾中。
-
-- 重構 `CbResolver`
-    - 自 `CbCompiler` 拆分為獨立元件，專責名稱解析與記憶體映射。
-    - 減少 Compiler 職責，
+- 重構 `Resolver`
+    - 自 `CbCompiler` 拆分為獨立元件，專責**名稱解析**與**記憶體映射**，以減少 Compiler 職責，
+    - `CbStorage`
+        - `StorageNode` 的子類別歸類至 `Copybook/Resolver/Storage/Node` 資料夾中。
 
 <br><br>
 

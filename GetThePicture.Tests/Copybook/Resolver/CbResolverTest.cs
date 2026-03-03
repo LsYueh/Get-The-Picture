@@ -178,4 +178,36 @@ public class CbResolverTest
         StringAssert.Contains(result, "CREATION-S start=29 len=1 end=30");
         StringAssert.Contains(result, "FILLER start=96 len=59 end=155");
     }
+
+    [TestMethod]
+    public void Copybook_Resolver_Test_06_Lv66_Renames()
+    {
+        string filePath = TestFileProvider.GetPath("twse/m02.cpy");
+        using var sr = new StreamReader(filePath, cp950);
+
+        CbLayout layout = CbCompiler.FromStreamReader(sr);
+        Assert.IsNotNull(layout);
+
+        CbStorage storage = CbResolver.FromLayout(layout);
+        Assert.IsNotNull(storage);
+
+        // layout.Dump(Console.Out);
+
+        var sb = new StringBuilder();
+        using var writer = new StringWriter(sb);
+
+        storage.Dump(writer);
+        // storage.Dump(Console.Out);
+
+        string result = sb.ToString();
+
+        StringAssert.Contains(result, "05 ACNT-BROKER start=23 len=4 end=27");
+        StringAssert.Contains(result, "05 ACNT-NO start=27 len=7 end=34");
+        StringAssert.Contains(result, "66 *ACNT start=23 len=11 end=34");
+
+        StringAssert.Contains(result, "05 BROKER-ID start=8 len=4 end=12");
+        StringAssert.Contains(result, "05 TX-DATE start=12 len=8 end=20");
+        StringAssert.Contains(result, "05 SEQNO start=20 len=3 end=23");
+        StringAssert.Contains(result, "66 *M02-KEY start=8 len=15 end=23");
+    }
 }
