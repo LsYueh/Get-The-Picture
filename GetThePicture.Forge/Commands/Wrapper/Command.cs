@@ -1,44 +1,51 @@
 using System.Text;
 
-using GetThePicture.Copybook.Compiler.Storage;
-using GetThePicture.Copybook.Compiler.Storage.Base;
 using GetThePicture.Copybook.Provider;
+using GetThePicture.Copybook.Resolver.Storage.Node;
 
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
 
 using GetThePicture.Forge.Core;
-using GetThePicture.Forge.Commands.Wrapper.Base;
+using GetThePicture.Forge.Core.Config;
+using GetThePicture.Forge.Commands.Wrapper.Utils;
+
+
 
 namespace GetThePicture.Forge.Commands.Wrapper;
 
-public class WrapperCommand(WrapperOptions? opts = null)
+public class WrapperCommand(ForgeConfig config)
 {
-    private readonly WrapperOptions _opts = opts ?? new (); // 預設選項
-
+    private readonly ForgeConfig _config = config;
+    
     private Dictionary<string, LeafNode> _map = null!;
 
-    private protected static string Indent(int i) => new(' ', i * 4);
+    private static string Indent(int i) => new(' ', i * 4);
 
-    public void ForgeCode(IDataProvider provider, string fileName)
+    public void ForgeCode(WrapperContext context)
     {
-        var storage = provider.GetStorage();
+        var fields = _config.Fields();
+
+        var storage = context.Provider.GetStorage();
 
         // 如果只有一個 Level 1 的 Group Item，就拿這個 Group Item 來當作 Class 的名稱
-        bool haveSingleLevel1 = TryResolveSingleLevel1Name(storage, out string? name);
+        bool haveSingleLevel1 = SingleLevelOne.TryResolve(storage, out string? levelName);
 
-        if (haveSingleLevel1 && name != null)
-        {
-            fileName = name;
-        }
+        string fileName = (haveSingleLevel1 && levelName != null) ? levelName : context.FileName;
         
-        _map = BuildFlatLeafMap(storage, haveSingleLevel1);
+        _map = FlatLeafMap.Build(storage, fields, haveSingleLevel1, context.WithRenames66);
         
         using var w = new StreamWriter($"{fileName}.cs", false, Encoding.UTF8);
 
         w.WriteLine($"using GetThePicture.Copybook.Wrapper;");
         w.WriteLine($"using GetThePicture.Copybook.Wrapper.Base;");
+
+        if (fields.Values.Any(f => !string.IsNullOrWhiteSpace(f.Type)))
+        {
+            w.WriteLine("using GetThePicture.Picture.Clause.Base.ClauseItems;");
+        }
+        
         w.WriteLine();
 
         w.WriteLine($"namespace GetThePicture;");
@@ -91,15 +98,15 @@ public class WrapperCommand(WrapperOptions? opts = null)
     {
         var indent = Indent(indentLevel);
 
-        if (node.Pic is null)
-            throw new InvalidOperationException($"Leaf node {keyName} does not have PICTURE clause.");
-
         var info = !string.IsNullOrEmpty(node.Info) ? $" // {node.Info}" : $"";
+
+        var semantic = (node.Pic.Semantic != PicSemantic.None) ? $", PicSemantic.{node.Pic.Semantic}" : "";
 
         // keyName 右補空格，對齊 "="
         string paddedKey = $"[\"{keyName}\"]".PadRight(maxKeyLength + 4); // 4 是額外空格補償
 
-        w.WriteLine($"{indent}{paddedKey} = new CbAddress({node.Offset + 1, 4:D}, {node.StorageOccupied, 3:D}, \"{node.Pic.Raw}\"),{info}");
+        w.WriteLine($"{indent}{paddedKey} = new CbAddress({node.Offset + 1, 4:D}, {node.StorageOccupied, 3:D}, \"{node.Pic.Raw}\"{semantic}),{info}");
+
     }
 
     private void ForgeProperties(StreamWriter w, int indentLevel = 0)
@@ -134,9 +141,6 @@ public class WrapperCommand(WrapperOptions? opts = null)
 
         string propName = NamingHelper.ToQualifiedPascalName(NamingHelper.ToPascalCase(keyName),"_");
 
-        if (node.Pic is null)
-            throw new InvalidOperationException($"Leaf node {keyName} does not have PICTURE clause.");
-
         string clrType = GetClrType(node.Pic);
 
         ForgePropertySummary(w, node, indentLevel);
@@ -153,14 +157,11 @@ public class WrapperCommand(WrapperOptions? opts = null)
     {
         var indent = Indent(indentLevel);
 
-        if (node.Pic is null)
-            throw new InvalidOperationException($"Leaf node {node.Name} does not have PICTURE clause.");
-
         string occursIndex = (node.Index is > 1) ? $" ({node.Index})" : "";
         
         var namePart = $"{node.Name}{occursIndex}";
         var picPart  = $"{node.Pic.Raw}";
-        var prefix   = $"{namePart} {picPart}";
+        var prefix   = node.IsRenames66 ? $"{namePart} (66 RENAMES)" : $"{namePart} {picPart}";
 
         w.WriteLine($"{indent}/// <summary>");
 
@@ -241,154 +242,5 @@ public class WrapperCommand(WrapperOptions? opts = null)
             _ when type == typeof(char)   => "char",
             _ => type.Name // 其他保留原名
         };
-    }
-
-    private static Dictionary<string, LeafNode> BuildFlatLeafMap(IStorageNode node, bool ignoredLevelOne = false)
-    {
-        var dict = new Dictionary<string, LeafNode>();
-
-        int fillerCount = 0;
-
-        void Walk(IStorageNode node, IReadOnlyList<PathSegment> parentPath, IStorageNode? parentNode = null)
-        {
-            PathSegment localPath = new(node.Name);
-            
-            // 如果 parent 是 Unnamed Group Item，子節點要繼承 index
-            if (parentNode is GroupNode { Ignored: true, Index: int index })
-            {
-                localPath.AddIndex(index);
-            }
-            
-            // 如果自己是 OCCURS
-            if (node.Index.HasValue)
-            {
-                localPath.AddIndex(node.Index.Value);
-            }
-
-            switch (node)
-            {
-                case CbStorage root:
-                {
-                    foreach (var child in root.Children)
-                    {
-                        // COPYBOOK-STORAGE-MAP 要排除
-                        Walk(child, []);
-                    }
-                    break;
-                }
-
-                case GroupNode group:
-                {
-                    // Level 1 或 Unnamed Group Item 輸出處裡
-                    bool ignored = (group.Level == 1 && ignoredLevelOne) || group.Ignored;
-                    
-                    List<PathSegment> currentPath = (parentPath.Count == 0)
-                        ? [localPath]
-                        : [.. parentPath, localPath];
-                    
-                    List<PathSegment> groupPath = ignored ? [.. parentPath] : currentPath;
-                                    
-                    foreach (var child in group.Children)
-                    {
-                        Walk(child, groupPath, group);
-                    }
-                        
-                    break;
-                }   
-
-                case LeafNode leaf:
-                {
-                    if (leaf.Ignored) // FILLER
-                    {
-                        string fillerName = $"FILLER{++fillerCount:D2}";
-                        dict.Add(fillerName, leaf);
-                        return;
-                    }
-
-                    List<PathSegment> currentPath = (parentPath.Count == 0)
-                        ? [localPath]
-                        : [.. parentPath, localPath];
-
-                    string fullPath = FormatPath(currentPath);
-
-                    if (!dict.TryAdd(fullPath, leaf))
-                        throw new InvalidOperationException($"Duplicate leaf path: {fullPath}");
-
-                    break;
-                }
-
-                default:
-                    throw new InvalidOperationException($"Unsupported storage node type: {node.GetType().Name}");
-            }
-        }
-
-        Walk(node, []);
-
-        return dict;
-    }
-
-    private static string FormatPath(IEnumerable<PathSegment> segments)
-    {
-        return string.Join("::", segments);
-    }
-
-    /// <summary>
-    /// Try to retrieve the Level 1 node file name from the storage. <br/>
-    /// <br/>
-    /// Rules: <br/>
-    /// - Only succeeds when Level 1 node count is 1. <br/>
-    /// - If more than 2 Level 1 nodes exist, the operation is considered invalid. <br/>
-    /// - Returns the name of the first Level 1 node when valid. <br/>
-    /// <br/>
-    /// Design Notes: <br/>
-    /// - Early exit is applied when Level 1 node count exceeds 1. <br/>
-    /// - Avoids full dictionary traversal when possible. <br/>
-    /// </summary>
-    private static bool TryResolveSingleLevel1Name(IStorageNode storage, out string? name)
-    {
-        ArgumentNullException.ThrowIfNull(storage);
-
-        int count = 0;
-        IStorageNode? level1 = null;
-
-        bool stopTraversal = false;
-
-        void WalkLevel1(IStorageNode node)
-        {
-            if (stopTraversal) return;
-            
-            if (node.Level == 1)
-            {
-                count++;
-
-                if (count == 1)
-                    level1 = node;
-
-                if (count > 1)
-                {
-                    stopTraversal = true;
-                    return;
-                }
-            }
-
-            switch (node)
-            {
-                case CbStorage root:
-                    foreach (var child in root.Children)
-                        WalkLevel1(child);
-                    break;
-
-                case GroupNode group:
-                    foreach (var child in group.Children)
-                        WalkLevel1(child);
-                    break;
-            }
-        }
-
-        WalkLevel1(storage);
-
-        name = (count == 1 && level1 != null) ? level1.Name : null;
-
-        return name != null;
     }
 }

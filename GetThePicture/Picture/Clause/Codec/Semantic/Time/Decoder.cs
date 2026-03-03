@@ -10,14 +10,6 @@ internal static class Decoder
 {
     public static TimeOnly Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
     {
-        if (pic.BaseClass == PicBaseClass.Numeric && pic.Signed)
-            throw new NotSupportedException($"Unsupported TimeOnly base type: PIC S9");
-
-        if (pic.Usage != PicUsage.Display)
-            throw new NotSupportedException($"'Time' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-
-        // TODO: 看看要不要支援 COMP-3 (PACKED-DECIMAL)
-
         return pic.Semantic switch
         {
             PicSemantic.Time6 => ParseTime6(buffer),

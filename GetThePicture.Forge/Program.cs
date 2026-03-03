@@ -1,26 +1,29 @@
 ﻿using System.Text;
-using CommandLine;
 
-using GetThePicture.Copybook.Provider;
+using CommandLine;
+using Microsoft.Extensions.Configuration;
+
 using GetThePicture.Picture.Clause.Utils;
 
 using GetThePicture.Forge.Commands.Wrapper;
-using GetThePicture.Forge.Core;
-
+using GetThePicture.Forge.Core.Config;
 
 namespace GetThePicture.Forge;
 
-class Program
+public class Program
 {
     private static readonly Encoding CP950 = EncodingFactory.CP950;
     
     public sealed class Options
     {
         [Option('c', "copybook", Required = true, HelpText = "Path to the copybook file.")]
-        public FileInfo? Copybook { get; set; }
+        public FileInfo? Copybook { get; private set; }
 
         [Option('v', "verbose", HelpText = "Enable verbose output.")]
-        public bool Verbose { get; set; }
+        public bool Verbose { get; private set; }
+
+        [Option("with-renames", HelpText = "Enable generation of properties with renamed field names (Level 66).")]
+        public bool WithRenames66 { get; private set; }
     }
 
     static int Main(string[] args)
@@ -36,35 +39,53 @@ class Program
 
     private static int RunOptions(Options opts)
     {
-        if (!opts.Copybook!.Exists)
+        if (opts.Copybook is null || !opts.Copybook.Exists)
         {
-            Console.Error.WriteLine($"Copybook not found: {opts.Copybook.FullName}");
+            Console.Error.WriteLine($"Copybook not found: {opts.Copybook?.FullName}");
             return 1;
         }
 
-        WrapperCommand cmd = new ();
+        try
+        {
+            var config = new ForgeConfig(BuildConfiguration(opts));
+            WrapperCommand cmd = new (config);
 
-        var provider = new DataProvider(new StreamReader(opts.Copybook.FullName, CP950));
+            var context = new WrapperContext(opts);
+            cmd.ForgeCode(context);
 
-        if (opts.Verbose) {
-            Console.WriteLine("==== LAYOUT ====");
-            provider.GetLayout().Dump(Console.Out);
-            Console.WriteLine("================");
-            Console.WriteLine();
+            Console.WriteLine($"New wrapper class generated: \"{Path.GetFullPath($"{context.FileName}.cs")}\"");
 
-            Console.WriteLine("==== Storage ====");
-            provider.GetStorage().Dump(Console.Out);
-            Console.WriteLine("================");
-            Console.WriteLine();
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine("Forge execution failed.");
+            Console.Error.WriteLine(ex.Message);
+
+#if DEBUG
+            Console.Error.WriteLine(ex.StackTrace);
+#endif
+            return 1;
+        }
+    }
+
+    private static IConfiguration BuildConfiguration(Options opts)
+    {
+        var builder = new ConfigurationBuilder();
+
+        // global config
+        builder.AddJsonFile("forge.json", optional: true);
+
+        // per copybook config
+        var localConfig = Path.ChangeExtension(opts.Copybook!.FullName, ".forge.json");
+        builder.AddJsonFile(localConfig, optional: true);
+
+        if (File.Exists(localConfig))
+        {
+            Console.WriteLine($"⚠ Local configuration detected: {localConfig}");
         }
 
-        string fileName = NamingHelper.ToPascalCase(Path.GetFileNameWithoutExtension(opts.Copybook.FullName));
-        
-        cmd.ForgeCode(provider, fileName);
-
-        Console.WriteLine($"New wrapper class generated: \"{Path.GetFullPath($"{fileName}.cs")}\"");
-
-        return 0;
+        return builder.Build();
     }
 
     private static int HandleParseError(IEnumerable<Error> errors)

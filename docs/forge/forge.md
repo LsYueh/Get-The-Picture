@@ -347,4 +347,118 @@ New wrapper class generated: "D:\Projects\get-the-picture\GetThePicture.Forge\T3
 
 </details>
 
+<br>
+
+## `with-renames`
+額外加入解析 `RENAMES` 子句後屬性
+
+```bash
+forge --copybook Copybooks/m02.cpy --with-renames
+```
+
+<details>
+    <summary>產出的 Wrapper Class 內容：</summary>
+
+```csharp
+public class M02_t(byte[]? raw = null) : CbWrapper(raw)
+{
+    // ----------------------------
+    // Copybook Address Map
+    // ----------------------------
+
+    protected override Dictionary<string, CbAddress> AddressMap { get; } = new Dictionary<string, CbAddress>
+    {
+        ...
+        ["BROKER-ID"]          = new CbAddress(   8,   4, "X(04)"),
+        ["TX-DATE"]            = new CbAddress(  12,   8, "9(08)"),
+        ["SEQNO"]              = new CbAddress(  20,   3, "X(03)"),
+        ["ACNT-BROKER"]        = new CbAddress(  23,   4, "X(04)"),
+        ["ACNT-NO"]            = new CbAddress(  27,   7, "9(07)"),
+        ["ACNT"]               = new CbAddress(  23,  11, "X(11)"), // (66) ACNT-BROKER ~ ACNT-NO
+        ...
+        ["M02-KEY"]            = new CbAddress(   8,  15, "X(15)"), // (66) BROKER-ID ~ SEQNO
+    };
+
+    // ----------------------------
+    // Strongly Typed Properties
+    // ----------------------------
+
+    ...
+
+    /// <summary>
+    /// ACNT (66 RENAMES) : 帳號流水號
+    /// </summary>
+    public string Acnt
+    {
+        get => this["ACNT"].Get<string>();
+        set => this["ACNT"].Set(value);
+    }
+
+    ...
+
+    /// <summary>
+    /// M02-KEY (66 RENAMES) : PK
+    /// </summary>
+    public string M02Key
+    {
+        get => this["M02-KEY"].Get<string>();
+        set => this["M02-KEY"].Set(value);
+    }
+}
+```
+
+</details>
+
+<br><br>
+
+# Semantic Override
+在不修改原始 Copybook (.cpy) 的前提下：
+- 允許使用者覆寫語意層資訊  
+- 不破壞語法解析結果  
+- 保持 Copybook 原始結構純粹  
+- 提供業務系統可控的語意調整機制  
+
+## 檔案結構
+```code
+{copybook-name}.cpy
+{copybook-name}.forge.json
+```
+
+<br>
+
+`{copybook-name}.cpy`
+- 原始 COBOL Copybook
+- 僅負責語法與儲存結構
+- 不包含業務語意調整
+
+<br>
+
+`{copybook-name}.forge.json`
+- 語意覆寫設定檔
+- 用於改變：
+    - 型別映射
+    - Decode 行為
+    - 命名策略
+    - 特殊欄位語意
+
+<br>
+
+## 覆寫的項目
+
+### 型別覆寫
+```json
+{
+  "fields": {
+    "TX-DATE": {
+        "type": "DATE",
+    }
+  }
+}
+```
+
+影響：
+- Decode() 回傳型別
+- 生成 Wrapper 屬性型別
+- 可能影響 Encode
+
 <br><br>

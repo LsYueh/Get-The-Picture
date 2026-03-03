@@ -11,10 +11,6 @@ internal static class Encoder
         if (value is not DateTime dt)
             throw new FormatException($"Invalid value type for Timestamp (DateTime) encoding: {value.GetType().FullName}");
 
-        if (pic.Usage != PicUsage.Display)
-            throw new NotSupportedException($"'Timestamp' does not support usage '{pic.Usage}'. Only DISPLAY is allowed.");
-            
-
         if (pic.Semantic != PicSemantic.Timestamp14)
         {
             throw new NotSupportedException($"DateTime can only be encoded as Timestamp14, but was {pic.Semantic}");

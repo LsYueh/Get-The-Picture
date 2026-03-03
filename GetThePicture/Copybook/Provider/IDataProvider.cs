@@ -1,5 +1,5 @@
 using GetThePicture.Copybook.Compiler.Layout;
-using GetThePicture.Copybook.Compiler.Storage;
+using GetThePicture.Copybook.Resolver.Storage;
 
 namespace GetThePicture.Copybook.Provider;
 

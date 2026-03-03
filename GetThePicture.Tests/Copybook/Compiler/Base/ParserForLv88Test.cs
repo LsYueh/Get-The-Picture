@@ -1,6 +1,7 @@
 using System.Text;
+
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Base;
-using GetThePicture.Copybook.Compiler.Layout;
 
 namespace GetThePicture.Tests.Copybook.Compiler.Base;
 
@@ -18,18 +19,19 @@ public class ParserForLv88Test
     // [DataRow("88 SPACE-FLAG VALUE SPACE.", "")]
     public void Test_Set(string line, string expected_01, string expected_02)
     {        
-        var tokens = lexer.Tokenize(line, 1).ToList();
+        var tokens = lexer.Tokenize(line, 1, Area_t.Free).ToList();
 
         Parser parser = new(tokens);
 
-        var model = parser.Analyze();
+        var layout = parser.Analyze();
+        layout.Seal();
         
-        Assert.IsNotNull(model);
+        Assert.IsNotNull(layout);
 
         var sb = new StringBuilder();
         using var writer = new StringWriter(sb);
 
-        model.Dump(writer);
+        layout.Dump(writer);
 
         string result = sb.ToString();
         

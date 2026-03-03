@@ -1,10 +1,11 @@
 using System.Text;
 
-using GetThePicture.Copybook.Base;
+using GetThePicture.Cobol;
+using GetThePicture.Cobol.Base;
 using GetThePicture.Picture.Clause.Utils;
 using GetThePicture.TestData;
 
-namespace GetThePicture.Tests.Copybook.Base;
+namespace GetThePicture.Tests.Cobol.Base;
 
 [TestClass]
 public class CobolLineTest
@@ -21,7 +22,11 @@ public class CobolLineTest
         var lines = CobolLine.FromStreamReader(reader);
 
         Assert.AreEqual(12, lines.Count);
-        Assert.AreEqual("01 CUSTOMER-RECORD.", lines[0].Line);
-        Assert.AreEqual("        'NEEDS TO BE CONTINUED ACROSS MULTIPLE LINES'.", lines[^1].Line);
+
+        Assert.AreEqual("01 CUSTOMER-RECORD.", lines[0].Text);
+        Assert.AreEqual(Area_t.A, lines[0].Area);
+
+        Assert.AreEqual("        'NEEDS TO BE CONTINUED ACROSS MULTIPLE LINES'.", lines[^1].Text);
+        Assert.AreEqual(Area_t.B, lines[^1].Area);
     }
 }

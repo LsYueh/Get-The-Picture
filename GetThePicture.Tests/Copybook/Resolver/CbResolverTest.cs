@@ -2,7 +2,8 @@ using System.Text;
 
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
-using GetThePicture.Copybook.Compiler.Storage;
+using GetThePicture.Copybook.Resolver;
+using GetThePicture.Copybook.Resolver.Storage;
 using GetThePicture.Picture.Clause.Utils;
 using GetThePicture.TestData;
 
@@ -132,5 +133,81 @@ public class CbResolverTest
         StringAssert.Contains(result, "ORDER-LINES(3) start=81");
         StringAssert.Contains(result, "AMOUNT start=99 len=7 end=106");
         StringAssert.Contains(result, "TOTAL-AMOUNT start=106 len=9 end=115");
+    }
+
+    [TestMethod]
+    public void Copybook_Resolver_Test_05_Redefines()
+    {
+        string filePath = TestFileProvider.GetPath("twse/m05.cpy");
+        using var sr = new StreamReader(filePath, cp950);
+
+        CbLayout layout = CbCompiler.FromStreamReader(sr);
+        Assert.IsNotNull(layout);
+
+        CbStorage storage = CbResolver.FromLayout(layout);
+        Assert.IsNotNull(storage);
+
+        // layout.Dump(Console.Out);
+
+        var sb = new StringBuilder();
+        using var writer = new StringWriter(sb);
+
+        storage.Dump(writer);
+        // storage.Dump(Console.Out);
+
+        string result = sb.ToString();
+
+        StringAssert.Contains(result, "PD-ID start=1 len=4 end=5");
+        StringAssert.Contains(result, "FIELD-DATA start=29 len=126 end=155");
+
+        StringAssert.Contains(result, "COMT-DATA start=29");
+        StringAssert.Contains(result, "COMT-VALUE start=29 len=126 end=155");
+
+        StringAssert.Contains(result, "CMEN-DATA start=29");
+        StringAssert.Contains(result, "CMEN-VALUE start=29 len=126 end=155");
+
+        StringAssert.Contains(result, "ANCE-DATA start=29");
+        StringAssert.Contains(result, "ANNOUNCE-YMD start=29 len=8 end=37");
+        StringAssert.Contains(result, "FILLER start=152 len=3 end=155");
+
+        StringAssert.Contains(result, "OBJ-DATA start=29");
+        StringAssert.Contains(result, "OBJ-ID start=29 len=6 end=35");
+        StringAssert.Contains(result, "FILLER start=62 len=93 end=155");
+
+        StringAssert.Contains(result, "CTRL-DATA start=29");
+        StringAssert.Contains(result, "CREATION-S start=29 len=1 end=30");
+        StringAssert.Contains(result, "FILLER start=96 len=59 end=155");
+    }
+
+    [TestMethod]
+    public void Copybook_Resolver_Test_06_Lv66_Renames()
+    {
+        string filePath = TestFileProvider.GetPath("twse/m02.cpy");
+        using var sr = new StreamReader(filePath, cp950);
+
+        CbLayout layout = CbCompiler.FromStreamReader(sr);
+        Assert.IsNotNull(layout);
+
+        CbStorage storage = CbResolver.FromLayout(layout);
+        Assert.IsNotNull(storage);
+
+        // layout.Dump(Console.Out);
+
+        var sb = new StringBuilder();
+        using var writer = new StringWriter(sb);
+
+        storage.Dump(writer);
+        // storage.Dump(Console.Out);
+
+        string result = sb.ToString();
+
+        StringAssert.Contains(result, "05 ACNT-BROKER start=23 len=4 end=27");
+        StringAssert.Contains(result, "05 ACNT-NO start=27 len=7 end=34");
+        StringAssert.Contains(result, "66 *ACNT start=23 len=11 end=34");
+
+        StringAssert.Contains(result, "05 BROKER-ID start=8 len=4 end=12");
+        StringAssert.Contains(result, "05 TX-DATE start=12 len=8 end=20");
+        StringAssert.Contains(result, "05 SEQNO start=20 len=3 end=23");
+        StringAssert.Contains(result, "66 *M02-KEY start=8 len=15 end=23");
     }
 }

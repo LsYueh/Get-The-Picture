@@ -1,6 +1,7 @@
 using GetThePicture.Picture.Clause.Base;
 using GetThePicture.Picture.Clause.Base.ClauseItems;
 using GetThePicture.Picture.Clause.Base.Options;
+using GetThePicture.Picture.Clause.Codec.Semantic;
 
 namespace GetThePicture.Picture.Clause.Codec;
 
@@ -19,6 +20,12 @@ public static class Encoder
     {
         ArgumentNullException.ThrowIfNull(value);
         ArgumentNullException.ThrowIfNull(pic);
+
+        if (pic.Semantic != PicSemantic.None)
+        {
+            Constraint rule = Rules.GetConstraint(pic.Semantic);
+            rule.ValidateOrThrow(pic);
+        }
 
         byte[] normalized = pic.Semantic switch
         {

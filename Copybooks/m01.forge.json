@@ -1,0 +1,9 @@
+{
+  "fields": {
+    "TX-DATE": {
+        "type": "DATE",
+        "propertyName": "TransactionDate",
+        "comment" : ""
+    }
+  }
+}

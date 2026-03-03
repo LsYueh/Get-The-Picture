@@ -1,3 +1,5 @@
+using GetThePicture.Cobol.Base;
+
 namespace GetThePicture.Copybook.Compiler.Layout.Base;
 
 /// <summary>
@@ -5,6 +7,7 @@ namespace GetThePicture.Copybook.Compiler.Layout.Base;
 /// </summary>
 public interface IDataItem
 {
+    Area_t Area { get; }
     int Level { get; }
     string Name { get; }
     int? Occurs { get; }

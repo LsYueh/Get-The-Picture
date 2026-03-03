@@ -1,3 +1,4 @@
+using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Base;
 
 namespace GetThePicture.Tests.Copybook.Compiler.Base;
@@ -18,9 +19,12 @@ public class LexerTest
     {        
         string line = "05 CUSTOMER-NAME PIC X(10) VALUE 'ABC'.";
 
-        var tokens = lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0, Area_t.Free).ToList();
 
         Assert.AreEqual(10, tokens.Count);
+
+        foreach (var token in tokens)
+            Assert.AreEqual(Area_t.Free, token.Area);
 
         AssertToken(tokens[0], TokenType.NumericLiteral     , "05");
         AssertToken(tokens[1], TokenType.AlphanumericLiteral, "CUSTOMER-NAME");
@@ -39,7 +43,7 @@ public class LexerTest
     {        
         string line = "05 BGEN-XXXXX  OCCURS 4.";
 
-        var tokens = lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0, Area_t.Free).ToList();
 
         Assert.AreEqual(5, tokens.Count);
 
@@ -55,9 +59,12 @@ public class LexerTest
     {        
         string line = "07 BGEN-XXXXX-TRANS-NO3     PIC S9(05)V(03) COMP-3.";
 
-        var tokens = lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0, Area_t.Free).ToList();
 
         Assert.AreEqual(13, tokens.Count);
+
+        foreach (var token in tokens)
+            Assert.AreEqual(Area_t.Free, token.Area);
 
         AssertToken(tokens[ 0], TokenType.NumericLiteral     , "07");
         AssertToken(tokens[ 1], TokenType.AlphanumericLiteral, "BGEN-XXXXX-TRANS-NO3");
@@ -79,9 +86,12 @@ public class LexerTest
     {        
         string line = "VALUE 'O''NEIL'";
 
-        var tokens = lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0, Area_t.Free).ToList();
 
         Assert.AreEqual(2, tokens.Count);
+
+        foreach (var token in tokens)
+            Assert.AreEqual(Area_t.Free, token.Area);
 
         AssertToken(tokens[0], TokenType.Value, "VALUE");
         AssertToken(tokens[1], TokenType.AlphanumericLiteral, "'O''NEIL'");
@@ -92,9 +102,12 @@ public class LexerTest
     {        
         string line = "VALUE 'ABC.";
 
-        var tokens = lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0, Area_t.Free).ToList();
 
         Assert.AreEqual(2, tokens.Count);
+
+        foreach (var token in tokens)
+            Assert.AreEqual(Area_t.Free, token.Area);
 
         AssertToken(tokens[0], TokenType.Value, "VALUE");
         AssertToken(tokens[1], TokenType.AlphanumericLiteral, "'ABC."); // Note: 缺閉合，不會有Dot
@@ -105,9 +118,12 @@ public class LexerTest
     {        
         string line = "PIC  9(005)";
 
-        var tokens = lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0, Area_t.Free).ToList();
 
         Assert.AreEqual(5, tokens.Count);
+
+        foreach (var token in tokens)
+            Assert.AreEqual(Area_t.Free, token.Area);
 
         AssertToken(tokens[0], TokenType.Picture       , "PIC");
         AssertToken(tokens[1], TokenType.NumericLiteral, "9");
@@ -121,9 +137,12 @@ public class LexerTest
     {        
         string line = "01 STOCK-NO PIC X(6). *> 股票代號     ";
 
-        var tokens = lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0, Area_t.Free).ToList();
 
         Assert.AreEqual(9, tokens.Count);
+
+        foreach (var token in tokens)
+            Assert.AreEqual(Area_t.Free, token.Area);
 
         AssertToken(tokens[0], TokenType.NumericLiteral     , "01");
         AssertToken(tokens[1], TokenType.AlphanumericLiteral, "STOCK-NO");
@@ -141,9 +160,12 @@ public class LexerTest
     {
         string line = "88 FLAG-ALPHA        VALUES 'AA' 'AB' 'AC'";
 
-        var tokens = lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0, Area_t.Free).ToList();
 
         Assert.AreEqual(6, tokens.Count);
+
+        foreach (var token in tokens)
+            Assert.AreEqual(Area_t.Free, token.Area);
 
         AssertToken(tokens[0], TokenType.NumericLiteral     , "88");
         AssertToken(tokens[1], TokenType.AlphanumericLiteral, "FLAG-ALPHA");
@@ -158,9 +180,12 @@ public class LexerTest
     {
         string line = "88 FLAG-NUMERIC      VALUE 11 THRU 99";
 
-        var tokens = lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0, Area_t.Free).ToList();
 
         Assert.AreEqual(6, tokens.Count);
+
+        foreach (var token in tokens)
+            Assert.AreEqual(Area_t.Free, token.Area);
 
         AssertToken(tokens[0], TokenType.NumericLiteral     , "88");
         AssertToken(tokens[1], TokenType.AlphanumericLiteral, "FLAG-NUMERIC");
@@ -175,9 +200,12 @@ public class LexerTest
     {
         string line = "66  EMP-KEY RENAMES EMP-ID THRU EMP-DEPT";
 
-        var tokens = lexer.Tokenize(line, 0).ToList();
+        var tokens = lexer.Tokenize(line, 0, Area_t.Free).ToList();
 
         Assert.AreEqual(6, tokens.Count);
+
+        foreach (var token in tokens)
+            Assert.AreEqual(Area_t.Free, token.Area);
 
         AssertToken(tokens[0], TokenType.NumericLiteral     , "66");
         AssertToken(tokens[1], TokenType.AlphanumericLiteral, "EMP-KEY");
