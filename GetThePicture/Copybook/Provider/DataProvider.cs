@@ -1,6 +1,7 @@
 using System.Text;
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
+using GetThePicture.Copybook.Provider.Base;
 using GetThePicture.Copybook.Resolver;
 using GetThePicture.Copybook.Resolver.Storage;
 
