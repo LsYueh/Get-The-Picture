@@ -1,5 +1,14 @@
 # Changelog
 
+## [26.15.1] – 2026-03-25
+
+### Refact
+- 將 `CbField` 自 `Wrapper` 中拆分為獨立檔案，以提升維護性。
+- 於 `Resolver` 導入 `StorageNode` 各子類別的 Builder Pattern，集中建構邏輯，避免分散實作並提升擴充性。
+
+<br><br>
+
+
 ## [26.15.0] – 2026-03-04
 
 ### Added

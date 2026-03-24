@@ -1,9 +1,8 @@
 using GetThePicture.Copybook.Compiler.Layout.Item;
 using GetThePicture.Copybook.Resolver.Base;
-using GetThePicture.Copybook.Resolver.Storage.Node;
 using GetThePicture.Picture.Clause.Base;
 
-namespace GetThePicture.Copybook.Resolver.Storage;
+namespace GetThePicture.Copybook.Resolver.Storage.Node;
 
 public class Builder
 {
