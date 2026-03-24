@@ -1,7 +1,7 @@
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Resolver.Storage;
 
-namespace GetThePicture.Copybook.Provider;
+namespace GetThePicture.Copybook.Provider.Base;
 
 public interface IDataProvider
 {
