@@ -7,7 +7,7 @@ namespace GetThePicture.Tests.Picture.Clause.Codec;
 [TestClass]
 public class DefaultRepresentationTest
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow( "A(5)", PicUsage.Display, new byte[] { (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ' })]
     [DataRow( "X(5)", PicUsage.Display, new byte[] { (byte)' ', (byte)' ', (byte)' ', (byte)' ', (byte)' ' })]
     [DataRow( "9(5)", PicUsage.Display, new byte[] { (byte)'0', (byte)'0', (byte)'0', (byte)'0', (byte)'0' })]

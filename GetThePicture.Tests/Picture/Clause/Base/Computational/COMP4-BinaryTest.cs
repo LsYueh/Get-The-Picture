@@ -31,7 +31,7 @@ public class BinaryTest
         };
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("9(4)", false,     "0", (ushort)       0, new byte[] { 0x00, 0x00 })]
     [DataRow("9(4)", false,     "1", (ushort)       1, new byte[] { 0x00, 0x01 })]
     [DataRow("9(4)", false,   "256", (ushort)     256, new byte[] { 0x01, 0x00 })]
@@ -60,7 +60,7 @@ public class BinaryTest
         Assert.AreEqual(expected, Convert.ToUInt16(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("S9(4)", false, "0",        (short)0,        new byte[] { 0x00, 0x00 })]
     [DataRow("S9(4)", false, "1",        (short)1,        new byte[] { 0x00, 0x01 })]
     [DataRow("S9(4)",  true, "1",        (short)-1,       new byte[] { 0xFF, 0xFF })]

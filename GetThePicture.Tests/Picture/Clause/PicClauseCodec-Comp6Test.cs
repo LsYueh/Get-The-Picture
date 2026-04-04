@@ -11,7 +11,7 @@ public class CodecComp6Test
     // Encode
     // ------------------------- 
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("9(1)", (byte)         5, new byte[] { 0x05 })]
     [DataRow("9(2)", (byte)        12, new byte[] { 0x12 })]
     [DataRow("9(3)", (ushort)     123, new byte[] { 0x01, 0x23 })]
@@ -48,7 +48,7 @@ public class CodecComp6Test
     // Decode
     // ------------------------- 
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("9(1)", (byte)         5, new byte[] { 0x05 })]
     [DataRow("9(2)", (byte)        12, new byte[] { 0x12 })]
     [DataRow("9(3)", (ushort)     123, new byte[] { 0x01, 0x23 })]
@@ -86,12 +86,11 @@ public class CodecComp6Test
     // -------------------------
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
-    public void Decode_With_Sign_Negative_ThrowsOverflowException()
+    public void Decode_With_Sign_Negative_ThrowsNotSupportedException()
     {
         var pic = PicMeta.Parse("S9(5)");
         pic.Usage = PicUsage.UPackedDecimal;
         
-        PicClauseCodec.ForMeta(pic).Decode([0x05, 0x21, 0x94]);
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode([0x05, 0x21, 0x94]));
     }
 }

@@ -1,5 +1,22 @@
 # Changelog
 
+## [26.16.1] – 2026-04-05
+
+### Changed
+- Forge 更新套件
+    - Microsoft.Extensions.Configuration : `10.0.3` > `10.0.5`
+    - Microsoft.Extensions.Configuration.Binder : `10.0.3` > `10.0.5`
+    - Microsoft.Extensions.Configuration.Json : `10.0.3` > `10.0.5`
+
+- Tests 更新套件
+    - coverlet.collector : `6.0.0` > `8.0.1`
+    - Microsoft.NET.Test.Sdk : `17.8.0` > `18.3.0`
+    - MSTest.TestAdapter : `3.1.1` > `4.1.0`
+    - MSTest.TestFramework : `3.1.1` > `4.1.0 `
+        - ⚠️ 部分測試項目的語法更新至 4.0 的版本
+
+<br><br>
+
 ## [26.16.0] – 2026-04-04
 
 ### Changed

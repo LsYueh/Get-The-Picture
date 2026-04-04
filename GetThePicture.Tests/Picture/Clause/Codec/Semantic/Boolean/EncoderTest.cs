@@ -11,7 +11,7 @@ public class EncoderTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("X(1)", "Y", true)]
     [DataRow("X(1)", "N", false)]
     [DataRow("A(1)", "Y", true)]
@@ -33,7 +33,6 @@ public class EncoderTest
     // Exceptions
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public void Encode_ShouldThrow_WhenValueIsNotBool()
     {
         var pic = PicMeta.Parse("X(1)");
@@ -41,47 +40,43 @@ public class EncoderTest
 
         object value = "NotABool"; // 非 bool
 
-        PicClauseCodec.ForMeta(pic).Encode(value);
+        Assert.ThrowsExactly<ArgumentException>(() => PicClauseCodec.ForMeta(pic).Encode(value));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
     public void Encode_ShouldThrow_WhenUsageNotDisplay()
     {
         var pic = PicMeta.Parse("X(1)");
         pic.Semantic = PicSemantic.Boolean;
         pic.Usage = PicUsage.PackedDecimal; // 非 DISPLAY
 
-        PicClauseCodec.ForMeta(pic).Encode(true);
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Encode(true));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
     public void Encode_ShouldThrow_WhenStorageOccupiedNot1()
     {
         var pic = PicMeta.Parse("X(2)"); // 兩位
         pic.Semantic = PicSemantic.Boolean;
 
-        PicClauseCodec.ForMeta(pic).Encode(true);
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Encode(true));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
     public void Encode_ShouldThrow_WhenSigned()
     {
         var pic = PicMeta.Parse("S9(1)"); // 帶符號
         pic.Semantic = PicSemantic.Boolean;
 
-        PicClauseCodec.ForMeta(pic).Encode(true);
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Encode(true));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
     public void Encode_ShouldThrow_WhenUnsupportedPicType()
     {
         var pic = PicMeta.Parse("9(2)"); // Numeric 但長度 >1
         pic.Semantic = PicSemantic.Boolean;
 
-        PicClauseCodec.ForMeta(pic).Encode(true);
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Encode(true));
     }
 }

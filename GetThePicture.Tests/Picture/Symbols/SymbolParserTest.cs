@@ -7,7 +7,7 @@ namespace GetThePicture.Tests.Picture.Symbols;
 [TestClass]
 public class SymbolParserTest
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("X",        PicBaseClass.Alphanumeric, false,  1, 0)]
     [DataRow("XX",       PicBaseClass.Alphanumeric, false,  2, 0)]
     [DataRow("X(3)",     PicBaseClass.Alphanumeric, false,  3, 0)]
@@ -45,49 +45,49 @@ public class SymbolParserTest
         Assert.AreEqual(decimalDigits, meta.DecimalDigits);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("9P",       PicBaseClass.Numeric, false, 1, 0)]
     [DataRow("9P9",      PicBaseClass.Numeric, false, 2, 0)]
     [DataRow("9(2)P9",   PicBaseClass.Numeric, false, 3, 0)]
     [DataRow("SP9",      PicBaseClass.Numeric, true , 1, 0)]
     public void Parser_Tests_02(string symbols, PicBaseClass baseClass, bool signed, int integerDigits, int decimalDigits)
     {
-        Assert.ThrowsException<NotSupportedException>(() => SymbolParser.Read(symbols));
+        Assert.ThrowsExactly<NotSupportedException>(() => SymbolParser.Read(symbols));
     }
 
     [TestMethod]
     public void Parser_Should_Throw_When_Mixing_Classes()
     {
-        Assert.ThrowsException<Exception>(() => SymbolParser.Read("X9"));
+        Assert.ThrowsExactly<Exception>(() => SymbolParser.Read("X9"));
     }
 
     [TestMethod]
     public void Parser_Should_Throw_When_Sign_With_Alpha()
     {
-        Assert.ThrowsException<Exception>(() => SymbolParser.Read("SX"));
+        Assert.ThrowsExactly<Exception>(() => SymbolParser.Read("SX"));
     }
 
     [TestMethod]
     public void Parser_Should_Throw_On_Mixed_Classes()
     {
-        Assert.ThrowsException<Exception>(() => SymbolParser.Read("X9"));
+        Assert.ThrowsExactly<Exception>(() => SymbolParser.Read("X9"));
     }
 
     [TestMethod]
     public void Parser_Should_Throw_On_Sign_With_Alpha()
     {
-        Assert.ThrowsException<Exception>(() => SymbolParser.Read("SX"));
+        Assert.ThrowsExactly<Exception>(() => SymbolParser.Read("SX"));
     }
 
     [TestMethod]
     public void Parser_Should_Throw_On_V_Without_Numeric()
     {
-        Assert.ThrowsException<Exception>(() => SymbolParser.Read("V9"));
+        Assert.ThrowsExactly<Exception>(() => SymbolParser.Read("V9"));
     }
 
     [TestMethod]
     public void Parser_Should_Throw_On_Multiple_V()
     {
-        Assert.ThrowsException<Exception>(() => SymbolParser.Read("9V9V9"));
+        Assert.ThrowsExactly<Exception>(() => SymbolParser.Read("9V9V9"));
     }
 }

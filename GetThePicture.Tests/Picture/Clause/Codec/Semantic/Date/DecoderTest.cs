@@ -9,7 +9,7 @@ namespace GetThePicture.Tests.Picture.Clause.Codec.Semantic.Date;
 [TestClass]
 public class DecoderTest
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("X(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("9(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("X(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
@@ -27,7 +27,7 @@ public class DecoderTest
         Assert.AreEqual(expected, value);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("X(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("9(8)", PicSemantic.GregorianDate, "20240115", 2024, 1, 15)]
     [DataRow("X(7)", PicSemantic.MinguoDate   ,  "1130115", 2024, 1, 15)]
@@ -55,7 +55,7 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("20241301");
 
-        Assert.ThrowsException<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
     [TestMethod]
@@ -66,17 +66,16 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("20241301");
 
-        Assert.ThrowsException<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
+        Assert.ThrowsExactly<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("X(7)", "11301CC")]
     [DataRow("9(7)", "11301CC")]
     [DataRow("X(7)", "113BBCC")]
     [DataRow("9(7)", "113BBCC")]
     [DataRow("X(7)", "AAABBCC")]
     [DataRow("9(7)", "AAABBCC")]
-    [ExpectedException(typeof(FormatException))]
     public void Decode_Invalid_MinguoDate_ThrowsFormatException(string picString, string text)
     {
         var pic = PicMeta.Parse(picString);
@@ -84,6 +83,6 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        PicClauseCodec.ForMeta(pic).Decode(buffer);
+        Assert.ThrowsExactly<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 }

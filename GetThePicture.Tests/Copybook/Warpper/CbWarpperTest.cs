@@ -147,7 +147,6 @@ public class CbWrapperTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(KeyNotFoundException))]
     public void Wrapper_Get_Field_Throw_KeyNotFoundException()
     {
         const string s = "11011 00106600000096950000087300020251219000000  0台泥一永        000000000000000000000 0           ";
@@ -156,11 +155,10 @@ public class CbWrapperTest
         
         var T30 = new T30_t(raw);
 
-        T30["SHOW-ME-THE-MONEY"].Get<uint>();
+        Assert.ThrowsExactly<KeyNotFoundException>(() => T30["SHOW-ME-THE-MONEY"].Get<uint>());
     }
 
     [TestMethod]
-    [ExpectedException(typeof(KeyNotFoundException))]
     public void Wrapper_Set_Field_Throw_KeyNotFoundException()
     {
         const string s = "11011 00106600000096950000087300020251219000000  0台泥一永        000000000000000000000 0           ";
@@ -169,6 +167,6 @@ public class CbWrapperTest
         
         var T30 = new T30_t(raw);
 
-        T30["SHOW-ME-THE-MONEY"].Set(100000000m);
+        Assert.ThrowsExactly<KeyNotFoundException>(() => T30["SHOW-ME-THE-MONEY"].Set(100000000m));
     }
 }

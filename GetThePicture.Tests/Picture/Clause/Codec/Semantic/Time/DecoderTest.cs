@@ -9,7 +9,7 @@ namespace GetThePicture.Tests.Picture.Clause.Codec.Semantic.Time;
 [TestClass]
 public class DecoderTest
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("X(6)", PicSemantic.Time6, "235959",    23, 59, 59, 0)]   // Time6
     [DataRow("9(6)", PicSemantic.Time6, "235959",    23, 59, 59, 0)]
     [DataRow("X(9)", PicSemantic.Time9, "123045678", 12, 30, 45, 678)] // Time9
@@ -43,7 +43,7 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("123456");
 
-        Assert.ThrowsException<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
     [TestMethod]
@@ -54,6 +54,6 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("246060"); // invalid time
 
-        Assert.ThrowsException<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 }

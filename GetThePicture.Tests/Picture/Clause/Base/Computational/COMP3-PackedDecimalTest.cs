@@ -14,7 +14,7 @@ public class PackedDecimalTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("S9(5)", new byte[] { 0x12, 0x34, 0x5C }                  ,        12345,    typeof(int))]
     [DataRow("S9(5)", new byte[] { 0x12, 0x34, 0x5D }                  ,       -12345,    typeof(int))]
     [DataRow("S9(5)", new byte[] { 0x98, 0x76, 0x5D }                  ,       -98765,    typeof(int))]
@@ -34,7 +34,7 @@ public class PackedDecimalTest
         Assert.AreEqual(expected, value);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("S9(5)V9(2)", new byte[] { 0x12, 0x34, 0x56, 0x7C }, "12345.67")]
     [DataRow("S9(3)V9(2)", new byte[] { 0x12, 0x34, 0x5D }      ,  "-123.45")]
     public void Decode_Decimal(string picText, byte[] buffer, string expectedValue)
@@ -48,7 +48,6 @@ public class PackedDecimalTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(FormatException))]
     public void Decode_Invalid_Sign_Nibble_Should_Throw()
     {
         var pic = PicMeta.Parse("S9(3)");
@@ -57,7 +56,7 @@ public class PackedDecimalTest
         // invalid sign = 0xA
         byte[] buffer = [0x12, 0x3A];
 
-        COMP3.Decode(buffer, pic);
+        Assert.ThrowsExactly<FormatException>(() => COMP3.Decode(buffer, pic));
     }
 
     [TestMethod]

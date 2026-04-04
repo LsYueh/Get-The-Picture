@@ -8,8 +8,7 @@
             "name": "C#: Forge Debug",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/GetThePicture.Forge/GetThePicture.Forge.csproj",
-            "launchConfigurationId": "TargetFramework=;Debug"
+            "projectPath": "${workspaceFolder}/GetThePicture.Forge/GetThePicture.Forge.csproj"
         }
     ]
 }

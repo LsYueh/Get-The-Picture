@@ -9,7 +9,7 @@ public class PicMeta9SV
     // ─────────────────────────
     // Numeric - Integer only
     // ─────────────────────────
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(   "9", PicBaseClass.Numeric, 1, 0, 1, false)]
     [DataRow("9(4)", PicBaseClass.Numeric, 4, 0, 4, false)]
     [DataRow("9(1)", PicBaseClass.Numeric, 1, 0, 1, false)]
@@ -29,7 +29,7 @@ public class PicMeta9SV
     // ─────────────────────────
     // Numeric - Signed
     // ─────────────────────────
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(   "S9", PicBaseClass.Numeric, 1, 0, 1, true)]
     [DataRow("S9(5)", PicBaseClass.Numeric, 5, 0, 5, true)]
     public void Parse_PIC_S9(string symbols, PicBaseClass baseClass, int integerDigits, int decimalDigits, int digitCount, bool signed)
@@ -47,7 +47,7 @@ public class PicMeta9SV
     // ─────────────────────────
     // Numeric - Decimal (V)
     // ─────────────────────────
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(      "9V9", PicBaseClass.Numeric, 1, 1, 2, false)]
     [DataRow("9(3)V9(2)", PicBaseClass.Numeric, 3, 2, 5, false)]
     [DataRow(   "999V99", PicBaseClass.Numeric, 3, 2, 5, false)]
@@ -66,7 +66,7 @@ public class PicMeta9SV
     // ─────────────────────────
     // Numeric - Signed + Decimal
     // ─────────────────────────
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(    "S9V9", PicBaseClass.Numeric, 1, 1, 2, true)]
     [DataRow("S9(5)V99", PicBaseClass.Numeric, 5, 2, 7, true)]
     public void Parse_PIC_S9V9(string symbols, PicBaseClass baseClass, int integerDigits, int decimalDigits, int digitCount, bool signed)
