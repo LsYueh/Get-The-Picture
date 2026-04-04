@@ -489,19 +489,23 @@ USAGE 項目的適用範圍:
 
 # Benchmarks (基準測試)
 
-## 數據內容
-- 根據**櫃買中心** (OTC) 規格改寫的 `T30.CPY` (包含註解)：DataItem 24 個   
-- 部分**櫃買中心** (OTC) 的 `T30.DAT`：漲跌幅度資料 55 筆   
+執行指令:
+
+```sh
+dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj -f {TargetSdkVersion} --filter *   
+```
+
+```sh
+dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj -f {TargetSdkVersion} --anyCategories {BenchmarkCategory}  
+```
+
+- TargetSdkVersion : `net8.0` `net10.0`
 
 <br>
 
-執行指令:
-
-> dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj -f {TargetSdkVersion} --filter *   
-
-> dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj -f {TargetSdkVersion} --anyCategories {BenchmarkCategory}  
-
-- TargetSdkVersion : `net8.0` `net10.0`
+## 數據內容
+- 根據**櫃買中心** (OTC) 規格改寫的 `T30.CPY` (包含註解)：DataItem 24 個   
+- 部分**櫃買中心** (OTC) 的 `T30.DAT`：漲跌幅度資料 55 筆   
 
 <br>
 
