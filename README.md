@@ -487,7 +487,7 @@ USAGE 項目的適用範圍:
 <br><br>
 
 
-# Performance
+# Benchmarks (基準測試)
 
 ## 數據內容
 - 根據**櫃買中心** (OTC) 規格改寫的 `T30.CPY` (包含註解)：DataItem 24 個   
@@ -497,107 +497,18 @@ USAGE 項目的適用範圍:
 
 執行指令:
 
-> dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj --filter *   
+> dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj -f {TargetSdkVersion} --filter *   
 
-> dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj --anyCategories {BenchmarkCategory}  
+> dotnet run -c Release --project GetThePicture.Benchmarks\GetThePicture.Benchmarks.csproj -f {TargetSdkVersion} --anyCategories {BenchmarkCategory}  
 
-<br>
-
-## 跑分結果
-```bash
-BenchmarkDotNet v0.15.8, Windows 11 (10.0.26200.7840/25H2/2025Update/HudsonValley2)
-Intel Core i5-10400 CPU 2.90GHz, 1 CPU, 12 logical and 6 physical cores
-.NET SDK 8.0.418
-  [Host]     : .NET 8.0.24 (8.0.24, 8.0.2426.7010), X64 RyuJIT x86-64-v3
-  DefaultJob : .NET 8.0.24 (8.0.24, 8.0.2426.7010), X64 RyuJIT x86-64-v3
-```
-
-> 1 µs = 1000 ns  
+- TargetSdkVersion : `net8.0` `net10.0`
 
 <br>
 
-### Wrapper
+## 結果
 
-| Method                | Mean     | Error     | StdDev    |
-|---------------------- |---------:|----------:|----------:|
-| Wrapper_Read_String   | 4.362 μs | 0.0176 μs | 0.0156 μs |
-| Wrapper_Write_String  | 4.267 μs | 0.0222 μs | 0.0186 μs |
-| Wrapper_Read_Integer  | 4.511 μs | 0.0249 μs | 0.0233 μs |
-| Wrapper_Write_Integer | 5.450 μs | 0.0198 μs | 0.0165 μs |
-| Wrapper_Read_Decimal  | 5.895 μs | 0.0376 μs | 0.0333 μs |
-| Wrapper_Write_Decimal | 9.589 μs | 0.0614 μs | 0.0574 μs |
-
-> ⚠️ T30 的資料內沒有進行 `COMP`，目前的 Wrapper 跑分算是 Best Case。  
-> ⚠️ Wrapper 只做**單筆欄位**讀取。  
-
-<br>
-
-### DISPLAY
-
-Integer: `PIC 9(18)` / `PIC S9(18)`   
-Decimal: `PIC S9(5)V9(2)`  
-
-| Method                       | Mean      | Error    | StdDev   |
-|----------------------------- |----------:|---------:|---------:|
-| Display_Read_Integer         |  79.69 ns | 0.447 ns | 0.418 ns |
-| Display_Write_Integer        | 113.33 ns | 0.418 ns | 0.370 ns |
-| Display_Read_Signed_Integer  |  98.95 ns | 0.496 ns | 0.464 ns |
-| Display_Write_Signed_Integer | 183.39 ns | 0.948 ns | 0.840 ns |
-| Display_Read_Decimal         |  97.51 ns | 0.309 ns | 0.274 ns |
-| Display_Write_Decimal        | 206.42 ns | 0.992 ns | 0.928 ns |
-
-<br>
-
-### COMP-3
-
-Integer: `PIC 9(18)` / `PIC S9(18)`   
-Decimal: `PIC S9(5)V9(2)`  
-
-| Method                     | Mean      | Error    | StdDev   |
-|--------------------------- |----------:|---------:|---------:|
-| Comp3_Read_Integer         |  87.85 ns | 0.218 ns | 0.182 ns |
-| Comp3_Write_Integer        |  88.29 ns | 0.446 ns | 0.372 ns |
-| Comp3_Read_Signed_Integer  |  84.39 ns | 0.440 ns | 0.412 ns |
-| Comp3_Write_Signed_Integer |  91.66 ns | 0.343 ns | 0.304 ns |
-| Comp3_Read_Decimal         |  96.58 ns | 0.642 ns | 0.601 ns |
-| Comp3_Write_Decimal        | 151.53 ns | 1.131 ns | 1.058 ns |
-
-<br>
-
-### COMP-4 (BE)
-
-Integer: `PIC 9(18)` / `PIC S9(18)`  
-
-| Method                     | Mean      | Error    | StdDev   |
-|--------------------------- |----------:|---------:|---------:|
-| Comp4_Read_Integer         |  41.56 ns | 0.201 ns | 0.178 ns |
-| Comp4_Write_Integer        | 129.20 ns | 0.395 ns | 0.330 ns |
-| Comp4_Read_Signed_Integer  |  42.06 ns | 0.154 ns | 0.129 ns |
-| Comp4_Write_Signed_Integer | 132.84 ns | 0.555 ns | 0.463 ns |
-
-<br>
-
-### COMP-5
-
-Integer: `PIC S9(18)`  
-
-| Method                 | Mean      | Error    | StdDev   |
-|----------------------- |----------:|---------:|---------:|
-| Comp5_Read_Integer_BE  |  40.91 ns | 0.223 ns | 0.209 ns |
-| Comp5_Write_Integer_BE | 132.44 ns | 0.655 ns | 0.580 ns |
-| Comp5_Read_Integer_LE  |  40.76 ns | 0.253 ns | 0.224 ns |
-| Comp5_Write_Integer_LE | 132.85 ns | 0.747 ns | 0.663 ns |
-
-<br>
-
-### COMP-6
-
-Integer: `PIC 9(18)`  
-
-| Method              | Mean     | Error    | StdDev   |
-|-------------------- |---------:|---------:|---------:|
-| Comp6_Read_Integer  | 84.26 ns | 0.365 ns | 0.323 ns |
-| Comp6_Write_Integer | 92.26 ns | 0.246 ns | 0.192 ns |
+[.NET 8.0](/docs/benchmarks/net80.md)  
+[.NET 10.0](/docs/benchmarks/net100.md)  
 
 <br><br>
 
