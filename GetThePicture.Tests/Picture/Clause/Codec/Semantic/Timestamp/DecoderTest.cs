@@ -9,7 +9,7 @@ namespace GetThePicture.Tests.Picture.Clause.Codec.Semantic.Timestamp;
 [TestClass]
 public class DecoderTest
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("X(14)", PicSemantic.Timestamp14, "20240115123045", 2024,  1, 15, 12, 30, 45)]
     [DataRow("9(14)", PicSemantic.Timestamp14, "20240115123045", 2024,  1, 15, 12, 30, 45)]
     [DataRow("X(14)", PicSemantic.Timestamp14, "19991231235959", 1999, 12, 31, 23, 59, 59)]
@@ -52,7 +52,7 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("20240115123045");
 
-        Assert.ThrowsException<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
     [TestMethod]
@@ -63,6 +63,6 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("20241301120000");// invalid month
 
-        Assert.ThrowsException<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
+        Assert.ThrowsExactly<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 }

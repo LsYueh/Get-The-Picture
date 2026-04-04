@@ -57,11 +57,10 @@ public class EncoderTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
     public void Encode_Wrong_Usage_ThrowsNotSupportedException()
     {
         var pic = PicMeta.Parse("X(7)");
 
-        PicClauseCodec.ForMeta(pic).Usage(PicUsage.PackedDecimal).Encode("中文字 ");
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Usage(PicUsage.PackedDecimal).Encode("中文字 "));
     }
 }

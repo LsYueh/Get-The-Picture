@@ -30,14 +30,14 @@ public class PicMetaTest
     [TestMethod]
     public void Parse_Empty_ShouldThrow()
     {
-        Assert.ThrowsException<ArgumentException>(() =>
+        Assert.ThrowsExactly<ArgumentException>(() =>
             PicMeta.Parse(""));
     }
 
     [TestMethod]
     public void Parse_With_PIC_Keyword_ShouldThrow()
     {
-        Assert.ThrowsException<NotSupportedException>(() =>
+        Assert.ThrowsExactly<NotSupportedException>(() =>
             PicMeta.Parse("PIC 9(3)"));
     }
 }

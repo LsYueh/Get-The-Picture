@@ -11,7 +11,7 @@ public class ParserForLv66Test
 {
     private static readonly Lexer lexer = new();
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(
         "05 EMP-ID PIC X(10)." +
         "66 EMP-KEY RENAMES EMP-ID.",

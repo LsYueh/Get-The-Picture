@@ -59,13 +59,12 @@ public class DecoderTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
     public void Decode_Wrong_Usage_ThrowsNotSupportedException()
     {
         var pic = PicMeta.Parse("X(7)");
 
         byte[] buffer = cp950.GetBytes("中文字 ");
 
-        PicClauseCodec.ForMeta(pic).Usage(PicUsage.Binary).Decode(buffer);
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Usage(PicUsage.Binary).Decode(buffer));
     }
 }

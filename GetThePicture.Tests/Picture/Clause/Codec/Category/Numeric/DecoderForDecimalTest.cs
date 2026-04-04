@@ -9,7 +9,7 @@ namespace GetThePicture.Tests.Picture.Clause.Codec.Category.Numeric;
 [TestClass]
 public class DecoderForDecimalTest
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow( "01234",  "9(3)V9(2)", typeof(decimal),  "12.34")]
     [DataRow( "12345",  "9(3)V9(2)", typeof(decimal),  "123.45")]
     [DataRow( "1234E", "S9(3)V9(2)", typeof(decimal),  "123.45")]

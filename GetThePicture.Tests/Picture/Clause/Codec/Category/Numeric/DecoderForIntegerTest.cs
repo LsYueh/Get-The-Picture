@@ -24,7 +24,7 @@ public class DecoderForIntegerTest
         };
     }
     
-    [DataTestMethod]
+    [TestMethod]
     [DataRow( "9",  "9(1)", typeof (byte),  (byte)  9)]
     [DataRow( "I", "S9(1)", typeof(sbyte), (sbyte)  9)]
     [DataRow( "R", "S9(1)", typeof(sbyte), (sbyte) -9)]
@@ -43,7 +43,7 @@ public class DecoderForIntegerTest
         Assert.IsTrue(IsIntegerValue(value));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow( "998",  "9(3)", typeof(ushort), (ushort)  998)]
     [DataRow( "99H", "S9(3)", typeof (short),  (short)  998)]
     [DataRow( "99Q", "S9(3)", typeof (short),  (short) -998)]
@@ -62,7 +62,7 @@ public class DecoderForIntegerTest
         Assert.IsTrue(IsIntegerValue(value));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(    "99997",  "9(5)", typeof(uint), (uint)     99997)]
     [DataRow(    "9999G", "S9(5)", typeof (int),  (int)     99997)]
     [DataRow(    "9999P", "S9(5)", typeof (int),  (int)    -99997)]
@@ -81,7 +81,7 @@ public class DecoderForIntegerTest
         Assert.IsTrue(IsIntegerValue(value));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(        "9999999996",  "9(10)", typeof(ulong), (ulong)         9999999996)]
     [DataRow(        "999999999F", "S9(10)", typeof (long),  (long)         9999999996)]
     [DataRow(        "999999999O", "S9(10)", typeof (long),  (long)        -9999999996)]
@@ -100,7 +100,7 @@ public class DecoderForIntegerTest
         Assert.IsTrue(IsIntegerValue(value));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(         "9999999999999999995",  "9(19)", typeof(decimal),           "9999999999999999995")]
     [DataRow(         "999999999999999999E", "S9(19)", typeof(decimal),           "9999999999999999995")]
     [DataRow(         "999999999999999999N", "S9(19)", typeof(decimal),          "-9999999999999999995")]
@@ -140,29 +140,24 @@ public class DecoderForIntegerTest
     // Invalid format
     // -------------------------
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("99999999999999999999999999994",  "9(29)", typeof(decimal),  "99999999999999999999999999994")]
     [DataRow("9999999999999999999999999999D", "S9(29)", typeof(decimal),  "99999999999999999999999999994")]
     [DataRow("9999999999999999999999999999M", "S9(29)", typeof(decimal), "-99999999999999999999999999994")]
-    [ExpectedException(typeof(OverflowException))]
     public void Decode_ThrowsOverflowException(string text, string picString, Type expectedType, string expectedValue)
     {
         var pic = PicMeta.Parse(picString);
         byte[] buffer = Encoding.ASCII.GetBytes(text);
 
-        object value = PicClauseCodec.ForMeta(pic).Decode(buffer);
-
-        Assert.IsInstanceOfType(value, expectedType);
-        Assert.AreEqual(decimal.Parse(expectedValue, CultureInfo.InvariantCulture), value);
+        Assert.ThrowsExactly<OverflowException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(FormatException))]
     public void Decode_NumericWithNonDigit_ThrowsFormatException()
     {
         var pic = PicMeta.Parse("9(5)");
         byte[] buffer = Encoding.ASCII.GetBytes("12A34");
 
-        PicClauseCodec.ForMeta(pic).Decode(buffer);
+        Assert.ThrowsExactly<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 }

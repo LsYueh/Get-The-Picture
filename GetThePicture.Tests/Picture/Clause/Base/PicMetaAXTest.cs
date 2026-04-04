@@ -10,7 +10,7 @@ public class PicMetaAXTest
     // Alphabetic (A)
     // ─────────────────────────
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(    "A", PicBaseClass.Alphabetic,  1, 0,  1, false)]
     [DataRow( "A(1)", PicBaseClass.Alphabetic,  1, 0,  1, false)]
     [DataRow("A(20)", PicBaseClass.Alphabetic, 20, 0, 20, false)]
@@ -30,7 +30,7 @@ public class PicMetaAXTest
     // Alphanumeric (X)
     // ─────────────────────────
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(       "X", PicBaseClass.Alphanumeric,  1, 0,  1, false)]
     [DataRow(      "XX", PicBaseClass.Alphanumeric,  2, 0,  2, false)]
     [DataRow(    "X(1)", PicBaseClass.Alphanumeric,  1, 0,  1, false)]

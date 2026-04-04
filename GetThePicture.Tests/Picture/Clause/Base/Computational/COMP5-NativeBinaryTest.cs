@@ -32,7 +32,7 @@ public class NativeBinaryTest
         };
     }
     
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("9(4)", false,     "0",      (ushort) 0)]
     [DataRow("9(4)", false, "65535", ushort.MaxValue)]
     public void Codec_Halfword(string picString, bool isNegative, string digits, object expected)
@@ -59,7 +59,7 @@ public class NativeBinaryTest
         Assert.AreEqual(expected, Convert.ToUInt16(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("S9(4)", false, "32767", short.MaxValue)]
     [DataRow("S9(4)",  true, "32768", short.MinValue)]
     public void Codec_Sign_Halfword(string picString, bool isNegative, string digits, short expected)
@@ -86,7 +86,7 @@ public class NativeBinaryTest
         Assert.AreEqual(expected, Convert.ToInt16(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("9(9)", false,          "0",      (uint) 0)]
     [DataRow("9(9)", false, "4294967295", uint.MaxValue)]
     public void Codec_Fullword(string picString, bool isNegative, string digits, uint expected)
@@ -113,7 +113,7 @@ public class NativeBinaryTest
         Assert.AreEqual(expected, Convert.ToUInt32(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("S9(9)", false, "2147483647", int.MaxValue)]
     [DataRow("S9(9)",  true, "2147483648", int.MinValue)]
     public void Codec_Sign_Fullword(string picString, bool isNegative, string digits, int expected)
@@ -140,7 +140,7 @@ public class NativeBinaryTest
         Assert.AreEqual(expected, Convert.ToInt32(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("9(18)", false,                    "0",      (ulong) 0)]
     [DataRow("9(18)", false, "18446744073709551615", ulong.MaxValue)]
     public void Codec_Doubleword(string picString, bool isNegative, string digits, ulong expected)
@@ -167,7 +167,7 @@ public class NativeBinaryTest
         Assert.AreEqual(expected, Convert.ToUInt64(decodedBE), $"BE failed for {expected}, {pic.DigitCount} bytes, Signed={pic.Signed}");
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("S9(18)", false, "9223372036854775807", long.MaxValue)]
     [DataRow("S9(18)",  true, "9223372036854775808", long.MinValue)]
     public void Codec_Sign_Doubleword(string picString, bool isNegative, string digits, long expected)
@@ -198,7 +198,7 @@ public class NativeBinaryTest
     // Exceptions
     // -------------------------
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(  "9(4)", false,               "65536")]
     [DataRow( "S9(4)", false,               "32768")]
     [DataRow( "S9(9)", false,          "2147483648")]
@@ -209,10 +209,10 @@ public class NativeBinaryTest
         
         var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
 
-        Assert.ThrowsException<OverflowException>(() => COMP5.Encode(nMeta, pic));
+        Assert.ThrowsExactly<OverflowException>(() => COMP5.Encode(nMeta, pic));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow( "9(2)V99", false, "1")]
     [DataRow("S9(2)V99", false, "1")]
     public void Codec_Numeric_WithDecimal(string picString, bool isNegative, string digits)
@@ -221,6 +221,6 @@ public class NativeBinaryTest
         
         var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
 
-        Assert.ThrowsException<NotSupportedException>(() => COMP5.Encode(nMeta, pic));
+        Assert.ThrowsExactly<NotSupportedException>(() => COMP5.Encode(nMeta, pic));
     }
 }

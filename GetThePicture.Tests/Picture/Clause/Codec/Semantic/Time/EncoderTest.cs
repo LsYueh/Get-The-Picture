@@ -12,7 +12,7 @@ public class EncoderTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("X(6)", PicSemantic.Time6, "235959",    23, 59, 59, 0)]   // Time6
     [DataRow("9(6)", PicSemantic.Time6, "235959",    23, 59, 59, 0)]
     [DataRow("X(9)", PicSemantic.Time9, "123045678", 12, 30, 45, 678)] // Time9

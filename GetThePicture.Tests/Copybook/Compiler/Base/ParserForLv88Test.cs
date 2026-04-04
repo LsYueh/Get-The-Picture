@@ -11,7 +11,7 @@ public class ParserForLv88Test
 {
     private static readonly Lexer lexer = new();
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("88 A VALUE 'A'.", "COPYBOOK-LAYOUT", "88 A >> Value(s) in A")]
     [DataRow("88 B VALUES 'A' 'B' 'C'.", $"COPYBOOK-LAYOUT", "88 B >> Value(s) in A B C")]
     [DataRow("88 DIGIT VALUE 1 THROUGH 9.", $"COPYBOOK-LAYOUT", "88 DIGIT >> Value(s) in 1 through 9")]

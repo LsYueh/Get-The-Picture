@@ -11,7 +11,7 @@ public class CodecComp5Test
     // Encode
     // ------------------------- 
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow( "9(04)", (ushort)  9999, new byte[] { 0x0F, 0x27 })] // 9999 >> 0x270F >> (Little Endian) >> 0F 27
     [DataRow("S9(04)",  (short)  9999, new byte[] { 0x0F, 0x27 })]
     [DataRow("S9(04)",  (short) -9999, new byte[] { 0xF1, 0xD8 })]
@@ -31,7 +31,7 @@ public class CodecComp5Test
         CollectionAssert.AreEqual(expected, buffer);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("S9(04)", (short) 9999, new byte[] { 0x27, 0x0F })]
     [DataRow("S9(18)", -999999999999999999L, new byte[] { 0xF2, 0x1F, 0x49, 0x4C, 0x58, 0x9C, 0x00, 0x01 })]
     public void Encode_With_Change_Endian(string picString, object value, byte[] expected)
@@ -48,7 +48,7 @@ public class CodecComp5Test
     // Decode
     // ------------------------- 
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow( "9(04)", (ushort)  9999, new byte[] { 0x0F, 0x27 })] // 9999 >> 0x270F >> (Little Endian) >> 0F 27
     [DataRow("S9(04)",  (short)  9999, new byte[] { 0x0F, 0x27 })]
     [DataRow("S9(04)",  (short) -9999, new byte[] { 0xF1, 0xD8 })]
@@ -68,7 +68,7 @@ public class CodecComp5Test
         Assert.AreEqual(expected, value);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("S9(04)", (short) 9999, new byte[] { 0x27, 0x0F })]
     [DataRow("S9(18)", -999999999999999999L, new byte[] { 0xF2, 0x1F, 0x49, 0x4C, 0x58, 0x9C, 0x00, 0x01 })]
     public void Decode_With_Change_Endian(string picString, object expected, byte[] buffer)
@@ -86,26 +86,24 @@ public class CodecComp5Test
     // -------------------------
 
     [TestMethod]
-    [ExpectedException(typeof(OverflowException))]
     public void Encode_Without_Sign_Negative_ThrowsOverflowException()
     {
         // PIC 9(4) COMP-4.
         var pic = PicMeta.Parse("9(4)");
         pic.Usage = PicUsage.Binary;
 
-        PicClauseCodec.ForMeta(pic).WithStrict().Encode(-9999);
+        Assert.ThrowsExactly<OverflowException>(() => PicClauseCodec.ForMeta(pic).WithStrict().Encode(-9999));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow( "9(28)",  9999)]
     [DataRow("S9(28)",  9999)]
     [DataRow("S9(28)", -9999)]
-    [ExpectedException(typeof(NotSupportedException))]
     public void Encode_For_BigInt_NotSupported(string picString, object value)
     {
         var pic = PicMeta.Parse(picString);
         pic.Usage = PicUsage.Binary;
 
-        PicClauseCodec.ForMeta(pic).WithStrict().Encode(value);
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).WithStrict().Encode(value));
     }
 }

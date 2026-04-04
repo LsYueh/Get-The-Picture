@@ -27,7 +27,7 @@ public class MetaTest
         Assert.IsTrue(v.IsNegative);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("9(5)V9(2)", "12.3", "0001230", 2)]
     public void Decimal(string picString, string value, string expected, int expectedScale)
     {
@@ -44,7 +44,7 @@ public class MetaTest
         Assert.IsFalse(v.IsNegative);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("9(5)V9(2)", "-12.3", "0001230", 2)]
     [DataRow("9(2)V9(3)", "-12.3",   "12300", 3)]
     public void Decimal_Is_Negative(string picString, string value, string expected, int expectedScale)
@@ -72,7 +72,7 @@ public class MetaTest
         var pic = PicMeta.Parse("9(6)");
         pic.Semantic = PicSemantic.Time6;
 
-        Assert.ThrowsException<NotSupportedException>(() => NumericMeta.Parse(new DateTime(), pic));
+        Assert.ThrowsExactly<NotSupportedException>(() => NumericMeta.Parse(new DateTime(), pic));
     }
 
     [TestMethod]
@@ -81,14 +81,14 @@ public class MetaTest
         var pic = PicMeta.Parse("9(8)");
         pic.Semantic = PicSemantic.GregorianDate;
 
-        Assert.ThrowsException<NotSupportedException>(() => NumericMeta.Parse(new DateTime(), pic));
+        Assert.ThrowsExactly<NotSupportedException>(() => NumericMeta.Parse(new DateTime(), pic));
     }
 
     // Unsupported type
     [TestMethod]
     public void UnsupportedType_Throws()
     {
-        Assert.ThrowsException<NotSupportedException>(() =>
+        Assert.ThrowsExactly<NotSupportedException>(() =>
             NumericMeta.Parse(new object(), PicMeta.Parse("X(5)")));
     }
 }

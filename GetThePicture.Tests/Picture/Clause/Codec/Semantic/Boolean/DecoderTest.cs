@@ -8,7 +8,7 @@ namespace GetThePicture.Tests.Picture.Clause.Codec.Semantic.Boolean;
 [TestClass]
 public class DecoderTest
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("X(1)", "Y", true)]
     [DataRow("X(1)", "N", false)]
     [DataRow("A(1)", "Y", true)]
@@ -32,7 +32,6 @@ public class DecoderTest
     // Exceptions
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
     public void Decode_ShouldThrow_WhenUsageNotDisplay()
     {
         var pic = PicMeta.Parse("9(1)");
@@ -41,11 +40,10 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("1");
 
-        PicClauseCodec.ForMeta(pic).Decode(buffer);
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
     public void Decode_ShouldThrow_WhenStorageOccupiedNot1()
     {
         var pic = PicMeta.Parse("9(2)"); // 兩位
@@ -53,11 +51,10 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("12");
 
-        PicClauseCodec.ForMeta(pic).Decode(buffer);
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(FormatException))]
     public void Decode_ShouldThrow_WhenInvalidNumericValue()
     {
         var pic = PicMeta.Parse("9(1)");
@@ -65,11 +62,10 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("2"); // 不合法值
 
-        PicClauseCodec.ForMeta(pic).Decode(buffer);
+        Assert.ThrowsExactly<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(FormatException))]
     public void Decode_ShouldThrow_WhenInvalidAlphanumericValue()
     {
         var pic = PicMeta.Parse("X(1)");
@@ -77,11 +73,10 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("Z"); // 不合法值
 
-        PicClauseCodec.ForMeta(pic).Decode(buffer);
+        Assert.ThrowsExactly<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 
     [TestMethod]
-    [ExpectedException(typeof(NotSupportedException))]
     public void Decode_ShouldThrow_WhenSigned()
     {
         var pic = PicMeta.Parse("S9(1)"); // 帶符號
@@ -89,6 +84,6 @@ public class DecoderTest
 
         byte[] buffer = Encoding.ASCII.GetBytes("1");
 
-        PicClauseCodec.ForMeta(pic).Decode(buffer);
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
     }
 }

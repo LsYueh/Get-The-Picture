@@ -12,7 +12,7 @@ public class EncoderForIntegerTest
 {
     private static readonly Encoding cp950 = EncodingFactory.CP950;
     
-    [DataTestMethod]
+    [TestMethod]
     [DataRow((byte)                  99, "9(02)",                 "99")]
     [DataRow((ushort)              9999, "9(04)",               "9999")]
     [DataRow((uint)           999999999, "9(09)",          "999999999")]
@@ -28,7 +28,7 @@ public class EncoderForIntegerTest
         Assert.AreEqual(expected, result);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(                           "9", "9(28)", "0000000000000000000000000009")]
     [DataRow( "999999999999999999999999999", "9(27)",  "999999999999999999999999999")]
     [DataRow( "999999999999999999999999999", "9(28)", "0999999999999999999999999999")]

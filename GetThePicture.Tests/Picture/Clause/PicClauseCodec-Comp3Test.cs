@@ -11,7 +11,7 @@ public class CodecComp3Test
     // Encode
     // ------------------------- 
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(  "9(5)",     52194, new byte[] { 0x52, 0x19, 0x4F })]
     [DataRow( "S9(5)",     52194, new byte[] { 0x52, 0x19, 0x4C })]
     [DataRow( "S9(5)",    -52194, new byte[] { 0x52, 0x19, 0x4D })]
@@ -44,7 +44,7 @@ public class CodecComp3Test
     // Decode
     // ------------------------- 
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(  "9(5)", (uint)  52194, new byte[] { 0x52, 0x19, 0x4F })]
     [DataRow(  "9(5)", (uint)  52194, new byte[] { 0x52, 0x19, 0x4C })]
     [DataRow( "9(10)", (ulong)     1, new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x1F })]
@@ -80,12 +80,11 @@ public class CodecComp3Test
     // -------------------------
 
     [TestMethod]
-    [ExpectedException(typeof(OverflowException))]
     public void Decode_Without_Sign_Negative_ThrowsOverflowException()
     {
         var pic = PicMeta.Parse("9(5)");
         pic.Usage = PicUsage.PackedDecimal;
         
-        PicClauseCodec.ForMeta(pic).Decode([0x52, 0x19, 0x4D]);
+        Assert.ThrowsExactly<OverflowException>(() => PicClauseCodec.ForMeta(pic).Decode([0x52, 0x19, 0x4D]));
     }
 }
