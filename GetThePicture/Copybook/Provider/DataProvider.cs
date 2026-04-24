@@ -19,12 +19,19 @@ public sealed class DataProvider : IDataProvider
     /// Initializes a new instance of <see cref="DataProvider"/> using a <see cref="StreamReader"/> that reads a COBOL Copybook.
     /// </summary>
     /// <param name="reader">The <see cref="StreamReader"/> for the Copybook file (e.g., .cpy or .cbl).</param>
+    /// <exception cref="Exception">if the file cannot be opened or read</exception>
     public DataProvider(StreamReader reader)
     {
         _layout  = CbCompiler.FromStreamReader(reader);
         _storage = CbResolver.FromLayout(_layout);
     }
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="DataProvider"/> using a file path and charset.
+    /// </summary>
+    /// <param name="fileName">the path to the Copybook file</param>
+    /// <param name="encoding">the character encoding of the file</param>
+    /// <exception cref="Exception">if the file cannot be opened or read</exception>
     public DataProvider(string fileName, Encoding encoding)
     {
         using var reader = new StreamReader(fileName, encoding);

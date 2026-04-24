@@ -6,6 +6,12 @@ namespace GetThePicture.Copybook.Compiler;
 
 public sealed class CbCompiler
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="streamReader"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
     public static CbLayout FromStreamReader(StreamReader streamReader)
     {
         ArgumentNullException.ThrowIfNull(streamReader);
