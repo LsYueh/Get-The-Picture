@@ -2,7 +2,7 @@ using System.Text;
 
 using GetThePicture.Cobol;
 using GetThePicture.Cobol.Base;
-using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.Picture.Utils;
 using GetThePicture.TestData;
 
 namespace GetThePicture.Tests.Cobol.Base;

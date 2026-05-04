@@ -3,7 +3,7 @@
 using CommandLine;
 using Microsoft.Extensions.Configuration;
 
-using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.Picture.Utils;
 
 using GetThePicture.Forge.Commands.Wrapper;
 using GetThePicture.Forge.Core.Config;

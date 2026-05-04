@@ -2,7 +2,7 @@ using System.Text;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 
-using GetThePicture.Picture.Clause;
+using GetThePicture.Picture;
 using GetThePicture.Picture.Clause.Base;
 
 namespace GetThePicture.Benchmarks.Category;

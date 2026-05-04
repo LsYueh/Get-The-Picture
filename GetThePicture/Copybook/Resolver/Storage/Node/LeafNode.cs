@@ -1,6 +1,6 @@
-using GetThePicture.Picture.Clause.Base;
-using GetThePicture.Picture.Clause.Base.ClauseItems;
-using GetThePicture.Picture.Clause.Codec.Semantic;
+using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Base.Meta;
+using GetThePicture.Picture.Codec.Semantic;
 using GetThePicture.Copybook.Resolver.Storage.Base;
 
 namespace GetThePicture.Copybook.Resolver.Storage.Node;

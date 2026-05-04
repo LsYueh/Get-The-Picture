@@ -1,0 +1,36 @@
+using System.Globalization;
+using System.Text;
+
+using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Base.Meta;
+
+namespace GetThePicture.Picture.Codec.Semantic.Timestamp;
+
+internal static class Decoder
+{
+    public static DateTime Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
+    {
+        return pic.Semantic switch
+        {
+            PicSemantic.Timestamp14 => ParseTimestamp14(buffer),
+            _ => throw new NotSupportedException($"Unsupported DateTime format: {pic.Semantic}")
+        };
+    }
+
+    private static DateTime ParseTimestamp14(ReadOnlySpan<byte> buffer)
+    {
+        string s = Encoding.ASCII.GetString(buffer);
+
+        // yyyyMMddHHmmss
+        if (!DateTime.TryParseExact(
+                s, "yyyyMMddHHmmss",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var dt))
+        {
+            throw new FormatException($"Invalid Timestamp14 value: '{s}'");
+        }
+
+        return dt;
+    }
+}

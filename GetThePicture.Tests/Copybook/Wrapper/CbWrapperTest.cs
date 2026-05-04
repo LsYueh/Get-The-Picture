@@ -1,8 +1,8 @@
 using System.Text;
 using GetThePicture.Copybook.Wrapper;
 using GetThePicture.Copybook.Wrapper.Base;
-using GetThePicture.Picture.Clause.Base.ClauseItems;
-using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Utils;
 
 namespace GetThePicture.Tests.Copybook.Wrapper;
 

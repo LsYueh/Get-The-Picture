@@ -2,7 +2,7 @@ using System.Text;
 
 using GetThePicture.Copybook.Provider;
 using GetThePicture.Forge.Core;
-using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.Picture.Utils;
 using static GetThePicture.Forge.Program;
 
 namespace GetThePicture.Forge.Commands.Wrapper;

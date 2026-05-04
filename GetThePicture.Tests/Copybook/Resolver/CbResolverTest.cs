@@ -4,7 +4,7 @@ using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Resolver;
 using GetThePicture.Copybook.Resolver.Storage;
-using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.Picture.Utils;
 using GetThePicture.TestData;
 
 namespace GetThePicture.Tests.Copybook.Resolver;

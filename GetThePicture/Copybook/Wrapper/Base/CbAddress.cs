@@ -1,5 +1,5 @@
-using GetThePicture.Picture.Clause.Base;
-using GetThePicture.Picture.Clause.Base.ClauseItems;
+using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Base.Meta;
 
 namespace GetThePicture.Copybook.Wrapper.Base;
 

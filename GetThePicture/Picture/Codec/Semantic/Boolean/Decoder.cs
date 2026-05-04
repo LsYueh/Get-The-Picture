@@ -1,0 +1,33 @@
+using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Base.Meta;
+
+namespace GetThePicture.Picture.Codec.Semantic.Boolean;
+
+internal static class Decoder
+{
+    public static bool Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
+    {
+        byte raw = buffer[0];
+
+        // 如果是數字型 PIC 9(1)，'0' = false, '1' = true
+        if (pic.BaseClass == PicBaseClass.Numeric)
+        {
+            if (raw == (byte)'0') return false;
+            if (raw == (byte)'1') return true;
+            throw new FormatException($"Invalid numeric boolean value: {(char)raw}");
+        }
+
+        // 如果是字元型 PIC X(1)，通常 'Y'/'N'
+        if (pic.BaseClass == PicBaseClass.Alphanumeric || pic.BaseClass == PicBaseClass.Alphabetic)
+        {
+            return char.ToUpperInvariant((char)raw) switch
+            {
+                'Y' => true,
+                'N' => false,
+                _ => throw new FormatException($"Invalid alphanumeric boolean value: {(char)raw}"),
+            };
+        }
+
+        throw new NotSupportedException($"Unsupported PIC type for Boolean: {pic.BaseClass}");
+    }
+}

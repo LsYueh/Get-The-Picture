@@ -1,6 +1,6 @@
 using GetThePicture.Cobol.Base;
 using GetThePicture.Copybook.Compiler.Layout.Base;
-using GetThePicture.Picture.Clause.Base;
+using GetThePicture.Picture.Base.Meta;
 
 namespace GetThePicture.Copybook.Compiler.Layout.Item;
 

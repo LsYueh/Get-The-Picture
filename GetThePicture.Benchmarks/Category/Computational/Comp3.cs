@@ -1,9 +1,9 @@
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 
-using GetThePicture.Picture.Clause;
+using GetThePicture.Picture;
 using GetThePicture.Picture.Clause.Base;
-using GetThePicture.Picture.Clause.Base.ClauseItems;
+using GetThePicture.Picture.Base.Clause.Items;
 
 namespace GetThePicture.Benchmarks.Category.Computational;
 

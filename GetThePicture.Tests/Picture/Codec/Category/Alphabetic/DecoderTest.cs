@@ -1,0 +1,78 @@
+using System.Text;
+
+using GetThePicture.Picture;
+using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Base.Meta;
+using GetThePicture.Picture.Utils;
+
+namespace GetThePicture.Tests.Picture.Codec.Category.Alphabetic;
+
+[TestClass]
+public class DecoderTest
+{
+    private static readonly Encoding cp950 = EncodingFactory.CP950;
+    
+    [TestMethod]
+    public void Decode_Alphabetic_TrimsRightSpaces()
+    {
+        var pic = PicMeta.Parse("A(5)");
+        byte[] buffer = Encoding.ASCII.GetBytes("AbC  ");
+
+        object result = PicClauseCodec.ForMeta(pic).Decode(buffer);
+
+        Assert.AreEqual("AbC", result);
+    }
+
+    [TestMethod]
+    public void Decode_Alphabetic_Lesser_Extra_TrimsRightSpaces()
+    {
+        var pic = PicMeta.Parse("A(5)");
+        byte[] buffer = Encoding.ASCII.GetBytes("AbC  fGh");
+
+        object result = PicClauseCodec.ForMeta(pic).Decode(buffer);
+
+        Assert.AreEqual("AbC", result);
+    }
+
+    // -------------------------
+    // Invalid format
+    // -------------------------
+
+    [TestMethod]
+    public void Decode_Alphanumeric_ThrowsFormatException()
+    {
+        var pic = PicMeta.Parse("A(5)");
+        byte[] buffer = Encoding.ASCII.GetBytes("AbC@ ");
+
+        Assert.ThrowsExactly<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
+    }
+
+    [TestMethod]
+    public void Decode_Numeric_ThrowsFormatException()
+    {
+        var pic = PicMeta.Parse("A(5)");
+        byte[] buffer = Encoding.ASCII.GetBytes("12345");
+
+        Assert.ThrowsExactly<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
+    }
+
+    [TestMethod]
+    public void Decode_CP950_ThrowsFormatException()
+    {
+        var pic = PicMeta.Parse("A(7)");
+
+        byte[] buffer = cp950.GetBytes("中文字 ");
+
+        Assert.ThrowsExactly<FormatException>(() => PicClauseCodec.ForMeta(pic).Decode(buffer));
+    }
+
+    [TestMethod]
+    public void Decode_Wrong_Usage_ThrowsNotSupportedException()
+    {
+        var pic = PicMeta.Parse("A(7)");
+
+        byte[] buffer = cp950.GetBytes("中文字 ");
+
+        Assert.ThrowsExactly<NotSupportedException>(() => PicClauseCodec.ForMeta(pic).Usage(PicUsage.Binary).Decode(buffer));
+    }
+}

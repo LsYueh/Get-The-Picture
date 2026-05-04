@@ -1,4 +1,4 @@
-using GetThePicture.Picture.Clause.Base.ClauseItems;
+using GetThePicture.Picture.Base.Clause.Items;
 
 namespace GetThePicture.Forge.Commands.Wrapper.Base;
 
