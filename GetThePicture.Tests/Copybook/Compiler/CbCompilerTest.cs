@@ -3,7 +3,7 @@ using System.Text;
 using GetThePicture.Copybook.Compiler;
 using GetThePicture.Copybook.Compiler.Layout;
 using GetThePicture.Copybook.Compiler.Layout.Item;
-using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.Picture.Utils;
 using GetThePicture.TestData;
 
 namespace GetThePicture.Tests.Copybook.Compiler;

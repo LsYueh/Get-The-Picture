@@ -1,0 +1,60 @@
+using GetThePicture.Picture.Base;
+using GetThePicture.Picture.Base.Clause.Computational;
+using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Base.Clause.Overpunch;
+using GetThePicture.Picture.Base.Mapper;
+using GetThePicture.Picture.Base.Meta;
+
+namespace GetThePicture.Picture.Codec.Category.Numeric;
+
+public static class Decoder
+{
+    /// <summary>
+    /// CP950 → {{ [Overpunch Decode]/[COMP] (object) → Mapper }} → CLR
+    /// </summary>
+    /// <param name="buffer">ASCII/CP950</param>
+    /// <param name="pic"></param>
+    /// <param name="dataStorageOptions"></param>
+    /// <returns></returns>
+    /// <exception cref="OverflowException"></exception>
+    /// <exception cref="NotSupportedException"></exception>
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, CodecOptions? options = null)
+    {
+        if (pic.DigitCount > 28)
+            throw new OverflowException($"PIC {pic} has {pic.IntegerDigits} + {pic.DecimalDigits} = {pic.DigitCount} digit(s), which exceeds the supported maximum (28 digits).");
+
+        options ??= new CodecOptions();
+        
+        // Note: COBOL資料記憶體先被S9(n)截位再轉處裡，一般COBOL應該也是這樣的狀況
+
+        // 截位或補字處理
+        Span<byte> bytes = Utils.BufferSlice.SlicePadStart(buffer, pic.StorageOccupied);
+
+        return pic.Usage switch
+        {
+            PicUsage.Display => Display_Decode(bytes, pic, options),
+            PicUsage.COMP3   =>   COMP3.Decode(bytes, pic),
+            PicUsage.COMP4   =>   COMP4.Decode(bytes, pic),
+            PicUsage.COMP5   =>   COMP5.Decode(bytes, pic, options.IsBigEndian),
+            PicUsage.COMP6   =>   COMP6.Decode(bytes, pic),
+            _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
+        };
+    }
+
+    private static readonly SIntMapper _SIntMapper = new();
+    private static readonly UIntMapper _UIntMapper = new();
+
+    private static object Display_Decode(Span<byte> bytes, PicMeta pic, CodecOptions options)
+    {
+        Span<byte> chars = OpCodec.Decode(bytes, pic, options, out bool isNegative);
+
+        if (chars.Length != pic.DigitCount)
+            throw new FormatException($"Numeric length mismatch for PIC. Expected {pic.DigitCount}, actual {chars.Length}.");
+
+        decimal value = CbDecimal.Decode(chars, pic.DecimalDigits, isNegative);
+
+        IMapper mapper = pic.Signed ? _SIntMapper : _UIntMapper;
+
+        return (pic.DecimalDigits == 0) ? mapper.Map(value, pic) : value;
+    }
+}

@@ -1,0 +1,64 @@
+﻿using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Base.Symbols;
+using GetThePicture.Picture.Base.Symbols.Core;
+
+namespace GetThePicture.Picture.Base.Meta;
+
+internal static partial class PicMetaBuilder
+{
+    public static PicMeta Parse(string symbols, PicSemantic semantic = PicSemantic.None, PicUsage usage = PicUsage.Display)
+    {
+        if (string.IsNullOrWhiteSpace(symbols))
+            throw new ArgumentException("PIC clause is empty.");
+        
+        symbols = symbols.ToUpperInvariant().Replace(" ", string.Empty);
+        
+        SymbolMeta meta = SymbolParser.Read(symbols);
+
+        var picMeta = meta.BaseClass switch
+        {
+            // ─────────────────────────
+            // Numeric
+            // ─────────────────────────
+            PicBaseClass.Numeric => new PicMeta {
+                Raw           = symbols,
+                BaseClass     = meta.BaseClass,
+                Semantic      = semantic,
+                Usage         = usage,
+                Signed        = meta.Signed,
+                IntegerDigits = meta.IntegerDigits,
+                DecimalDigits = meta.DecimalDigits
+            },
+
+            // ─────────────────────────
+            // Alphanumeric
+            // ─────────────────────────
+            PicBaseClass.Alphanumeric => new PicMeta {
+                Raw           = symbols,
+                BaseClass     = meta.BaseClass,
+                Semantic      = semantic,
+                Usage         = PicUsage.Display,
+                Signed        = false,
+                IntegerDigits = meta.IntegerDigits,
+                DecimalDigits = 0
+            },
+
+            // ─────────────────────────
+            // Alphabetic
+            // ─────────────────────────
+            PicBaseClass.Alphabetic => new PicMeta {
+                Raw           = symbols,
+                BaseClass     = meta.BaseClass,
+                Semantic      = semantic,
+                Usage         = PicUsage.Display,
+                Signed        = false,
+                IntegerDigits = meta.IntegerDigits,
+                DecimalDigits = 0
+            },
+
+            _ => throw new NotSupportedException($"Unsupported PIC clause: {symbols}"),
+        };
+
+        return picMeta;
+    }
+}

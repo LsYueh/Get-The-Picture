@@ -8,11 +8,6 @@
 
 ## 使用方式:
 ```csharp
-using GetThePicture.Picture.Clause;      // PicClauseCodec
-using GetThePicture.Picture.Clause.Base; // PicMeta
-```
-
-```csharp
 var pic = PicMeta.Parse("9(14))"); // X(14) ok!
 pic.Semantic = PicSemantic.Timestamp14; // (HHmmss)
 

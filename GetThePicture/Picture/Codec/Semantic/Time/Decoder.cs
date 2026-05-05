@@ -1,0 +1,54 @@
+using System.Globalization;
+using System.Text;
+
+using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Base.Meta;
+
+namespace GetThePicture.Picture.Codec.Semantic.Time;
+
+internal static class Decoder
+{
+    public static TimeOnly Decode(ReadOnlySpan<byte> buffer, PicMeta pic)
+    {
+        return pic.Semantic switch
+        {
+            PicSemantic.Time6 => ParseTime6(buffer),
+            PicSemantic.Time9 => ParseTime9(buffer),
+            _ => throw new NotSupportedException($"Unsupported TimeOnly format: {pic.Semantic}")
+        };
+    }
+
+    private static TimeOnly ParseTime6(ReadOnlySpan<byte> buffer)
+    {
+        string s = Encoding.ASCII.GetString(buffer);
+        
+        // HHmmss
+        if (!TimeOnly.TryParseExact(
+                s, "HHmmss",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var time))
+        {
+            throw new FormatException($"Invalid Time6 value: '{s}'");
+        }
+
+        return time;
+    }
+
+    private static TimeOnly ParseTime9(ReadOnlySpan<byte> buffer)
+    {
+        string s = Encoding.ASCII.GetString(buffer);
+
+        // HHmmssfff
+        if (!TimeOnly.TryParseExact(
+                s, "HHmmssfff",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var time))
+        {
+            throw new FormatException($"Invalid Time9 value: '{s}'");
+        }
+
+        return time;
+    }
+}

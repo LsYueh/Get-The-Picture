@@ -6,7 +6,7 @@ using BenchmarkDotNet.Engines;
 using GetThePicture.Copybook.Wrapper;
 using GetThePicture.Copybook.Wrapper.Base;
 
-using GetThePicture.Picture.Clause.Utils;
+using GetThePicture.Picture.Utils;
 using GetThePicture.TestData;
 
 namespace GetThePicture.Benchmarks.Category;

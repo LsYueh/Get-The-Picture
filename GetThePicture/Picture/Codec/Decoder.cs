@@ -1,0 +1,54 @@
+using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Base.Meta;
+using GetThePicture.Picture.Codec.Semantic;
+
+namespace GetThePicture.Picture.Codec;
+
+public static class Decoder
+{
+    /// <summary>
+    /// COBOL Elementary Item (buffer) → CLR value
+    /// </summary>
+    /// <param name="buffer">COBOL Elementary Item</param>
+    /// <param name="pic"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    /// <exception cref="FormatException"></exception>
+    public static object Decode(ReadOnlySpan<byte> buffer, PicMeta pic, CodecOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(pic);
+
+        if (options.Strict && (buffer.Length != pic.StorageOccupied))
+        {
+            throw new FormatException($"DISPLAY length mismatch. Expected {pic.StorageOccupied}, actual {buffer.Length}.");
+        }
+
+        if (pic.Semantic != PicSemantic.None)
+        {
+            Constraint rule = Rules.GetConstraint(pic.Semantic);
+            rule.ValidateOrThrow(pic);
+        }
+
+        return pic.Semantic switch
+        {
+            PicSemantic.GregorianDate or
+            PicSemantic.MinguoDate  =>      Semantic.Date.Decoder.Decode(buffer, pic),
+            PicSemantic.Time6 or
+            PicSemantic.Time9       =>      Semantic.Time.Decoder.Decode(buffer, pic),
+            PicSemantic.Timestamp14 => Semantic.Timestamp.Decoder.Decode(buffer, pic),
+            PicSemantic.Boolean     =>   Semantic.Boolean.Decoder.Decode(buffer, pic),
+            _ => DecodeBaseType(buffer, pic, options),
+        };
+    }
+
+    private static object DecodeBaseType(ReadOnlySpan<byte> buffer, PicMeta pic, CodecOptions options)
+    {
+        return pic.BaseClass switch
+        {
+            PicBaseClass.Numeric      =>      Category.Numeric.Decoder.Decode(buffer, pic, options),
+            PicBaseClass.Alphanumeric => Category.Alphanumeric.Decoder.Decode(buffer, pic),
+            PicBaseClass.Alphabetic   =>   Category.Alphabetic.Decoder.Decode(buffer, pic),
+            _ => throw new NotSupportedException($"Unsupported PIC Data Type [Decode] : {pic.BaseClass}"),
+        };
+    }
+}

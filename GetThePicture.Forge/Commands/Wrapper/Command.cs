@@ -1,15 +1,14 @@
 using System.Text;
 
-using GetThePicture.Copybook.Provider;
 using GetThePicture.Copybook.Resolver.Storage.Node;
 
-using GetThePicture.Picture.Clause.Base;
-using GetThePicture.Picture.Clause.Base.ClauseItems;
-using GetThePicture.Picture.Clause.Codec.Category.Numeric.Mapper;
+using GetThePicture.Picture.Base.Clause.Items;
+using GetThePicture.Picture.Base.Mapper;
 
 using GetThePicture.Forge.Core;
 using GetThePicture.Forge.Core.Config;
 using GetThePicture.Forge.Commands.Wrapper.Utils;
+using GetThePicture.Picture.Base.Meta;
 
 
 
@@ -43,7 +42,7 @@ public class WrapperCommand(ForgeConfig config)
 
         if (fields.Values.Any(f => !string.IsNullOrWhiteSpace(f.Type)))
         {
-            w.WriteLine("using GetThePicture.Picture.Clause.Base.ClauseItems;");
+            w.WriteLine("using GetThePicture.Picture.Base.Clause.Items;");
         }
         
         w.WriteLine();

@@ -1,6 +1,6 @@
 using GetThePicture.Copybook.Compiler.Layout.Item;
 using GetThePicture.Copybook.Resolver.Base;
-using GetThePicture.Picture.Clause.Base;
+using GetThePicture.Picture.Base.Meta;
 
 namespace GetThePicture.Copybook.Resolver.Storage.Node;
 
