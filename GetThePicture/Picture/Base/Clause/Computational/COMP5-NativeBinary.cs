@@ -1,7 +1,6 @@
 using System.Buffers.Binary;
 
 using GetThePicture.Picture.Base.Meta;
-using GetThePicture.Picture.Codec.Category.Numeric;
 
 namespace GetThePicture.Picture.Base.Clause.Computational;
 
@@ -43,7 +42,7 @@ internal static class COMP5
         };
     }
 
-    public static byte[] Encode(NumericMeta nMeta, PicMeta pic, bool isBigEndian = true)
+    public static byte[] Encode(NumericMeta numeric, PicMeta pic, bool isBigEndian = true)
     {
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException("COMP-5 does not support decimal digits.");
@@ -53,12 +52,12 @@ internal static class COMP5
         
         if (pic.Signed)
         {
-            long value = nMeta.ToInt64();
+            long value = numeric.ToInt64();
             WriteSigned(bytes, value, length, isBigEndian);
         }
         else
         {
-            ulong value = nMeta.ToUInt64();
+            ulong value = numeric.ToUInt64();
             WriteUnsigned(bytes, value, length, isBigEndian);
         }
 

@@ -2,7 +2,6 @@ using System.Text;
 
 using GetThePicture.Picture.Base.Clause.Computational;
 using GetThePicture.Picture.Base.Meta;
-using GetThePicture.Picture.Codec.Category.Numeric;
 using GetThePicture.Picture.Utils;
 
 namespace GetThePicture.Tests.Picture.Base.Clause.Computational;
@@ -38,11 +37,11 @@ public class NativeBinaryTest
     {
         var pic = PicMeta.Parse(picString);
         
-        var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
+        var numeric = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic);
+        byte[] bytesLE = COMP5.Encode(numeric, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(numeric, pic);
 
         // Decode
         object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
@@ -65,11 +64,11 @@ public class NativeBinaryTest
     {
         var pic = PicMeta.Parse(picString);
         
-        var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
+        var numeric = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic);
+        byte[] bytesLE = COMP5.Encode(numeric, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(numeric, pic);
 
         // Decode
         object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
@@ -92,11 +91,11 @@ public class NativeBinaryTest
     {
         var pic = PicMeta.Parse(picString);
         
-        var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
+        var numeric = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic);
+        byte[] bytesLE = COMP5.Encode(numeric, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(numeric, pic);
 
         // Decode
         object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
@@ -119,11 +118,11 @@ public class NativeBinaryTest
     {
         var pic = PicMeta.Parse(picString);
         
-        var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
+        var numeric = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic);
+        byte[] bytesLE = COMP5.Encode(numeric, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(numeric, pic);
 
         // Decode
         object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
@@ -146,11 +145,11 @@ public class NativeBinaryTest
     {
         var pic = PicMeta.Parse(picString);
         
-        var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
+        var numeric = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic);
+        byte[] bytesLE = COMP5.Encode(numeric, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(numeric, pic);
 
         // Decode
         object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
@@ -173,11 +172,11 @@ public class NativeBinaryTest
     {
         var pic = PicMeta.Parse(picString);
         
-        var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
+        var numeric = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesLE = COMP5.Encode(nMeta, pic, false); // x86/x86-64
-        byte[] bytesBE = COMP5.Encode(nMeta, pic);
+        byte[] bytesLE = COMP5.Encode(numeric, pic, false); // x86/x86-64
+        byte[] bytesBE = COMP5.Encode(numeric, pic);
 
         // Decode
         object decodedLE = COMP5.Decode(bytesLE, pic, false); // x86/x86-64
@@ -206,9 +205,9 @@ public class NativeBinaryTest
     {
         var pic = PicMeta.Parse(picString);
         
-        var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
+        var numeric = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
 
-        Assert.ThrowsExactly<OverflowException>(() => COMP5.Encode(nMeta, pic));
+        Assert.ThrowsExactly<OverflowException>(() => COMP5.Encode(numeric, pic));
     }
 
     [TestMethod]
@@ -218,8 +217,8 @@ public class NativeBinaryTest
     {
         var pic = PicMeta.Parse(picString);
         
-        var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
+        var numeric = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
 
-        Assert.ThrowsExactly<NotSupportedException>(() => COMP5.Encode(nMeta, pic));
+        Assert.ThrowsExactly<NotSupportedException>(() => COMP5.Encode(numeric, pic));
     }
 }

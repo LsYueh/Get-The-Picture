@@ -1,7 +1,6 @@
 using GetThePicture.Picture.Base.Clause.Options;
 using GetThePicture.Picture.Base.Mapper;
 using GetThePicture.Picture.Base.Meta;
-using GetThePicture.Picture.Codec.Category.Numeric;
 
 namespace GetThePicture.Picture.Base.Clause.Computational;
 
@@ -88,15 +87,15 @@ internal static class COMP3
         return mapper.Map(value, pic);
     }
 
-    public static byte[] Encode(NumericMeta nMeta, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
+    public static byte[] Encode(NumericMeta numeric, PicMeta pic, DataStorageOptions ds = DataStorageOptions.CI)
     {        
-        if (!pic.Signed && nMeta.IsNegative)
+        if (!pic.Signed && numeric.IsNegative)
             throw new InvalidOperationException("Unsigned PIC cannot encode negative value");
 
         int byteLen = GetByteLength(pic.DigitCount);
         byte[] buffer = new byte[byteLen];
 
-        ReadOnlySpan<byte> chars = nMeta.Chars;
+        ReadOnlySpan<byte> chars = numeric.Chars;
 
         int charIndex = chars.Length - 1;
         int byteIndex = byteLen - 1;
@@ -105,7 +104,7 @@ internal static class COMP3
 
         int signNibble = !pic.Signed
             ? UNSIGNED
-            : (nMeta.IsNegative ? NEGATIVE_SIGN : POSITIVE_SIGN);
+            : (numeric.IsNegative ? NEGATIVE_SIGN : POSITIVE_SIGN);
 
         int low  = signNibble;
         int high = charIndex >= 0 ? chars[charIndex--] - '0' : 0;

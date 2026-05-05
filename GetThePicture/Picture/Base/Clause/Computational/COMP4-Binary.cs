@@ -1,5 +1,4 @@
 using GetThePicture.Picture.Base.Meta;
-using GetThePicture.Picture.Codec.Category.Numeric;
 
 namespace GetThePicture.Picture.Base.Clause.Computational;
 
@@ -59,13 +58,13 @@ internal static class COMP4
     /// When running on Little Endian platforms (x86/x64), <br/>
     /// byte order must be reversed to maintain compatibility. <br/>
     /// </summary>
-    /// <param name="nMeta"></param>
+    /// <param name="numeric"></param>
     /// <param name="pic"></param>
     /// <returns></returns>
-    public static byte[] Encode(NumericMeta nMeta, PicMeta pic)
+    public static byte[] Encode(NumericMeta numeric, PicMeta pic)
     {
         // TODO: 只實作 TRUNC STD
        
-        return COMP5.Encode(nMeta, pic, isBigEndian: true);
+        return COMP5.Encode(numeric, pic, isBigEndian: true);
     }
 }

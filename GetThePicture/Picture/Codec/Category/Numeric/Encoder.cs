@@ -23,15 +23,15 @@ public static class Encoder
         
         options ??= new CodecOptions();
 
-        var nMeta = NumericMeta.Parse(value, pic);
+        var numeric = NumericMeta.Parse(value, pic);
 
         byte[] buffer = pic.Usage switch
         {
-            PicUsage.Display => Display_Encode(nMeta, pic, options),
-            PicUsage.COMP3   =>   COMP3.Encode(nMeta, pic),
-            PicUsage.COMP4   =>   COMP4.Encode(nMeta, pic),
-            PicUsage.COMP5   =>   COMP5.Encode(nMeta, pic, options.IsBigEndian),
-            PicUsage.COMP6   =>   COMP6.Encode(nMeta, pic),
+            PicUsage.Display => Display_Encode(numeric, pic, options),
+            PicUsage.COMP3   =>   COMP3.Encode(numeric, pic),
+            PicUsage.COMP4   =>   COMP4.Encode(numeric, pic),
+            PicUsage.COMP5   =>   COMP5.Encode(numeric, pic, options.IsBigEndian),
+            PicUsage.COMP6   =>   COMP6.Encode(numeric, pic),
             _ => throw new NotSupportedException($"Unsupported numeric storage: {pic.Usage}")
         };
 
@@ -42,14 +42,9 @@ public static class Encoder
         return normalized;
     }
 
-    private static byte[] Display_Encode(NumericMeta nMeta, PicMeta pic, CodecOptions options)
+    private static byte[] Display_Encode(NumericMeta numeric, PicMeta pic, CodecOptions options)
     {
-        bool isNegative = nMeta.IsNegative;
-
-        // Note: 如果不想複製，可直接用 ReadOnlyMemory<byte>
-        byte[] numeric = [.. nMeta.Chars]; 
-
-        byte[] buffer = OpCodec.Encode(isNegative, numeric, pic, options);
+        byte[] buffer = OpCodec.Encode(numeric.IsNegative, [.. numeric.Chars], pic, options);
 
         return buffer;
     }

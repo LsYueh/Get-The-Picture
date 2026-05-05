@@ -3,10 +3,9 @@ using System.Text;
 
 using GetThePicture.Picture.Base.Clause.Items;
 using GetThePicture.Picture.Base.Meta;
-using GetThePicture.Picture.Codec.Category.Numeric;
 using GetThePicture.Picture.Utils;
 
-namespace GetThePicture.Tests.Picture.Codec.Category.Numeric;
+namespace GetThePicture.Tests.Picture.Base.Meta;
 
 [TestClass]
 public class NumericMetaTest
@@ -18,13 +17,13 @@ public class NumericMetaTest
     {
         var pic = PicMeta.Parse("9(5)");
 
-        var v = NumericMeta.Parse(-123, pic);
+        var numeric = NumericMeta.Parse(-123, pic);
 
-        string actual = cp950.GetString(v.Chars);
+        string actual = cp950.GetString(numeric.Chars);
 
         Assert.AreEqual("00123", actual);
-        Assert.AreEqual(0, v.DecimalDigits);
-        Assert.IsTrue(v.IsNegative);
+        Assert.AreEqual(0, numeric.DecimalDigits);
+        Assert.IsTrue(numeric.IsNegative);
     }
 
     [TestMethod]
@@ -35,13 +34,13 @@ public class NumericMetaTest
 
         var pic = PicMeta.Parse(picString);
 
-        var v = NumericMeta.Parse(_value, pic);
+        var numeric = NumericMeta.Parse(_value, pic);
 
-        string actual = cp950.GetString(v.Chars);
+        string actual = cp950.GetString(numeric.Chars);
 
         Assert.AreEqual(expected, actual);
-        Assert.AreEqual(expectedScale, v.DecimalDigits);
-        Assert.IsFalse(v.IsNegative);
+        Assert.AreEqual(expectedScale, numeric.DecimalDigits);
+        Assert.IsFalse(numeric.IsNegative);
     }
 
     [TestMethod]
@@ -53,13 +52,13 @@ public class NumericMetaTest
 
         var pic = PicMeta.Parse(picString);
 
-        var v = NumericMeta.Parse(_value, pic);
+        var numeric = NumericMeta.Parse(_value, pic);
 
-        string actual = cp950.GetString(v.Chars);
+        string actual = cp950.GetString(numeric.Chars);
 
         Assert.AreEqual(expected, actual);
-        Assert.AreEqual(expectedScale, v.DecimalDigits);
-        Assert.IsTrue(v.IsNegative);
+        Assert.AreEqual(expectedScale, numeric.DecimalDigits);
+        Assert.IsTrue(numeric.IsNegative);
     }
 
     // -------------------------

@@ -2,7 +2,6 @@ using System.Text;
 
 using GetThePicture.Picture.Base.Clause.Computational;
 using GetThePicture.Picture.Base.Meta;
-using GetThePicture.Picture.Codec.Category.Numeric;
 using GetThePicture.Picture.Utils;
 
 namespace GetThePicture.Tests.Picture.Base.Clause.Computational;
@@ -41,10 +40,10 @@ public class BinaryTest
     {
         var pic = PicMeta.Parse(picString);
         
-        var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
+        var numeric = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
         
         // Encode
-        byte[] bytesBE = COMP4.Encode(nMeta, pic);
+        byte[] bytesBE = COMP4.Encode(numeric, pic);
 
         // 檢查 Big Endian bytes
         CollectionAssert.AreEqual(expectedBytes, bytesBE, $"BE bytes mismatch for {expected}");
@@ -70,10 +69,10 @@ public class BinaryTest
     {
         var pic = PicMeta.Parse(picString);
         
-        var nMeta = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
+        var numeric = new NumericMeta(cp950.GetBytes(digits), decimalDigits: 0, isNegative);
 
         // Encode
-        byte[] bytesBE = COMP4.Encode(nMeta, pic);
+        byte[] bytesBE = COMP4.Encode(numeric, pic);
 
         // 🔎 驗證 Big Endian byte layout
         CollectionAssert.AreEqual(

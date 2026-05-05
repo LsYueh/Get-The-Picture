@@ -4,7 +4,6 @@ using System.Text;
 using GetThePicture.Picture.Base.Clause.Items;
 using GetThePicture.Picture.Base.Clause.Computational;
 using GetThePicture.Picture.Base.Meta;
-using GetThePicture.Picture.Codec.Category.Numeric;
 using GetThePicture.Picture.Utils;
 
 namespace GetThePicture.Tests.Picture.Base.Clause.Computational;
@@ -63,9 +62,9 @@ public class PackedDecimalTest
     public void Encode_Unsigned_Should_Use_F_Sign()
     {
         var pic = PicMeta.Parse("9(5)");
-        var nMeta = new NumericMeta(cp950.GetBytes("12345"), 0, false);
+        var numeric = new NumericMeta(cp950.GetBytes("12345"), 0, false);
 
-        byte[] buffer = COMP3.Encode(nMeta, pic);
+        byte[] buffer = COMP3.Encode(numeric, pic);
 
         // 12 34 5F
         CollectionAssert.AreEqual(new byte[] { 0x12, 0x34, 0x5F }, buffer);

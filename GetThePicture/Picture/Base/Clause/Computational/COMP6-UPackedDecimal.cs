@@ -1,6 +1,5 @@
 using GetThePicture.Picture.Base.Mapper;
 using GetThePicture.Picture.Base.Meta;
-using GetThePicture.Picture.Codec.Category.Numeric;
 
 namespace GetThePicture.Picture.Base.Clause.Computational;
 
@@ -68,7 +67,7 @@ internal static class COMP6
         return _UIntMapper.Map(value, pic);
     }
 
-    public static byte[] Encode(NumericMeta nMeta, PicMeta pic)
+    public static byte[] Encode(NumericMeta numeric, PicMeta pic)
     {                
         if (pic.DecimalDigits > 0)
             throw new NotSupportedException("Decimal digits not supported in COMP-6");
@@ -76,13 +75,13 @@ internal static class COMP6
         if (pic.Signed)
             throw new NotSupportedException("Signed value is not valid for COMP-6");
 
-        if (nMeta.IsNegative)
-            throw new ArgumentException("Negative value is not valid for COMP-6", nameof(nMeta));
+        if (numeric.IsNegative)
+            throw new ArgumentException("Negative value is not valid for COMP-6", nameof(numeric));
 
         int byteLen = COMP3.GetByteLength(pic.DigitCount); // 共用計算公式
         byte[] buffer = new byte[byteLen];
 
-        ReadOnlySpan<byte> digits = nMeta.Chars;
+        ReadOnlySpan<byte> digits = numeric.Chars;
 
         int digitIndex = digits.Length - 1;
         int byteIndex  = buffer.Length - 1;
