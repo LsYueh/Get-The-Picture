@@ -3,7 +3,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 
 using GetThePicture.Picture;
-using GetThePicture.Picture.Clause.Base;
+using GetThePicture.Picture.Base.Meta;
 
 namespace GetThePicture.Benchmarks.Category;
 
