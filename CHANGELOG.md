@@ -1,5 +1,28 @@
 # Changelog
 
+## [26.16.3] – 2026-06-22
+
+轉用 `dotnet-outdated` 管理 NuGet 套件，減少人力管理負擔。
+
+### Changed
+- 更新 `forge` 依賴套件：
+  | Package | Before | After |
+  |---|---|---|
+  | Microsoft.Extensions.Configuration | 10.0.5 | 10.0.9 |
+  | Microsoft.Extensions.Configuration.Binder | 10.0.5 | 10.0.9 |
+  | Microsoft.Extensions.Configuration.Json | 10.0.5 | 10.0.9 |
+
+- 更新 `GetThePicture.Tests` 依賴套件：
+  | Package | Before | After |
+  |---|---|---|
+  | coverlet.collector | 8.0.1 | 10.0.1 |
+  | Microsoft.NET.Test.Sdk | 18.3.0 | 18.6.0 |
+  | MSTest.TestAdapter | 4.1.0 | 4.2.3 |
+  | MSTest.TestFramework | 4.1.0 | 4.2.3 |
+
+
+<br><br>
+
 ## [26.16.2] – 2026-05-05
 
 在 `C#` 中，`namespace` 與資料夾結構並非強制對應，開發者可依需求自由宣告。然而，本專案同時維護 `Java` 版本，而 `Java` 的 `package` 必須嚴格對應實際的資料夾路徑。
